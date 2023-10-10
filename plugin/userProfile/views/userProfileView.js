@@ -1,0 +1,288 @@
+define([
+  'jquery',
+  'underscore',
+  'backbone',
+  'validate',
+  'inputmask',
+  'moment',
+  'slim',
+  'locationpicker',
+  '../../readFiles/views/readFilesView',
+  '../models/userProfileModel',
+  'text!../templates/userProfileTemp.html',
+], function ($, _, Backbone, validate, inputmask, moment, slim, locationpicker, readFilesView, userProfileModel, userProfileTemp) {
+
+  var infoSingleView = Backbone.View.extend({
+    model: userProfileModel,
+    initialize: function (options) {
+      var selfobj = this;
+      $(".modelbox").hide();
+      $('#infoDetails').remove();
+      $(".popupLoader").show();
+      this.model = new userProfileModel();
+      this.model.set({ adminID: $.cookie('authid') })
+      this.model.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler
+      }).done(function (res) {
+        var bDate = selfobj.model.get("dateOfBirth");
+        if (bDate !== undefined && bDate !== "0000-00-00") {
+          selfobj.model.set({ "dateOfBirth": moment(bDate).format("DD/MM/YYYY") });
+          selfobj.render();
+          selfobj.setValues();
+        }
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        selfobj.render();
+
+      });
+    },
+    events:
+    {
+      "click .saveUserDetails": "saveUserDetails",
+      "click .item-container li": "setValues",
+      "blur .txtchange": "updateOtherDetails",
+      "change .multiSel": "setValues",
+      "change .bDate": "updateOtherDetails",
+      "change .dropval": "updateOtherDetails",
+      "click  .chageIcon": "chageIcon",
+      "change .fileAdded": "updateImage",
+      "click #address": "showlocation",
+      "click .loadMedia": "loadMedia",
+    },
+    onErrorHandler: function (collection, response, options) {
+      alert("Something was wrong ! Try to refresh the page or contact administer. :(");
+      $(".profile-loader").hide();
+    },
+
+    updateImage: function (e) {
+      var ob = this;
+      var toID = $(e.currentTarget).attr("id");
+      var value = $(e.currentTarget).attr("value");
+      var newdetails = [];
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById("output").src = e.target.result;
+        $("#output").show();
+        newdetails["" + toID] = reader.result;
+        ob.model.set(newdetails);
+        console.log(newdetails);
+      };
+      // read the image file as a data URL.
+      reader.readAsDataURL(e.currentTarget.files[0]);
+    },
+
+    chageIcon: function (e) {
+      // alert("hii");
+      var currentval = $("#password").attr("type");
+      if (currentval == "password") {
+        this.model.set({ eyeIcon: "fa fa-eye", inputType: "text" })
+      }
+      if (currentval == "text") {
+        this.model.set({ eyeIcon: "fa fa-eye-slash", inputType: "password" })
+      }
+      this.render();
+
+    },
+    getSelectedFile: function (url) {
+      $('.' + this.elm).val(url);
+      $('.' + this.elm).change();
+      $("#profile_pic_view").attr("src", url);
+      $("#profile_pic_view").css({ "max-width": "100%" });
+      $('#largeModal').modal('toggle');
+      this.model.set({ "photo": url });
+      console.log(this.model);
+    },
+    loadMedia: function (e) {
+      e.stopPropagation();
+      $('#largeModal').modal('toggle');
+      this.elm = "profile_pic";
+      var menusingleview = new readFilesView({ loadFrom: "addpage", loadController: this });
+    },
+    updateOtherDetails: function (e) {
+
+      var valuetxt = $(e.currentTarget).val();
+      var toID = $(e.currentTarget).attr("id");
+      var newdetails = [];
+      newdetails["" + toID] = valuetxt;
+      this.model.set(newdetails);
+      console.log(this.model);
+    },
+    setValues: function (e) {
+      setvalues = ["adminID"];
+      var selfobj = this;
+      $.each(setvalues, function (key, value) {
+        var modval = selfobj.model.get(value);
+        if (modval != null) {
+          console.log(setvalues);
+
+          var modeVal = modval.split(",");
+
+        } else { var modeVal = {}; }
+
+        $(".item-container li." + value).each(function () {
+          var currentval = $(this).attr("data-value");
+          var selecterobj = $(this);
+          $.each(modeVal, function (key, dbvalue) {
+            if (dbvalue.trim().toLowerCase() == currentval.toLowerCase()) {
+              $(selecterobj).addClass("active");
+            }
+          });
+        });
+
+      });
+      setTimeout(function () {
+        if (e != undefined && e.type == "click") {
+          var newsetval = [];
+          var objectDetails = [];
+          var classname = $(e.currentTarget).attr("class").split(" ");
+          $(".item-container li." + classname[0]).each(function () {
+            var isclass = $(this).hasClass("active");
+            if (isclass) {
+              var vv = $(this).attr("data-value");
+              newsetval.push(vv);
+            }
+
+          });
+
+          if (0 < newsetval.length) {
+            var newsetvalue = newsetval.toString();
+          }
+          else { var newsetvalue = ""; }
+
+          objectDetails["" + classname[0]] = newsetvalue;
+          $("#valset__" + classname[0]).html(newsetvalue);
+          selfobj.model.set(objectDetails);
+          console.log(classname[0]);
+          console.log(selfobj.model);
+        }
+      }, 500);
+    },
+    ////LocationMap ////
+    showlocation: function () {
+      var selfobj = this;
+      $(".memberLocation").show();
+      // ------locationpicker-----------
+      $('#memberLocation').locationpicker({
+        location: {
+          latitude: selfobj.model.attributes.latitude,
+          longitude: selfobj.model.attributes.longitude
+        },
+        center: {
+          latitude: 21.7679,
+          longitude: 78.8718
+        },
+        addressFormat: 'postal_code',
+        radius: 500,
+        zoom: 5,
+        inputBinding: {
+          locationNameInput: $('#address'),
+        },
+        enableAutocomplete: true,
+        markerIcon: 'images/map-marker-2-xl.png',
+        markerDraggable: true,
+        markerVisible: true,
+        onchanged: function (currentLocation, radius, isMarkerDropped) {
+          var addressComponents = $(this).locationpicker('map').location.addressComponents;
+          var loc = addressComponents.addressLine1 + " " + addressComponents.city + " " + addressComponents.stateOrProvince + " " + addressComponents.country;
+          selfobj.model.set({ latitude: $(this).locationpicker('map').location.latitude });
+          selfobj.model.set({ longitude: $(this).locationpicker('map').location.longitude });
+          selfobj.model.set({ address: loc });
+          $('#address').val(loc);
+          $(".memberLocation").hide();
+        }
+      });
+      // --------------------------------------
+    },
+    ///////////////////
+    saveUserDetails: function (e) {
+      e.preventDefault();
+      var bid = this.model.get("adminID");
+      console.log(bid)
+      if (bid != "0" || bid == "") {
+        var methodt = "POST";
+      } else {
+        console.log("here")
+        var methodt = "PUT";
+      }
+      if ($("#userProfileDetails").valid()) {
+        var selfobj = this;
+        $(e.currentTarget).html("<span>Saving..</span>");
+        $(e.currentTarget).attr("disabled", "disabled");
+        this.model.save({}, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler, type: methodt
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          if (res.flag == "F") {
+            alert(res.msg);
+            $(e.currentTarget).html("<span>Error</span>");
+          } else {
+            $(e.currentTarget).html("<span>Saved</span>");
+            //scanDetails.filterSearch();
+          }
+          setTimeout(function () {
+            $(e.currentTarget).html("<span>Save</span>");
+            $(e.currentTarget).removeAttr("disabled");
+          }, 3000);
+        });
+      }
+    },
+    initializeValidate: function () {
+      var selfobj = this;
+      $("#userProfileDetails").validate({
+        rules: {
+          photo: {
+            required: true,
+          },
+          contactNo: {
+            required: true,
+            minlength: 10,
+            maxlength: 10,
+          },
+          whatsappNo: {
+            minlength: 10,
+            maxlength: 10,
+          }
+        },
+        messages: {
+          photo: "Require photo size should be less than 1MB",
+          contactNo: "Please enter atleast 10 characters",
+          whatsappNo: "Please enter at least 10 characters",
+        }
+      });
+
+      $('#dateOfBirth').datepickerBT({
+        format: "dd-mm-yyyy",
+        todayBtn: "linked",
+        clearBtn: true,
+        todayHighlight: true,
+        endDate: new Date(),
+        numberOfMonths: 1,
+        autoclose: true,
+      }).on('changeDate', function (ev) {
+        var valuetxt = $("#dateOfBirth").val();
+        selfobj.model.set({ "dateOfBirth": valuetxt });
+        //alert(selfobj.model.get("dateOfBirth"));
+      });
+      $('.slim').slim();
+    },
+
+    render: function () {
+      var source = userProfileTemp;
+      var template = _.template(source);
+      console.log(this.model.attributes);
+      this.$el.html(template({ "model": this.model.attributes }));
+      $(".main_container").append(this.$el);
+      $(".memberLocation").hide();
+      this.initializeValidate();
+      this.setValues();
+      return this;
+    },
+  });
+
+  return infoSingleView;
+
+});

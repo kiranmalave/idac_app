@@ -1,0 +1,122 @@
+<form id="demo-form" action="#">
+  <h6>Filter Search</h6>
+  <hr>
+  <div class="clearfix">&nbsp;</div>
+  <div class="row">
+    <div class="col-md-6">
+      <select id="textSearch" class="form-control txtchange changeBox" name="textSearch">
+        <option value="">Select</option>
+        <option value="subject">Task Name</option>
+      </select>
+    </div>
+    <div class="col-md-6 textvalBox hidetextval" style="display: none;">
+      <input id="textval" class="form-control txtchange filterClear" name="textval" type="text">
+    </div>
+  </div>
+
+  <div class="clearfix">&nbsp;</div>
+
+  <div class="row">
+    <div class="col-md-6 assigneeList">
+      <select for="assignee" id="assignee" name="assignee" data-live-search="true"
+        class="form-control dropval ws-select show-tick txtchange">
+        <option value="">Assignee</option>
+        <% _.each(adminList, function(model1) { %>
+          <option value="<%=model1.attributes.adminID%>">
+            <%=model1.attributes.name%>
+          </option>
+          <%}); %>
+      </select>
+    </div>
+    <div class="col-md-6">
+      <select for="task_priority" id="task_priority" name="task_priority" title="Task priority"
+        class="form-control dropval ws-select show-tick txtchange repeatChange">
+        <option value="">Task Priority</option>
+        <% _.each(categoryList, function(modelcat) { %>
+          <% if(modelcat.attributes.slug=="task_priority" ) _.each(modelcat.attributes.sublist, function(model1) { %>
+            <option value="<%=model1.category_id%>">
+              <%=model1.categoryName%>
+            </option>
+            <%})%>
+              <%})%>
+      </select>
+    </div>
+  </div>
+
+  <div class="clearfix">&nbsp;</div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <select id="task_status" name="task_status" class="form-control dropval txtchange" title="Task Status">
+        <option value="">Task Status</option>
+        <% _.each(categoryList, function(modelcat) { %>
+          <% if(modelcat.attributes.slug=="task_status" ) _.each(modelcat.attributes.sublist, function(model1) { %>
+            <option value="<%=model1.category_id%>">
+              <%=model1.categoryName %>
+            </option>
+            <%})%>
+              <%})%>
+      </select>
+    </div>
+    <div class="col-md-6">
+      <select id="customer_id" name="customer_id" class="form-control dropval ws-select show-tick txtchange"
+        title="Select Customer">
+        <option value="">Customer</option>
+        <% _.each(customerList, function(model1) { %>
+          <option value="<%=model1.attributes.customer_id%>">
+            <%=model1.attributes.first_name%>
+          </option>
+          <%}); %>
+      </select>
+    </div>
+  </div>
+
+  <div class="clearfix">&nbsp;</div>
+  <label>Task   Start date</label>
+  <div class="row dateList">
+    <div class="col-5">
+      <input type="text" id="fromDate" class="form-control txtchange filterClear" placeholder="Start Date" readonly>
+    </div>
+    <div class="input-group-addon mt-2">to</div>
+    <div class="col-5">
+      <input type="text" id="toDate" class="form-control txtchange filterClear" placeholder="End Date" readonly>
+    </div>
+  </div>
+
+  <div class="clearfix">&nbsp;</div>
+
+  <label>Due date</label>
+  <div class="row dateList">
+    <div class="col-5">
+      <input type="text" id="fromDate2" class="form-control txtchange filterClear" placeholder="Start Date" readonly>
+    </div>
+    <div class="input-group-addon mt-2">to</div>
+    <div class="col-5">
+      <input type="text" id="toDate2" class="form-control txtchange filterClear" placeholder="End Date" readonly>
+    </div>
+  </div>
+
+  <div class="row pt-2">
+    <!-- <div class="col-md-12">
+      <label>Order By:</label>
+      <ul class="item-container" data-valid="orderBy">
+        <li class="orderBy multiOptionSel" data-single="Y" data-value="subject">Task Name</li>
+        <li class="orderBy multiOptionSel" data-single="Y" data-value="created_date">Created Date</li>
+      </ul>
+    </div> -->
+
+    <div class="col-md-12">
+      <label>Order:</label>
+      <ul class="item-container" data-valid="order">
+        <li class="order multiOptionSel" data-single="Y" data-value="ASC">Ascending</li>
+        <li class="order multiOptionSel" data-single="Y" data-value="DESC">Descending</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-xs-12 text-right">
+    <hr>
+    <input type="button" id="filterSearch" class="filterSearch btn btn-raised bg-green waves-effect"
+      value="Search"></button>
+    <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval" value="Reset"></button>
+  </div>
+</form>

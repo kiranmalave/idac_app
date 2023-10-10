@@ -1,0 +1,31 @@
+<tr class="even pointer bg-<%=taskDetails.attributes.status%>">
+  <td class="a-center">
+    <div class="listCheckbox">
+      <input id="cAll_<%= taskDetails.attributes.task_id %>" class="memberlistcheck chk-col-amber"
+        data-task_id="<%= taskDetails.attributes.task_id %>" type="checkbox">
+      <label for="cAll_<%= taskDetails.attributes.task_id %>">&nbsp;</label>
+    </div>
+  </td>
+  <td class="loadview" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"><a
+      href="javascript:;"><u>
+        <%=taskDetails.attributes.subject%>
+      </u></a></td>
+  </td>
+  <td class="">
+    <%=taskDetails.attributes.name%>
+  </td>
+  <td class="">
+    <%=taskDetails.attributes.priority_slug%>
+  </td>
+  <td class="">
+    <%=taskDetails.attributes.status_slug%>
+  </td>
+  <td class="">
+    <%=taskDetails.attributes.due_date%>
+  </td>
+  <td>
+    <button type="button" class="ws-btn-default loadview" data-task_id="<%=taskDetails.attributes.task_id%>"
+      data-view="singletaskData" data-toggle="tooltip" data-placement="top" title="Edit"><i
+        class="material-icons">mode_edit</i></button>
+  </td>
+</tr>

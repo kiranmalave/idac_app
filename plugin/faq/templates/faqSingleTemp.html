@@ -1,0 +1,106 @@
+<div class="tab-pane in active">
+    <div id="faqSingleView">
+        <form id="faqDetails" name="faqDetails" action="#">
+            <div class="text-right actionBtns">
+                <button type="button" class="btn bg-indigo saveFaqDetails" data-action="close">Save</button>
+                <button type="button" class="btn bg-indigo saveFaqDetails" data-action="new">Save & new</button>
+            </div>
+            <div class="row ws-appointment-main-container">
+                <div class="col-md-12 ws-appointment-container">
+                    <div class="clearfix">&nbsp;</div>
+                    <div class="list-row">
+                        <div class="icon-left">
+                            <div class="ws-icon">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="right-layout">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <label for="faq_question" class="form-label">Question<span
+                                                    class="error">*</span> :</label>
+                                            <input id="faq_question" class="form-control txtchange" name="faq_question"
+                                                required="" type="text" value="<%=model.faq_question%>">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="list-row">
+                        <div class="icon-left">
+                            <div class="ws-icon">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="right-layout">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="is_publish">is publish ?<span class="error"></span> :</label>
+                                    <ul class="item-container" data-valid="is_publish">
+                                        <li class="is_publish multiSel" data-render="no" data-single="Y"
+                                            data-value="1">Yes</li>
+                                        <li class="is_publish multiSel" data-render="no" data-single="Y"
+                                            data-value="0">No</li>
+                                    </ul>
+                                    <!-- </div> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-row">
+                        <div class="icon-left">
+                            <div class="ws-icon">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="right-layout">
+                            <div class="row">
+                                <%if(model.asked_by_name!=""&& model.asked_by_email!=null){%>
+                                <div class="col-md-6">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <label for="asked_by_name">Name<span class="error"></span> :</label>
+                                            <input id="asked_by_name" disabled class="form-control txtchange"
+                                                name="asked_by_name" required="" type="text"
+                                                value="<%=model.asked_by_name%>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <label for="asked_by_email">Email<span class="error"></span> :</label>
+                                            <input id="asked_by_email" disabled class="form-control txtchange"
+                                                name="asked_by_email" required="" type="text"
+                                                value="<%=model.asked_by_email%>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <%}%>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-row">
+                        <div class="icon-left">
+                            <div class="ws-icon">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="right-layout">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="faq_answer" class="form-label">Answer:</label>
+                                    <div id="faq_answer" rows="5" class="form-control txtchange" name="faq_answer"
+                                        required="" type="text"><%=model.faq_answer%></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+        </form>
+    </div>
+</div>

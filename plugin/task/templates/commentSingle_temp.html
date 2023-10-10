@@ -1,0 +1,30 @@
+<div class="tab-pane in active">
+    <div class="card ">
+        <div class="body">
+            <% _.each(commentList, function(model1) { %>
+
+                <ul class="inbox-widget list-unstyled clearfix">
+                    <li class="inbox-inner">
+                        <div class="inbox-item">
+                            <div class="inbox-img"> <img
+                                    src="http://localhost/projects/LMS/website/uploads/user-def.jpg" alt=""> </div>
+                            <div class="inbox-item-info">
+                                <p class="author">
+                                    <%=model1.attributes.name%>
+                                </p>
+                                <p class="m-b-5 m-t-10">
+                                    <%=model1.attributes.comment_text%>
+                                </p>
+                                <p class="inbox-date">
+                                    <%=model1.attributes.created_date%>
+                                </p>
+                            </div>
+                        </div>
+                        </a>
+                    </li>
+                </ul>
+                <%}); %>
+        </div>
+    </div>
+
+</div>

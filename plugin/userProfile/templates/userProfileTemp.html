@@ -1,0 +1,86 @@
+<div class="right_col overflow-hidden" role="main">
+  <form id="userProfileDetails" name="userProfileDetails" action="#">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <div class="text-right actionBtns">
+            <button type="button" class="btn bg-indigo saveUserDetails">Save</button>
+          </div>
+          <!-- <h2>My Profile</h2>
+        <div class="clearfix">&nbsp;</div> -->
+
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="slim" data-size="640,640">
+                  <input type="file" name="slim[]" />
+                </div>
+                <!-- <div class="clearfix">&nbsp;
+                  <input id="typehead" class="btn loadMedia" type="button" value="Select Profile Picture"
+                    name="Select Picture" data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal">
+                </div>
+                <div class="col-md-12 mt-5">
+                  <img id="profile_pic_view" style="max-width: 100%;" src="<%=model.photo%>">
+                </div> -->
+                <!-- <img src="<%=APPPATH%>images/site/logo.png" width="240" height="240" alt="User" /> -->
+                <!-- <input id="photo" class="form-control fileAdded" type="file" max-file-size="1024" value="<%=model.photo%>"> -->
+              </div>
+              <div class="col-md-8">
+                <div></div>
+                <div class="col-sm-12">
+                  <div class="form-group form-float">
+                    <div class="form-line">
+                      <label for="Name" class="form-label">Name</label>
+                      <input id="Name" class="form-control txtchange" name="Name" required="" maxlength="45" type="text"
+                        value="<%=model.name%>">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="form-group form-float">
+                    <div class="form-line">
+                      <label for="email" class="form-label">Email</label>
+                      <input id="email" class="form-control txtchange" name="email" required="" maxlength="45"
+                        type="text" value="<%=model.email%>">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class=" form-group form-float">
+                    <div class="form-line">
+                      <input id="contactNo" type="text" class="form-control txtchange" name="contactNo"
+                        value="<%=model.contactNo%>">
+                      <label for="contactNo" class="form-label">Contact Number</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12">
+                  <div class="form-group form-float">
+                    <div class="form-line">
+                      <label for="password" class="form-label">Password</label>
+                      <input id="password" type="password" class="form-control txtchange" name="password"
+                        value="<%=model.password%>">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+</form>
+</div>
+
+<!-- Large Size -->
+<div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div id="mediaLoad" class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+      </div>
+    </div>
+  </div>
+</div>

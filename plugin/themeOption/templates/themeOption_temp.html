@@ -1,0 +1,1226 @@
+<div class="container-fluid">
+  <form id="themeDetails" name="themeDetails" action="#">
+    <div class="row clearfix">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="text-right actionBtns theme_option_actionbtn">
+            <button type="button" class="btn bg-indigo savethemeDetails">Save</button>
+          </div>
+          <div class="header">
+            <h2>General<small></small> </h2>
+          </div>
+          <div class="body">
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-4">
+                  <div class="header">
+                    <h2>Primary Color<small>(default:#41a6df)</small> </h2>
+                  </div>
+                </div>
+                <div class="col-8 pt-4">
+                  <div class="btn-group mr-5">
+                    <input type="text" id="primary_color" name="primary_color" class="color"
+                      value="<%=model.primary_color%>">
+                  </div>
+                  <div class="text-muted pt-3">
+                    <h6><small>Controls the main highlight color throughout the theme. Color applied to elements such as
+                        buttons, links, categories, etc.</small></h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-4">
+                  <div class="header">
+                    <h2>Secondary Color<small>(default:#363F48)</small> </h2>
+                  </div>
+                </div>
+                <div class="col-8 pt-4">
+                  <div class="btn-group mr-5">
+                    <input type="text" id="secondary_color" name="secondary_color" class="color"
+                      value="<%=model.secondary_color%>">
+                  </div>
+                  <div class="text-muted pt-3">
+                    <h6><small>Controls the main highlight color throughout the theme. Color applied to elements such as
+                        links, mouseover,buttons, breadcrums, etc.</small></h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-4">
+                  <div class="header">
+                    <h2>User Signup From Password Filed <small>On for enable and off for disable password field</small>
+                    </h2>
+                  </div>
+                </div>
+                <div class="col-8 pt-4">
+                  <div class="switch ">
+                    <label>
+                      <input <% if(model.user_signup=="yes" ) {%>checked<%}%> id="user_signup" type="checkbox">
+                        <span class="lever switch-col-indigo"></span>
+                    </label>
+                  </div>
+                  <div class="text-muted pt-3">
+                    <h6><small>Enable to show password filed within the signup from. Disable to have the password email
+                        to
+                        user after signup. it`s recommended to leave enabled.</small></h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-4">
+                  <div class="header">
+                    <h2>Instant-Signup Username Filed<small>On for enable and off for disable username field</small>
+                    </h2>
+                  </div>
+                </div>
+                <div class="col-8 pt-4">
+                  <div class="switch">
+                    <label>
+                      <input <% if(model.instant_signup=="yes" ) {%>checked<%}%> id="instant_signup" type="checkbox">
+                        <span class="lever switch-col-indigo"></span>
+                    </label>
+                  </div>
+                  <div class="text-muted pt-3">
+                    <h6><small>Enable to allow user to set their own username within the instant signup from. if disable
+                        a
+                        username is auto-genrated during signup. instant signup show during listing and review
+                        submission
+                        if the user isn`t signed up</small></h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-4">
+                  <div class="header">
+                    <h2>Page Title(H1)<small>On for enable and off for disable page title</small> </h2>
+                  </div>
+                </div>
+                <div class="col-8 pt-4">
+                  <div class="switch ">
+                    <label>
+                      <input <% if(model.page_title_h1=="yes" ) {%>checked<%}%> id="page_title_h1" type="checkbox">
+                        <span class="lever switch-col-indigo"></span>
+                    </label>
+                  </div>
+                  <div class="text-muted">
+                    <h6><small>Controls the main highlight color throughout the theme. Color applied to elements such as
+                        buttons, links, categories, etc.</small></h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-4">
+                  <div class="header">
+                    <h2>Custom CSS<small>Past your CSS code here.</small> </h2>
+                  </div>
+                </div>
+                <div class="col-8 pt-4">
+                  <div class="form-group">
+                    <textarea class="form-control border txtchange" rows="6" id="custom_css" name="custom_css"
+                      value="<%=model.custom_css%>"><%=model.custom_css%></textarea>
+                  </div>
+                  <div class="text-muted">
+                    <h6><small>Enter your Custom CSS code in the field. Do not include any tags or HTML in the field.
+                        Custom CSS entered here will override the theme CSS. In some cases, the fimportant tag may be
+                        needed. All CSS here will be kept during a theme update. We highly recommend adding your Custom
+                        CSS to a Child Theme.</small></h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-4">
+                  <div class="header">
+                    <h2>Custom JS<small>Paste your JS code here.</small> </h2>
+                  </div>
+                </div>
+                <div class="col-8 pt-4">
+                  <div class="form-group">
+                    <textarea class="form-control border txtchange" rows="6" id="custom_js" name="custom_js"
+                      value="<%=model.custom_js%>"><%=model.custom_js%></textarea>
+                  </div>
+                  <div class="text-muted">
+                    <h6><small>Enter your Custom JS Code in the field. Custom JS entered here will be kept during a
+                        theme
+                        update. We highly recommend entering Custom JS in a Child Theme.</small></h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--Genral section end  -->
+
+        <!--Typgraphy section start  -->
+        <div class="card">
+          <div class="header">
+            <h2>Typography<small></small> </h2>
+          </div>
+          <div class="body">
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Body Font<small>Specify the body font properties</small> </h2>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Family</b> </p>
+                      <select id="fontFamily" data-toChange="body_font"
+                        class="form-control dropdownVal ws-select show-tick">
+                        <option <% if(model.body_font.fontFamily == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.body_font.fontFamily == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.body_font.fontFamily == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Weight & Style</b> </p>
+                      <select id="fontWeightStyle" data-toChange="body_font"
+                        class="form-control dropdownVal ws-select show-tick">
+                        <option <% if(model.body_font.fontWeightStyle == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.body_font.fontWeightStyle == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.body_font.fontWeightStyle == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Subset</b> </p>
+                      <select id="fontSubset" data-toChange="body_font"
+                        class="form-control dropdownVal ws-select show-tick">
+                        <option <% if(model.body_font.fontSubset == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.body_font.fontSubset == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.body_font.fontSubset == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <div class="btn-group mb-3">
+                        <input type="text" id="body_font_color" name="body_font_color" data-toChange="body_font"
+                          class="subObj color" value="<%=model.body_font.color%>">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Navigation Style and Anchor<small>Typography option with each property can be called
+                        individually.</small> </h2>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Family</b> </p>
+                      <select id="fontFamily" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="navigation_style_and_anchor">
+                        <option <% if(model.navigation_style_and_anchor.fontFamily == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.navigation_style_and_anchor.fontFamily == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.navigation_style_and_anchor.fontFamily == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Weight & Style</b> </p>
+                      <select id="fontWeightStyle" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="navigation_style_and_anchor">
+                        <option <% if(model.navigation_style_and_anchor.fontWeightStyle == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.navigation_style_and_anchor.fontWeightStyle == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.navigation_style_and_anchor.fontWeightStyle == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Subset</b> </p>
+                      <select id="fontSubset" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="navigation_style_and_anchor">
+                        <option <% if(model.navigation_style_and_anchor.fontSubset == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.navigation_style_and_anchor.fontSubset == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.navigation_style_and_anchor.fontSubset == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Heading h1 Style <small>Typography option with each property can be called
+                        individually.</small>
+                    </h2>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Family</b> </p>
+                      <select id="fontFamily" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h1_style">
+                        <option <% if(model.heading_h1_style.fontFamily == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h1_style.fontFamily == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h1_style.fontFamily == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Weight & Style</b> </p>
+                      <select id="fontWeightStyle" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h1_style">
+                        <option <% if(model.heading_h1_style.fontWeightStyle == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h1_style.fontWeightStyle == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h1_style.fontWeightStyle == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Subset</b> </p>
+                      <select id="fontSubset" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h1_style">
+                        <option <% if(model.heading_h1_style.fontSubset == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h1_style.fontSubset == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h1_style.fontSubset == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <div class="btn-group mb-3">
+                        <input type="text" data-toChange="heading_h1_style" class="subObj color"
+                          id="heading_h1_style_color" name="heading_h1_style_color"
+                          value="<%=model.heading_h1_style.color%>">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Heading h3 Style <small>Typography option with each property can be called
+                        individually.</small>
+                    </h2>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Family</b> </p>
+                      <select id="fontFamily" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h3_style">
+                        <option <% if(model.heading_h3_style.fontFamily == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h3_style.fontFamily == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h3_style.fontFamily == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Weight & Style</b> </p>
+                      <select id="fontWeightStyle" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h3_style">
+                        <option <% if(model.heading_h3_style.fontWeightStyle == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h3_style.fontWeightStyle == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h3_style.fontWeightStyle == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Subset</b> </p>
+                      <select id="fontSubset" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h3_style">
+                        <option <% if(model.heading_h3_style.fontSubset == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h3_style.fontSubset == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h3_style.fontSubset == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <div class="btn-group mb-3">
+                        <input type="text" data-toChange="heading_h3_style" class="subObj color"
+                          id="heading_h3_style_color" name="heading_h3_style_color"
+                          value="<%=model.heading_h3_style.color%>">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Heading h4 Style <small>Typography option with each property can be called
+                        individually.</small>
+                    </h2>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Family</b> </p>
+                      <select id="fontFamily" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h4_style">
+                        <option <% if(model.heading_h4_style.fontFamily == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h4_style.fontFamily == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h4_style.fontFamily == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Weight & Style</b> </p>
+                      <select id="fontWeightStyle" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h4_style">
+                        <option <% if(model.heading_h4_style.fontWeightStyle == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h4_style.fontWeightStyle == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h4_style.fontWeightStyle == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Subset</b> </p>
+                      <select id="fontSubset" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h4_style">
+                        <option <% if(model.heading_h4_style.fontSubset == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h4_style.fontSubset == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h4_style.fontSubset == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <div class="btn-group mb-3">
+                        <input type="text" data-toChange="heading_h4_style" class="subObj color"
+                          id="heading_h4_style_color" name="heading_h4_style_color"
+                          value="<%=model.heading_h4_style.color%>">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Heading h5 Style <small>Typography option with each property can be called
+                        individually.</small>
+                    </h2>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Family</b> </p>
+                      <select id="fontFamily" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h5_style">
+                        <option <% if(model.heading_h5_style.fontFamily == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h5_style.fontFamily == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h5_style.fontFamily == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Weight & Style</b> </p>
+                      <select id="fontWeightStyle" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h5_style">
+                        <option <% if(model.heading_h5_style.fontWeightStyle == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h5_style.fontWeightStyle == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h5_style.fontWeightStyle == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Subset</b> </p>
+                      <select id="fontSubset" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h5_style">
+                        <option <% if(model.heading_h5_style.fontSubset == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h5_style.fontSubset == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h5_style.fontSubset == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <div class="btn-group mb-3">
+                        <input type="text" data-toChange="heading_h5_style" class="subObj color"
+                          id="heading_h5_style_color" name="heading_h5_style_color"
+                          value="<%=model.heading_h5_style.color%>">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Heading h6 Style <small>Typography option with each property can be called
+                        individually.</small>
+                    </h2>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Family</b> </p>
+                      <select id="fontFamily" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h6_style">
+                        <option <% if(model.heading_h6_style.fontFamily == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h6_style.fontFamily == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h6_style.fontFamily == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Weight & Style</b> </p>
+                      <select id="fontWeightStyle" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h6_style">
+                        <option <% if(model.heading_h6_style.fontWeightStyle == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h6_style.fontWeightStyle == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h6_style.fontWeightStyle == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Subset</b> </p>
+                      <select id="fontSubset" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="heading_h6_style">
+                        <option <% if(model.heading_h6_style.fontSubset == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.heading_h6_style.fontSubset == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.heading_h6_style.fontSubset == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <div class="btn-group mb-3">
+                        <input type="text" data-toChange="heading_h6_style" class="subObj color"
+                          id="heading_h6_style_color" name="heading_h6_style_color"
+                          value="<%=model.heading_h6_style.color%>">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Paragraph and small elements<small>Typography option with each property can be called
+                        individually.</small> </h2>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Family</b> </p>
+                      <select id="fontFamily" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="para_and_small_elm">
+                        <option <% if(model.para_and_small_elm.fontFamily == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.para_and_small_elm.fontFamily == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.para_and_small_elm.fontFamily == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Weight & Style</b> </p>
+                      <select id="fontWeightStyle" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="para_and_small_elm">
+                        <option <% if(model.para_and_small_elm.fontWeightStyle == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.para_and_small_elm.fontWeightStyle == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.para_and_small_elm.fontWeightStyle == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <p> <b>Font Subset</b> </p>
+                      <select id="fontSubset" class="form-control dropdownVal ws-select show-tick"
+                        data-toChange="para_and_small_elm">
+                        <option <% if(model.para_and_small_elm.fontSubset == "mustard"){%> selected<%}%> value="mustard">Mustard</option>
+                        <option <% if(model.para_and_small_elm.fontSubset == "ketchup"){%> selected<%}%> value="ketchup">Ketchup</option>
+                        <option <% if(model.para_and_small_elm.fontSubset == "relish"){%> selected<%}%> value="relish">Relish</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                      <div class="btn-group mb-3">
+                        <input type="text" data-toChange="para_and_small_elm" class="subObj color"
+                          id="para_and_small_elm_color" name="para_and_small_elm_color"
+                          value="<%=model.para_and_small_elm.color%>">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--Typgraphy section end  -->
+
+        <!-- Header section start -->
+        <div class="card">
+          <div class="header">
+            <h2>Header<small></small> </h2>
+          </div>
+          <div class="body">
+            <div class="clearfix">
+              <div class="row border-bottom pb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Header layout<small>Default: Listing deatils layout</small> </h2>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="dd nestable-with-handle" id="dd-selected-pages">
+                    <ol class="dd-list ui-droppable" id="selected-pages" style="min-height: 100px;border: 1px solid;">
+                      <il><img src="images/site/left.png" width="48" class="selectImg" data-id="header_layout"
+                          data-toChange="left" height="48" alt="Left" /></il>
+                      <il><img src="images/site/center.png" width="48" class="selectImg" data-id="header_layout"
+                          data-toChange="center" height="48" alt="Center" /></il>
+                      <il><img src="images/site/right.jfif" width="48" class="selectImg" data-id="header_layout"
+                          data-toChange="right" height="48" alt="Right" /></il>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Fixed Header<small>Position Top Fixed Header.</small></h2>
+                    <div class="text mt-5">
+                      <span><small>Default: No</small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row">
+                    <div class="font-family mr-5">
+                      <div class="switch">
+                        <label>
+                          <input <% if(model.fixed_header=="yes" ) {%>checked<%}%> id="fixed_header" type="checkbox">
+                            <span class="lever switch-col-indigo"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Fixed Header In Inner Pages<small>Position Top Fixed Header In Inner Pages.</small> </h2>
+                    <div class="text mt-5">
+                      <span><small>Default: No</small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row">
+                    <div class="font-family mr-5">
+                      <div class="switch">
+                        <label>
+                          <input <% if(model.fixed_header_in_inner_pages=="yes" ) {%>checked<%}%>
+                            id="fixed_header_in_inner_pages" type="checkbox">
+                            <span class="lever switch-col-indigo"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Header Background Color<small>(default:#42a7df)</small> </h2>
+                    <div class="text mt-5">
+                      <span><small>Default: transparant</small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-6">
+                      <div class="btn-group mb-3">
+                        <input type="text" class="color" id="header_background_color" name="header_background_color"
+                          value="<%=model.header_background_color%>">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Header Background Color Inner Pages<small>(default:#42a7df)</small> </h2>
+                    <div class="text mt-5">
+                      <span><small>Default:#42a7df</small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-6">
+                      <div class="btn-group mb-3">
+                        <input type="text" class="color" id="header_background_color_inner_pages"
+                          name="header_background_color_inner_pages"
+                          value="<%=model.header_background_color_inner_pages%>">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Header Text and Border Color<small>(default:#ffffff)</small> </h2>
+                    <div class="text mt-5">
+                      <span><small>Default:#FFFFFF</small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-6">
+                      <div class="btn-group mb-3">
+                        <input type="text" class="color" id="header_text_and_border_color"
+                          name="header_text_and_border_color" value="<%=model.header_text_and_border_color%>">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Header Text Layout<small></small> </h2>
+                    <div class="text mt-5">
+                      <span><small>Default:1</small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row">
+                    <div class="font-family mr-5">
+                      <div class="switch">
+                        <label>
+                          <input <% if(model.header_text_layout=="yes" ) {%>checked<%}%> id="header_text_layout"
+                            type="checkbox">
+                            <span class="lever switch-col-indigo"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Header Search<small></small> </h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row">
+                    <div class="font-family mr-5">
+                      <div class="switch">
+                        <label>
+                          <input <% if(model.header_search=="yes" ) {%>checked<%}%> id="header_search" type="checkbox">
+                            <span class="lever switch-col-indigo"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Header Page Logo</h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4 photoUpload">
+                  <div class="form-group">
+                    <div class="form-line">
+                      <input type="text" class="form-control" placeholder="#">
+                    </div>
+                    <div class="mediabtn">
+                      <input id="typehead" class="btn loadMedia" type="button" value="Media" name="Media"
+                        data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Logo for Inner Pages</h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4 photoUpload">
+                  <div class="form-group">
+                    <div class="form-line">
+                      <input type="text" class="form-control" placeholder="#">
+                    </div>
+                    <div class="mediabtn">
+                      <input id="typehead" class="btn loadMedia" type="button" value="Media" name="Media"
+                        data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Favicon</h2>
+                    <div class="text mt-5">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4 photoUpload">
+                  <div class="form-group">
+                    <div class="form-line">
+                      <input type="text" class="form-control" placeholder="#">
+                    </div>
+                    <div class="mediabtn">
+                      <input id="typehead" class="btn loadMedia" type="button" value="Media" name="Media"
+                        data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Header section End  -->
+
+        <!-- Captcha section start -->
+        <div class="card">
+          <div class="header">
+            <h2>From reCaptcha<small></small> </h2>
+          </div>
+          <div class="body">
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Google reCaptcha v3<small></small></h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="switch">
+                    <label>
+                      <input <% if(model.google_reCaptcha=="yes" ) {%>checked<%}%> id="google_reCaptcha"
+                        type="checkbox">
+                        <span class="lever switch-col-indigo"></span>
+                    </label>
+                  </div>
+                  <h6><small>Enalble to display Google reCaptcha and Load Script</small></h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Captcha section End -->
+
+        <!-- Footer section start -->
+        <div class="card">
+          <div class="header">
+            <h2>Footer</h2>
+          </div>
+          <div class="body">
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Footer Layout<small>Select Footer Layout</small> </h2>
+                    <div class="text mt-5">
+                      <span><small>Default: Footer 1</small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="btn-group ">
+                    <input type="text" class="color" id="footer_layout" name="footer_layout"
+                      value="<%=model.footer_layout%>">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Select footer widget layout<small>Select footer widget layout</small> </h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row">
+                    <div class="font-family ">
+                      <div class="switch">
+                        <label>
+                          <input <% if(model.select_footer_widget_layout=="yes" ) {%>checked<%}%>
+                            id="select_footer_widget_layout" type="checkbox">
+                            <span class="lever switch-col-indigo"></span>
+                        </label>
+                      </div>
+                      <h6><small>Enalble to display Google reCaptcha and Load Script</small></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Footer top area background color<small>(default:#363f48)</small> </h2>
+                    <div class="text mt-5">
+                      <span><small>Default:#363f48</small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-6">
+                      <div class="btn-group mb-3">
+                        <input type="text" class="color" id="footer_top_area_background_color"
+                          name="footer_top_area_background_color" value="<%=model.footer_top_area_background_color%>">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Footer Bottom area background color<small>(default:#363f48)</small> </h2>
+                    <div class="text mt-5">
+                      <span><small>Default: Footer 1</small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row mb-3">
+                    <div class="col-6">
+                      <div class="btn-group mb-3">
+                        <input type="text" class="color" id="footer_bottom_area_background_color"
+                          name="footer_bottom_area_background_color"
+                          value="<%=model.footer_bottom_area_background_color%>">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Footer Top Text Color ON/OFF<small></small></h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row">
+                    <div class="font-family mr-5">
+                      <div class="switch">
+                        <label>
+                          <input <% if(model.footer_top_text_color=="yes" ) {%>checked<%}%> id="footer_top_text_color"
+                            type="checkbox">
+                            <span class="lever switch-col-indigo"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Footer Bottom Text Color ON/OFF<small></small></h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="row">
+                    <div class="font-family mr-5">
+                      <div class="switch">
+                        <label>
+                          <input <% if(model.footer_bottom_text_color=="yes" ) {%>checked<%}%>
+                            id="footer_bottom_text_color" type="checkbox">
+                            <span class="lever switch-col-indigo"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Facebook URL<small></small> </h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="form-group">
+                    <div class="form-line">
+                      <input type="text" class="form-control txtchange" id="facebook_url" name="facebook_url"
+                        placeholder="#" value="<%=model.facebook_url%>">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Twitter URL<small></small> </h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="form-group">
+                    <div class="form-line">
+                      <input type="text" class="form-control txtchange" id="twitter_url" name="twitter_url"
+                        placeholder="#" value="<%=model.twitter_url%>">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Instagram URL<small></small> </h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="form-group">
+                    <div class="form-line">
+                      <input type="text" class="form-control txtchange" id="instagram_url" name="instagram_url"
+                        placeholder="#" value="<%=model.instagram_url%>">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Tumbler URL<small></small> </h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="form-group">
+                    <div class="form-line">
+                      <input type="text" class="form-control txtchange" id="tumbler_url" name="tumbler_url"
+                        placeholder="#" value="<%=model.tumbler_url%>">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Youtube URL<small></small> </h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="form-group">
+                    <div class="form-line">
+                      <input type="text" class="form-control txtchange" id="youtube_url" name="youtube_url"
+                        placeholder="#" value="<%=model.youtube_url%>">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Linkdin URL<small></small> </h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="form-group">
+                    <div class="form-line">
+                      <input type="text" class="form-control txtchange" id="linkdin_url" name="linkdin_url"
+                        placeholder="#" value="<%=model.linkdin_url%>">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>Pinterest URL<small></small> </h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="form-group">
+                    <div class="form-line">
+                      <input type="text" class="form-control txtchange" id="pinterest_url" name="pinterest_url"
+                        placeholder="#" value="<%=model.pinterest_url%>">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clearfix">
+              <div class="row border-bottom mb-2">
+                <div class="col-6">
+                  <div class="header">
+                    <h2>VK URL<small></small> </h2>
+                    <div class="text mt-5">
+                      <span><small></small></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6 pt-4">
+                  <div class="form-group">
+                    <div class="form-line">
+                      <input type="text" class="form-control txtchange" id="vk_url" name="vk_url" placeholder="#"
+                        value="<%=model.vk_url%>">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Footer section end -->
+      </div>
+    </div>
+  </form>
+</div>
+<div class="sidebar-right">
+</div>
+<div class="ws_filterOptions"></div>
+
+<div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div id="mediaLoad" class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+      </div>
+    </div>
+  </div>
+</div>

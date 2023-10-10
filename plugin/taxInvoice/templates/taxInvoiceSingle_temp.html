@@ -1,0 +1,192 @@
+<div class="tab-pane in active">
+  <form id="taxInvoiceDetails" name="taxInvoiceDetails" action="#">
+    <!--tax invoice Header starts-->
+    <div class="text-right actionBtns">
+      <% if(status !='cancel'){ %>
+      <button type="button" class="btn bg-indigo saveTaxInvoiceDetails" data-action="close">Save</button> <%}%>
+      <button type="button" class="btn bg-indigo saveTaxInvoiceDetails" data-action="new">Save & new</button>
+  </div>
+  <div class="clearfix">&nbsp;</div>
+    <div class="row">
+      <div class="col-sm-4 form-details">
+        <div class="form-group form-float">
+          <div class="form-line">
+            <label for="skillDesc" class="form-label"><span><%=model.invoiceNumber%></span> Invoice Number:</label>
+            <input type="text" name="invoiceNumber" id="invoiceNumber" class="form-control" value="<%=model.invoiceNumber%>"/>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4 form-details">
+        <div class="form-group form-float">
+          <div class="form-line">
+            <% const catID=model.customer_id ? model.customer_id.split(','):[]%>
+            <label for="customer_id" class="form-label">customer</label>
+            <select id="customer_id" name="customer_id" class="form-control dropval ws-select mt-1" multiple>
+                <% _.each(customerList, function(model1) { %>
+                    <option <% if(catID.includes(model1.attributes.customer_id) ){ %> selected <% } %> 
+                    value="<%=model1.attributes.customer_id%>"><%=model1.attributes.first_name%></option>
+                <%})%>
+           </select>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4 form-details">
+        <div class="form-group form-float">
+          <div class="form-line">
+            <label for="skillDesc" class="form-label">Invoice Date:</label>
+            <input type="text" name="invoiceDate" id="invoiceDate" class="form-control" value="<%=model.invoiceDate%>" />
+          </div>
+        </div>
+      </div>  
+    </div>
+    <div class="clearfix">&nbsp;</div>
+    <!-- <div class="row">  
+      <div class="col-sm-4 form-details">
+        <div class="form-group form-float">
+          <div class="form-line">
+            <label for="reportMonth" class="form-label">Report Month:</label>
+            <select  id="reportMonth" name="reportMonth"class="form-control dropval ws-select show-tick repeatChange">
+              <option value="">Select Month</option>
+              <option <% if(model.processingMonth =='january'){ %> selected <% } %> value="january">January</option>
+              <option <% if(model.processingMonth =='february'){ %> selected <% } %> value="february">February</option>
+              <option <% if(model.processingMonth =='march'){ %> selected <% } %> value="march">March</option>
+              <option <% if(model.processingMonth =='april'){ %> selected <% } %> value="April">April</option>
+              <option <% if(model.processingMonth =='may'){ %> selected <% } %> value="May">May</option>
+              <option <% if(model.processingMonth =='june'){ %> selected <% } %> value="June">June</option>
+              <option <% if(model.processingMonth =='july'){ %> selected <% } %> value="July">July</option>
+              <option <% if(model.processingMonth =='august'){ %> selected <% } %> value="August">August</option>
+              <option <% if(model.processingMonth =='september'){ %> selected <% } %> value="September">September</option>
+              <option <% if(model.processingMonth =='october'){ %> selected <% } %> value="October">October</option>
+              <option <% if(model.processingMonth =='november'){ %> selected <% } %> value="November">November</option>
+              <option <% if(model.processingMonth =='december'){ %> selected <% } %> value="December">December</option>
+            </select>
+          </div>
+        </div>
+      </div> -->
+      <!-- <div class="col-sm-4 form-details">
+        <div class="form-group form-float">
+          <div class="form-line">
+            <label for="reportYear" class="form-label">Report Year:</label>
+            <select  name="reportYear"id="reportYear" class="form-control dropval ws-select show-tick repeatChange"><% if(model.isEdit == "no") { %>disabled <%}%></select>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    <!--tax invoice heade ends-->
+    <div class="col-xs-12">
+      <table class="table table-striped">
+        <tbody class="items-holder">
+          <tr id="item-header" class="text-center">
+            <th>SR No.</th>
+            <th>Type</th>
+            <th style="width: 39%">Description</th>
+            <th style="width: 10%">Quantity.</th>
+            <th>Unit</th>
+            <th>Rate</th>
+            <th>Amount</th>
+            <th style="width: 4%"><i class="material-icons" aria-hidden="true">delete_forever</i></th>
+          </tr>
+          <% if(model.invoiceID != '' && model.invoiceID != null){
+            _.each(invoiceLine, function(model) { 
+          %>
+            <tr id="item-<%=model.srNo%>" class="item-list-box">
+              <td class="sno"><%=model.srNo%></td>
+              <td>
+                <select id="narr_<%=model.srNo%>" name="narr_<%=model.srNo%>" class="form-control dropval setnarr ws-select show-tick repeatChange">
+                  <option value="">Type</option>
+                  <% _.each(model.narrList, function(model2) { %>
+                    <option <% if(model2.invoiceChargeID == model2.invoiceLineChrgID){ %> selected <% } %>  value="<%=model2.invoiceChargeID%>"><%=model2.invoiceChargeName%></option>
+                  <%}); %>
+                </select>
+              </td>
+              <td><input type="text" name="itemName_<%=model.srNo%>" id="itemName_<%=model.srNo%>" class="form-control amtChange narration" value="<%=model.invoiceLineNarr%>"></td>
+              <td>
+                <input <% if(model.isEdit =='no'){ %> disabled <% } %> type="text" name="itemQuantity_<%=model.srNo%>" id="itemQuantity_<%=model.srNo%>" class="form-control amtChange digits" value="<%=model.invoiceLineQty%>">
+              </td>
+              <td>
+                <input <% if(model.isEdit =='no'){ %> disabled <% } %>  type="text" name="itemUnit_<%=model.srNo%>" id="itemUnit_<%=model.srNo%>" class="form-control" value="<%=model.invoiceLineUnit%>">
+              </td>
+              <td class="text-right">
+                <input <% if(model.isEdit =='no'){ %> disabled <% } %> type="text" name="itemRate_<%=model.srNo%>" id="itemRate_<%=model.srNo%>" class="form-control amtChange digits" value="<%=model.invoiceLineRate%>">
+              </td>
+              <td class="text-right diginum" id="itemtotal_<%=model.srNo%>"><%=numberFormat(model.invoiceLineAmount,2)%></td>
+              <td class="text-right">
+                <% if(model.isEdit !='no'){ %>
+                 <button id="itemdel_<%=model.srNo%>" class="del-row btn-small btn-default"><i class="material-icons" aria-hidden="true">delete_forever</i></button>
+                <% }else{ %>
+                 &nbsp;
+                <% } %>
+              </td>
+            </tr>
+          <%  });
+          }else{ %>
+            <tr id="item-1" class="item-list-box">
+              <td class="sno">1</td>
+              <td>
+                <select id="narr_1" name="narr_1" class="form-control dropval setnarr">
+                  <option value="">Type</option>
+                  <% _.each(model.narrList, function(model) { %>
+                    <option value="<%=model.invoiceChargeID%>"><%=model.invoiceChargeName%></option>
+                  <%}); %>
+                </select>
+              </td>
+              <td><input type="text" name="itemName_1" id="itemName_1" class="form-control amtChange"></td>
+              <td><input type="text" name="itemQuantity_1" id="itemQuantity_1" class="form-control amtChange"></td>
+              <td><input type="text" name="itemUnit_1" id="itemUnit_1" class="form-control"></td>
+              <td class="text-right"><input type="text" name="itemRate_1" id="itemRate_1" class="form-control amtChange"></td>
+              <td class="text-right diginum" id="itemtotal_1"></td>
+              <td class="text-right">&nbsp;</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+      <div class="col-xs-12 text-right">
+        <hr>
+        <button id="addRow" class="btn btn-default">Add Row</button>
+        <hr>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+          &nbsp;
+        </div>
+      <div class="clearfix">&nbsp;</div>
+      <div class="clearfix">&nbsp;</div>
+      <div class="clearfix">&nbsp;</div>
+      <div class="col-xs-6">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th style="width:50%">Subtotal:</th>
+                <td align="right" class="subTotal diginum"><%=numberFormat(model.invoiceTotal,2)%></td>
+              </tr>
+              <tr>
+                <th>SGST (<%=model.stateGstPercent%>%) <input type="checkbox" name="issgst" id="issgst" class="updateAmt" <%if(model.stateGstAmount != 0 && model.stateGstAmount != null){%> checked="checked" <% } %>></th>
+                <td align="right" class="sgst diginum"><%=numberFormat(model.stateGstAmount,2)%></td>
+              </tr>
+              <tr>
+                <th>CGST (<%=model.centralGstPercent%>%) <input type="checkbox" name="iscgst" id="iscgst" class="updateAmt" <%if(model.centralGstAmount != 0 && model.centralGstAmount != null ){%> checked="checked" <% } %>></th>
+                <td align="right" class="cgst diginum"><%=numberFormat(model.centralGstAmount,2)%></td>
+              </tr>
+              <tr>
+                <th>IGST (<%=model.interGstPercent%>%) <input type="checkbox" name="isigst" id="isigst" class="updateAmt" <%if(model.interGstAmount != 0 && model.interGstAmount != null){%> checked="checked" <% } %>></th>
+                <td align="right" class="igst diginum"><%=numberFormat(model.interGstAmount,2)%></td>
+              </tr>
+              <tr>
+                <th>Round Off:</th>
+                <td align="right" class="roundOff diginum"><%=numberFormat(model.roundOff,2)%></td>
+              </tr>
+              <tr>
+                <th>Gross Total:</th>
+                <td align="right" class="grossTotal diginum"><%=numberFormat(model.grossAmount,2)%></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div> 
+</form>
+</div>
+  
+

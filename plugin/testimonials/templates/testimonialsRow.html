@@ -1,0 +1,14 @@
+<tr class="even pointer bg-<%=testimonialsDetails.attributes.status%>" >
+  <td class="a-center">
+    <div class="listCheckbox">
+        <input id="cAll_<%= testimonialsDetails.attributes.testimonial_id%>" class="memberlistcheck chk-col-amber" data-testimonial_id="<%= testimonialsDetails.attributes.testimonial_id%>" type="checkbox">
+        <label for="cAll_<%= testimonialsDetails.attributes.testimonial_id%>">&nbsp;</label>
+    </div>
+  </td>
+  <td class="loadview" data-toggle="modal" data-target="#myModal" data-testimonial_id="<%=testimonialsDetails.attributes.testimonial_id%>" data-show="singleTestimonialsData"><a href="javascript:;"><u><%=testimonialsDetails.attributes.testimonial_name%></u></a></td>
+  <td class=""><%= formatDate(testimonialsDetails.attributes.created_date,'no') %></td>
+  <td>
+    <button type="button" class="ws-btn-default loadview"  data-testimonial_id="<%=testimonialsDetails.attributes.testimonial_id%>" data-view="singleTestimonialsData"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Edit">mode_edit</i></button>
+  </td>
+</tr>
+              

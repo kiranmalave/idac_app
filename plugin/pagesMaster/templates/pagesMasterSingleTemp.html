@@ -1,0 +1,118 @@
+<div class="tab-pane in active">
+  <div id="pagesMasterSingleView">
+    <form id="pagesDetails" name="pagesDetails" action="#" style="padding: 0px 10px;">
+      <div class="text-right actionBtns">
+        <button type="button" class="btn bg-indigo saveDetails" data-action="close">Save</button>
+        <button type="button" class="btn bg-indigo saveDetails" data-action="new">Save & new</button>
+      </div>
+      <div class="row mb-1">
+        <div class="col-md-6">
+          <div class="clearfix">&nbsp;</div>
+          <div class="form-group form-float">
+            <div class="form-line">
+              <label for="pageTitle" class="form-label"> Page Title <span class="error">*</span> : </label>
+              <input id="pageTitle" type="text" class="form-control txtchange titleChange" name="pageTitle"
+                value="<%=model.pageTitle%>">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="clearfix">&nbsp;</div>
+          <div class="form-group form-float">
+            <div class="form-line">
+              <label for="pageLink" class="form-label"> Page Link <span class="error">*</span> : </label>
+              <input id="pageLink" type="text" class="form-control txtchange " name="pageLink"
+                value="<%=model.pageLink%>">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-1">
+        <div class="col-md-6">
+          <div class="form-group form-float">
+            <div class="form-line">
+              <label for="pageSubTitle" class="form-label"> Page Sub-Title <span class="error">*</span> : </label>
+              <input id="pageSubTitle" type="text" class="form-control txtchange" name="pageSubTitle"
+                value="<%=model.pageSubTitle%>">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group form-float">
+            <div class="form-line">
+              <label for="keywords" class="form-label"> Keywords <span class="error">*</span> : </label>
+              <input id="keywords" type="text" class="form-control txtchange" name="keywords"
+                value="<%=model.keywords%>">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-1">
+        <div class="col-md-6">
+          <div class="form-group form-float">
+            <div class="form-line">
+              <div class="clearfix">&nbsp;</div>
+              <label for="metaDesc" class="form-label"> Meta Description <span class="error">*</span> : </label>
+              <input id="metaDesc" type="text" class="form-control txtchange" name="metaDesc"
+                value="<%=model.metaDesc%>">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label for="tempType" class="form-label text-secondary"> Page Template <span class="error">*</span> : </label>
+          <select id="tempType" name="tempType" class="form-control dropval ws-select show-tick repeatChange">
+            <option value="default" <% if(model.tempType=='default' ){ %> selected <% } %>>Default</option>
+            <option value="withoutHF" <% if(model.tempType=='withoutHF' ){ %> selected <% } %>>Without Header and Footer
+            </option>
+            <option value="withHF" <% if(model.tempType=='withHF' ){ %> selected <% } %>>With Header and Footer</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label for="status">Status <span class="error">*</span> :</label>
+          <ul class="item-container" data-valid="status">
+            <li class="status multiSel" data-single="Y" data-value="active">Active</li>
+            <li class="status multiSel" data-single="Y" data-value="inactive">InActive</li>
+            <li class="status multiSel" data-single="Y" data-value="delete">Delete</li>
+          </ul>
+        </div>
+      </div>
+  </div>
+</div>
+  <!--    <div class="row mb-1">     -->
+  <div class="col-md-11">
+    <label for="scriptForPage">Page JavaScript<span class="error"></span> :</label>
+    <textarea id="scriptForPage" rows="4" class="ckeditor form-control txtchange"
+      name="scriptForPage"><%=model.scriptForPage %></textarea>
+  </div>
+
+<div class="col-md-11">
+  <label for="cssForPage">Page Css<span class="error"></span> :</label>
+  <textarea id="cssForPage" rows="4" class="ckeditor form-control txtchange"
+    name="cssForPage"><%=model.cssForPage %></textarea>
+</div>
+
+<div class="clearfix">&nbsp;</div>
+
+<div class="row">
+  <div class="icon-left">
+    <div class="ws-icon">
+      <div class="clearfix">&nbsp;</div>
+      <span class="input-group-addon right"><i class="material-icons">sort</i></span>
+    </div>
+  </div>
+  <div class="col-md-11">
+    <label for="description">Description<span class="error"></span> :</label>
+    <div id="description" class="form-control">
+      <%=model.description%>
+    </div>
+  </div>
+</div>
+<div class="clearfix">&nbsp;</div>
+<div class="clearfix">&nbsp;</div>
+<div class="clearfix">&nbsp;</div>
+<div class="clearfix">&nbsp;</div>
+</form>
+</div>
+</div>

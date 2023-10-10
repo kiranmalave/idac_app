@@ -1,0 +1,18 @@
+<tr class="even pointer bg-<%=faqDetails.attributes.status%>" >
+  <td class="a-center">
+        <div class="listCheckbox">
+          <input id="cAll_<%= faqDetails.attributes.faq_answer%>" class="memberlistcheck chk-col-amber" data-faq_id="<%= faqDetails.attributes.faq_id%>" type="checkbox">
+          <label for="cAll_<%= faqDetails.attributes.faq_id%>">&nbsp;</label>
+        </div> 
+  </td>
+  <td><%=faqDetails.attributes.faq_question%></td>
+  <td><%if(faqDetails.attributes.faq_answer!=""){%>Y<%}else{%>N<%}%></td>
+  <td><%if(faqDetails.attributes.asked_by_name!=""){%>Y<%}else{%>N<%}%></td>
+  <td><%if(faqDetails.attributes.is_email_send==1){%>Y<%}else{%>N<%}%></td>
+  <!-- <td><%=faqDetails.attributes.status%></td> -->
+  <td><%= formatDate(faqDetails.attributes.created_date,'no') %></td>
+  <td>
+    <button type="button" class="ws-btn-default loadview"  data-faq_id="<%=faqDetails.attributes.faq_id%>" data-view="singlefaqData" data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+  </td>
+</tr>
+              

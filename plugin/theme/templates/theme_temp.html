@@ -1,0 +1,318 @@
+<!-- ########## Abhay : HTML code for creating new classes for Buttons, Forms, Tables etc like bootstrap with ws-prefix ########## -->
+<div class="container">
+  <div class="row">
+
+    <div class="col-12 mb-5 mt-5">
+      <h1 class="text-center">Bootstrap Elements with WS-Prefix</h1>
+    </div>
+    <div class="col-12 mb-5">
+      <h2 class="ws-section-header">Custom Buttons</h2>
+      <p>Normal Buttons</p>
+      <p>
+        <button class="ws-btn ws-btn-default">Default</button>
+        <button class="ws-btn ws-btn-primary">Primary</button>
+        <button class="ws-btn ws-btn-secondary">Secondary</button>
+        <button class="ws-btn ws-btn-success">Success</button>
+        <button class="ws-btn ws-btn-info">Info</button>
+        <button class="ws-btn ws-btn-warning">Warning</button>
+        <button class="ws-btn ws-btn-danger">Danger</button>
+        <button class="ws-btn ws-btn-light">Light</button>
+        <button class="ws-btn ws-btn-dark">Dark</button>
+        <a href="javascript:void(0)" class="ws-link">Link</a>
+      </p>
+
+      <p>Disabled Buttons</p>
+      <p>
+        <button class="ws-btn ws-btn-default disabled">Default</button>
+        <button class="ws-btn ws-btn-primary disabled">Primary</button>
+        <button class="ws-btn ws-btn-secondary disabled">Secondary</button>
+        <button class="ws-btn ws-btn-success disabled">Success</button>
+        <button class="ws-btn ws-btn-info disabled">Info</button>
+        <button class="ws-btn ws-btn-warning disabled">Warning</button>
+        <button class="ws-btn ws-btn-danger disabled">Danger</button>
+        <button class="ws-btn ws-btn-light disabled">Light</button>
+        <button class="ws-btn ws-btn-dark disabled">Dark</button>
+      </p>
+
+      <p>Outline Buttons</p>
+      <p>
+        <button type="button" class="ws-btn ws-btn-outline-primary">Primary</button>
+        <button type="button" class="ws-btn ws-btn-outline-secondary">Secondary</button>
+        <button type="button" class="ws-btn ws-btn-outline-success">Success</button>
+        <button type="button" class="ws-btn ws-btn-outline-info">Info</button>
+        <button type="button" class="ws-btn ws-btn-outline-warning">Warning</button>
+        <button type="button" class="ws-btn ws-btn-outline-danger">Danger</button>
+        <button type="button" class="ws-btn ws-btn-outline-dark">Dark</button>
+        <button type="button" class="ws-btn ws-btn-outline-light text-dark">Light</button>
+      </p>
+    </div>
+
+    <div class="col-12 mb-5">
+      <h2 class="ws-section-header">Custom Form</h2>
+      <form>
+        <div class="ws-form-group">
+          <label for="name">Full Name</label>
+          <input type="text" class="ws-form-control" id="name" placeholder="Full Name">
+        </div>
+        <div class="ws-form-group">
+          <label for="email">Email address</label>
+          <input type="email" class="ws-form-control" id="email" placeholder="name@example.com">
+        </div>
+        <div class="ws-form-group">
+          <label for="select">Example select</label>
+          <select class="ws-form-control" id="select">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+        </div>
+        <div class="ws-form-group">
+          <label for="selectmultiple">Example multiple select</label>
+          <select multiple class="ws-form-control" id="selectmultiple">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="textarea">Example textarea</label>
+          <textarea class="ws-form-control" id="textarea" rows="3">Message...</textarea>
+        </div>
+        <div class="ws-form-group">
+          <label for="gender">Gender:</label>
+          <div class="ws-radio-checkbox">
+            <div class=''>
+              <label>
+                <input type="radio" class="ws-option-input radio" name="example" checked /> Male
+              </label>
+              <label>
+                <input type="radio" class="ws-option-input radio" name="example" /> Female
+              </label>
+              <label>
+                <input type="radio" class="ws-option-input radio" name="example" /> Other
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="ws-form-group">
+          <label for="interests">Interests:</label>
+          <div class="ws-radio-checkbox">
+            <div class="ws-radio-checkbox">
+              <div class=''>
+                <label>
+                  <input type="checkbox" class="ws-option-input checkbox" checked /> Reading
+                </label>
+                <label>
+                  <input type="checkbox" class="ws-option-input checkbox" /> Swimming
+                </label>
+                <label>
+                  <input type="checkbox" class="ws-option-input checkbox" /> Cooking
+                </label>
+                <label>
+                  <input type="checkbox" class="ws-option-input checkbox" /> Singing
+                </label>
+                <label>
+                  <input type="checkbox" class="ws-option-input checkbox" /> Programming
+                </label>
+                <label>
+                  <input type="checkbox" class="ws-option-input checkbox" /> Other
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ws-form-group">
+          <label for="pwd">Password:</label>
+          <input type="password" class="ws-form-control" id="pwd" placeholder="********">
+        </div>
+        <div class="ws-form-group">
+          <label for="doc">Document:</label>
+          <input type="file" class="ws-form-control" id="doc">
+        </div>
+        <div class="ws-form-group">
+          <label>
+            <input type="checkbox" class="ws-option-input checkbox" /> Accept Here
+          </label>
+        </div><br />
+        <button type="submit" class="btn ws-btn-success disabled">Submit (Disabled)</button>
+      </form>
+    </div>
+
+    <div class="col-12 mb-5">
+      <h2 class="ws-section-header">Custom Backgrounds</h2>
+      <p>Paragraphs with classes "ws-bg-primary", "ws-bg-success", "ws-bg-info", "ws-bg-warning" & "ws-bg-danger".</p>
+      <p class="ws-bg-primary">This paragraph is styled with class "ws-bg-primary".</p>
+      <p class="ws-bg-success">This paragraph is styled with class "ws-bg-success".</p>
+      <p class="ws-bg-info">This paragraph is styled with class "ws-bg-info".</p>
+      <p class="ws-bg-warning">This paragraph is styled with class "ws-bg-warning".</p>
+      <p class="ws-bg-danger">This paragraph is styled with class "ws-bg-danger".</p>
+    </div>
+
+    <div class="col-12 mb-5">
+      <h2 class="ws-section-header">Custom Table</h2>
+      <p>Table with classes "ws-table", "ws-table-bordered", "ws-table-striped", "ws-table-hover", "ws-table-condensed"
+        & parent div having class "ws-table-responsive".</p>
+      <div class="ws-table-responsive">
+        <table id="clist" class="ws-table ws-table-bordered ws-table-striped ws-table-hover ws-table-condensed">
+          <thead>
+            <tr>
+              <th>
+                <div class="bg__control normal">
+                  <label class="check__box">
+                    <input class="checkall" data-tocheck="clist" type="checkbox">
+                    <div class="square__box round"></div>
+                  </label>
+                </div>
+              </th>
+              <th>#</th>
+              <th>Firstname</th>
+              <th>Lastname</th>
+              <th>Age</th>
+              <th>City</th>
+              <th>Country</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="a-center">
+                <div class="bg__control normal">
+                  <label class="check__box">
+                    <input class="memberlistcheck" type="checkbox" data-themeID="1">
+                    <div class="square__box round"></div>
+                  </label>
+                </div>
+              </td>
+              <td>1</td>
+              <td>Anna</td>
+              <td>Pitt</td>
+              <td>35</td>
+              <td>New York</td>
+              <td>USA</td>
+            </tr>
+            <tr>
+              <td class="a-center">
+                <div class="bg__control normal">
+                  <label class="check__box">
+                    <input class="memberlistcheck" type="checkbox" data-themeID="2">
+                    <div class="square__box round"></div>
+                  </label>
+                </div>
+              </td>
+              <td>2</td>
+              <td>John</td>
+              <td>Doe</td>
+              <td>52</td>
+              <td>Mumbai</td>
+              <td>India</td>
+            </tr>
+            <tr>
+              <td class="a-center">
+                <div class="bg__control normal">
+                  <label class="check__box">
+                    <input class="memberlistcheck" type="checkbox" data-themeID="3">
+                    <div class="square__box round"></div>
+                  </label>
+                </div>
+              </td>
+              <td>3</td>
+              <td>Robert</td>
+              <td>Williams</td>
+              <td>45</td>
+              <td>Moscow</td>
+              <td>Russia</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-12 mb-5">
+      <h2 class="ws-section-header">Custom Progress Bar</h2>
+      <div class="ws-progress">
+        <div class="ws-progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"
+          style="width:70%">
+          70% Complete
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 mb-5">
+      <h2 class="ws-section-header">Custom Card (Panel)</h2>
+      <div class="ws-card">
+        <div class="ws-card-header">Header</div>
+        <div class="ws-card-body">Card content here...</div>
+        <div class="ws-card-footer">Footer</div>
+      </div>
+    </div>
+
+    <div class="col-12 mb-5">
+      <h2 class="ws-section-header">Custom Navs</h2>
+      <ul class="ws-nav ws-nav-pills">
+        <li class="ws-nav-item">
+          <a class="ws-nav-link active" href="#">Active</a>
+        </li>
+        <li class="ws-nav-item">
+          <a class="ws-nav-link" href="#">Link 1</a>
+        </li>
+        <li class="ws-nav-item">
+          <a class="ws-nav-link" href="#">Link 2</a>
+        </li>
+        <li class="ws-nav-item">
+          <a class="ws-nav-link disabled" href="#">Disabled</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="col-12 mb-5">
+      <h2 class="ws-section-header">Custom Contextual Badges</h2>
+      <span class="ws-badge ws-badge-primary">Primary</span>
+      <span class="ws-badge ws-badge-secondary">Secondary</span>
+      <span class="ws-badge ws-badge-success">Success</span>
+      <span class="ws-badge ws-badge-danger">Danger</span>
+      <span class="ws-badge ws-badge-warning">Warning</span>
+      <span class="ws-badge ws-badge-info">Info</span>
+      <span class="ws-badge ws-badge-light">Light</span>
+      <span class="ws-badge ws-badge-dark">Dark</span>
+    </div>
+
+    <div class="col-12 mb-5">
+      <h2 class="ws-section-header">Custom Alert With Links</h2>
+      <p>Add the alert-link class to any links inside the alert box to create "matching colored links".</p>
+      <div class="ws-alert ws-alert-primary">
+        <strong>Primary!</strong> You should <a href="#" class="ws-alert-link">read this message</a>.
+      </div>
+      <div class="ws-alert ws-alert-secondary">
+        <strong>Secondary!</strong> You should <a href="#" class="ws-alert-link">read this message</a>.
+      </div>
+      <div class="ws-alert ws-alert-success">
+        <strong>Success!</strong> You should <a href="#" class="ws-alert-link">read this message</a>.
+      </div>
+      <div class="ws-alert ws-alert-info">
+        <strong>Info!</strong> You should <a href="#" class="ws-alert-link">read this message</a>.
+      </div>
+      <div class="ws-alert ws-alert-warning">
+        <strong>Warning!</strong> You should <a href="#" class="ws-alert-link">read this message</a>.
+      </div>
+      <div class="ws-alert ws-alert-danger">
+        <strong>Danger!</strong> You should <a href="#" class="ws-alert-link">read this message</a>.
+      </div>
+      <div class="ws-alert ws-alert-dark">
+        <strong>Dark!</strong> You should <a href="#" class="ws-alert-link">read this message</a>.
+      </div>
+      <div class="ws-alert ws-alert-light">
+        <strong>Light!</strong> You should <a href="#" class="ws-alert-link">read this message</a>.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $('#clist').datatable();
+  });
+</script>

@@ -1,0 +1,24 @@
+<li class="dd-item bg-<%=menuDetails.attributes.status%> " <% if(menuDetails.attributes.isParent =='no'){ %>data-type='root'<% } %>  data-id="<%= menuDetails.attributes.menuID %>">
+  <div class="dd-handle dd3-handle"></div>
+    <div class="dd3-content ws-dd3-content">
+      <span class="loadview" data-menuID="<%=menuDetails.attributes.menuID%>" data-view="singlemenuData"><%=menuDetails.attributes.menuName%></span>
+      <div class="otherAction">
+        <button type="button" class="ws-btn-default loadview"  data-menuID="<%=menuDetails.attributes.menuID%>" data-view="singlemenuData"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Edit">mode_edit</i></button>
+        <a class="ws-btn-default loadview" href="#pageCustomFields/<%=menuDetails.attributes.menuID%>" data-toggle="tooltip" data-placement="top" title="Dynamic Form"><i class="material-icons">extension</i></a> 
+      </div>
+    </div>
+    <ol class="dd-list">
+      <% _.each(menuDetails.attributes.subMenu, function(subMenuD) { %>
+        <li class="dd-item dd3-item" data-id="<%=subMenuD.menuID%>">
+          <div class="dd-handle dd3-handle"></div>
+            <div class="dd3-content ws-dd3-content">
+              <span class="loadview" data-menuID="<%=subMenuD.menuID%>" data-view="singlemenuData"><%=subMenuD.menuName%></span>
+              <div class="otherAction">
+                <button type="button" class="ws-btn-default loadview"  data-menuID="<%=subMenuD.menuID%>" data-view="singlemenuData"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Edit">mode_edit</i></button>
+                <a class="ws-btn-default loadview" href="#pageCustomFields/<%=subMenuD.menuID%>" data-toggle="tooltip" data-placement="top" title="Dynamic Form"><i class="material-icons">extension</i></a> 
+              </div>
+            </div>
+        </li>
+      <%}); %>
+    </ol>
+</li>

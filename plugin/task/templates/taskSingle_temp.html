@@ -1,0 +1,397 @@
+<div class="tab-pane in active">
+    <form id="taskDetails" name="taskDetails" action="#">
+        <div class="text-right actionBtns mt-2">
+            <button type="button" class="btn bg-indigo saveTaskDetails" data-action="close">Save</button>
+            <button type="button" class="btn bg-indigo saveTaskDetails" data-action="new">Save & new</button>
+        </div>
+        <div class="row ws-task-main-container">
+            <div class="col-md-8 ws-task-container">
+                <div class="clearfix">&nbsp;</div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input id="subject" type="text" class="form-control txtchange" name="subject"
+                                            value="<%=model.subject%>">
+                                        <label for="subject" class="form-label">Subject</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <span class="input-group-addon lg"><i class="material-icons">sort</i></span>
+                        </div>
+                    </div>
+                    <div class="right-layout ws-quill">
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="description">Description</label>
+                                <div id="description" class="form-control">
+                                    <%=model.description%>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <span class="input-group-addon lg" style="margin-top:10px;"><i
+                                    class="material-icons">schedule</i></span>
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group input-group form-float">
+                                    <div class="form-line">
+                                        <input id="start_date" type="text" class="form-control" name="start_date"
+                                            value="<%=model.start_date%>" readonly>
+                                        <label for="start_date" class="form-label">Start Date</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group input-group form-float">
+                                    <div class="form-line">
+                                        <input id="due_date" type="text" class="form-control" name="due_date"
+                                            value="<%=model.due_date%>" readonly>
+                                        <label for="due_date" class="form-label">Due Date</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <span class="input-group-addon lg">
+                                <i class="material-icons">
+                                    <span class="material-symbols-outlined">
+                                        <span class="input-group-addon lg">
+                                            <i class="material-icons">
+                                                <span class="material-symbols-outlined"
+                                                    style="margin-top:8px;">priority</span>
+                                            </i>
+                                        </span>
+                                    </span>
+                                </i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <select for="task_priority" id="task_priority" name="task_priority"
+                                            title="Task priority"
+                                            class="form-control dropval ws-select show-tick repeatChange">
+                                            <option class="addNew" value="addPriority">Add Priority</option>
+                                            <% _.each(categoryList, function(modelcat) { %>
+                                                <% if(modelcat.attributes.slug=="task_priority" )
+                                                    _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                    <option <% if(model1.category_id==model.task_priority ){ %>selected
+                                                        <% } %>value="<%=model1.category_id%>"><%=model1.categoryName%>
+                                                    </option>
+                                                    <%})%>
+                                                        <%})%>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <select id="task_type" name="category_id" class="form-control dropval ws-select"
+                                            title="Task Type">
+                                            <option class="addNew" value="addType">Add Type</option>
+                                            <% _.each(categoryList, function(modelcat) { %>
+                                                <% if(modelcat.attributes.slug=="task_type" )
+                                                    _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                    <option <% if(model1.category_id==model.task_type ){ %> selected
+                                                        <% } %>
+                                                            value="<%=model1.category_id%>"><%=model1.categoryName%>
+                                                    </option>
+                                                    <%})%>
+                                                        <%})%>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <select id="task_status" name="task_status"
+                                            class="form-control dropval ws-select" title="Task Status">
+                                            <option class="addNew" value="addStatus">Add Status</option>
+                                            <% _.each(categoryList, function(modelcat) { %>
+                                                <% if(modelcat.attributes.slug=="task_status" )
+                                                    _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                    <option <% if(model1.category_id==model.task_status ){ %>
+                                                        selected
+                                                        <% } %>
+                                                            value="<%=model1.category_id%>"><%=model1.categoryName %>
+                                                    </option>
+                                                    <%})%>
+                                                        <%})%>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <span class="input-group-addon lg" style="margin-top:8px;">
+                                <i class="material-icons">group</i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-float">
+                                    <div class="from-line">
+                                        <select id="customer_id" name="customer_id"
+                                            class="form-control dropval ws-select show-tick" title="Select Customer">
+                                            <option class="addNew" value="addCustomer">Add customer </option>
+                                            <% _.each(customerList, function(model1) { %>
+                                                <option <% if(model1.attributes.customer_id==model.customer_id ) { %>
+                                                    selected <% } %>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.first_name%> <%=model1.attributes.last_name%></option>
+                                                <%}); %>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="ws-icon">
+                                    <span class="input-group-addon lg"></span>
+                                </div>
+                                <div class="form-group form-float">
+                                    <div class="from-line">
+                                        <select for="assignee" id="assignee" name="assignee"
+                                            class="form-control dropval ws-select show-tick" title="Select Assignee"
+                                            <%if(userRoll!=101 ){%>disabled<%}%>>
+                                                <option class="addNew" value="addAssignee">Add Assignee</option>
+                                                <% _.each(adminList, function(model1) { %>
+                                                    <% if(model.task_id==undefined ){%>
+                                                        <option <%if(model1.attributes.adminID==loggedInID ){%>selected
+                                                            <%}%>
+                                                                value="<%=model1.attributes.adminID%>">
+                                                                    <%=model1.attributes.name%>
+                                                        </option>
+                                                        <%}else{%>
+                                                            <option <% if(model1.attributes.adminID==model.assignee ){%>
+                                                                selected<%}%> value="<%=model1.attributes.adminID%>">
+                                                                        <%=model1.attributes.name%>
+                                                            </option>
+                                                            <%}%>
+                                                                <%}); %>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <%if(model.task_id !=null){%>
+                    <div class="list-row">
+                        <div class="icon-left">
+                            <div class="ws-icon">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="right-layout">
+                            <div class="row">
+                                <!-- <div class="col-md-4">
+                                        <div class="form-group form-float">
+                                            <label> Is Repeate ?</label>
+                                        </div>
+                                    </div> -->
+                                <div class="col-md-4">
+                                    <div class="form-group form-float d-flex">
+                                        <div class="rept-time">
+                                            <div>
+                                                <select id="does_repeat" name="does_repeat"
+                                                    class="form-control dropval ws-select show-tick repeatChange">
+                                                    <option <% if(model.does_repeat=="does_not_repeat" ){%> selected
+                                                        <%}%>
+                                                            value="does_not_repeat">Does not Repeat
+                                                    </option>
+                                                    <option <% if(model.does_repeat=="daily" ){%>selected<%}%>
+                                                            value="daily">Daily</option>
+                                                    <option <% if(model.does_repeat=="mon_to_fir" ){%>selected<%}%>
+                                                            value="mon_to_fir">Mon-Fri</option>
+                                                    <option <% if(model.does_repeat=="weekend" ){%>selected<%}%>
+                                                            value="weekend">Weekend (Sat-Sun)</option>
+                                                    <option <% if(model.does_repeat=="custom" ){%>selected<%}%>
+                                                            value="custom">Custom</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="ws-repeatTask" <%if(model.does_repeat=="custom" ){%>
+                                            style="display:block;"<%}else{%>style="display: none;"<%}%> >
+                                                    <button type="button" class="loadCustom ws-repeatTaskbtn bg-white"
+                                                        data-item="repeatTaskCustomView" data-view="repeatTask"
+                                                        data-task_id="<%=model.task_id%>" data-toggle="modal"
+                                                        data-target="#defaultModal">
+                                                        <span class="material-icons">add</span>
+                                                    </button>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="ws-repeatTask" <%if(model.does_repeat=="custom" ){%>
+                                        style="display:block;"<%}else{%>style="display: none;"<%}%> >
+                                                <button type="button" class="loadCustom ws-repeatTaskbtn bg-white"
+                                                    data-item="repeatTaskCustomView" data-view="repeatTask"
+                                                    data-task_id="<%=model.task_id%>" data-toggle="modal"
+                                                    data-target="#defaultModal">
+                                                    <span class="material-icons">add</span>
+                                                </button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-row mb-3">
+                        <div class="icon-left">
+                            <div class="ws-icon "><span class="input-group-addon lg" style="margin-top:8px;">
+                                    <i class="material-icons">attach_file</i>
+                                </span></div>
+                        </div>
+                        <div class="right-layout">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p class="mt-2">Attach Document</p>
+                                </div>
+                                <button <% if(model.task_id==undefined ){%>disabled <%}%> type="button" class="loadMedia
+                                        ws-taskModalbtn" data-change="ws-bg-image"
+                                        data-toggle="modal" data-target="#largeModal"><span
+                                            class="material-icons">add</span></button>
+                            </div>
+                            <div id="attachedDoc" class="row"></div>
+                        </div>
+                    </div>
+                    <ul class="nav nav-tabs task-nav-tab">
+                        <li class="nav-item"><a class="nav-link loadview" data-view="singleCommentData"
+                                data-task_id="<%=model.task_id%>" data-toggle="tab" href="">Comments</a></li>
+                        <li class="nav-item"><a class="nav-link loadview" data-view="singleHistoryData"
+                                data-task_id="<%=model.task_id%>" data-toggle="tab" href="">History</a></li>
+                    </ul>
+                    <div class="showHistory"></div>
+                    <div class="showComment">
+                        <div class="list-row mt-2">
+                            <div class="icon-left">
+                                <div class="ws-icon">
+                                    <span class="input-group-addon lg">
+                                        <i class="material-icons">rate_review</i>
+                                </div>
+                            </div>
+                            <div class="right-layout ws-quill">
+                                <div class="row">
+                                    <div class="col-md-12 mb-2">
+                                        <div class="outerCommentdiv">
+                                            <div class="form-control comment-box">Enter Comment</div>
+                                        </div>
+                                        <div class="commentEditor">
+                                            <div id="comment" class="form-control comment-editor"
+                                                style="display: none;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 text-right">
+                                        <button name="post" id="post" type="button" class="btn bg-indigo saveComment"
+                                            data-action="cpost">Post</button>
+                                        <button type="button" class="btn bg-indigo cancelPost">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-row mt-5" <% if(commentList=="" ){%>style="display: none;"<%}else{%>
+                                style="display: block;"<%}%> >
+                                    <!-- <div class="icon-left mt-3">
+                                        <div class="ws-icon">
+                                            <span class="input-group-addon lg">
+                                                <i class="material-icons">comment</i>
+                                        </div>
+                                    </div> -->
+                                    <div class="right-layout">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">Recent Comments</h6>
+                                                </div>
+                                                <div class="showPages">
+                                                    <% var count=0; _.each(commentList, function(model1) { if (count <
+                                                        3) { %>
+                                                        <ul class="inbox-widget list-unstyled clearfix">
+                                                            <li class="inbox-inner">
+                                                                <div class="inbox-item">
+                                                                    <div class="inbox-img"> <img
+                                                                            src="http://localhost/projects/LMS/website/uploads/user-def.jpg"
+                                                                            alt=""> </div>
+                                                                    <div class="inbox-item-info">
+                                                                        <p class="author">
+                                                                            <%=model1.attributes.name%>
+                                                                        </p>
+                                                                        <p class="inbox-message m-b-5 m-t-10">
+                                                                            <%=model1.attributes.comment_text%>
+                                                                        </p>
+                                                                        <p class="inbox-date">
+                                                                            <%=model1.attributes.created_date%>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                        <% count++; } }); %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-md-12 text-right">
+                                                <button name="read_more" id="read_more" type="button"
+                                                    class="btn bg-indigo loadview" data-task_id="<%=model.task_id%>"
+                                                    data-view="singleCommentData">Read
+                                                    More..</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                        </div>
+                    </div>
+                    <% } %>
+            </div>
+            <div class="col-md-4 ws-assignee-container">
+                <div class="row">
+                    <div class="col-md-12 ws-assignee-column">
+                        <div class="form-group form-float">
+                            <div class="form-line">
+                                <input id="typehead" type="text" class="form-control  watchersName ws-assignee-input"
+                                    name="typehead">
+                                <label for="typehead" class="form-label">Watchers</label>
+                            </div>
+                        </div>
+                        <div class="tm-input"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,18 @@
+<tr class="even pointer bg-<%=customerDetails.attributes.status%>">
+  <td class="a-center">
+    <div class="listCheckbox">
+        <input id="cAll_<%= customerDetails.attributes.customer_id %>" class="memberlistcheck chk-col-amber" data-customer_id="<%= customerDetails.attributes.customer_id %>" type="checkbox">
+        <label for="cAll_<%= customerDetails.attributes.customer_id %>">&nbsp;</label>
+    </div>
+  </td>
+  <!-- <td><%=customerDetails.attributes.customer_id%></td> -->
+  <td><%=customerDetails.attributes.first_name%></td>
+  <td><%=customerDetails.attributes.email%></td>
+  <td><%=customerDetails.attributes.mobile_no%></td>
+  <td><%=customerDetails.attributes.type%></td>
+  
+  <td>
+    <button type="button" class="ws-btn-default loadview"  data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+    <!-- <a class="ws-btn-default loadview" href="#pageCustomFields/<%=customerDetails.attributes.customerID%>"><i class="material-icons">extension</i></a>  -->
+  </td>
+</tr>

@@ -1,0 +1,119 @@
+<div class="tab-pane in active">
+  <div id="addAdminView">
+    <form id="adminDetails" name="adminDetails" action="#">
+      <div class="text-right actionBtns">
+        <button type="button" class="btn bg-indigo saveEduDetails" data-action="close">Save</button>
+        <button type="button" class="btn bg-indigo saveEduDetails" data-action="new">Save & new</button>
+      </div>
+      <div class="clearfix">&nbsp;</div>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="col-sm-12 form-group form-float">
+            <div class="form-line">
+              <input id="name" type="text" class="form-control txtchange" name="name" value="<%=model.name%>">
+              <label for="name" class="form-label">Name <span class="error">*</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="col-sm-12 form-group form-float">
+            <div class="form-line">
+              <input id="email" type="text" class="form-control txtchange" name="email" value="<%=model.email%>">
+              <label for="email" class="form-label">Email-ID <span class="error">*</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="col-sm-12 form-group form-float">
+            <div class="form-line">
+              <input id="contactNo" type="text" class="form-control txtchange" name="contactNo"
+                value="<%=model.contactNo%>">
+              <label for="contactNo" class="form-label">Contact Number <span class="error">*</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="col-sm-12 form-group form-float">
+            <div class="form-line">
+              <input id="whatsappNo" type="text" class="form-control txtchange" name="whatsappNo" maxlength="45"
+                type="text" value="<%=  model.whatsappNo %>">
+              <label for="whatsappNo" class="form-label">Whatsapp Number</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="col-sm-12 form-group form-float">
+            <div class="form-line">
+              <input id="dateOfBirth" class="form-control txtchange" name="dateOfBirth" type="text"
+                value="<%=model.dateOfBirth %>" readonly>
+              <label for="dateOfBirth" class="form-label">Date Of Birth</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="col-sm-12 form-group form-float">
+            <div class="form-line">
+              <input id="userName" class="form-control txtchange has-feedback-left" name="userName"
+                type="text" value="<%=  model.userName %>">
+              <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+              <label for="userName" class="form-label">User Name <span class="error">*</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="col-sm-12 form-group form-float">
+            <div class="form-line">
+              <label for="password" class="form-label"></label>
+              <input id="password" class="form-control txtchange" name="password" maxlength="45"
+                placeholder="Auto Generated Password" type="text" value="<%=model.password%>" <%if(model.password==""
+                ){%>disabled=""<%}%>">
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="col-sm-12 form-group form-float">
+            <div class="form-line">
+              <label for="roleID" class="form-label">User Role</label>
+              <select id="roleID" name="roleID" class="form-control roleChange" <% if (model.is_sys_user=="yes"
+                ){%>disabled <%}%>>
+                  <option value="">Select User Role <span class="error">*</span></option>
+                  <% _.each(userRoleList, function(model1) { %>
+                    <option <% if(model1.attributes.roleID==model.roleID){ %> selected <% } %> value="
+                        <%=model1.attributes.roleID%>"><%=model1.attributes.roleName%>
+                    </option>
+                    <%}); %>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-xs-12">
+          <div class="col-sm-12 col-xs-12">
+            <label for="status">Status <span class="error">*</span> :</label>
+            <ul class="item-container" data-valid="status">
+              <li class="status multiSel" data-single="Y" data-value="active">Active</li>
+              <li class="status multiSel" data-single="Y" data-value="inactive">InActive</li>
+              <li class="status multiSel" data-single="Y" data-value="delete">Delete</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-xs-12">
+        <label for="address">Address :</label>
+        <textarea id="address" class="form-control txtchange " name="address"
+          value="<%=model.address%>"><%=model.address %></textarea>
+        <div class="clearfix">&nbsp;</div>
+      </div>
+      <div id="dynamicFormFields" class="row"></div>
+
+    </form>
+  </div>
+</div>

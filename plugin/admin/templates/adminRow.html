@@ -1,0 +1,39 @@
+<tr class="even pointer">
+  <%if(adminDetails.attributes.is_sys_user!="yes" ){%>
+    <td class="a-center">
+      <div class="listCheckbox" <%if(adminDetails.attributes.is_sys_user=="yes" ){%>style="display: none;"<%} %> >
+          <input id="cAll_<%= adminDetails.attributes.adminID %>" data-adminID="<%=adminDetails.attributes.adminID%>"
+            class="memberlistcheck chk-col-amber" data-menuID="<%= adminDetails.attributes.adminID %>" type="checkbox">
+          <label for="cAll_<%= adminDetails.attributes.adminID %>">&nbsp;</label>
+      </div>
+    </td>
+    <%}else{%>
+      <td></td>
+      <%}%>
+        <td class="loadview" data-adminID="<%=adminDetails.attributes.adminID%>" data-view="singleadminData"><a
+            href="javascript:;"><u>
+              <%=adminDetails.attributes.name%>
+            </u></a></td>
+        </td>
+        <td class="">
+          <%=adminDetails.attributes.userName%>
+        </td>
+        <td>
+          <%=adminDetails.attributes.email%>
+        </td>
+        <td class="">
+          <%=adminDetails.attributes.roleName%>
+        </td>
+        <td class="">
+          <%= formatDate(adminDetails.attributes.lastLogin,"yes") %>
+        </td>
+        <td class="">
+          <%= adminDetails.attributes.status %>
+        </td>
+        <td class="last">
+          <button type="button" class="ws-btn-default loadview" data-adminID="<%=adminDetails.attributes.adminID%>"
+            data-view="singleadminData" data-toggle="tooltip" data-placement="top" title="Edit">
+            <i class="material-icons">mode_edit</i></button>
+        </td>
+
+</tr>

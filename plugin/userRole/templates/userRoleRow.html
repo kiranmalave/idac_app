@@ -1,0 +1,34 @@
+<tr class="even pointer bg-<%=userRoleDetails.attributes.status%>">
+  <%if(userRoleDetails.attributes.is_sys_user!="yes" ){%>
+    <td class="a-center">
+      <div class="listCheckbox">
+        <input id="cAll_<%= userRoleDetails.attributes.roleID %>" class="memberlistcheck chk-col-amber"
+          data-roleID="<%= userRoleDetails.attributes.roleID %>" type="checkbox">
+        <label for="cAll_<%= userRoleDetails.attributes.roleID %>">&nbsp;</label>
+      </div>
+    </td>
+    <%}else{%>
+      <td class="a-center"></td>
+      <%}%>
+        <% if(userRoleDetails.attributes.is_sys_user=="yes" ){%>
+          <td class="">
+            <%=userRoleDetails.attributes.roleName%>
+          </td>
+          <%}else{%>
+            <td class="loadview" data-roleID="<%=userRoleDetails.attributes.roleID%>" data-view="singleuserRoleData">
+              <a href="javascript:;">
+                <%=userRoleDetails.attributes.roleName%>
+              </a>
+            </td>
+            <%}%>
+              <td class="">
+                <%= formatDate(userRoleDetails.attributes.created_date,'no') %>
+              </td>
+              <td>
+                <button <% if(userRoleDetails.attributes.is_sys_user=="yes" ){%> style="display: none;"<%}%>
+                    type="button"
+                    class="ws-btn-default loadview" data-roleID="<%=userRoleDetails.attributes.roleID%>"
+                      data-view="singleuserRoleData" data-toggle="tooltip" data-placement="top" title="Edit"><i
+                        class="material-icons">mode_edit</i></button>
+              </td>
+</tr>

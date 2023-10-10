@@ -1,0 +1,14 @@
+<tr class="even pointer bg-<%=teamDetails.attributes.status%>" >
+  <td class="a-center">
+    <div class="listCheckbox">
+        <input id="cAll_<%= teamDetails.attributes.team_id %>" class="memberlistcheck chk-col-amber" data-team_id="<%= teamDetails.attributes.team_id %>" type="checkbox">
+        <label for="cAll_<%= teamDetails.attributes.team_id %>">&nbsp;</label>
+    </div>
+  </td>
+  <td class="loadview" data-toggle="modal" data-target="#myModal" data-team_id="<%= teamDetails.attributes.team_id %>" data-show="singleteamData"><a href="javascript:;"><u><%=teamDetails.attributes.name%></u></a></td></td>
+  <td class=""><%= formatDate(teamDetails.attributes.created_date,'no') %></td>
+  <td>
+    <button type="button" class="ws-btn-default loadview"  data-team_id="<%=teamDetails.attributes.team_id%>" data-view="singleteamData"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Edit">mode_edit</i></button>
+  </td>
+</tr>
+              

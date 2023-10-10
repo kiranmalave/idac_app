@@ -1,0 +1,88 @@
+
+<div class="tab-pane in active">
+    <form id="teamDetails" name="teamDetails" action="#">
+        <div class="text-right actionBtns">
+            <button type="button" class="btn bg-indigo saveTeamDetails" data-action="close">Save</button>
+            <button type="button" class="btn bg-indigo saveTeamDetails" data-action="new">Save & new</button>
+        </div>
+        <div class="row ws-appointment-main-container">
+            <div class="col-md-8">
+                <div class="clearfix">&nbsp;</div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col">       
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <label for="name" class="form-label"> Name</label>
+                                        <input id="name" class="form-control txtchange" name="name" type="text" value="<%=model.name%>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col">       
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <label for="position" class="form-label"> Member Designation</label>
+                                        <input id="position" class="form-control txtchange" name="memberDesignation" type="text" value="<%=model.position%>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <span class="input-group-addon lg"><i class="material-icons">sort</i></span>
+                        </div>
+                    </div>
+                    <div class="right-layout mb-5">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="description">Member Description</label>
+                                <div id="description" class="form-control"><%=model.description%></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>       
+                <div class="clearfix">&nbsp;</div>      
+            </div>
+            <div class="col-md-4 ws-assignee-container border-left">
+                <div class="row">
+                    <div class="col-md-12 ws-assignee-column">
+                        <label for="assignee" class="form-label" style="margin-left: 7px;">Thumbnail</label>
+                        <div class="clearfix">&nbsp;
+                            <input id="typehead" class="btn loadMedia" type="button" value="Media" name="Media"
+                                data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal">
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-5">
+                        <% if(model.member_image !="") {%>
+                        <img id="profile_pic_view" style="max-width: 100%;" src="<%=model.member_image%>">
+                        <%}else{%>
+                            No image uploaded.
+                        <%}%>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </form>
+</div>
+
+
+
+
