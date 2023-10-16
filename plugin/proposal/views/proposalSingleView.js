@@ -6,22 +6,23 @@ define([
   'inputmask',
   'datepickerBT',
   'moment',
+  'Swal',
   '../../core/views/multiselectOptions',
   '../../dynamicForm/views/dynamicFieldRender',
-  '../collections/customerCollection',
-  '../models/customerSingleModel',
+  '../collections/proposalCollection',
+  '../models/proposalSingleModel',
   '../../readFiles/views/readFilesView',
-  'text!../templates/customerSingle_temp.html',
-], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, multiselectOptions, dynamicFieldRender, customerCollection, customerSingleModel, readFilesView, customertemp) {
-  var customerSingleView = Backbone.View.extend({
-    model: customerSingleModel,
+  'text!../templates/proposalSingle_temp.html',
+], function ($, _, Backbone, validate, inputmask, datepickerBT, moment,Swal, multiselectOptions, dynamicFieldRender, proposalCollection, proposalSingleModel, readFilesView, proposaltemp) {
+  var proposalSingleView = Backbone.View.extend({
+    model: proposalSingleModel,
     initialize: function (options) {
       console.log(options);
       this.dynamicData = null;
-      this.toClose = "customerSingleView";
-      this.pluginName = "customerList";
+      this.toClose = "proposalSingleView";
+      this.pluginName = "proposalList";
       this.loadFrom = options.loadfrom;
-      this.model = new customerSingleModel();
+      this.model = new proposalSingleModel();
       var selfobj = this;
       this.dynamicFieldRenderobj = new dynamicFieldRender({
         ViewObj: selfobj,
@@ -29,23 +30,23 @@ define([
       });
       this.multiselectOptions = new multiselectOptions();
       $(".modelbox").hide();
-      scanDetails = options.searchCustomer;
+      scanDetails = options.searchproposal;
       console.log(options);
       $(".popupLoader").show();
-      var customerList = new customerCollection();
-      customerList.fetch({
+      var proposalList = new proposalCollection();
+      proposalList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
-        selfobj.model.set("customerList", res.data);
+        selfobj.model.set("proposalList", res.data);
         selfobj.render();
       });
 
-      if (options.customer_id != "") {
-        this.model.set({ customer_id: options.customer_id });
+      if (options.proposal_id != "") {
+        this.model.set({ proposal_id: options.proposal_id });
         this.model.fetch({
           headers: {
             'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
@@ -63,7 +64,7 @@ define([
       }
     },
     events: {
-      "click .saveCustomerDetails": "saveCustomerDetails",
+      "click .saveproposalDetails": "saveproposalDetails",
       "click .item-container li": "setValues",
       "blur .txtchange": "updateOtherDetails",
       "click .multiSel": "setValues",
@@ -71,13 +72,14 @@ define([
       "change .dropval": "updateOtherDetails",
       "change .logoAdded": "updateImageLogo",
       "click .loadMedia": "loadMedia",
+      "click .saveconfirmProposal": "saveconfirmProposal",
 
     },
     attachEvents: function () {
       // Detach previous event bindings
-      this.$el.off("click", ".saveCustomerDetails", this.saveCustomerDetails);
+      this.$el.off("click", ".saveproposalDetails", this.saveproposalDetails);
       // Reattach event bindings
-      this.$el.on("click", ".saveCustomerDetails", this.saveCustomerDetails.bind(this));
+      this.$el.on("click", ".saveproposalDetails", this.saveproposalDetails.bind(this));
       this.$el.off("click", ".multiSel", this.setValues);
       this.$el.on("click", ".multiSel", this.setValues.bind(this));
       this.$el.off("change", ".bDate", this.updateOtherDetails);
@@ -89,6 +91,10 @@ define([
       this.$el.on("blur", ".txtchange", this.updateOtherDetails.bind(this));
       this.$el.off("click", ".loadMedia", this.loadMedia);
       this.$el.on("click", ".loadMedia", this.loadMedia.bind(this));
+      this.$el.off("click", ".saveconfirmProposal", this.saveconfirmProposal);
+      this.$el.on("click", ".saveconfirmProposal", this.saveconfirmProposal.bind(this));
+
+
     },
 
     onErrorHandler: function (collection, response, options) {
@@ -117,7 +123,7 @@ define([
       $("#profile_pic_view").attr("src", url);
       $("#profile_pic_view").css({ "max-width": "100%" });
       $('#largeModal').modal('toggle');
-      this.model.set({ "customer_image": url });
+      this.model.set({ "proposal_image": url });
 
     },
     loadMedia: function (e) {
@@ -126,16 +132,57 @@ define([
       this.elm = "profile_pic";
       var menusingleview = new readFilesView({ loadFrom: "addpage", loadController: this });
     },
+
+    saveconfirmProposal: function (e) {
+      e.stopPropagation();
+      // $('#confirmProposal').modal('toggle');
+      // this.elm = "profile_pic";
+      // var menusingleview = new readFilesView({ loadFrom: "addpage", loadController: this });
+      // Swal.fire({
+      //   title: 'Are you sure?',
+      //   text: "You won't be able to revert this!",
+      //   // icon: 'warning',
+      //   // showCancelButton: true,
+      //   confirmButtonColor: '#3085d6',
+      //   cancelButtonColor: '#d33',
+      //   confirmButtonText: 'Make an another copy',
+      //   cancelButtonColor: '#3085d6',
+      //   cancelButtonColor: '#f0f',
+      //   cancelButtonColor: ' Text as keep the same'
+      // }).then((result) => {
+      //   // if (result.isConfirmed) {
+      //   //   Swal.fire(
+      //   //     'Deleted!',
+      //   //     'Your file has been deleted.',
+      //   //     'success'
+      //   //   )
+      //   // }
+      // })
+      Swal.fire({
+        title: 'Do you want to save the changes?',
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: 'Make an another copy',
+        denyButtonText: `Text as keep the same`,
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        // if (result.isConfirmed) {
+        //   Swal.fire('Saved!', '', 'success')
+        // } else if (result.isDenied) {
+        //   Swal.fire('Changes are not saved', '', 'info')
+        // }
+      })
+    },
     setValues: function (e) {
       var selfobj = this;
       var da = selfobj.multiselectOptions.setCheckedValue(e);
       selfobj.model.set(da);
     },
 
-    saveCustomerDetails: function (e) {
+    saveproposalDetails: function (e) {
       e.preventDefault();
       let selfobj = this;
-      var mid = this.model.get("customer_id");
+      var mid = this.model.get("proposal_id");
       let isNew = $(e.currentTarget).attr("data-action");
       if (permission.edit != "yes") {
         alert("You dont have permission to edit");
@@ -146,7 +193,7 @@ define([
       } else {
         var methodt = "POST";
       }
-      if ($("#customerDetails").valid()) {
+      if ($("#proposalDetails").valid()) {
         $(e.currentTarget).html("<span>Saving..</span>");
         $(e.currentTarget).attr("disabled", "disabled");
         this.model.save({}, {
@@ -185,37 +232,10 @@ define([
         salutation: {
           required: true,
         },
-        first_name: {
+        proposal_name: {
           required: true,
         },
-        middle_name: {
-          required: true,
-        },
-        last_name: {
-          required: true,
-        },
-        email: {
-          email: true,
-          required: true,
-        },
-        mobile_no: {
-          required: true,
-          minlength: 10,
-          maxlength: 10,
-          number: true,
-        },
-        birth_date: {
-          required: true,
-        },
-        address: {
-          required: true,
-        },
-        customer_image: {
-          required: true,
-        },
-        type: {
-          required: true,
-        },
+        
       };
       var feildsrules = feilds;
       var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
@@ -229,17 +249,10 @@ define([
       }
       var messages = {
         salutation: "select salutation",
-        first_name: "Please enter First Name",
-        middle_name: "Please enter Middle Name",
-        last_name: "Please enter Last Name",
-        email: "Please enter email",
-        mobile_no: "Please enter valid Mobile Number",
-        type: "Please select Type",
-        email: "Please enter Address",
-        customer_image: "please Selecct Customer Image"
+        proposal_name: "Please enter First Name",
       };
       $("#mobile_no").inputmask("Regex", { regex: "^[0-9](\\d{1,9})?$" });
-      $("#customerDetails").validate({
+      $("#proposalDetails").validate({
         rules: feildsrules,
         messages: messages,
       });
@@ -279,7 +292,7 @@ define([
       //var isexits = checkisoverlay(this.toClose);
       //if(!isexits){
       var selfobj = this;
-      var source = customertemp;
+      var source = proposaltemp;
       var template = _.template(source);
       $("#" + this.toClose).remove();
       this.$el.html(template({ model: this.model.attributes }));
@@ -293,9 +306,38 @@ define([
       $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
       this.initializeValidate();
       this.setOldValues();
-      $(".ws-select").selectpicker();
       this.attachEvents();
-      rearrageOverlays("Customer", this.toClose);
+      rearrageOverlays("Proposals", this.toClose);
+      var __toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+        [{ 'direction': 'rtl' }],                         // text direction
+        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+        [{ 'align': [] }],
+        ['link'],
+          ['clean']                                         // remove formatting button
+      ];
+    var editor = new Quill($("#description").get(0),{
+        modules: {
+            toolbar: __toolbarOptions
+        },
+        theme: 'snow' 
+        });
+  
+        //const delta = editor.clipboard.convert();
+        //editor.setContents(delta, 'silent');
+        editor.on('text-change', function(delta, oldDelta, source) {
+            if (source == 'api') {
+                console.log("An API call triggered this change.");
+              } else if (source == 'user') {
+                var delta = editor.getContents();
+                var text = editor.getText();
+                var justHtml = editor.root.innerHTML;
+                selfobj.model.set({"description":justHtml});
+              }
+        });
+
+
       return this;
     },
     onDelete: function () {
@@ -303,5 +345,5 @@ define([
     },
   });
 
-  return customerSingleView;
+  return proposalSingleView;
 });

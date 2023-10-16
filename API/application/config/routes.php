@@ -154,6 +154,21 @@ $route['customerMaster'] = 'customerMaster/customerMaster';
 $route['customerMaster/(:num)'] = 'customerMaster/customerMaster/$1';
 $route['customerMaster/status'] = 'customerMaster/customerChangeStatus';
 
+
+######proposal
+$route['proposalMasterList'] = 'proposal/getproposalDetails';
+$route['proposalMaster'] = 'proposal/proposal';
+$route['proposalMaster/(:num)'] = 'proposal/proposal/$1';
+$route['proposalMaster/status'] = 'proposal/proposalchangeStatus';
+
+
+######project
+$route['projectList'] = 'project/getprojectDetails';
+$route['project'] = 'project/project';
+$route['project/(:num)'] = 'project/project/$1';
+$route['project/status'] = 'project/projectchangeStatus';
+
+
 ######task
 $route['taskMasterList'] = 'taskMaster/gettaskDetails';
 $route['taskMaster'] = 'taskMaster/taskMaster';

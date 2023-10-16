@@ -1,0 +1,18 @@
+<tr class="even pointer bg-<%=proposalDetails.attributes.status%>">
+    <td class="a-center">
+      <div class="listCheckbox">
+          <input id="cAll_<%= proposalDetails.attributes.proposal_id %>" class="memberlistcheck chk-col-amber" data-proposal_id="<%= proposalDetails.attributes.proposal_id %>" type="checkbox">
+          <label for="cAll_<%= proposalDetails.attributes.proposal_id %>">&nbsp;</label>
+      </div>
+    </td>
+    <!-- <td><%=proposalDetails.attributes.proposal_id%></td> -->
+    <td><%=proposalDetails.attributes.proposal_name%></td>
+    
+    
+    <td>
+      <button type="button" class="ws-btn-default loadview"  data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+      <!-- <button type="button" class="ws-btn-default" data-toggle="tooltip" data-placement="top" title="Confirm Proposal">Confirm Proposal</button> -->
+      <button type="button" class="btn bg-indigo confirmproposal" style="margin-left:15px; margin-top:3px">Confirm Proposal</button>
+    </td>
+  </tr>
+  

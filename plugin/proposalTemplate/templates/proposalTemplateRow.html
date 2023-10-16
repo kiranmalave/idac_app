@@ -1,0 +1,13 @@
+<tr class="even pointer bg-<%=projectDetails.attributes.status%>">
+    <td class="a-center">
+      <div class="listCheckbox">
+          <input id="cAll_<%= projectDetails.attributes.project_id %>" class="memberlistcheck chk-col-amber" data-project_id="<%= projectDetails.attributes.project_id %>" type="checkbox">
+          <label for="cAll_<%= projectDetails.attributes.project_id %>">&nbsp;</label>
+      </div>
+    </td>
+    <td><%=projectDetails.attributes.project_name%></td>
+    <td>
+      <button type="button" class="ws-btn-default loadview"  data-project_id="<%=projectDetails.attributes.project_id%>" data-view="singleprojectData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+    </td>
+</tr>
+  

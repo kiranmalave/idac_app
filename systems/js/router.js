@@ -27,6 +27,9 @@ define([
   'plugin/themeOption/views/themeOptionView',
   'plugin/task/views/taskView',
   'plugin/customer/views/customerView',
+  'plugin/proposal/views/proposalView',
+  'plugin/project/views/projectView',
+  'plugin/proposalTemplate/views/proposalTemplateView',
   'plugin/taxInvoice/views/taxInvoiceView',
   'plugin/readFiles/views/readFilesView',
   'plugin/ourclients/views/ourClientsView',
@@ -38,7 +41,7 @@ define([
   'text!../templates/appFull_temp.html',
   'text!../templates/sideNav_temp.html',
   'text!../templates/topNav_temp.html',
-], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormSingleView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
+], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormSingleView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
 
   var AppRouter = Backbone.Router.extend({
     routes: {
@@ -59,6 +62,9 @@ define([
       'addnewpage/:pageID': "addpage",
       'addnewblog/:blogID': "addblog",
       'customer': 'customerView',
+      'proposal': 'proposalView',
+      'proposalTemplate': 'proposalTemplateView',
+      'project': 'projectView',
       'theme-option': 'themeOptionView',
       'media': 'readFilesView',
       'category': 'categoryView',
@@ -285,6 +291,30 @@ define([
       var validate = preTemp();
       if (validate) {
         new customerView({ action: action });
+        //setsidbar();
+      }
+    });
+
+    app_router.on('route:proposalView', function (action) {
+      var validate = preTemp();
+      if (validate) {
+        new proposalView({ action: action });
+        //setsidbar();
+      }
+    });
+
+    app_router.on('route:projectView', function (action) {
+      var validate = preTemp();
+      if (validate) {
+        new projectView({ action: action });
+        //setsidbar();
+      }
+    });
+
+    app_router.on('route:proposalTemplateView', function (action) {
+      var validate = preTemp();
+      if (validate) {
+        new proposalTemplateView({ action: action });
         //setsidbar();
       }
     });

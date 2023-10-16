@@ -1,0 +1,110 @@
+
+<div class="tab-pane in active">
+    <form id="projectDetails" name="projectDetails" action="#">
+        <div class="text-right actionBtns">
+            <button type="button" class="btn bg-indigo saveprojectDetails" data-action="close">Save</button>
+            <button type="button" class="btn bg-indigo saveprojectDetails" data-action="new">Save & new</button>
+        </div>
+        <div class="row ws-appointment-main-container">
+            <div class="col-md-12">
+                <div class="clearfix">&nbsp;</div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col">       
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <label for="project_name" class="form-label"> Project Id</label>
+                                        <input id="project_id" class="form-control txtchange" name="project_id" type="text" value="<%=model.project_id%>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col">       
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <label for="project_name" class="form-label"> Project Name</label>
+                                        <input id="project_name" class="form-control txtchange" name="project_name" type="text" value="<%=model.project_name%>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group form-float">
+                                  <div class="form-line">
+                                    <select id="client_name" name="client_name" class="form-control dropval ws-select show-tick mt-2" title="Select Client">
+                                        <% _.each(ourClientsList, function(model1) { %>
+                                                <option <% if(model1.attributes.client_id==model.client_id ) { %>
+                                         selected <%}%>value="<%=model1.attributes.client_name%>"><%=model1.attributes.client_name%></option>
+                                         <%}); %>
+                                    </select>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon "><span class="input-group-addon lg" style="margin-top:4px;">
+                                <i class="material-icons">attach_file</i>
+                            </span></div>
+                    </div>
+                    <div class="right-layout form-group">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p class="mt-2">Attach Document</p>
+                            </div>
+                            <button type="button" class="loadMedia ws-taskModalbtn" data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal"><span class="material-icons">add</span></button>
+                        </div>
+                        <div id="attachment" class="row"></div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <span class="input-group-addon lg"><i class="material-icons">sort</i></span>
+                        </div>
+                    </div>
+                    <div class="right-layout mb-5">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="description">Project Description</label>
+                                <div id="description" class="form-control"><%=model.description%></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>       
+                <div class="clearfix">&nbsp;</div>      
+            </div>
+           
+        </div> 
+    </form>
+</div>
+
+
+
+
