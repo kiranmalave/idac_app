@@ -42,6 +42,7 @@ class Project extends CI_Controller {
 		$order = $this->input->post('order');
 		$statuscode = $this->input->post('status');
 		$filterSName = $this->input->post('filterSName');
+		$client_id = $this->input->post('client_id');
 		
 		$config = array();
 		if(!isset($orderBy) || empty($orderBy)){
@@ -81,21 +82,21 @@ class Project extends CI_Controller {
 			$projectDetails = $this->CommonModel->GetMasterListDetails($selectC='*','project',$wherec,'','',$join,$other);	
 		}else{
 			
-			// $join = array();
-			// $join[0]['type'] ="LEFT JOIN";
-			// $join[0]['table']="stateMaster";
-			// $join[0]['alias'] ="s";
-			// $join[0]['key1'] ="state";
-			// $join[0]['key2'] ="stateID";
+			$join = array();
+			$join[0]['type'] ="LEFT JOIN";
+			$join[0]['table']="customer";
+			$join[0]['alias'] ="c";
+			$join[0]['key1'] ="client_id";
+			$join[0]['key2'] ="customer_id";
 
-			// $join[1]['type'] ="LEFT JOIN";
-			// $join[1]['table']="districtMaster";
-			// $join[1]['alias'] ="d";
-			// $join[1]['key1'] ="district";
-			// $join[1]['key2'] ="districtID";
-			
-			$selectC = "*";
-			$projectDetails = $this->CommonModel->GetMasterListDetails($selectC='*','project',$wherec,$config["per_page"],$page,$join,$other);
+			$selectC = "t.*, c.company_name as client_id";
+
+			if(isset($statuscode) && !empty($statuscode)){
+				$statusStr = str_replace(",",'","',$statuscode);
+				$wherec["c.status"] = 'IN ("'.$statusStr.'")';
+				}
+				
+			$projectDetails = $this->CommonModel->GetMasterListDetails($selectC,'project',$wherec,$config["per_page"],$page,$join,$other);
 
 		}
 		//print_r($companyDetails);exit;
@@ -150,7 +151,7 @@ class Project extends CI_Controller {
 
 				$projectDetails['project_id'] = $this->validatedata->validate('project_id','project_id',false,'',array());
 				$projectDetails['project_name'] = $this->validatedata->validate('project_name','project Name',false,'',array());
-				$projectDetails['client_name'] = $this->validatedata->validate('client_name','client Name',false,'',array());
+				$projectDetails['client_id'] = $this->validatedata->validate('client_id','client ID',false,'',array());
                 $projectDetails['desicription'] = $this->validatedata->validate('desicription','Desicription',false,'',array());
 
 					  
@@ -211,7 +212,7 @@ class Project extends CI_Controller {
 		}elseif($method=="dele")
 		{
 			$projectDetails = array();
-			$where=array('sID'=>$sID);
+			$where=array();
 				if(!isset($sID) || empty($sID)){
 					$status['msg'] = $this->systemmsg->getErrorCode(996);
 					$status['statusCode'] = 996;

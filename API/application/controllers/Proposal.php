@@ -98,7 +98,6 @@ class Proposal extends CI_Controller {
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,$config["per_page"],$page,$join,$other);
 
 		}
-		//print_r($companyDetails);exit;
 		$status['data'] = $proposalDetails;
 		$status['paginginfo']["curPage"] = $curPage;
 		if($curPage <=1)
@@ -141,7 +140,6 @@ class Proposal extends CI_Controller {
 		$this->response->decodeRequest();
 		$method = $this->input->method(TRUE);
 		// echo $method;
-		print_r($method);exit;
 		if($method=="POST"||$method=="PUT")
 		{
 				$proposalDetails = array();

@@ -9,11 +9,11 @@ define([
     '../../core/views/multiselectOptions',
     '../../dynamicForm/views/dynamicFieldRender',
     '../collections/projectCollection',
-    "../../ourClients/collections/ourClientsCollection",
+    "../../customer/collections/customerCollection",
     '../models/projectSingleModel',
     '../../readFiles/views/readFilesView',
     'text!../templates/projectSingle_temp.html',
-  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, multiselectOptions, dynamicFieldRender, projectCollection, ourClientsCollection, projectSingleModel, readFilesView, projecttemp) {
+  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, multiselectOptions, dynamicFieldRender, projectCollection, customerCollection, projectSingleModel, readFilesView, projecttemp) {
     var projectSingleView = Backbone.View.extend({
       model: projectSingleModel,
       initialize: function (options) {
@@ -45,11 +45,11 @@ define([
           selfobj.render();
         });
 
-        this.ourClientsList = new ourClientsCollection();
-       this.ourClientsList.fetch({
+        this.customerList = new customerCollection();
+       this.customerList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status:'active'}
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
@@ -128,9 +128,9 @@ define([
         $('.' + this.elm).val(url);
         $('.' + this.elm).change();
         $("#profile_pic_view").attr("src", url);
-        $("#profile_pic_view").css({ "max-width": "100%" });
+        $("#profile_pic_view").css({ "max-width": "10%" });
         $('#largeModal').modal('toggle');
-        this.model.set({ "project_image": url });
+        this.model.set({ "attachment": url });
       },
       loadMedia: function (e) {
         e.stopPropagation();
@@ -214,41 +214,12 @@ define([
         var messages = {
           project_name: "Please enter First Name",
         };
-        $("#mobile_no").inputmask("Regex", { regex: "^[0-9](\\d{1,9})?$" });
         $("#projectDetails").validate({
           rules: feildsrules,
           messages: messages,
         });
   
-        $("#birth_date").datepickerBT({
-          format: "dd-mm-yyyy",
-          todayBtn: "linked",
-          clearBtn: true,
-          todayHighlight: true,
-          endDate: new Date(),
-          numberOfMonths: 1,
-          autoclose: true,
-        }).on('changeDate', function (selected) {
-          $('#birth_date').change();
-          var valuetxt = $("#birth_date").val();
-          selfobj.model.set({ birth_date: valuetxt });
-        });
-  
-        var input = document.getElementById('address');
-        var autocomplete = new google.maps.places.Autocomplete(input);
-        autocomplete.addListener('place_changed', function () {
-  
-          var place = autocomplete.getPlace();
-          if (place == "") {
-  
-            selfobj.model.set({ "address": input.value() });
-          } else {
-            selfobj.model.set({ "address": place.formatted_address });
-            selfobj.model.set({ "latitude": place.geometry['address'].lat() });
-            selfobj.model.set({ "longitude": place.geometry['address'].lng() });
-            selfobj.model.set({ "address_url": place.url });
-          }
-        });
+       
       },
   
       render: function () {
@@ -258,8 +229,8 @@ define([
         var source = projecttemp;
         var template = _.template(source);
         $("#" + this.toClose).remove();
-        console.log(this.ourClientsList);
-        this.$el.html(template({ "model": this.model.attributes , "ourClientsList": this.ourClientsList.models}));
+        console.log(this.customerList);
+        this.$el.html(template({ "model": this.model.attributes , "customerList": this.customerList.models}));
         this.$el.addClass("tab-pane in active panel_overflow");
         this.$el.attr("id", this.toClose);
         this.$el.addClass(this.toClose);

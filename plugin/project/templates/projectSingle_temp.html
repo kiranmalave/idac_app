@@ -55,10 +55,10 @@
                             <div class="col">
                                 <div class="form-group form-float">
                                   <div class="form-line">
-                                    <select id="client_name" name="client_name" class="form-control dropval ws-select show-tick mt-2" title="Select Client">
-                                        <% _.each(ourClientsList, function(model1) { %>
-                                                <option <% if(model1.attributes.client_id==model.client_id ) { %>
-                                         selected <%}%>value="<%=model1.attributes.client_name%>"><%=model1.attributes.client_name%></option>
+                                    <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick mt-2" title="Select Client">
+                                        <% _.each(customerList, function(model1) { %>
+                                                <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected
+                                                    <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
                                          <%}); %>
                                     </select>
                                   </div>
@@ -80,7 +80,7 @@
                             </div>
                             <button type="button" class="loadMedia ws-taskModalbtn" data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal"><span class="material-icons">add</span></button>
                         </div>
-                        <div id="attachment" class="row"></div>
+                            <img id="profile_pic_view" style="max-width:10%;" src="<%=model.attachment%>">
                     </div>
                 </div>
                 <div class="list-row">

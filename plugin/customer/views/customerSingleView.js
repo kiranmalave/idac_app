@@ -182,40 +182,29 @@ define([
     initializeValidate: function () {
       var selfobj = this;
       var feilds = {
-        salutation: {
+        company_name: {
           required: true,
         },
-        first_name: {
-          required: true,
+        GST_no: {
+          minlength: 15,
+          maxlength: 15,
         },
-        middle_name: {
-          required: true,
-        },
-        last_name: {
-          required: true,
-        },
-        email: {
-          email: true,
-          required: true,
-        },
-        mobile_no: {
-          required: true,
-          minlength: 10,
-          maxlength: 10,
-          number: true,
-        },
-        birth_date: {
-          required: true,
-        },
-        address: {
-          required: true,
-        },
-        customer_image: {
-          required: true,
-        },
-        type: {
-          required: true,
-        },
+        // person_name: {
+        //   required: true,
+        // },
+        // pan_number: {
+        //   required: true,
+        // },
+        // email: {
+        //   email: true,
+        //   required: true,
+        // },
+        // mobile_no: {
+        //   required: true,
+        //   minlength: 10,
+        //   maxlength: 10,
+        //   number: true,
+        // },
       };
       var feildsrules = feilds;
       var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
@@ -228,36 +217,16 @@ define([
         //   };
       }
       var messages = {
-        salutation: "select salutation",
-        first_name: "Please enter First Name",
-        middle_name: "Please enter Middle Name",
-        last_name: "Please enter Last Name",
-        email: "Please enter email",
-        mobile_no: "Please enter valid Mobile Number",
-        type: "Please select Type",
-        email: "Please enter Address",
-        customer_image: "please Selecct Customer Image"
+        company_name: "Please enter Company Name",
       };
       $("#mobile_no").inputmask("Regex", { regex: "^[0-9](\\d{1,9})?$" });
+      $("#adhar_number").inputmask("Regex", { regex: "^[0-9]{4}[ -]?[0-9]{4}[ -]?[0-9]{4}$" });
+    //  $("#GST_no").inputmask("Regex", { regex: "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9]{1}[A-Z]{2}$" });
       $("#customerDetails").validate({
         rules: feildsrules,
         messages: messages,
       });
-
-      $("#birth_date").datepickerBT({
-        format: "dd-mm-yyyy",
-        todayBtn: "linked",
-        clearBtn: true,
-        todayHighlight: true,
-        endDate: new Date(),
-        numberOfMonths: 1,
-        autoclose: true,
-      }).on('changeDate', function (selected) {
-        $('#birth_date').change();
-        var valuetxt = $("#birth_date").val();
-        selfobj.model.set({ birth_date: valuetxt });
-      });
-
+      
       var input = document.getElementById('address');
       var autocomplete = new google.maps.places.Autocomplete(input);
       autocomplete.addListener('place_changed', function () {

@@ -56,6 +56,7 @@ define([
       "click #filterOption": "filterRender",
       "click .resetval": "resetSearch",
       "click .loadview": "loadSubView",
+      "click .sortColumns": "sortColumn",
       "change .txtchange": "updateOtherDetails",
       "click .changeStatus": "changeStatusListElement",
       "click .showpage": "loadData",
@@ -153,6 +154,30 @@ define([
           break;
         }
       }
+    },
+    sortColumn: function (e) {
+      var order = $(e.currentTarget).attr("data-value");
+      var selfobj = this;
+      var newsetval = [];
+      $("#clist").find(".up").removeClass("active");
+      $("#clist").find(".down").removeClass("active");
+      // var classname = $(e.currentTarget).attr("class").split(" ");
+      newsetval["order"] = $(e.currentTarget).attr("data-value");
+      newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+      if (order == "" || order == "DESC") {
+        order = "ASC";
+        $(e.currentTarget).find(".down").removeClass("active");
+        $(e.currentTarget).find(".up").addClass("active");
+      } else {
+        order = "DESC";
+        $(e.currentTarget).find(".down").addClass("active");
+        $(e.currentTarget).find(".up").removeClass("active");
+      }
+      $(e.currentTarget).attr("data-value", order);
+      newsetval["order"] = order;
+      newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+      filterOption.set(newsetval);
+      selfobj.filterSearch();
     },
     resetSearch: function () {
       //filterOption.set({curpage:0,customerID:null,textval: null,textSearch:'customerName',status:'active',orderBy:'created_date',order:'DESC'});

@@ -30,7 +30,7 @@
 			$this->load->library("ValidateData");
 		}
 
-		public function customerList()
+		public function getcustomerList()
 		{
 			$this->access->checkTokenKey();
 			$this->response->decodeRequest();
@@ -68,7 +68,7 @@
 			}
 
 			$config["base_url"] = base_url() . "customer	Details";
-			$config["total_rows"] = $this->CommonModel->getCountByParameter('customerID', 'customer', $wherec);
+			$config["total_rows"] = $this->CommonModel->getCountByParameter('customer_id', 'customer', $wherec);
 			$config["uri_segment"] = 2;
 			$this->pagination->initialize($config);
 			if (isset($curPage) && !empty($curPage)) {
@@ -122,16 +122,29 @@
 			$this->response->decodeRequest();
 			$method = $this->input->method(TRUE);
 			if ($method == "PUT" || $method == "POST") {
-				$menuDetails = array();
+				$customerDetails = array();
 				$updateDate = date("Y/m/d H:i:s");
+
+				$customerDetails['customer_id'] = $this->validatedata->validate('customer_id', 'customer ID', false, '', array());
+				$customerDetails['pan_number'] = $this->validatedata->validate('pan_number', 'Pan Number', false, '', array());
+				$customerDetails['company_name'] = $this->validatedata->validate('company_name', 'Company Name', true, '', array());
+				$customerDetails['person_name'] = $this->validatedata->validate('person_name', 'person name ', true, '', array());
+				$customerDetails['GST_no'] = $this->validatedata->validate('GST_no', 'GST no', true, '', array());
+				$customerDetails['email'] = $this->validatedata->validate('email', 'Email', false, '', array());
+				$customerDetails['mobile_no'] = $this->validatedata->validate('mobile_no', 'Mobile no', false, '', array());
+				$customerDetails['adhar_number'] = $this->validatedata->validate('adhar_number', 'Adhar Number', false, '', array());
+				$customerDetails['website'] = $this->validatedata->validate('website', 'Website', false, '', array());
+				$customerDetails['address'] = $this->validatedata->validate('address', 'Address', false, '', array());
+				$customerDetails['customer_image'] = $this->validatedata->validate('customer_image', 'customer Picture', false, '', array());
+	
 			}
 			switch ($method) {
 				case "PUT": {
 
-						$menuDetails['created_by'] = $this->input->post('SadminID');
-						$menuDetails['created_date'] = $updateDate;
+						$customerDetails['created_by'] = $this->input->post('SadminID');
+						$customerDetails['created_date'] = $updateDate;
 
-						$iscreated = $this->CommonModel->saveMasterDetails('customer', $menuDetails);
+						$iscreated = $this->CommonModel->saveMasterDetails('customer', $customerDetails);
 						if (!$iscreated) {
 							$status['msg'] = $this->systemmsg->getErrorCode(998);
 							$status['statusCode'] = 998;
@@ -149,9 +162,9 @@
 					}
 
 				case "POST": {
-						//$menuDetails = array();
+						//$customerDetails = array();
 						$updateDate = date("Y/m/d H:i:s");
-						$where = array('menuID' => $id);
+						$where = array('customer_id' => $id);
 						if (!isset($id) || empty($id)) {
 							$status['msg'] = $this->systemmsg->getErrorCode(998);
 							$status['statusCode'] = 998;
@@ -159,8 +172,8 @@
 							$status['flag'] = 'F';
 							$this->response->output($status, 200);
 						}
-						$menuDetails['modified_by'] = $this->input->post('SadminID');
-						$iscreated = $this->CommonModel->updateMasterDetails('customer', $menuDetails, $where);
+						$customerDetails['modified_by'] = $this->input->post('SadminID');
+						$iscreated = $this->CommonModel->updateMasterDetails('customer', $customerDetails, $where);
 						if (!$iscreated) {
 							$status['msg'] = $this->systemmsg->getErrorCode(998);
 							$status['statusCode'] = 998;
@@ -177,9 +190,9 @@
 						break;
 					}
 				case "DELETE": {
-						$menuDetails = array();
+						$customerDetails = array();
 
-						$where = array('menuID' => $id);
+						$where = array('customer_id' => $id);
 						if (!isset($id) || empty($id)) {
 							$status['msg'] = $this->systemmsg->getErrorCode(996);
 							$status['statusCode'] = 996;
@@ -205,7 +218,7 @@
 						break;
 					}
 				default: {
-						$where = array("menuID" => $id);
+						$where = array("customer_id" => $id);
 						$menuHistory = $this->CommonModel->getMasterDetails('customer', '', $where);
 						if (isset($menuHistory) && !empty($menuHistory)) {
 
@@ -223,6 +236,31 @@
 						}
 						break;
 					}
+			}
+		}
+		public function customerChangeStatus()
+		{
+			$this->access->checkTokenKey();
+			$this->response->decodeRequest(); 
+			$action = $this->input->post("action");
+				if(trim($action) == "changeStatus"){
+					$ids = $this->input->post("list");
+					$statusCode = $this->input->post("status");	
+					$changestatus = $this->CommonModel->changeMasterStatus('customer',$statusCode,$ids,'customer_id');
+					
+				if($changestatus){
+	
+					$status['data'] = array();
+					$status['statusCode'] = 200;
+					$status['flag'] = 'S';
+					$this->response->output($status,200);
+				}else{
+					$status['data'] = array();
+					$status['msg'] = $this->systemmsg->getErrorCode(996);
+					$status['statusCode'] = 996;
+					$status['flag'] = 'F';
+					$this->response->output($status,200);
+				}
 			}
 		}
 	}

@@ -149,10 +149,10 @@ $route['categoryMaster/(:num)'] = 'categoryMaster/categoryMaster/$1';
 $route['categoryMaster/status'] = 'categoryMaster/CategoryChangeStatus';
 
 ######customer
-$route['customerMasterList'] = 'customerMaster/getcustomerDetails';
-$route['customerMaster'] = 'customerMaster/customerMaster';
-$route['customerMaster/(:num)'] = 'customerMaster/customerMaster/$1';
-$route['customerMaster/status'] = 'customerMaster/customerChangeStatus';
+$route['customerMasterList'] = 'Customer/getcustomerList';
+$route['customerMaster'] = 'Customer/customer';
+$route['customerMaster/(:num)'] = 'Customer/customer/$1';
+$route['customerMaster/status'] = 'Customer/customerChangeStatus';
 
 
 ######proposal
