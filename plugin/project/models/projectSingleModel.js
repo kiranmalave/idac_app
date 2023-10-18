@@ -8,7 +8,7 @@ define([
       defaults: {
         project_id: null,
         project_name: null,
-        client_name: null,
+        client_id: null,
         description: null,
         status: 'active',
       },

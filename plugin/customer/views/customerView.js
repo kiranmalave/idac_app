@@ -37,6 +37,16 @@ define([
         setPagging(res.paginginfo, res.loadstate, res.msg);
       });
 
+      this.customerList = new customerCollection();
+      this.customerList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { status: "active" }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        // selfobj.render();
+      });
       this.collection = searchCustomer;
       this.collection.on('add', this.addOne, this);
       this.collection.on('reset', this.addAll, this);
@@ -68,20 +78,18 @@ define([
       var newdetails = [];
       newdetails["" + toID] = valuetxt;
       filterOption.set(newdetails);
+      console.log(filterOption);
     },
-
     changeBox: function (e) {
       var selVal = $(e.currentTarget).val();
       $(".hidetextval").hide();
       $(".filterClear").val("");
-      filterOption.set({ textval: '' });
-      if (selVal == "mobile_no") {
-        $(".contacttxt").show();
-      } else if (selVal == "first_name" || selVal == "middle_name" || selVal == "last_name" || selVal == "email") {
-        $(".textval").show();
+      if (selVal == "searchList") {
+        $(".customerList").show();
+      } else {
+        $(".textvalBox").show();
       }
     },
-
     settextSearch: function (e) {
       var usernametxt = $(e.currentTarget).val();
       filterOption.set({ textSearch: usernametxt });
@@ -180,14 +188,14 @@ define([
       selfobj.filterSearch();
     },
     resetSearch: function () {
-      //filterOption.set({curpage:0,customerID:null,textval: null,textSearch:'customerName',status:'active',orderBy:'created_date',order:'DESC'});
+      //filterOption.set({curpage:0,customer_id:null,textval: null,textSearch:'company_name',status:'active',orderBy:'created_date',order:'DESC'});
       //filterOption.reset();
       filterOption.clear().set(filterOption.defaults);
       $(".multiOptionSel").removeClass("active");
       // $("#textval").val("");
       $(".filterClear").val("");
       $(".hidetextval").hide();
-      $('#textSearch option[value=customer_id]').attr('selected', 'selected');
+      $('#textSearch option[value=company ]').attr('selected', 'selected');
       this.filterSearch(false);
     },
     loaduser: function () {
@@ -210,8 +218,9 @@ define([
         var template = _.template(source);
 
         var cont = $("<div>");
-        cont.html(template());
+        cont.html(template({"customerList": this.customerList.models }));
         cont.attr('id', this.toClose);
+
         /*  
           INFO
           this line use to hide if any other overlay is open first close it.
@@ -219,6 +228,8 @@ define([
         $(".overlay-main-container").removeClass("open");
         // append filter html here
         $(".ws_filterOptions").append(cont);
+        // $(".ws-select").selectpicker();
+
         /*  
           INFO
           open filter popup by adding class open here
@@ -243,7 +254,6 @@ define([
         }
       }
       this.setValues();
-      this.setupFilter();
       rearrageOverlays("Filter", this.toClose, "small");
     },
     setValues: function (e) {
@@ -327,9 +337,7 @@ define([
       if (isClose && typeof isClose != 'object') {
         $('.' + this.toClose).remove();
         rearrageOverlays();
-        //alert("sdfsf 222");
       }
-
       searchCustomer.reset();
       var selfobj = this;
       readyState = true;
@@ -358,7 +366,6 @@ define([
         } else {
           $(".profile-loader-msg").hide();
         }
-
         selfobj.setValues();
       });
     },
@@ -395,53 +402,7 @@ define([
         });
       }
     },
-    setupFilter: function () {
-      var selfobj = this;
-      startDate = $('#fromDate').datepickerBT({
-        format: "dd-mm-yyyy",
-        todayBtn: "linked",
-        clearBtn: true,
-        todayHighlight: true,
-        StartDate: new Date(),
-        numberOfMonths: 1,
-        autoclose: true,
-      }).on('changeDate', function (ev) {
-        $('#fromDate').change();
-        var valuetxt = $("#fromDate").val();
-        var temp = moment(valuetxt, 'DD-MM-YYYY').valueOf();
-        filterOption.set({ trainingStartDate: valuetxt });
-        //selfobj.model.set({trainingStartDate:valuetxt});
-        //endDate.datepicker({"StartDate":new Date("10/03/2023")});
-        var valuetxt = $("#toDate").val();
-        var temp2 = moment(valuetxt, 'DD-MM-YYYY').valueOf();
-        if (temp > temp2) {
-          $("#toDate").val("");
-        }
-
-      });
-      endDate = $('#toDate').datepickerBT({
-        format: "dd-mm-yyyy",
-        todayBtn: "linked",
-        clearBtn: true,
-        todayHighlight: true,
-        numberOfMonths: 1,
-        autoclose: true,
-      }).on('changeDate', function (ev) {
-        $('#toDate').change();
-        var valuetxt = $("#toDate").val();
-        var temp = moment(valuetxt, 'DD-MM-YYYY').valueOf();
-        filterOption.set({ trainingStartDate: valuetxt });
-        var valuetxt = $("#fromDate").val();
-        var temp2 = moment(valuetxt, 'DD-MM-YYYY').valueOf();
-        if (temp2 > temp) {
-          $("#fromDate").val("");
-        }
-        //selfobj.model.set({trainingStartDate:valuetxt});
-        //startDate.datepicker("option","minDate",$.datepicker.parseDate("dd/mm/yy",ev.value));
-        // startDate.datepicker("setEndDate", moment(valuetxt).format('l'));
-
-      });
-    },
+   
     render: function () {
       var template = _.template(customerTemp);
       this.$el.html(template({ closeItem: this.toClose }));

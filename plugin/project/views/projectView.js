@@ -60,6 +60,7 @@ define([
         "click .changeStatus": "changeStatusListElement",
         "click .showpage": "loadData",
         "change .changeBox": "changeBox",
+        "click .sortColumns": "sortColumn",
       },
       updateOtherDetails: function (e) {
         var valuetxt = $(e.currentTarget).val();
@@ -68,19 +69,17 @@ define([
         newdetails["" + toID] = valuetxt;
         filterOption.set(newdetails);
       },
-  
       changeBox: function (e) {
         var selVal = $(e.currentTarget).val();
         $(".hidetextval").hide();
         $(".filterClear").val("");
-        filterOption.set({ textval: '' });
-        if (selVal == "mobile_no") {
-          $(".contacttxt").show();
-        } else if (selVal == "first_name" || selVal == "middle_name" || selVal == "last_name" || selVal == "email") {
-          $(".textval").show();
+        if (selVal == "searchList") {
+          $(".customerList").show();
+        } else {
+          $(".textvalBox").show();
         }
       },
-  
+
       settextSearch: function (e) {
         var usernametxt = $(e.currentTarget).val();
         filterOption.set({ textSearch: usernametxt });
@@ -154,6 +153,30 @@ define([
             break;
           }
         }
+      },
+      sortColumn: function (e) {
+        var order = $(e.currentTarget).attr("data-value");
+        var selfobj = this;
+        var newsetval = [];
+        $("#clist").find(".up").removeClass("active");
+        $("#clist").find(".down").removeClass("active");
+        // var classname = $(e.currentTarget).attr("class").split(" ");
+        newsetval["order"] = $(e.currentTarget).attr("data-value");
+        newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+        if (order == "" || order == "DESC") {
+          order = "ASC";
+          $(e.currentTarget).find(".down").removeClass("active");
+          $(e.currentTarget).find(".up").addClass("active");
+        } else {
+          order = "DESC";
+          $(e.currentTarget).find(".down").addClass("active");
+          $(e.currentTarget).find(".up").removeClass("active");
+        }
+        $(e.currentTarget).attr("data-value", order);
+        newsetval["order"] = order;
+        newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+        filterOption.set(newsetval);
+        selfobj.filterSearch();
       },
       resetSearch: function () {
         //filterOption.set({curpage:0,projectID:null,textval: null,textSearch:'projectName',status:'active',orderBy:'created_date',order:'DESC'});

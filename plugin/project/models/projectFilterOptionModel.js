@@ -8,6 +8,7 @@ define([
       defaults: {
         textSearch: 'project_name',
         textval: null,
+        client_id: null,
         fromDate: null,
         toDate: null,
         status: 'Active',

@@ -21,10 +21,10 @@
           <div class="form-line">
             <% const catID=model.customer_id ? model.customer_id.split(','):[]%>
             <label for="customer_id" class="form-label">customer</label>
-            <select id="customer_id" name="customer_id" class="form-control dropval ws-select mt-1" multiple>
+            <select id="customer_id" name="customer_id" class="form-control dropval ws-select">
                 <% _.each(customerList, function(model1) { %>
                     <option <% if(catID.includes(model1.attributes.customer_id) ){ %> selected <% } %> 
-                    value="<%=model1.attributes.customer_id%>"><%=model1.attributes.first_name%></option>
+                    value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
                 <%})%>
            </select>
           </div>

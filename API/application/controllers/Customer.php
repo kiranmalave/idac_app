@@ -45,6 +45,7 @@
 			$textval = $this->input->post('textval');
 			$orderBy = $this->input->post('orderBy');
 			$order = $this->input->post('order');
+			$company = $this->input->post('company');
 
 			$statuscode = $this->input->post('status');
 
@@ -65,6 +66,10 @@
 			if (isset($statuscode) && !empty($statuscode)) {
 				$statusStr = str_replace(",", '","', $statuscode);
 				$wherec["status"] = 'IN ("' . $statusStr . '")';
+			}
+
+			if (isset($company) && !empty($company)) {
+				$wherec["company_name like"] = "'" . $company . "%'";
 			}
 
 			$config["base_url"] = base_url() . "customer	Details";

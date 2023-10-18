@@ -38,7 +38,7 @@ class Project extends CI_Controller {
 		$curPage = $this->input->post('curpage');
 		$ITIID = $this->input->post('project_id');
 		$textval = $this->input->post('textval');
-		$orderBy = $this->input->post('oderBy');
+		$orderBy = $this->input->post('orderBy');
 		$order = $this->input->post('order');
 		$statuscode = $this->input->post('status');
 		$filterSName = $this->input->post('filterSName');
@@ -46,7 +46,7 @@ class Project extends CI_Controller {
 		
 		$config = array();
 		if(!isset($orderBy) || empty($orderBy)){
-			$orderBy = "project_name";
+			$orderBy = "project_id";
 			$order ="ASC";
 		}
 		$other = array("orderBy"=>$orderBy,"order"=>$order);
@@ -57,6 +57,9 @@ class Project extends CI_Controller {
 
 		$wherec["$textSearch like  "] = "'".$textval."%'";
 		}
+
+		
+
 
 		if(isset($statuscode) && !empty($statuscode)){
 		$statusStr = str_replace(",",'","',$statuscode);
@@ -96,6 +99,9 @@ class Project extends CI_Controller {
 				$wherec["c.status"] = 'IN ("'.$statusStr.'")';
 				}
 				
+				if (isset($client_id) && !empty($client_id)) {
+					$wherec["client_id like"] = $client_id;
+				}
 			$projectDetails = $this->CommonModel->GetMasterListDetails($selectC,'project',$wherec,$config["per_page"],$page,$join,$other);
 
 		}

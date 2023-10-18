@@ -4,31 +4,18 @@
   <div class="clearfix">&nbsp;</div>
   <div class="row">
     <div class="col-md-6">
-      <div class="form-float">
-        <div class="form-line">
-          <select id="textSearch" class="form-control changeBox" name="textSearch">
-            <option>Company Name</option>
-            <option>Contact Person Name </option>
-            <option>Email Id </option>
-            <option>Mobile Number</option>
-            <option>GST Number</option>
-            <option>Company Adhar Number </option>
-            <option>Company Pan Number</option>
-            <option>GST Number</option>
-          </select>
-        </div>
-      </div>
+      <select id="textSearch" class="form-control txtchange changeBox" name="textSearch">
+        <option>select</option>
+        <option value="person_name">Contact Person Name</option>
+        <option value="email">Email Id</option>
+        <option value="mobile_no">Contact Number</option>
+        <option value="GST_no">GST Number</option>
+        <option value="adhar_number">Company Adhar Number </option>
+        <option value="pan_number">Company Pan Number</option>
+      </select>
     </div>
-    <div class="col-md-6">
-      <div class="form-group form-float">
-        <div class="form-line">
-          <!-- <input id="textval" class="form-control txtchange filterClear" name="textval" type="text"> -->
-          <input  class="form-control txtchange filterClear" type="text">
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 contacttxt hidetextval" style="display: none;">
-      <div class="form-group form-float">
+    <div class="col-md-6 textvalBox contacttxt hidetextval" style="display: none;">
+      <div class="form-group">
         <div class="form-line">
           <input id="textval" class="form-control txtchange filterClear" minlength="10" maxlength="10" name="textval"
             type="text">
@@ -36,28 +23,20 @@
       </div>
     </div>
   </div>
-
-
-  <!-- <label>Date of Birth</label> -->
-  <!-- <div class="row dateList">
-    <div class="col-5">
-      <input type="text" id="fromDate" class="form-control txtchange filterClear" placeholder="Start Date" readonly>
+  <div class="clearfix">&nbsp;</div>
+  <div class="row">
+    <div class="col-md-6">
+      <select id="company" class="form-control dropval ws-select show-tick txtchange" name="textSearch" data-live-search="true">
+        <option class="disabled">Company Name</option>
+        <% _.each(customerList, function(model1) { %>
+          <option value="<%=model1.attributes.company_name%>">
+            <%=model1.attributes.company_name%>
+          </option>
+          <%}); %>
+      </select>
     </div>
-    <div class="input-group-addon mt-2">to</div>
-    <div class="col-5">
-      <input type="text" id="toDate" class="form-control txtchange filterClear" placeholder="End Date" readonly>
-    </div>
-  </div> -->
-  <!-- <div class="clearfix">&nbsp;</div> -->
+  </div>
    <div class="row pt-2">
-    <!--<div class="col-md-12">
-      <label>Customer Type:</label>
-      <ul class="item-container" data-valid="type">
-        <li class="type multiOptionSel" data-single="Y" data-value="customer">Customer</li>
-        <li class="type  multiOptionSel" data-single="Y" data-value="subscriber">Subscriber</li>
-      </ul>
-    </div>-->
-
     <div class="col-md-12">
       <label>Order:</label>
       <ul class="item-container" data-valid="order">
