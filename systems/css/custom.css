@@ -2259,3 +2259,85 @@ label.label-style {
   outline: none;
   box-shadow: none !important;
 }
+
+
+/******Custom Dashbord start********/
+.profile-header {
+  padding: 20px;
+  background: url("../../images/site/profilebg.jpg") !important;
+  background-repeat:no-repeat !important;
+  background-size: 100% !important;
+  background-position: center center !important;
+}
+.profile-header .profile_info .profile-image {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    border: 3px solid #fff;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16),0 3px 6px rgba(0,0,0,0.23);
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.profile-header .profile_info .profile-image img{
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+.profile-sub-header {
+	width: 100%;
+}
+.profile-sub-header .box-list ul {
+  display: inline-table;
+  padding: 0;
+  table-layout: fixed;
+  width: 100%;
+  margin-bottom: 0 !important;
+}
+ .profile-sub-header .box-list ul li {
+	border-left: 1px solid #dedede;
+	display: table-cell;
+	list-style: outside none none;
+  padding: 7px 0;
+}
+.profile-sub-header .box-list ul li:first-child {
+	border-left: none;
+}
+
+ .profile-sub-header .box-list ul li a {
+  padding: 5px 10px;
+  color: #424242;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.profile-sub-header .box-list ul li a p{
+  margin-bottom: 0 !important;
+}
+.job_post {
+  display: block;
+}
+.text-center {
+	text-align: center !important;
+}
+.profile-sub-header .box-list ul li:hover {
+	text-decoration: none;
+	color: #fff;
+  background-color: #ffc100
+}
+.profile-sub-header .box-list ul li:hover a{
+  text-decoration: none;
+  color: #fff;
+}
+
+.block-header {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+/******Custom Dashbord end********/
