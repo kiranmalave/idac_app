@@ -4,13 +4,13 @@
 // All Global Path for images and API call
 APPNAME = "Webtrix Solutions LMS";
 COKI = "/";
-APPPATH = "http://localhost/projects/idac_app-1/";
-APIPATH = "http://localhost/projects/idac_app-1/API/";
-APPPFRONTATH = "http://localhost/projects/idac_app-1/website/";
+// APPPATH = "http://localhost/projects/idac_app-1/";
+// APIPATH = "http://localhost/projects/idac_app-1/API/";
+// APPPFRONTATH = "http://localhost/projects/idac_app-1/website/";
 
-// APPPATH = "http://beta.webtrixsolutions.com/admin/";
-// APIPATH = "http://beta.webtrixsolutions.com/admin/API/";
-// APPPFRONTATH = "http://beta.webtrixsolutions.com/";
+APPPATH = "http://app.idacindia.co.in/";
+APIPATH = "http://app.idacindia.co.in/API/";
+APPPFRONTATH = "http:/www.idacindia.co.in/";
 
 
 IMAGES = APPPATH + "images";
@@ -110,7 +110,7 @@ require.config({
     'calender': {
       deps: ['jquery', 'bootstrap']
     },
-    'sweetalert': {
+    'Swal': {
       deps: ['jquery', 'bootstrap']
     },
   },
@@ -155,7 +155,7 @@ require.config({
     notify: '../../assets/theme-setup/plugins/bootstrap-notify/bootstrap-notify.min',
     fullcalendar: '../../assets/theme-setup/plugins/fullcalendar/fullcalendar.min',
     calender: '../../assets/bootstrap-calendar/calender/main',
-    sweetalert: '../../assets/theme-setup/plugins/sweetalert/sweetalert.min',
+    Swal: '../../assets/theme-setup/plugins/sweetalert/sweetalert.min',
   }
 });
 
