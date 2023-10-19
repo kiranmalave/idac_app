@@ -1,0 +1,27 @@
+<div class="tab-pane in active">
+    <form id="branchDetails" name="branchDetails" action="#">
+        <div class="text-right actionBtns">
+            <button type="button" class="btn bg-indigo savebranchDetails" data-action="close">Save</button>
+            <button type="button" class="btn bg-indigo savebranchDetails" data-action="new">Save & new</button>
+        </div>
+       <div class="clearfix">&nbsp;</div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group form-float">
+                    <div class="form-line">
+                        <input id="branchName" class="form-control txtchange" name="branchName" type="text" value="<%=model.branchName%>">
+                        <label for="branchName" class="form-label">Branch Name </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-6">
+                <label for="status">Status <span class="error">*</span> :</label>
+                <ul class="item-container" data-valid="status">
+                  <li class="status multiSel" data-single="Y" data-value="active">Active</li>
+                  <li class="status multiSel" data-single="Y" data-value="inactive">InActive</li>
+                  <li class="status multiSel" data-single="Y" data-value="delete">Delete</li>
+                </ul>
+              </div>
+        </div>
+    </form>
+</div>
