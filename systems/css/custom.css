@@ -2264,7 +2264,8 @@ label.label-style {
 /******Custom Dashbord start********/
 .profile-header {
   padding: 20px;
-  background: url("../../images/site/profilebg.jpg") !important;
+  background: linear-gradient(45deg, 
+  rgb(245 245 245 / 57%), rgb(190 190 190 / 43%)), url("../../images/site/profilebg.jpg") !important;
   background-repeat:no-repeat !important;
   background-size: 100% !important;
   background-position: center center !important;
@@ -2308,7 +2309,21 @@ label.label-style {
 .profile-sub-header .box-list ul li:first-child {
 	border-left: none;
 }
+.profile-sub-header .box-list ul li.active{
+  color: #fff;
+  background-color: #ffc100
+}
 
+.profile-sub-header .box-list ul li.active a{
+  text-decoration: none;
+  color: #fff;
+}
+
+.profile-sub-header .box-list ul li.active a .material-icons {
+  color: #fff !important;
+}
+
+.profile-sub-header .box-list ul li.active a
  .profile-sub-header .box-list ul li a {
   padding: 5px 10px;
   color: #424242;
@@ -2339,5 +2354,96 @@ label.label-style {
 .block-header {
   padding: 0 !important;
   margin: 0 !important;
+}
+.profile-sub-header .box-list ul li a{
+  color: #424242;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.profile-sub-header .box-list ul li:hover a .material-icons{
+  color: #fff !important;
+
+}
+
+.nopadding {
+  padding: 0;
+}
+
+.c_review li {
+	margin-bottom: 14px;
+	padding-bottom: 13px;
+	border-bottom: 1px solid #e8e8e8;
+}
+
+.c_review .avatar {
+	float: left;
+	width: 30px;
+}
+
+.c_review .comment-action {
+	float: left;
+	width: calc(100% - 30px);
+}
+
+.c_msg{
+    white-space: nowrap;
+    width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 9px;
+}
+
+.comment-actionHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+.comment-actionHeading_left {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+  align-items: center;
+}
+
+.projectFolder .projectFolderTop i {
+  font-size: 60px;
+}
+
+.projectFolder .projectFolderBottom h2 {
+  font-size: 18px;
+  color: #616161;
+}
+
+.addFlex {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+}
+.addFlex li {
+  /* width: 20%; */
+  /* background: #f0f; */
+  flex: 0 0 30%;
+  margin: 0;
+  padding: 0;
+  border-bottom: none;
+}
+.addFlex li .projectFolder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.projectFolder .projectFolderBottom h2 {
+  font-size: 14px;
+  color: #616161;
 }
 /******Custom Dashbord end********/

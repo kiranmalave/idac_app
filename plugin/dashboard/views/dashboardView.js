@@ -123,6 +123,8 @@ define([
       "change .saveOtherDetail": "updateDetails",
       "click .getPaymentData": "getPaymentDetails",
       "click .showOverlay": "showOverlay",
+      
+      "click .tablinks": "tablinks",
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
@@ -155,6 +157,8 @@ define([
       $(".app_playground").append(this.$el);
       return this;
     },
+
+   
     getBannersDetails: function (e) {
       $.ajax({
         url: APIPATH + 'bannersCountDetails/',
@@ -177,7 +181,27 @@ define([
 
         }
       });
-    }
+    },
+
+    tablinks:function(e){
+      let ctab = $(e.currentTarget).attr("data-type");
+      $(".tablinks").removeClass("active");
+      $(".taskcard").hide();
+      $(e.currentTarget).addClass("active");
+      $("#"+ctab).show();
+      
+      // var i, tabcontent, tablinks;
+      // tabcontent = document.getElementsByClassName("card");
+      // for (i = 0; i < tabcontent.length; i++) {
+      //   tabcontent[i].style.display = "none";
+      // }
+      // tablinks = document.getElementsByClassName("tablinks");
+      // for (i = 0; i < tablinks.length; i++) {
+      //   tablinks[i].className = tablinks[i].className.replace(" active", "");
+      // }
+      // document.getElementById(cityName).style.display = "block";
+      // evt.currentTarget.className += " active";
+    }, 
 
   });
 
