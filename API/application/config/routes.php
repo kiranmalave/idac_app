@@ -154,6 +154,11 @@ $route['customerMaster'] = 'Customer/customer';
 $route['customerMaster/(:num)'] = 'Customer/customer/$1';
 $route['customerMaster/status'] = 'Customer/customerChangeStatus';
 
+######branch
+$route['branchList'] = 'Branch/getbranchList';
+$route['branch'] = 'Branch/branch';
+$route['branch/(:num)'] = 'Branch/branch/$1';
+$route['branch/status'] = 'Branch/branchChangeStatus';
 
 ######proposal
 $route['proposalMasterList'] = 'proposal/getproposalDetails';

@@ -7,47 +7,27 @@
             <select id="textSearch" class="form-control changeBox" name="textSearch" >
               <option>Project Id</option>
               <option value="project_name">Project Name</option>
-              <option value="client_id">Company Name</option>
             </select>
       </div>
-      <!-- <div class="col-md-6">
-        <div class="form-group form-float">
-          <div class="form-line">
-            <input id="textval" class="form-control txtchange filterClear" name="textval" type="text">
-          </div>
-        </div>
-      </div> -->
       <div class="col-md-6 textvalBox contacttxt hidetextval" style="display: none;">
-        <div class="form-group">
-          <div class="form-line">
             <input id="textval" class="form-control txtchange filterClear" minlength="10" maxlength="10" name="textval"
               type="text">
-          </div>
-        </div>
       </div>
     </div>
-  
-  
-    <!-- <label>Date of Birth</label> -->
-    <!-- <div class="row dateList">
-      <div class="col-5">
-        <input type="text" id="fromDate" class="form-control txtchange filterClear" placeholder="Start Date" readonly>
+    <div class="clearfix">&nbsp;</div>
+    <div class="row">
+      <div class="col-md-6">
+        <select id="company" class="form-control dropval ws-select show-tick txtchange" name="textSearch" data-live-search="true">
+          <option class="disabled">Company Name</option>
+          <% _.each(customerList, function(model1) { %>
+            <option value="<%=model1.attributes.client_id%>">
+              <%=model1.attributes.company_name%>
+            </option>
+            <%}); %>
+        </select>
       </div>
-      <div class="input-group-addon mt-2">to</div>
-      <div class="col-5">
-        <input type="text" id="toDate" class="form-control txtchange filterClear" placeholder="End Date" readonly>
-      </div>
-    </div> -->
-    <!-- <div class="clearfix">&nbsp;</div> -->
+    </div>
     <div class="row pt-2">
-      <!-- <div class="col-md-12">
-        <label>project Type:</label>
-        <ul class="item-container" data-valid="type">
-          <li class="type multiOptionSel" data-single="Y" data-value="project">project</li>
-          <li class="type  multiOptionSel" data-single="Y" data-value="subscriber">Subscriber</li>
-        </ul>
-      </div> -->
-  
       <div class="col-md-12">
         <label>Order:</label>
         <ul class="item-container" data-valid="order">

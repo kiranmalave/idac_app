@@ -15,11 +15,46 @@
                     </div>
                     <div class="right-layout">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line">
                                         <input id="company_name" class="form-control txtchange" name="company_name" type="text" value="<%=model.company_name%>">
                                         <label for="company_name" class="form-label">Company Name </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input id="billing_name" class="form-control txtchange" name="billing_name" type="text" value="<%=model.billing_name%>">
+                                        <label for="billing_name" class="form-label">Billing Name </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div  class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input id="billing_address" class="form-control txtchange" name="billing_address" type="text" value="<%=model.billing_address%>">
+                                        <label for="billing_address" class="form-label">Address</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input id="person_name" class="form-control txtchange" name="person_name" type="text" value="<%=model.person_name%>">
+                                        <label for="person_name" class="form-label">Contact Person Name </label>
                                     </div>
                                 </div>
                             </div>
@@ -81,7 +116,7 @@
                                 <div class="form-group form-float">
                                     <div class="form-line">                                    
                                         <input id="adhar_number" class="form-control txtchange" name="adhar_number" type="text" value="<%=model.adhar_number%>">
-                                        <label for="adhar_number" class="form-label">Company Adhar Number </label>
+                                        <label for="adhar_number" class="form-label">Adhar Number </label>
                                     </div>
                                 </div>
                             </div>
@@ -100,7 +135,7 @@
                                 <div class="form-group input-group form-float">
                                     <div class="form-line">
                                         <input id="pan_number" class="form-control txtchange" name="pan_number" type="text" maxlength="10" value="<%=model.pan_number%>">
-                                        <label for="pan_number" class="form-label">Company Pan Number </label>
+                                        <label for="pan_number" class="form-label">Pan Number </label>
                                     </div>
                                 </div>
                             </div>
@@ -108,7 +143,7 @@
                                 <div class="form-group input-group form-float">
                                     <div class="form-line">
                                         <input id="website" class="form-control txtchange" name="website" type="text" value="<%=model.website%>">
-                                        <label for="website" class="form-label">Company Website Link </label>
+                                        <label for="website" class="form-label"> Website Link </label>
                                     </div>
                                 </div>
                             </div>
@@ -128,9 +163,7 @@
                             <div class="col-md-12">
                                 <div class="form-group input-group form-float">
                                     <div class="form-line">
-                                        <input id="address" for="address" title="Addresss"
-                                            class="form-control txtchange" name="address" value="<%=model.address%>">
-                                        <label for="address" class="form-label">Company Address</label>
+                                        <input id="address" for="address" title="Addresss" class="form-control txtchange" name="address" value="<%=model.address%>">
                                     </div>
                                 </div>
                             </div>

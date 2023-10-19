@@ -1,0 +1,13 @@
+<tr class="even pointer bg-<%=branchDetails.attributes.status%>">
+  <td class="a-center">
+    <div class="listCheckbox">
+        <input id="cAll_<%= branchDetails.attributes.branchID  %>" class="memberlistcheck chk-col-amber" data-branchID ="<%= branchDetails.attributes.branchID  %>" type="checkbox">
+        <label for="cAll_<%= branchDetails.attributes.branchID  %>">&nbsp;</label>
+    </div>
+  </td>
+  <!-- <td><%=branchDetails.attributes.branchID %></td> -->
+  <td><%=branchDetails.attributes.branchName%></td>
+  <td>
+      <button type="button" class="ws-btn-default loadview"  data-branchID="<%=branchDetails.attributes.branchID%>" data-view="singlebranchData"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Edit">mode_edit</i></button>
+  </td>
+</tr>

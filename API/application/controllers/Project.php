@@ -42,7 +42,7 @@ class Project extends CI_Controller {
 		$order = $this->input->post('order');
 		$statuscode = $this->input->post('status');
 		$filterSName = $this->input->post('filterSName');
-		$client_id = $this->input->post('client_id');
+		$company_name = $this->input->post('company_name');
 		
 		$config = array();
 		if(!isset($orderBy) || empty($orderBy)){
@@ -58,9 +58,9 @@ class Project extends CI_Controller {
 		$wherec["$textSearch like  "] = "'".$textval."%'";
 		}
 
-		
-
-
+		if (isset($company) && !empty($company)) {
+			$wherec["client_id like"] = "'" . $company . "%'";
+		}
 		if(isset($statuscode) && !empty($statuscode)){
 		$statusStr = str_replace(",",'","',$statuscode);
 		$wherec["t.status"] = 'IN ("'.$statusStr.'")';
@@ -99,9 +99,6 @@ class Project extends CI_Controller {
 				$wherec["c.status"] = 'IN ("'.$statusStr.'")';
 				}
 				
-				if (isset($client_id) && !empty($client_id)) {
-					$wherec["client_id like"] = $client_id;
-				}
 			$projectDetails = $this->CommonModel->GetMasterListDetails($selectC,'project',$wherec,$config["per_page"],$page,$join,$other);
 
 		}
@@ -158,7 +155,7 @@ class Project extends CI_Controller {
 				$projectDetails['project_id'] = $this->validatedata->validate('project_id','project_id',false,'',array());
 				$projectDetails['project_name'] = $this->validatedata->validate('project_name','project Name',false,'',array());
 				$projectDetails['client_id'] = $this->validatedata->validate('client_id','client ID',false,'',array());
-                $projectDetails['desicription'] = $this->validatedata->validate('desicription','Desicription',false,'',array());
+                $projectDetails['description'] = $this->validatedata->validate('description','Description',false,'',array());
 
 					  
 					if($method=="PUT")
