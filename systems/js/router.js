@@ -27,6 +27,7 @@ define([
   'plugin/themeOption/views/themeOptionView',
   'plugin/task/views/taskView',
   'plugin/customer/views/customerView',
+  'plugin/branch/views/branchView',
   'plugin/proposal/views/proposalView',
   'plugin/project/views/projectView',
   'plugin/proposalTemplate/views/proposalTemplateView',
@@ -41,7 +42,7 @@ define([
   'text!../templates/appFull_temp.html',
   'text!../templates/sideNav_temp.html',
   'text!../templates/topNav_temp.html',
-], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormSingleView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
+], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormSingleView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView,branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
 
   var AppRouter = Backbone.Router.extend({
     routes: {
@@ -62,6 +63,7 @@ define([
       'addnewpage/:pageID': "addpage",
       'addnewblog/:blogID': "addblog",
       'customer': 'customerView',
+      'branch': 'branchView',
       'proposal': 'proposalView',
       'proposalTemplate': 'proposalTemplateView',
       'project': 'projectView',
@@ -294,7 +296,13 @@ define([
         //setsidbar();
       }
     });
-
+    app_router.on('route:branchView', function (action) {
+      var validate = preTemp();
+      if (validate) {
+        new branchView({ action: action });
+        //setsidbar();
+      }
+    });
     app_router.on('route:proposalView', function (action) {
       var validate = preTemp();
       if (validate) {

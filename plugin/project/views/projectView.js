@@ -8,10 +8,11 @@ define([
     '../views/projectSingleView',
     '../collections/projectCollection',
     '../models/projectFilterOptionModel',
+    "../../customer/collections/customerCollection",
     'text!../templates/projectRow.html',
     'text!../templates/project_temp.html',
     'text!../templates/projectFilterOption_temp.html',
-  ], function ($, _, Backbone, datepickerBT, moment, projectSingleView, projectCollection, projectFilterOptionModel, projectRowTemp, projectTemp, projectFilterTemp) {
+  ], function ($, _, Backbone, datepickerBT, moment, projectSingleView, projectCollection, projectFilterOptionModel, customerCollection, projectRowTemp, projectTemp, projectFilterTemp) {
   
     var projectView = Backbone.View.extend({
   
@@ -36,15 +37,21 @@ define([
           $(".profile-loader").hide();
           setPagging(res.paginginfo, res.loadstate, res.msg);
         });
-  
+
+        this.customerList = new customerCollection();
+        this.customerList.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler, data: { status: "active" }
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".popupLoader").hide();
+          // selfobj.render();
+        });
         this.collection = searchproject;
         this.collection.on('add', this.addOne, this);
         this.collection.on('reset', this.addAll, this);
-        /* $(".right_col").on("scroll",function(){
-               console.log("wait..");
-               selfobj.loadData();
-               
-           });*/
+        
       },
       events:
       {
@@ -179,11 +186,11 @@ define([
         selfobj.filterSearch();
       },
       resetSearch: function () {
-        //filterOption.set({curpage:0,projectID:null,textval: null,textSearch:'projectName',status:'active',orderBy:'created_date',order:'DESC'});
-        //filterOption.reset();
+        // filterOption.set({curpage:0,project_id:null,textval: null,company_name:null,textSearch:'project_name',status:'active',orderBy:'created_date',order:'ASC'});
+        // filterOption.reset();
         filterOption.clear().set(filterOption.defaults);
         $(".multiOptionSel").removeClass("active");
-        // $("#textval").val("");
+        $("#textval").val("");
         $(".filterClear").val("");
         $(".hidetextval").hide();
         $('#textSearch option[value=project_id]').attr('selected', 'selected');
@@ -209,7 +216,7 @@ define([
           var template = _.template(source);
   
           var cont = $("<div>");
-          cont.html(template());
+        cont.html(template({"customerList": this.customerList.models }));
           cont.attr('id', this.toClose);
           /*  
             INFO
