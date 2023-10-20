@@ -2302,9 +2302,20 @@ label.label-style {
 }
  .profile-sub-header .box-list ul li {
 	border-left: 1px solid #dedede;
-	display: table-cell;
-	list-style: outside none none;
   padding: 7px 0;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.profile-sub-header .box-list ul li p {
+  margin-bottom: 0;
+}
+.profile-sub-header .box-list ul li.active i {
+  color: #fff !important;
 }
 .profile-sub-header .box-list ul li:first-child {
 	border-left: none;
@@ -2339,7 +2350,9 @@ label.label-style {
   display: block;
 }
 .text-center {
-	text-align: center !important;
+  display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
 }
 .profile-sub-header .box-list ul li:hover {
 	text-decoration: none;
@@ -2362,7 +2375,7 @@ label.label-style {
   align-items: center;
   gap: 10px;
 }
-.profile-sub-header .box-list ul li:hover a .material-icons{
+.profile-sub-header .box-list ul li:hover .material-icons{
   color: #fff !important;
 
 }
