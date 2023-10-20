@@ -10,7 +10,7 @@ define([
       textval: null,
       company:null,
       status: 'Active',
-      orderBy: 'createdDate',
+      orderBy: 'created_date',
       order: 'ASC',
     }
   });

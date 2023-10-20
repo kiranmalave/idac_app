@@ -53,7 +53,7 @@
                             <div class="col-md-6">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <input id="person_name" class="form-control txtchange" name="person_name" type="text" value="<%=model.person_name%>">
+                                        <input id="person_name" class="form-control txtchange"  name="person_name" type="text" value="<%=model.person_name%>">
                                         <label for="person_name" class="form-label">Contact Person Name </label>
                                     </div>
                                 </div>
@@ -80,7 +80,7 @@
                             <div class="col-sm-6">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <input id="email" class="form-control txtchange" name="email" type="text" value="<%=model.email%>">
+                                        <input id="email" class="form-control txtchange"  name="email" type="text" value="<%=model.email%>">
                                         <label for="email" class="form-label">Email Id </label>
                                     </div>
                                 </div>
@@ -89,7 +89,8 @@
                                 <div class="form-group form-float ws-country">
                                     <div class="form-line">
                                         <select id="country_code" class="form-control txtchange ws-select dropval mt-1" data-live-search="true" title="Ext">
-                                             <option data-countryCode="DZ" value="213">(+213) Algeria</option>
+                                            <option  selected><%=model.country_code%></option>
+                                            <option data-countryCode="DZ" value="213">(+213) Algeria</option>
                                             <option data-countryCode="AD" value="376">(+376) Andorra</option>
                                             <option data-countryCode="AO" value="244">(+244) Angola</option>
                                             <option data-countryCode="AI" value="1264">(+1264) Anguilla</option>
@@ -286,11 +287,11 @@
                                             <option data-countryCode="TC" value="1649">(+1649) Turks &amp; Caicos Islands</option>
                                             <option data-countryCode="TV" value="688">(+688) Tuvalu</option>
                                             <option data-countryCode="UG" value="256">(+256) Uganda</option>
-                                            <!-- <option data-countryCode="GB" value="44">(+44) --> UK</option>
+                                            <option data-countryCode="GB" value="44">(+44) UK</option>
                                             <option data-countryCode="UA" value="380">(+380) Ukraine</option>
                                             <option data-countryCode="AE" value="971">(+971) United Arab Emirates</option>
                                             <option data-countryCode="UY" value="598">(+598) Uruguay</option>
-                                            <!-- <option data-countryCode="US" value="1">(+1) --> USA</option>
+                                            <option data-countryCode="US" value="1">(+1) USA</option>
                                             <option data-countryCode="UZ" value="7">(+7) Uzbekistan</option>
                                             <option data-countryCode="VU" value="678">(+678) Vanuatu</option>
                                             <option data-countryCode="VA" value="379">(+379) Vatican City</option>

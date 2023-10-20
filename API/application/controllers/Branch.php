@@ -52,7 +52,7 @@
 
 			$config = array();
 			if (!isset($orderBy) || empty($orderBy)) {
-				$orderBy = "createdDate";
+				$orderBy = "created_date";
 				$order = "DESC";
 			}
 			$other = array("orderBy" => $orderBy, "order" => $order);
@@ -136,8 +136,8 @@
 			switch ($method) {
 				case "PUT": {
 
-						$branchDetails['createdBy'] = $this->input->post('SadminID');
-						$branchDetails['createdDate'] = $updateDate;
+						$branchDetails['created_by'] = $this->input->post('SadminID');
+						$branchDetails['created_date'] = $updateDate;
 
 						$iscreated = $this->CommonModel->saveMasterDetails('branches', $branchDetails);
 						if (!$iscreated) {
@@ -167,8 +167,8 @@
 							$status['flag'] = 'F';
 							$this->response->output($status, 200);
 						}
-						$branchDetails['modifiedBy'] = $this->input->post('SadminID');
-						$branchDetails['modifiedDate'] = $updateDate;
+						$branchDetails['modified_by'] = $this->input->post('SadminID');
+						$branchDetails['modified_date'] = $updateDate;
 						$iscreated = $this->CommonModel->updateMasterDetails('branches', $branchDetails, $where);
 						if (!$iscreated) {
 							$status['msg'] = $this->systemmsg->getErrorCode(998);
