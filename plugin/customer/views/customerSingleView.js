@@ -16,7 +16,6 @@ define([
   var customerSingleView = Backbone.View.extend({
     model: customerSingleModel,
     initialize: function (options) {
-      console.log(options);
       this.dynamicData = null;
       this.toClose = "customerSingleView";
       this.pluginName = "customerList";
@@ -30,7 +29,6 @@ define([
       this.multiselectOptions = new multiselectOptions();
       $(".modelbox").hide();
       scanDetails = options.searchCustomer;
-      console.log(options);
       $(".popupLoader").show();
       var customerList = new customerCollection();
       customerList.fetch({
@@ -67,11 +65,9 @@ define([
       "click .item-container li": "setValues",
       "blur .txtchange": "updateOtherDetails",
       "click .multiSel": "setValues",
-      "change .bDate": "updateOtherDetails",
       "change .dropval": "updateOtherDetails",
       "change .logoAdded": "updateImageLogo",
       "click .loadMedia": "loadMedia",
-
     },
     attachEvents: function () {
       // Detach previous event bindings
@@ -80,8 +76,6 @@ define([
       this.$el.on("click", ".saveCustomerDetails", this.saveCustomerDetails.bind(this));
       this.$el.off("click", ".multiSel", this.setValues);
       this.$el.on("click", ".multiSel", this.setValues.bind(this));
-      this.$el.off("change", ".bDate", this.updateOtherDetails);
-      this.$el.on("change", ".bDate", this.updateOtherDetails.bind(this));
       this.$el.off("change", ".dropval", this.updateOtherDetails);
       this.$el.on("change", ".dropval", this.updateOtherDetails.bind(this));
       this.$el.off("click", ".iconSelection", this.setIconValues);
@@ -104,11 +98,10 @@ define([
       newdetails["" + toID] = valuetxt;
       this.model.set(newdetails);
       console.log(this.model);
-
     },
     setOldValues: function () {
       var selfobj = this;
-      setvalues = ["type"];
+      setvalues = ["status"];
       selfobj.multiselectOptions.setValues(setvalues, selfobj);
     },
     getSelectedFile: function (url) {
@@ -189,8 +182,20 @@ define([
           minlength: 15,
           maxlength: 15,
         },
-        // person_name: {
-        //   required: true,
+        mobile_no: {
+          minlength: 10,
+          maxlength: 10,
+        },
+        adhar_number: {
+          minlength: 12,
+          maxlength: 12,
+        },
+        pan_number: {
+          minlength: 10,
+          maxlength: 10,
+        },
+        // website: {
+        //   url:true,
         // },
         // pan_number: {
         //   required: true,
@@ -211,17 +216,17 @@ define([
 
       if (!_.isEmpty(dynamicRules)) {
         var feildsrules = $.extend({}, feilds, dynamicRules);
-        // var feildsrules = {
-        //   ...feilds,
-        //   ...dynamicRules
-        //   };
+       
       }
       var messages = {
         company_name: "Please enter Company Name",
       };
       $("#mobile_no").inputmask("Regex", { regex: "^[0-9](\\d{1,9})?$" });
-      $("#adhar_number").inputmask("Regex", { regex: "^[0-9]{4}[ -]?[0-9]{4}[ -]?[0-9]{4}$" });
-    //  $("#GST_no").inputmask("Regex", { regex: "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9]{1}[A-Z]{2}$" });
+      $("#adhar_number").inputmask("Regex", { regex: "^[0-9](\\d{1,11})?$" });
+      $("#GST_no").inputmask("Regex", { regex: "^[A-Za-z0-9]*$" });
+      $("#pan_number").inputmask("Regex", { regex: "^[A-Za-z0-9]*$" });
+      $('#email').inputmask({ alias: "email" });
+
       $("#customerDetails").validate({
         rules: feildsrules,
         messages: messages,

@@ -2229,9 +2229,11 @@ label.label-style {
 .actionDropDrown a {
   padding: 10px 11px;
   border-bottom: 1px solid #e0e0e0;
+  cursor: pointer;
 }
 .actionDropDrown a:hover{
   background-color: rgba(0,0,0,0.1);
+  cursor: pointer;
 }
 
 .actionDropDrown a:last-child {
@@ -2260,6 +2262,12 @@ label.label-style {
   box-shadow: none !important;
 }
 
+.ws-country{
+  width: 25%;
+}
+.ws-number{
+  width: 80%;
+}
 
 /******Custom Dashbord start********/
 .profile-header {
@@ -2302,9 +2310,20 @@ label.label-style {
 }
  .profile-sub-header .box-list ul li {
 	border-left: 1px solid #dedede;
-	display: table-cell;
-	list-style: outside none none;
   padding: 7px 0;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.profile-sub-header .box-list ul li p {
+  margin-bottom: 0;
+}
+.profile-sub-header .box-list ul li.active i {
+  color: #fff !important;
 }
 .profile-sub-header .box-list ul li:first-child {
 	border-left: none;
@@ -2339,7 +2358,9 @@ label.label-style {
   display: block;
 }
 .text-center {
-	text-align: center !important;
+  display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
 }
 .profile-sub-header .box-list ul li:hover {
 	text-decoration: none;
@@ -2362,7 +2383,7 @@ label.label-style {
   align-items: center;
   gap: 10px;
 }
-.profile-sub-header .box-list ul li:hover a .material-icons{
+.profile-sub-header .box-list ul li:hover .material-icons{
   color: #fff !important;
 
 }
@@ -2445,5 +2466,18 @@ label.label-style {
 .projectFolder .projectFolderBottom h2 {
   font-size: 14px;
   color: #616161;
+}
+/******Custom Dashbord end********/
+.profile-header{
+  position: relative;
+}
+
+.headerbtn {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 /******Custom Dashbord end********/

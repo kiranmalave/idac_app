@@ -6,12 +6,13 @@ define([
   'datepickerBT',
   'moment',
   '../views/customerSingleView',
+  '../../dashboard/views/dashboardView',
   '../collections/customerCollection',
   '../models/customerFilterOptionModel',
   'text!../templates/customerRow.html',
   'text!../templates/customer_temp.html',
   'text!../templates/customerFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, moment, customerSingleView, customerCollection, customerFilterOptionModel, customerRowTemp, customerTemp, customerFilterTemp) {
+], function ($, _, Backbone, datepickerBT, moment, customerSingleView, dashboardView, customerCollection, customerFilterOptionModel, customerRowTemp, customerTemp, customerFilterTemp) {
 
   var customerView = Backbone.View.extend({
 
@@ -33,7 +34,7 @@ define([
       }).done(function (res) {
 
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".profile-loader").hide();
+        $(".preloader").hide();
         setPagging(res.paginginfo, res.loadstate, res.msg);
       });
 
@@ -44,7 +45,7 @@ define([
         }, error: selfobj.onErrorHandler, data: { status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".popupLoader").hide();
+        $(".preloader").hide();
         // selfobj.render();
       });
       this.collection = searchCustomer;
@@ -161,6 +162,10 @@ define([
           var customersingleView = new customerSingleView({ customer_id: customer_id, searchCustomer: this });
           break;
         }
+        case "dashboard":{
+          var customer_id = $(e.currentTarget).attr("data-customer_id");
+          new dashboardView({ customer_id: customer_id})
+        }
       }
     },
     sortColumn: function (e) {
@@ -192,6 +197,8 @@ define([
       //filterOption.reset();
       filterOption.clear().set(filterOption.defaults);
       $(".multiOptionSel").removeClass("active");
+      $(".nav-item").removeClass("active");
+
       // $("#textval").val("");
       $(".filterClear").val("");
       $(".hidetextval").hide();
@@ -344,6 +351,7 @@ define([
       filterOption.set({ curpage: 0 });
       var $element = $('#loadMember');
       $(".profile-loader").show();
+      $(".ws_filterOptions").removeClass("open");
       $element.attr("data-index", 1);
       $element.attr("data-currPage", 0);
 
