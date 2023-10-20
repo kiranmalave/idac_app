@@ -22,7 +22,7 @@
   <div class="clearfix">&nbsp;</div>
   <div class="row">
     <div class="col-md-6">
-      <select id="company" class="form-control dropval ws-select show-tick txtchange" name="textSearch" data-live-search="true">
+      <select id="company" class="form-control dropval ws-select show-tick txtchange" name="textSearch" data-live-search="true" >
         <option class="disabled">Company Name</option>
         <% _.each(customerList, function(model1) { %>
           <option value="<%=model1.attributes.company_name%>">

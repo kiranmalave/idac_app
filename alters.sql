@@ -7,8 +7,14 @@ ALTER TABLE `ab_customer` CHANGE `birth_date` `adhar_number` INT(15) NULL DEFAUL
 ALTER TABLE `ab_customer` CHANGE `salutation` `pan_number` VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
 ALTER TABLE `ab_customer` CHANGE `type` `website` VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
 UPDATE `ab_menu_master` SET `menuName` = 'Company/Clients' WHERE `ab_menu_master`.`menuID` = 67;
+
+
+
+
 ALTER TABLE `ab_project` CHANGE `client_name` `client_id` INT(10) NOT NULL;
 ALTER TABLE `ab_customer` ADD `billing_name` VARCHAR(500) NOT NULL AFTER `person_name`, ADD `billing_address` VARCHAR(500) NOT NULL AFTER `billing_name`, ADD `branch_id` VARCHAR(200) NOT NULL AFTER `billing_address`;
+ALTER TABLE `ab_customer` ADD `country_code` VARCHAR(50) NOT NULL AFTER `address`;
+ALTER TABLE `ab_customer` CHANGE `adhar_number` `adhar_number` VARCHAR(15) NULL DEFAULT NULL;
 
 
 

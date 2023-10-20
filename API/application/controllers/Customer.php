@@ -144,6 +144,8 @@
 				$customerDetails['billing_name'] = $this->validatedata->validate('billing_name', 'Billing Name', false, '', array());
 				$customerDetails['billing_address'] = $this->validatedata->validate('billing_address', 'Billing Address', false, '', array());
 				$customerDetails['branch_id'] = $this->validatedata->validate('branch_id', 'branch Id', false, '', array());
+				$customerDetails['country_code'] = $this->validatedata->validate('country_code', 'country code', false, '', array());
+
 			}
 			switch ($method) {
 				case "PUT": {
