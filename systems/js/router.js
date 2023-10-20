@@ -27,6 +27,8 @@ define([
   'plugin/themeOption/views/themeOptionView',
   'plugin/task/views/taskView',
   'plugin/customer/views/customerView',
+  // 'plugin/proposal/views/projectSingleView',
+  // 'plugin/project/views/proposalSingleView',
   'plugin/branch/views/branchView',
   'plugin/proposal/views/proposalView',
   'plugin/project/views/projectView',
@@ -79,6 +81,8 @@ define([
       'dynamicForms': 'dynamicFormsView',
       'formMaster': 'formMasterView',
       'formQuestions/:formID': 'formQuestionsView',
+      'projectpage/:customer_id': 'projectView',
+      'proposalpage/:customer_id': 'proposalView',
       '*actions': 'defaultAction'
     }
   });
@@ -318,6 +322,7 @@ define([
         //setsidbar();
       }
     });
+   
 
     app_router.on('route:proposalTemplateView', function (action) {
       var validate = preTemp();

@@ -2229,9 +2229,11 @@ label.label-style {
 .actionDropDrown a {
   padding: 10px 11px;
   border-bottom: 1px solid #e0e0e0;
+  cursor: pointer;
 }
 .actionDropDrown a:hover{
   background-color: rgba(0,0,0,0.1);
+  cursor: pointer;
 }
 
 .actionDropDrown a:last-child {
@@ -2260,6 +2262,12 @@ label.label-style {
   box-shadow: none !important;
 }
 
+.ws-country{
+  width: 30%;
+}
+.ws-number{
+  width: 80%;
+}
 
 /******Custom Dashbord start********/
 .profile-header {

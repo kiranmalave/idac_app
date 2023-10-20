@@ -19,6 +19,7 @@ define([
       email: null,
       website: null,
       address: null,
+      country_code:null,
       customer_image: null,
       status: 'active',
     },

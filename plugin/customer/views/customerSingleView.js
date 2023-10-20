@@ -108,7 +108,7 @@ define([
     },
     setOldValues: function () {
       var selfobj = this;
-      setvalues = ["type"];
+      setvalues = ["status"];
       selfobj.multiselectOptions.setValues(setvalues, selfobj);
     },
     getSelectedFile: function (url) {
@@ -189,6 +189,18 @@ define([
           minlength: 15,
           maxlength: 15,
         },
+        mobile_no: {
+          minlength: 10,
+          maxlength: 10,
+        },
+        adhar_number: {
+          minlength: 12,
+          maxlength: 12,
+        },
+        pan_number: {
+          minlength: 10,
+          maxlength: 10,
+        },
         // person_name: {
         //   required: true,
         // },
@@ -220,8 +232,9 @@ define([
         company_name: "Please enter Company Name",
       };
       $("#mobile_no").inputmask("Regex", { regex: "^[0-9](\\d{1,9})?$" });
-      $("#adhar_number").inputmask("Regex", { regex: "^[0-9]{4}[ -]?[0-9]{4}[ -]?[0-9]{4}$" });
-    //  $("#GST_no").inputmask("Regex", { regex: "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9]{1}[A-Z]{2}$" });
+      $("#adhar_number").inputmask("Regex", { regex: "^[0-9](\\d{1,11})?$" });
+      $("#GST_no").inputmask("Regex", { regex: "^[A-Za-z0-9]*$" });
+      $("#pan_number").inputmask("Regex", { regex: "^[A-Za-z0-9]*$" });
       $("#customerDetails").validate({
         rules: feildsrules,
         messages: messages,

@@ -192,6 +192,8 @@ define([
       //filterOption.reset();
       filterOption.clear().set(filterOption.defaults);
       $(".multiOptionSel").removeClass("active");
+      $(".nav-item").removeClass("active");
+
       // $("#textval").val("");
       $(".filterClear").val("");
       $(".hidetextval").hide();
@@ -344,6 +346,7 @@ define([
       filterOption.set({ curpage: 0 });
       var $element = $('#loadMember');
       $(".profile-loader").show();
+      $(".ws_filterOptions").removeClass("open");
       $element.attr("data-index", 1);
       $element.attr("data-currPage", 0);
 
