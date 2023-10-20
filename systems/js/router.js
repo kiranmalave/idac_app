@@ -27,7 +27,7 @@ define([
   'plugin/themeOption/views/themeOptionView',
   'plugin/task/views/taskView',
   'plugin/customer/views/customerView',
-  // 'plugin/proposal/views/projectSingleView',
+  'plugin/dashboard/views/dashboardView',
   // 'plugin/project/views/proposalSingleView',
   'plugin/branch/views/branchView',
   'plugin/proposal/views/proposalView',
@@ -44,7 +44,7 @@ define([
   'text!../templates/appFull_temp.html',
   'text!../templates/sideNav_temp.html',
   'text!../templates/topNav_temp.html',
-], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormSingleView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView,branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
+], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormSingleView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, dashboardView, branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
 
   var AppRouter = Backbone.Router.extend({
     routes: {
@@ -65,6 +65,7 @@ define([
       'addnewpage/:pageID': "addpage",
       'addnewblog/:blogID': "addblog",
       'customer': 'customerView',
+      'customerDashboard/:customer_id': 'dashboardView',
       'branch': 'branchView',
       'proposal': 'proposalView',
       'proposalTemplate': 'proposalTemplateView',
@@ -297,6 +298,13 @@ define([
       var validate = preTemp();
       if (validate) {
         new customerView({ action: action });
+        //setsidbar();
+      }
+    });
+    app_router.on('route:dashboardView', function (action) {
+      var validate = preTemp();
+      if (validate) {
+        new dashboardView({ action: action });
         //setsidbar();
       }
     });
