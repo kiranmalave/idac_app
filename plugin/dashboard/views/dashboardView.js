@@ -5,9 +5,10 @@ define([
   'custom',
   '../models/dashboardModel',
   '../views/filterdataView',
+  '../../customer/views/customerSingleView',
   '../views/addUserView',
   'text!../templates/dashboard_temp.html',
-], function ($, _, Backbone, custom, dashboardModel, filterUser, addUserView, dashBoard_temp) {
+], function ($, _, Backbone, custom, dashboardModel, filterUser, customerSingleView, addUserView, dashBoard_temp) {
 
   var dashboardView = Backbone.View.extend({
     model: dashboardModel,
@@ -123,7 +124,7 @@ define([
       "change .saveOtherDetail": "updateDetails",
       "click .getPaymentData": "getPaymentDetails",
       "click .showOverlay": "showOverlay",
-      
+      "click .loadview" : "loadSubView",
       "click .tablinks": "tablinks",
     },
     onErrorHandler: function (collection, response, options) {
@@ -136,6 +137,15 @@ define([
     updateNote: function (e) {
       var note = $(e.currentTarget).val();
       this.model.set({ note: note });
+    },
+    loadSubView:function(e){
+      var show = $(e.currentTarget).attr("data-view");
+      switch(show){
+        case "singlecustomerview":{
+          new customerSingleView({loadfrom:"dashboard"});
+        }
+
+      }
     },
     showOverlay: function (e) {
       var view = $(e.currentTarget).data("view");
