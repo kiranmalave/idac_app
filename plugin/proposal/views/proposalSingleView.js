@@ -80,7 +80,7 @@ define([
       this.projectList.fetch({
        headers: {
          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status:'active'}
+        }, error: selfobj.onErrorHandler, data: {status:'active'}
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
@@ -331,6 +331,7 @@ define([
       $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
       this.initializeValidate();
       this.setOldValues();
+      $(".ws-select").selectpicker();
       this.attachEvents();
       rearrageOverlays("Proposals", this.toClose);
       var __toolbarOptions = [

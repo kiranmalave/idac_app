@@ -2530,3 +2530,6 @@ div:where(.swal2-icon) .swal2-icon-content {
   font-size: 50px !important;
 }
 /******Custom Dashbord end********/
+.ws-disable-cursor{
+  cursor:not-allowed;
+}
