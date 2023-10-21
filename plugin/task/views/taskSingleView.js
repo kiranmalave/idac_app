@@ -16,6 +16,7 @@ define([
   '../../category/views/categorySingleView',
   "../../dynamicForm/views/dynamicFieldRender",
   "../../customer/collections/customerCollection",
+  "../../project/collections/projectCollection",
   "../../category/collections/slugCollection",
   "../../admin/collections/adminCollection",
   "../collections/taskCollection",
@@ -24,7 +25,7 @@ define([
   "../models/singleTaskModel",
   "../models/commentModel",
   "text!../templates/taskSingle_temp.html",
-], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, moment, repeatTaskCustomView, commentSingleView, historySingleView, customerSingleView, addAdminView, multiselectOptions, categorySingleView, dynamicFieldRender, customerCollection, slugCollection, adminCollection, taskCollection, commentCollection, readFilesView, singleTaskModel, commentModel, tasktemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, moment, repeatTaskCustomView, commentSingleView, historySingleView, customerSingleView, addAdminView, multiselectOptions, categorySingleView, dynamicFieldRender, customerCollection,projectCollection, slugCollection, adminCollection, taskCollection, commentCollection, readFilesView, singleTaskModel, commentModel, tasktemp) {
   var taskSingleView = Backbone.View.extend({
     model: singleTaskModel,
     enteredWatchersArray: [],
@@ -36,6 +37,7 @@ define([
       this.toClose = "taskSingleView";
       this.tagID = null;
       var selfobj = this;
+      $(".popuploader").show();
       this.pluginName = "taskList";
       this.loggedInID = $.cookie("authid");
       this.userRoll = $.cookie('roleOfUser');
@@ -46,7 +48,6 @@ define([
       this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {}, });
       this.multiselectOptions = new multiselectOptions();
       scanDetails = options.searchtask;
-      $(".popupLoader").show();
       if (options.task_id != "") {
         this.model.set({ task_id: options.task_id });
 
@@ -61,7 +62,7 @@ define([
             selfobj.model.set({ "start_date": moment(startDate).format("DD-MM-YYYY") });
           }
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          $(".popupLoader").hide();
+          // $(".popupLoader").hide();
           selfobj.render();
         });
       }
@@ -72,9 +73,21 @@ define([
         }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".popupLoader").hide();
+        // $(".popupLoader").hide();
         selfobj.render();
       });
+
+      this.projectList = new projectCollection();
+      this.projectList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: {  status: "active" }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        // $(".popupLoader").hide();
+        selfobj.render();
+      });
+
       this.categoryList = new slugCollection();
       this.categoryList.fetch({
         headers: {
@@ -82,7 +95,7 @@ define([
         }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y', slug: 'task_priority,task_type,task_status' }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".popupLoader").hide();
+        // $(".popupLoader").hide();
         selfobj.render();
       });
 
@@ -93,7 +106,7 @@ define([
         }, error: selfobj.onErrorHandler, type: 'post', data: { status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".profile-loader").hide();
+        // $(".profile-loader").hide();
         selfobj.render();
       });
       this.getCommentList()
@@ -111,7 +124,7 @@ define([
           }, error: selfobj.onErrorHandler, type: 'post', data: { status: "active", getAll: 'Y', task_id: task_id }
         }).done(function (res) {
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          $(".popupLoader").hide();
+          // $(".popupLoader").hide();
           selfobj.render();
         });
       }
@@ -127,8 +140,8 @@ define([
       "click .saveComment": "saveComment",
       "click .loadview": "loadSubView",
       "click .cancelPost": "cancelPost",
-      "change .ql-editor": "showPostbtn",
       "click .deleteAttachment": "deleteAttachment",
+      "click .scroll": "scroll",
     },
     attachEvents: function () {
       // Detach previous event bindings
@@ -155,10 +168,10 @@ define([
       this.$el.on('click', '.comment-box', this.showCommentBox.bind(this));
       this.$el.off('click', '.cancelPost', this.cancelPost);
       this.$el.on('click', '.cancelPost', this.cancelPost.bind(this));
-      this.$el.off('change', '.ql-editor', this.showPostbtn);
-      this.$el.on('change', '.ql-editor', this.showPostbtn.bind(this));
       this.$el.off('click', '.deleteAttachment', this.deleteAttachment);
       this.$el.on('click', '.deleteAttachment', this.deleteAttachment.bind(this));
+      this.$el.off('click', '.scroll', this.scroll);
+      this.$el.on('click', '.scroll', this.scroll.bind(this));
     },
     showCommentBox: function (e) {
       let selfobj = this;
@@ -199,33 +212,48 @@ define([
     deleteAttachment: function (e) {
       let file_id = $(e.currentTarget).attr("data-file_id");
       let task_id = this.model.get("task_id");
-      let status = "delete";
       let div = document.getElementById('removeIMG');
-      console.log("file id" +file_id);
-      console.log("task id" +task_id);
-      $.ajax({
-        url: APIPATH + 'taskMaster/removeAttachment',
-        method: 'POST',
-        data: { fileID: file_id, status: status, taskID: task_id },
-        datatype: 'JSON',
-        beforeSend: function (request) {
-          request.setRequestHeader("token", $.cookie('_bb_key'));
-          request.setRequestHeader("SadminID", $.cookie('authid'));
-          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
-          request.setRequestHeader("Accept", 'application/json');
-        },
-        success: function (res) {
-          if (res.flag == "F")
-            alert(res.msg);
+      let status = "delete";
+      let selfobj = this;
+      // console.log("file id" + file_id);
+      // console.log("task id" + task_id);
 
-          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          if (res.flag == "S") {
-            scanDetails.filterSearch();
+      if (file_id != null) {
+        $.ajax({
+          url: APIPATH + 'taskMaster/removeAttachment',
+          method: 'POST',
+          data: { fileID: file_id, status: status, taskID: task_id },
+          datatype: 'JSON',
+          beforeSend: function (request) {
+            request.setRequestHeader("token", $.cookie('_bb_key'));
+            request.setRequestHeader("SadminID", $.cookie('authid'));
+            request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+            request.setRequestHeader("Accept", 'application/json');
+          },
+          success: function (res) {
+            if (res.flag == "F")
+              alert(res.msg);
 
+            if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+            if (res.flag == "S") {
+              scanDetails.filterSearch();
+
+            }
+            div.remove();
+            selfobj.model.set({ "attachment_file": "" });
+            console.log(selfobj.model);
           }
-          div.remove();
-        }
-      });
+        });
+      } else {
+        div.remove();
+        selfobj.model.set({ "attachment_file": "" });
+        console.log(selfobj.model);
+      }
+    },
+    scroll: function (e) {
+      $('.taskSingleView').animate({
+        scrollTop: $('.task-nav-tab').offset().top
+      }, 500); //
     },
     cancelPost: function (e) {
       // Clear the content inside the Quill editor
@@ -233,9 +261,6 @@ define([
       quill.setText('');
       $(".comment-box").show();
       $(".commentEditor").hide();
-    },
-    showPostbtn: function () {
-      alert("herer");
     },
     onErrorHandler: function (collection, response, options) {
       alert(
@@ -281,14 +306,13 @@ define([
       fName = furl[furl.length - 1];
       this.attachedDocURLArray.push({ url: fName });
       ftext = fName.split(".");
-      if (ftext[2] == "xls" || ftext[2] == "xlsx") {
+      // console.log(furl);
+      if (ftext[1] == "xls" || ftext[1] == "xlsx") {
         fName = "excel.png";
-      } else if (ftext[2] == "pdf") {
+      } else if (ftext[1] == "pdf") {
         fName = "pdf.png";
       }
-      docUrl = "<div class='col-xl-2 col-lg-3 col-md-4 col-sm-12 m-b-20' data-show='singleFile' data-url='" + UPLOADS + "/" + fName + "'><div class='thumbnail'><div class='centered'><img class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + "/" + fName + "' alt=''></div></div></div>";
-      // $('.' + this.elm).val(url);
-      // $('.' + this.elm).change();
+      docUrl = "<div class='col-xl-2 col-lg-3 col-md-4 col-sm-12 m-b-20' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><a href='" + url + "' target='_blank'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + "/" + fName + "' alt=''></a><span class='closeTab deleteAttachment'><span class='material-icons'>delete</span></span></div></div></div>";
       document.getElementById("attachedDoc").innerHTML += docUrl;
       $('#largeModal').modal('toggle');
       this.model.set({ "attachment_file": this.attachedDocURLArray });
@@ -302,7 +326,7 @@ define([
     loadSubView: function (e) {
       var selfobj = this;
       var show = $(e.currentTarget).attr("data-view");
-      console.log(e.currentTarget);
+      // console.log(e.currentTarget);
       switch (show) {
         case "taskData": {
           let task_id = $(e.currentTarget).attr("data-task_id");
@@ -382,7 +406,7 @@ define([
         }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".popupLoader").hide();
+        // $(".popupLoader").hide();
         selfobj.render();
       });
     },
@@ -406,7 +430,7 @@ define([
         }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y', slug: 'task_priority,task_type,task_status' }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".popupLoader").hide();
+        // $(".popupLoader").hide();
         selfobj.render();
       });
     },
@@ -414,7 +438,6 @@ define([
       e.preventDefault();
       let selfobj = this;
       let isNew = $(e.currentTarget).attr("data-action");
-      console.log(selfobj.model);
       let mid = "";
       isNew = "new";
       if (mid == "" || mid == null) {
@@ -436,7 +459,7 @@ define([
     },
     addWatchers: function () {
       let selfobj = this;
-      tagApi = $(".tm-input").tagsManager();
+      // tagApi = $(".tm-input").tagsManager();
       $("#typehead").typeahead({
         name: 'tags',
         displayKey: 'name',
@@ -458,21 +481,19 @@ define([
               $(".textLoader").hide();
               let result = [];
               if (res != "") {
-                console.log(res.data);
+                // console.log(res.data);
                 selfobj.tempRes = res.data;
                 $.each(res.data, function (dd, value) {
                   str = value.adminID + " - " + value.name;
                   result.push(str);
                   selfobj.tagID = value.adminID;
                 });
-                //let result = res.data.filter((function (rr) {
-                //return rr.email;
               }
               return process(result);
 
             }
           });
-          console.log(JSON.stringify(listName));
+          // console.log(JSON.stringify(listName));
           return listName;
         },
         afterSelect: function (item) {
@@ -480,7 +501,7 @@ define([
           $("#typehead").val("");
           selfobj.enteredWatchersArray.push({ name: item, id: selfobj.tagID });
           selfobj.model.set({ "tasksWatchers": selfobj.enteredWatchersArray });
-          console.log(selfobj.model);
+          // console.log(selfobj.model);
         }
       });
 
@@ -539,7 +560,7 @@ define([
       var selfobj = this;
       var feilds = {
         subject: {
-          required: true
+          required: true,
         },
         description: {
           required: true
@@ -638,8 +659,8 @@ define([
       var source = tasktemp;
       var template = _.template(source);
       $("#" + this.toClose).remove();
-      console.log(this.model);
-      this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID }))
+      // console.log(this.model);
+      this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID, "projectList":this.projectList.models, }))
       this.$el.addClass("tab-pane in active panel_overflow");
       this.$el.attr("id", this.toClose);
       this.$el.addClass(this.toClose);
@@ -691,18 +712,20 @@ define([
           const fName = attachment_file[i];
           const ftext = fName.split(".");
           let modifiedFName = fName;
-          if (ftext[2] === "xls" || ftext[2] === "xlsx") {
+          if (ftext[1] === "xls" || ftext[1] === "xlsx") {
             modifiedFName = "excel.png";
-          } else if (ftext[2] === "pdf") {
+          } else if (ftext[1] === "pdf") {
             modifiedFName = "pdf.png";
           } else {
             // Handle other cases if needed
           }
           const file_ids = file_id[i];
-          docUrl += "<div class='col-xl-2 col-lg-3 col-md-4 col-sm-12 m-b-20' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + "/" + modifiedFName + "' alt=''><span class='closeTab deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div>";
+          docUrl += "<div class='col-xl-2 col-lg-3 col-md-4 col-sm-12 m-b-20' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><a href='" + UPLOADS + "/" + attachment_file + "' target='_blank'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + "/" + modifiedFName + "' alt=''></a><span class='closeTab deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div>";
         }
         document.getElementById("attachedDoc").innerHTML += docUrl;
+
       }
+      $('#taskCom li:first-child a').tab('show');
       return this;
     },
 

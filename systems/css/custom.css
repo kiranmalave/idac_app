@@ -2523,4 +2523,10 @@ label.label-style {
   padding: 5px 0;
   margin-top: 0;
 }
+
+div:where(.swal2-icon) .swal2-icon-content {
+  display: flex;
+  align-items: center;
+  font-size: 50px !important;
+}
 /******Custom Dashbord end********/

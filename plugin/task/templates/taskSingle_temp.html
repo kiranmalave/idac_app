@@ -1,8 +1,32 @@
 <div class="tab-pane in active">
+    <div class="popuploader" style="display: none;">
+        <div class="profile-loader text-center circleloader">
+            <div class="preloader">
+                <div class="spinner-layer pl-amber">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <form id="taskDetails" name="taskDetails" action="#">
         <div class="text-right actionBtns mt-2">
-            <button type="button" class="btn bg-indigo saveTaskDetails" data-action="close">Save</button>
-            <button type="button" class="btn bg-indigo saveTaskDetails" data-action="new">Save & new</button>
+            <%if(model.task_id !=null){%>
+                <div class="taskAction">
+                    <span class="input-group-addon lg mr-2 scroll" data-scroll="comment">
+                        <i class="material-icons">chat</i>
+                    </span>
+                    <span class="input-group-addon lg scroll" data-scroll="history">
+                        <i class="material-icons">history</i>
+                    </span>
+                </div>
+                <%}%>
+                    <button type="button" class="btn bg-indigo saveTaskDetails" data-action="close">Save</button>
+                    <button type="button" class="btn bg-indigo saveTaskDetails" data-action="new">Save & new</button>
         </div>
         <div class="row ws-task-main-container">
             <div class="col-md-8 ws-task-container">
@@ -99,15 +123,19 @@
                                         <select for="task_priority" id="task_priority" name="task_priority"
                                             title="Task priority"
                                             class="form-control dropval ws-select show-tick repeatChange">
-                                            <option class="addNew" value="addPriority">Add Priority</option>
-                                            <% _.each(categoryList, function(modelcat) { %>
-                                                <% if(modelcat.attributes.slug=="task_priority" )
-                                                    _.each(modelcat.attributes.sublist, function(model1) { %>
-                                                    <option <% if(model1.category_id==model.task_priority ){ %>selected
-                                                        <% } %>value="<%=model1.category_id%>"><%=model1.categoryName%>
-                                                    </option>
-                                                    <%})%>
-                                                        <%})%>
+                                            <%if(permission.add=="yes" ) { %>
+                                                <option class="addNew" value="addPriority">Add Priority</option>
+                                                <%}%>
+                                                    <% _.each(categoryList, function(modelcat) { %>
+                                                        <% if(modelcat.attributes.slug=="task_priority" )
+                                                            _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                            <option <% if(model1.category_id==model.task_priority ){ %>
+                                                                selected
+                                                                <% } %>value="<%=model1.category_id%>">
+                                                                        <%=model1.categoryName%>
+                                                            </option>
+                                                            <%})%>
+                                                                <%})%>
                                         </select>
                                     </div>
                                 </div>
@@ -115,18 +143,22 @@
                             <div class="col-md-4">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <select id="task_type" name="category_id" class="form-control dropval ws-select"
+                                        <select id="task_type" name="task_type" class="form-control dropval ws-select"
                                             title="Task Type">
-                                            <option class="addNew" value="addType">Add Type</option>
-                                            <% _.each(categoryList, function(modelcat) { %>
-                                                <% if(modelcat.attributes.slug=="task_type" )
-                                                    _.each(modelcat.attributes.sublist, function(model1) { %>
-                                                    <option <% if(model1.category_id==model.task_type ){ %> selected
-                                                        <% } %>
-                                                            value="<%=model1.category_id%>"><%=model1.categoryName%>
-                                                    </option>
-                                                    <%})%>
-                                                        <%})%>
+                                            <%if(permission.add=="yes" ) { %>
+                                                <option class="addNew" value="addType">Add Type</option>
+                                                <%}%>
+                                                    <% _.each(categoryList, function(modelcat) { %>
+                                                        <% if(modelcat.attributes.slug=="task_type" )
+                                                            _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                            <option <% if(model1.category_id==model.task_type ){ %>
+                                                                selected
+                                                                <% } %>
+                                                                    value="<%=model1.category_id%>">
+                                                                        <%=model1.categoryName%>
+                                                            </option>
+                                                            <%})%>
+                                                                <%})%>
                                         </select>
                                     </div>
                                 </div>
@@ -136,17 +168,20 @@
                                     <div class="form-line">
                                         <select id="task_status" name="task_status"
                                             class="form-control dropval ws-select" title="Task Status">
-                                            <option class="addNew" value="addStatus">Add Status</option>
-                                            <% _.each(categoryList, function(modelcat) { %>
-                                                <% if(modelcat.attributes.slug=="task_status" )
-                                                    _.each(modelcat.attributes.sublist, function(model1) { %>
-                                                    <option <% if(model1.category_id==model.task_status ){ %>
-                                                        selected
-                                                        <% } %>
-                                                            value="<%=model1.category_id%>"><%=model1.categoryName %>
-                                                    </option>
-                                                    <%})%>
-                                                        <%})%>
+                                            <%if(permission.add=="yes" ) { %>
+                                                <option class="addNew" value="addStatus">Add Status</option>
+                                                <%}%>
+                                                    <% _.each(categoryList, function(modelcat) { %>
+                                                        <% if(modelcat.attributes.slug=="task_status" )
+                                                            _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                            <option <% if(model1.category_id==model.task_status ){ %>
+                                                                selected
+                                                                <% } %>
+                                                                    value="<%=model1.category_id%>">
+                                                                        <%=model1.categoryName %>
+                                                            </option>
+                                                            <%})%>
+                                                                <%})%>
                                         </select>
                                     </div>
                                 </div>
@@ -169,11 +204,17 @@
                                     <div class="from-line">
                                         <select id="customer_id" name="customer_id"
                                             class="form-control dropval ws-select show-tick" title="Select Customer">
-                                            <option class="addNew" value="addCustomer">Add customer </option>
-                                            <% _.each(customerList, function(model1) { %>
-                                                <option <% if(model1.attributes.customer_id==model.customer_id ) { %>
-                                                    selected <% } %>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.first_name%> <%=model1.attributes.last_name%></option>
-                                                <%}); %>
+                                            <%if(permission.add=="yes" ) { %>
+                                                <option class="addNew" value="addCustomer">Add customer </option>
+                                                <%}%>
+                                                    <% _.each(customerList, function(model1) { %>
+
+                                                        <option <% if(model1.attributes.customer_id==model.customer_id )
+                                                            { %>
+                                                            selected <% } %>value="<%=model1.attributes.customer_id%>">
+                                                                    <%=model1.attributes.company_name%>
+                                                        </option>
+                                                     <%}); %>
                                         </select>
                                     </div>
                                 </div>
@@ -187,21 +228,27 @@
                                         <select for="assignee" id="assignee" name="assignee"
                                             class="form-control dropval ws-select show-tick" title="Select Assignee"
                                             <%if(userRoll!=101 ){%>disabled<%}%>>
-                                                <option class="addNew" value="addAssignee">Add Assignee</option>
-                                                <% _.each(adminList, function(model1) { %>
-                                                    <% if(model.task_id==undefined ){%>
-                                                        <option <%if(model1.attributes.adminID==loggedInID ){%>selected
-                                                            <%}%>
-                                                                value="<%=model1.attributes.adminID%>">
-                                                                    <%=model1.attributes.name%>
-                                                        </option>
-                                                        <%}else{%>
-                                                            <option <% if(model1.attributes.adminID==model.assignee ){%>
-                                                                selected<%}%> value="<%=model1.attributes.adminID%>">
-                                                                        <%=model1.attributes.name%>
-                                                            </option>
-                                                            <%}%>
-                                                                <%}); %>
+                                                <%if(permission.add=="yes" ) { %>
+                                                    <option class="addNew" value="addAssignee">Add Assignee</option>
+                                                    <%}%>
+                                                        <% _.each(adminList, function(model1) { %>
+                                                            <% if(model.task_id==undefined ){%>
+                                                                <option <%if(model1.attributes.adminID==loggedInID ){%>
+                                                                    selected
+                                                                    <%}%>
+                                                                        value="<%=model1.attributes.adminID%>">
+                                                                            <%=model1.attributes.name%>
+                                                                </option>
+                                                                <%}else{%>
+                                                                    <option <%
+                                                                        if(model1.attributes.adminID==model.assignee
+                                                                        ){%>
+                                                                        selected<%}%> value="
+                                                                            <%=model1.attributes.adminID%>">
+                                                                                <%=model1.attributes.name%>
+                                                                    </option>
+                                                                    <%}%>
+                                                                        <%}); %>
                                         </select>
                                     </div>
                                 </div>
@@ -209,6 +256,33 @@
                         </div>
                     </div>
                 </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <span class="input-group-addon lg" style="margin-top:8px;">
+                                <i class="material-icons">group</i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-float">
+                                    <div class="from-line">
+                                        <select id="project_id" name="project_id" class="form-control dropval ws-select show-tick mt-2" title="Select Project" data-live-search="true"data-live-search="true">
+                                            <% _.each(projectList, function(model1) { %>
+                                                    <option <% if(model1.attributes.project_id == model.project_id ) { %>selected
+                                                        <%}%>value="<%=model1.attributes.project_id%>"><%=model1.attributes.project_name%></option>
+                                             <%}); %>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
                 <%if(model.task_id !=null){%>
                     <div class="list-row">
                         <div class="icon-left">
@@ -253,18 +327,6 @@
                                                         <span class="material-icons">add</span>
                                                     </button>
                                         </div>
-
-                                    </div>
-
-                                    <div class="ws-repeatTask" <%if(model.does_repeat=="custom" ){%>
-                                        style="display:block;"<%}else{%>style="display: none;"<%}%> >
-                                                <button type="button" class="loadCustom ws-repeatTaskbtn bg-white"
-                                                    data-item="repeatTaskCustomView" data-view="repeatTask"
-                                                    data-task_id="<%=model.task_id%>" data-toggle="modal"
-                                                    data-target="#defaultModal">
-                                                    <span class="material-icons">add</span>
-                                                </button>
-
                                     </div>
                                 </div>
                             </div>
@@ -279,7 +341,7 @@
                         <div class="right-layout">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <p class="mt-2">Attach Document</p>
+                                    <p class="mt-2">Attachments</p>
                                 </div>
                                 <button <% if(model.task_id==undefined ){%>disabled <%}%> type="button" class="loadMedia
                                         ws-taskModalbtn" data-change="ws-bg-image"
@@ -289,7 +351,7 @@
                             <div id="attachedDoc" class="row"></div>
                         </div>
                     </div>
-                    <ul class="nav nav-tabs task-nav-tab">
+                    <ul id="taskCom" class="nav nav-tabs task-nav-tab">
                         <li class="nav-item"><a class="nav-link loadview" data-view="singleCommentData"
                                 data-task_id="<%=model.task_id%>" data-toggle="tab" href="">Comments</a></li>
                         <li class="nav-item"><a class="nav-link loadview" data-view="singleHistoryData"
@@ -302,6 +364,7 @@
                                 <div class="ws-icon">
                                     <span class="input-group-addon lg">
                                         <i class="material-icons">rate_review</i>
+                                    </span>
                                 </div>
                             </div>
                             <div class="right-layout ws-quill">
@@ -376,7 +439,7 @@
                                     </div>
                         </div>
                     </div>
-                    <% } %>
+                <% } %>
             </div>
             <div class="col-md-4 ws-assignee-container">
                 <div class="row">
