@@ -10,10 +10,12 @@ define([
   '../../core/views/multiselectOptions',
   '../../dynamicForm/views/dynamicFieldRender',
   '../collections/proposalCollection',
+  "../../customer/collections/customerCollection",
+  "../../project/collections/projectCollection",
   '../models/proposalSingleModel',
   '../../readFiles/views/readFilesView',
   'text!../templates/proposalSingle_temp.html',
-], function ($, _, Backbone, validate, inputmask, datepickerBT, moment,Swal, multiselectOptions, dynamicFieldRender, proposalCollection, proposalSingleModel, readFilesView, proposaltemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, moment,Swal, multiselectOptions, dynamicFieldRender, proposalCollection,customerCollection,projectCollection, proposalSingleModel, readFilesView, proposaltemp) {
   var proposalSingleView = Backbone.View.extend({
     model: proposalSingleModel,
     initialize: function (options) {
@@ -62,6 +64,29 @@ define([
           selfobj.setOldValues();
         });
       }
+
+      this.customerList = new customerCollection();
+      this.customerList.fetch({
+       headers: {
+         'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status:'active'}
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        selfobj.render();
+      });
+
+      this.projectList = new projectCollection();
+      this.projectList.fetch({
+       headers: {
+         'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status:'active'}
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        selfobj.render();
+      });
+
     },
     events: {
       "click .saveproposalDetails": "saveproposalDetails",
@@ -114,7 +139,7 @@ define([
     },
     setOldValues: function () {
       var selfobj = this;
-      setvalues = ["type"];
+      setvalues = ["status"];
       selfobj.multiselectOptions.setValues(setvalues, selfobj);
     },
     getSelectedFile: function (url) {
@@ -295,7 +320,7 @@ define([
       var source = proposaltemp;
       var template = _.template(source);
       $("#" + this.toClose).remove();
-      this.$el.html(template({ model: this.model.attributes }));
+      this.$el.html(template({ model: this.model.attributes ,"customerList": this.customerList.models, "projectList":this.projectList.models}));
       this.$el.addClass("tab-pane in active panel_overflow");
       this.$el.attr("id", this.toClose);
       this.$el.addClass(this.toClose);

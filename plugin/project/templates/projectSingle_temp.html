@@ -19,7 +19,7 @@
                                 <div class="form-group form-float">
                                     <div class="form-line">
                                         <label for="project_name" class="form-label"> Project Id</label>
-                                        <input id="project_id" class="form-control txtchange" name="project_id" type="text" value="<%=model.project_id%>">
+                                        <input id="project_id" class="form-control txtchange" name="project_id" type="text" value="">
                                     </div>
                                 </div>
                             </div>
@@ -63,6 +63,27 @@
                                     </select>
                                   </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <div class="input-group ws-input-group"> <span class="input-group-addon ">
+                                    <i class="material-icons"></i> </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="status">Status <span class="error">*</span> :</label>
+                                <ul class="item-container" data-valid="status">
+                                  <li class="status multiSel" data-single="Y" data-value="active">Active</li>
+                                  <li class="status multiSel" data-single="Y" data-value="inactive">InActive</li>
+                                  <li class="status multiSel" data-single="Y" data-value="delete">Delete</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
