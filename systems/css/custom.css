@@ -2480,4 +2480,47 @@ label.label-style {
   border-radius: 50%;
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
+.job_post a{
+  color: #212529;
+  text-decoration: none;
+}
+
+.filterbuttons {
+  float: right;
+  position: absolute;
+  top: 15px;
+  right: 30px
+}
+
+.loadview a {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  /* width: auto; */
+  /* background: #f0f; */
+  /* overflow: hidden; */
+  /* max-width: initial; */
+  margin-right: 14px;
+  text-decoration: none;
+}
+.sno {
+  text-align: center;
+}
+
+.table-striped{
+  margin-bottom: 0;
+}
+
+.buttonborder{
+  padding: 10px 0;
+  border-top:1px s ;
+}
+
+.buttonborder {
+  border-top: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
+  padding: 5px 0;
+  margin-top: 0;
+}
 /******Custom Dashbord end********/

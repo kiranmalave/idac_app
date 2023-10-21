@@ -75,22 +75,24 @@
     <!--tax invoice heade ends-->
     <div class="col-xs-12">
       <table class="table table-striped">
+       
         <tbody class="items-holder">
           <tr id="item-header" class="text-center">
-            <th>SR No.</th>
+            <th style="width: 50px;">SR No.</th>
             <th>Type</th>
             <th style="width: 39%">Description</th>
             <th style="width: 10%">Quantity.</th>
             <th>Unit</th>
             <th>Rate</th>
             <th>Amount</th>
-            <th style="width: 4%"><i class="material-icons" aria-hidden="true">delete_forever</i></th>
+            <!-- <th style="width: 4%"><i class="material-icons" aria-hidden="true">delete_forever</i></th> -->
+            <th style="width: 4%">&nbsp;</th>
           </tr>
           <% if(model.invoiceID != '' && model.invoiceID != null){
             _.each(invoiceLine, function(model) { 
           %>
             <tr id="item-<%=model.srNo%>" class="item-list-box">
-              <td class="sno"><%=model.srNo%></td>
+              <td class="sno text-center"><%=model.srNo%></td>
               <td>
                 <select id="narr_<%=model.srNo%>" name="narr_<%=model.srNo%>" class="form-control dropval setnarr ws-select show-tick repeatChange">
                   <option value="">Type</option>
@@ -109,7 +111,7 @@
               <td class="text-right">
                 <input <% if(model.isEdit =='no'){ %> disabled <% } %> type="text" name="itemRate_<%=model.srNo%>" id="itemRate_<%=model.srNo%>" class="form-control amtChange digits" value="<%=model.invoiceLineRate%>">
               </td>
-              <td class="text-right diginum" id="itemtotal_<%=model.srNo%>"><%=numberFormat(model.invoiceLineAmount,2)%></td>
+              <td class="text-center diginum" id="itemtotal_<%=model.srNo%>"><%=numberFormat(model.invoiceLineAmount,2)%></td>
               <td class="text-right">
                 <% if(model.isEdit !='no'){ %>
                  <button id="itemdel_<%=model.srNo%>" class="del-row btn-small btn-default"><i class="material-icons" aria-hidden="true">delete_forever</i></button>
@@ -121,7 +123,7 @@
           <%  });
           }else{ %>
             <tr id="item-1" class="item-list-box">
-              <td class="sno">1</td>
+              <td class="sno text-center">1</td>
               <td>
                 <select id="narr_1" name="narr_1" class="form-control dropval setnarr">
                   <option value="">Type</option>
@@ -134,16 +136,23 @@
               <td><input type="text" name="itemQuantity_1" id="itemQuantity_1" class="form-control amtChange"></td>
               <td><input type="text" name="itemUnit_1" id="itemUnit_1" class="form-control"></td>
               <td class="text-right"><input type="text" name="itemRate_1" id="itemRate_1" class="form-control amtChange"></td>
-              <td class="text-right diginum" id="itemtotal_1"></td>
-              <td class="text-right">&nbsp;</td>
+              <td class="text-center diginum" id="itemtotal_1"></td>
+              <td class="text-right">
+
+                <% if(model.isEdit !='no'){ %>
+                  <button id="itemdel_<%=model.srNo%>" class="del-row btn-small btn-default"><i class="material-icons" aria-hidden="true">delete_forever</i></button>
+                 <% }else{ %>
+                  &nbsp;
+                 <% } %>
+              </td>
             </tr>
           <% } %>
         </tbody>
       </table>
-      <div class="col-xs-12 text-right">
-        <hr>
+      <div class="col-xs-12 text-right buttonborder">
+        
         <button id="addRow" class="btn btn-default">Add Row</button>
-        <hr>
+     
       </div>
     </div>
     <div class="row">
@@ -153,7 +162,7 @@
       <div class="clearfix">&nbsp;</div>
       <div class="clearfix">&nbsp;</div>
       <div class="clearfix">&nbsp;</div>
-      <div class="col-xs-6">
+      <div class="col-md-6  ml-auto mt-5">
         <div class="table-responsive">
           <table class="table">
             <tbody>
