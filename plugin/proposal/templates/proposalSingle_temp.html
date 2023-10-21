@@ -17,10 +17,47 @@
                     </div>
                     <div class="right-layout">
                         <div class="row">
+                            <div class="col-md-12">       
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <label for="proposal_number" class="form-label pl-2">Proposal Id</label>
+                                        <input id="proposal_number" class="form-control txtchange ws-disable-cursor"  type="text" value="" disabled >
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick" title="Select Client">
+                                        <label for="proposal_name" class="form-label pl-2">Proposal Name</label>
+                                        <input id="proposal_name" class="form-control txtchange" name="proposal_name" type="text" value="<%=model.proposal_name%>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
                                             <% _.each(customerList, function(model1) { %>
                                                     <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected
                                                         <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
@@ -42,14 +79,11 @@
                             <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <select class="form-control dropval ws-select show-tick mt-2" title="Select Client">
-                                            <option>Select Project</option>
-                                            <option>
-                                                test
-                                            </option>
-                                            <option>
-                                                testOne
-                                            </option>
+                                        <select id="project_id" name="project_id" class="form-control dropval ws-select show-tick mt-2" title="Select Project" data-live-search="true"data-live-search="true">
+                                            <% _.each(projectList, function(model1) { %>
+                                                    <option <% if(model1.attributes.project_id == model.project_id ) { %>selected
+                                                        <%}%>value="<%=model1.attributes.project_id%>"><%=model1.attributes.project_name%></option>
+                                             <%}); %>
                                         </select>
                                     </div>
                                 </div>
@@ -69,12 +103,8 @@
                                     <div class="form-line">
                                         <select class="form-control dropval ws-select show-tick mt-2" title="Select Client">
                                             <option>Select Proposal Template</option>
-                                            <option>
-                                                test
-                                            </option>
-                                            <option>
-                                                testOne
-                                            </option>
+                                            <option>test</option>
+                                            <option> testOne </option>
                                         </select>
                                     </div>
                                 </div>
@@ -85,21 +115,18 @@
                 <div class="list-row">
                     <div class="icon-left">
                         <div class="ws-icon">
+                            <span class="input-group-addon lg"><i class="material-icons">sort</i></span>
                         </div>
                     </div>
-                    <div class="right-layout">
+                    <div class="right-layout mb-5">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="form-group form-float">
-                                    <div class="form-line">
-                                        <label for="proposal_name" class="form-label">Proposal Name</label>
-                                        <input id="proposal_name" class="form-control txtchange" name="proposal_name" type="text" value="<%=model.proposal_name%>">
-                                    </div>
-                                </div>
+                                <label for="description">Proposal Description</label>
+                                <div id="description" class="form-control"><%=model.description%></div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>      
                 <div class="list-row">
                     <div class="icon-left">
                         <div class="ws-icon">
@@ -121,26 +148,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="list-row">
-                    <div class="icon-left">
-                        <div class="ws-icon">
-                            <span class="input-group-addon lg"><i class="material-icons">sort</i></span>
-                        </div>
-                    </div>
-                    <div class="right-layout mb-5">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="description">Proposal Description</label>
-                                <div id="description" class="form-control"><%=model.description%></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>      
-
-
             </div>
-
-            
         </div>
     </form>
 </div>

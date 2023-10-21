@@ -15,14 +15,15 @@
                     </div>
                     <div class="right-layout">
                         <div class="row">
-                            <div class="col">       
+                            <div class="col-md-12">       
                                 <div class="form-group form-float">
                                     <div class="form-line">
                                         <label for="project_number" class="form-label">Project Id</label>
-                                        <input id="project_number" class="form-control txtchange disabled"  type="text" value="<%=model.project_number%>" disabled >
+                                        <input id="project_number" class="form-control txtchange ws-disable-cursor"  type="text" value="<%=model.project_number%>" disabled >
                                     </div>
                                 </div>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -33,7 +34,7 @@
                     </div>
                     <div class="right-layout">
                         <div class="row">
-                            <div class="col">       
+                            <div class="col-md-12">       
                                 <div class="form-group form-float">
                                     <div class="form-line">
                                         <label for="project_name" class="form-label"> Project Name</label>
@@ -41,32 +42,12 @@
                                     </div>
                                 </div>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
                 
-                <div class="list-row">
-                    <div class="icon-left">
-                        <div class="ws-icon">
-                        </div>
-                    </div>
-                    <div class="right-layout">
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group form-float">
-                                  <div class="form-line">
-                                    <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick mt-2" title="Select Client">
-                                        <% _.each(customerList, function(model1) { %>
-                                                <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected
-                                                    <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
-                                         <%}); %>
-                                    </select>
-                                  </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
                 <div class="list-row">
                     <div class="icon-left">
                         <div class="ws-icon">
@@ -78,12 +59,16 @@
                     <div class="right-layout">
                         <div class="row">
                             <div class="col-md-12">
-                                <label for="status">Status <span class="error">*</span> :</label>
-                                <ul class="item-container" data-valid="status">
-                                  <li class="status multiSel" data-single="Y" data-value="active">Active</li>
-                                  <li class="status multiSel" data-single="Y" data-value="inactive">InActive</li>
-                                  <li class="status multiSel" data-single="Y" data-value="delete">Delete</li>
-                                </ul>
+                                <div class="form-group form-float">
+                                  <div class="form-line">
+                                    <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
+                                        <% _.each(customerList, function(model1) { %>
+                                                <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected
+                                                    <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
+                                         <%}); %>
+                                    </select>
+                                  </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -110,7 +95,7 @@
                             <span class="input-group-addon lg"><i class="material-icons">sort</i></span>
                         </div>
                     </div>
-                    <div class="right-layout mb-5">
+                    <div class="right-layout">
                         <div class="row">
                             <div class="col-md-12">
                                 <label for="description">Project Description</label>
@@ -120,6 +105,24 @@
                     </div>
                 </div>       
                 <div class="clearfix">&nbsp;</div>      
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="status">Status <span class="error">*</span> :</label>
+                                <ul class="item-container" data-valid="status">
+                                  <li class="status multiSel" data-single="Y" data-value="active">Active</li>
+                                  <li class="status multiSel" data-single="Y" data-value="inactive">InActive</li>
+                                  <li class="status multiSel" data-single="Y" data-value="delete">Delete</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
            
         </div> 

@@ -133,8 +133,8 @@
 				$customerDetails['customer_id'] = $this->validatedata->validate('customer_id', 'customer ID', false, '', array());
 				$customerDetails['pan_number'] = $this->validatedata->validate('pan_number', 'Pan Number', false, '', array());
 				$customerDetails['company_name'] = $this->validatedata->validate('company_name', 'Company Name', true, '', array());
-				$customerDetails['person_name'] = $this->validatedata->validate('person_name', 'person name ', true, '', array());
-				$customerDetails['GST_no'] = $this->validatedata->validate('GST_no', 'GST no', true, '', array());
+				$customerDetails['person_name'] = $this->validatedata->validate('person_name', 'person name ', false, '', array());
+				$customerDetails['GST_no'] = $this->validatedata->validate('GST_no', 'GST no', false, '', array());
 				$customerDetails['email'] = $this->validatedata->validate('email', 'Email', false, '', array());
 				$customerDetails['mobile_no'] = $this->validatedata->validate('mobile_no', 'Mobile no', false, '', array());
 				$customerDetails['adhar_number'] = $this->validatedata->validate('adhar_number', 'Adhar Number', false, '', array());

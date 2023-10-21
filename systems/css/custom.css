@@ -2524,3 +2524,6 @@ label.label-style {
   margin-top: 0;
 }
 /******Custom Dashbord end********/
+.ws-disable-cursor{
+  cursor:not-allowed;
+}
