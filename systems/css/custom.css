@@ -2504,4 +2504,23 @@ label.label-style {
   margin-right: 14px;
   text-decoration: none;
 }
+.sno {
+  text-align: center;
+}
+
+.table-striped{
+  margin-bottom: 0;
+}
+
+.buttonborder{
+  padding: 10px 0;
+  border-top:1px s ;
+}
+
+.buttonborder {
+  border-top: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
+  padding: 5px 0;
+  margin-top: 0;
+}
 /******Custom Dashbord end********/
