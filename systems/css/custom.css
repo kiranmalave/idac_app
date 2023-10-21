@@ -2229,9 +2229,11 @@ label.label-style {
 .actionDropDrown a {
   padding: 10px 11px;
   border-bottom: 1px solid #e0e0e0;
+  cursor: pointer;
 }
 .actionDropDrown a:hover{
   background-color: rgba(0,0,0,0.1);
+  cursor: pointer;
 }
 
 .actionDropDrown a:last-child {
@@ -2259,3 +2261,223 @@ label.label-style {
   outline: none;
   box-shadow: none !important;
 }
+
+.ws-country{
+  width: 25%;
+}
+.ws-number{
+  width: 80%;
+}
+
+/******Custom Dashbord start********/
+.profile-header {
+  padding: 20px;
+  background: linear-gradient(45deg, 
+  rgb(245 245 245 / 57%), rgb(190 190 190 / 43%)), url("../../images/site/profilebg.jpg") !important;
+  background-repeat:no-repeat !important;
+  background-size: 100% !important;
+  background-position: center center !important;
+}
+.profile-header .profile_info .profile-image {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    border: 3px solid #fff;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16),0 3px 6px rgba(0,0,0,0.23);
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.profile-header .profile_info .profile-image img{
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+.profile-sub-header {
+	width: 100%;
+}
+.profile-sub-header .box-list ul {
+  display: inline-table;
+  padding: 0;
+  table-layout: fixed;
+  width: 100%;
+  margin-bottom: 0 !important;
+}
+ .profile-sub-header .box-list ul li {
+	border-left: 1px solid #dedede;
+  padding: 7px 0;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.profile-sub-header .box-list ul li p {
+  margin-bottom: 0;
+}
+.profile-sub-header .box-list ul li.active i {
+  color: #fff !important;
+}
+.profile-sub-header .box-list ul li:first-child {
+	border-left: none;
+}
+.profile-sub-header .box-list ul li.active{
+  color: #fff;
+  background-color: #ffc100
+}
+
+.profile-sub-header .box-list ul li.active a{
+  text-decoration: none;
+  color: #fff;
+}
+
+.profile-sub-header .box-list ul li.active a .material-icons {
+  color: #fff !important;
+}
+
+.profile-sub-header .box-list ul li.active a
+ .profile-sub-header .box-list ul li a {
+  padding: 5px 10px;
+  color: #424242;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.profile-sub-header .box-list ul li a p{
+  margin-bottom: 0 !important;
+}
+.job_post {
+  display: block;
+}
+.text-center {
+  display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+.profile-sub-header .box-list ul li:hover {
+	text-decoration: none;
+	color: #fff;
+  background-color: #ffc100
+}
+.profile-sub-header .box-list ul li:hover a{
+  text-decoration: none;
+  color: #fff;
+}
+
+.block-header {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.profile-sub-header .box-list ul li a{
+  color: #424242;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.profile-sub-header .box-list ul li:hover .material-icons{
+  color: #fff !important;
+
+}
+
+.nopadding {
+  padding: 0;
+}
+
+.c_review li {
+	margin-bottom: 14px;
+	padding-bottom: 13px;
+	border-bottom: 1px solid #e8e8e8;
+}
+
+.c_review .avatar {
+	float: left;
+	width: 30px;
+}
+
+.c_review .comment-action {
+	float: left;
+	width: calc(100% - 30px);
+}
+
+.c_msg{
+    white-space: nowrap;
+    width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 9px;
+}
+
+.comment-actionHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+.comment-actionHeading_left {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+  align-items: center;
+}
+
+.projectFolder .projectFolderTop i {
+  font-size: 60px;
+}
+
+.projectFolder .projectFolderBottom h2 {
+  font-size: 18px;
+  color: #616161;
+}
+
+.addFlex {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+}
+.addFlex li {
+  /* width: 20%; */
+  /* background: #f0f; */
+  flex: 0 0 30%;
+  margin: 0;
+  padding: 0;
+  border-bottom: none;
+}
+.addFlex li .projectFolder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.projectFolder .projectFolderBottom h2 {
+  font-size: 14px;
+  color: #616161;
+}
+/******Custom Dashbord end********/
+.profile-header{
+  position: relative;
+}
+
+.headerbtn {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+/******Custom Dashbord end********/

@@ -1,7 +1,7 @@
 	<?php
 	defined('BASEPATH') or exit('No direct script access allowed');
 
-	class Customer extends CI_Controller
+	class Branch extends CI_Controller
 	{
 
 		/**
@@ -30,7 +30,7 @@
 			$this->load->library("ValidateData");
 		}
 
-		public function getcustomerList()
+		public function getbranchList()
 		{
 			$this->access->checkTokenKey();
 			$this->response->decodeRequest();
@@ -68,12 +68,10 @@
 				$wherec["status"] = 'IN ("' . $statusStr . '")';
 			}
 
-			if (isset($company) && !empty($company)) {
-				$wherec["company_name like"] = "'" . $company . "%'";
-			}
+			
 
-			$config["base_url"] = base_url() . "customer	Details";
-			$config["total_rows"] = $this->CommonModel->getCountByParameter('customer_id', 'customer', $wherec);
+			$config["base_url"] = base_url() . "branch	Details";
+			$config["total_rows"] = $this->CommonModel->getCountByParameter('branchID ', 'branches', $wherec);
 			$config["uri_segment"] = 2;
 			$this->pagination->initialize($config);
 			if (isset($curPage) && !empty($curPage)) {
@@ -84,9 +82,9 @@
 				$page = 0;
 			}
 			if ($isAll == "Y") {
-				$userRoleDetails = $this->CommonModel->GetMasterListDetails($selectC = '', 'customer', $wherec, '', '', $join, $other);
+				$userRoleDetails = $this->CommonModel->GetMasterListDetails($selectC = '', 'branches', $wherec, '', '', $join, $other);
 			} else {
-				$userRoleDetails = $this->CommonModel->GetMasterListDetails($selectC = '', 'customer', $wherec, $config["per_page"], $page, $join, $other);
+				$userRoleDetails = $this->CommonModel->GetMasterListDetails($selectC = '', 'branches', $wherec, $config["per_page"], $page, $join, $other);
 			}
 
 			$status['data'] = $userRoleDetails;
@@ -122,38 +120,26 @@
 			}
 		}
 
-		public function customer($id = '')
+		public function branch($id = '')
 		{
 			$this->response->decodeRequest();
 			$method = $this->input->method(TRUE);
 			if ($method == "PUT" || $method == "POST") {
-				$customerDetails = array();
+				$branchDetails = array();
 				$updateDate = date("Y/m/d H:i:s");
 
-				$customerDetails['customer_id'] = $this->validatedata->validate('customer_id', 'customer ID', false, '', array());
-				$customerDetails['pan_number'] = $this->validatedata->validate('pan_number', 'Pan Number', false, '', array());
-				$customerDetails['company_name'] = $this->validatedata->validate('company_name', 'Company Name', true, '', array());
-				$customerDetails['person_name'] = $this->validatedata->validate('person_name', 'person name ', true, '', array());
-				$customerDetails['GST_no'] = $this->validatedata->validate('GST_no', 'GST no', true, '', array());
-				$customerDetails['email'] = $this->validatedata->validate('email', 'Email', false, '', array());
-				$customerDetails['mobile_no'] = $this->validatedata->validate('mobile_no', 'Mobile no', false, '', array());
-				$customerDetails['adhar_number'] = $this->validatedata->validate('adhar_number', 'Adhar Number', false, '', array());
-				$customerDetails['website'] = $this->validatedata->validate('website', 'Website', false, '', array());
-				$customerDetails['address'] = $this->validatedata->validate('address', 'Address', false, '', array());
-				$customerDetails['customer_image'] = $this->validatedata->validate('customer_image', 'customer Picture', false, '', array());
-				$customerDetails['billing_name'] = $this->validatedata->validate('billing_name', 'Billing Name', false, '', array());
-				$customerDetails['billing_address'] = $this->validatedata->validate('billing_address', 'Billing Address', false, '', array());
-				$customerDetails['branch_id'] = $this->validatedata->validate('branch_id', 'branch Id', false, '', array());
-				$customerDetails['country_code'] = $this->validatedata->validate('country_code', 'country code', false, '', array());
+				$branchDetails['branchID '] = $this->validatedata->validate('branchID ', 'branch ID', false, '', array());
+				$branchDetails['branchName'] = $this->validatedata->validate('branchName', 'Branch Name', false, '', array());
+				$branchDetails['status'] = $this->validatedata->validate('status', 'status', true, '', array());
 
 			}
 			switch ($method) {
 				case "PUT": {
 
-						$customerDetails['created_by'] = $this->input->post('SadminID');
-						$customerDetails['created_date'] = $updateDate;
+						$branchDetails['created_by'] = $this->input->post('SadminID');
+						$branchDetails['created_date'] = $updateDate;
 
-						$iscreated = $this->CommonModel->saveMasterDetails('customer', $customerDetails);
+						$iscreated = $this->CommonModel->saveMasterDetails('branches', $branchDetails);
 						if (!$iscreated) {
 							$status['msg'] = $this->systemmsg->getErrorCode(998);
 							$status['statusCode'] = 998;
@@ -171,9 +157,9 @@
 					}
 
 				case "POST": {
-						//$customerDetails = array();
+						//$branchDetails = array();
 						$updateDate = date("Y/m/d H:i:s");
-						$where = array('customer_id' => $id);
+						$where = array('branchID ' => $id);
 						if (!isset($id) || empty($id)) {
 							$status['msg'] = $this->systemmsg->getErrorCode(998);
 							$status['statusCode'] = 998;
@@ -181,8 +167,9 @@
 							$status['flag'] = 'F';
 							$this->response->output($status, 200);
 						}
-						$customerDetails['modified_by'] = $this->input->post('SadminID');
-						$iscreated = $this->CommonModel->updateMasterDetails('customer', $customerDetails, $where);
+						$branchDetails['modified_by'] = $this->input->post('SadminID');
+						$branchDetails['modified_date'] = $updateDate;
+						$iscreated = $this->CommonModel->updateMasterDetails('branches', $branchDetails, $where);
 						if (!$iscreated) {
 							$status['msg'] = $this->systemmsg->getErrorCode(998);
 							$status['statusCode'] = 998;
@@ -199,9 +186,9 @@
 						break;
 					}
 				case "DELETE": {
-						$customerDetails = array();
+						$branchDetails = array();
 
-						$where = array('customer_id' => $id);
+						$where = array('branchID ' => $id);
 						if (!isset($id) || empty($id)) {
 							$status['msg'] = $this->systemmsg->getErrorCode(996);
 							$status['statusCode'] = 996;
@@ -210,7 +197,7 @@
 							$this->response->output($status, 200);
 						}
 
-						$iscreated = $this->CommonModel->deleteMasterDetails('customer', $where);
+						$iscreated = $this->CommonModel->deleteMasterDetails('branches', $where);
 						if (!$iscreated) {
 							$status['msg'] = $this->systemmsg->getErrorCode(996);
 							$status['statusCode'] = 996;
@@ -227,8 +214,8 @@
 						break;
 					}
 				default: {
-						$where = array("customer_id" => $id);
-						$menuHistory = $this->CommonModel->getMasterDetails('customer', '', $where);
+						$where = array("branchID " => $id);
+						$menuHistory = $this->CommonModel->getMasterDetails('branches', '', $where);
 						if (isset($menuHistory) && !empty($menuHistory)) {
 
 							$status['data'] = $menuHistory;
@@ -247,7 +234,7 @@
 					}
 			}
 		}
-		public function customerChangeStatus()
+		public function branchChangeStatus()
 		{
 			$this->access->checkTokenKey();
 			$this->response->decodeRequest(); 
@@ -255,7 +242,7 @@
 				if(trim($action) == "changeStatus"){
 					$ids = $this->input->post("list");
 					$statusCode = $this->input->post("status");	
-					$changestatus = $this->CommonModel->changeMasterStatus('customer',$statusCode,$ids,'customer_id');
+					$changestatus = $this->CommonModel->changeMasterStatus('branches',$statusCode,$ids,'branchID ');
 					
 				if($changestatus){
 	

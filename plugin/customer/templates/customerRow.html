@@ -6,7 +6,7 @@
     </div>
   </td>
   <!-- <td><%=customerDetails.attributes.customer_id%></td> -->
-  <td><%=customerDetails.attributes.company_name%></td>
+  <td class="loadview" data-customer_id="customerDetails.attributes.customer_id" data-view="dashboard"><a target="_blank" href="#customerDashboard/<%= customerDetails.attributes.customer_id %>"><u><%=customerDetails.attributes.company_name%></u></a></td>
   <td><%=customerDetails.attributes.person_name%></td>
   <td><%=customerDetails.attributes.email%></td>
   <td><%=customerDetails.attributes.mobile_no%></td>
@@ -17,8 +17,8 @@
       </button>
       <div class="dropdown-menu ws-select actionDropDrown" aria-labelledby="dropdownMenuButton">
         <a class="dropdown-item loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData">Edit</a>
-        <a class="dropdown-item"  data-view="singleCustomerData" data-item="customerSingleView">Project List</a>
-        <a class="dropdown-item" data-view="singleCustomerData">Proposal List</a>
+        <a class="dropdown-item"  href="#projectpage/<%= customerDetails.attributes.customer_id %>">Project</a>
+        <a class="dropdown-item"  href="#proposalpage/<%= customerDetails.attributes.customer_id %>">Proposal</a>
       </div>
     </div>
     

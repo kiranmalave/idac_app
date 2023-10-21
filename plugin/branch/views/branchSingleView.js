@@ -8,19 +8,20 @@ define([
   'moment',
   '../../core/views/multiselectOptions',
   '../../dynamicForm/views/dynamicFieldRender',
-  '../collections/customerCollection',
-  '../models/customerSingleModel',
+  '../collections/branchCollection',
+  '../models/branchSingleModel',
   '../../readFiles/views/readFilesView',
-  'text!../templates/customerSingle_temp.html',
-], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, multiselectOptions, dynamicFieldRender, customerCollection, customerSingleModel, readFilesView, customertemp) {
-  var customerSingleView = Backbone.View.extend({
-    model: customerSingleModel,
+  'text!../templates/branchSingle_temp.html',
+], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, multiselectOptions, dynamicFieldRender, branchCollection, branchSingleModel, readFilesView, branchtemp) {
+  var branchSingleView = Backbone.View.extend({
+    model: branchSingleModel,
     initialize: function (options) {
+      console.log(options);
       this.dynamicData = null;
-      this.toClose = "customerSingleView";
-      this.pluginName = "customerList";
+      this.toClose = "branchSingleView";
+      this.pluginName = "branchList";
       this.loadFrom = options.loadfrom;
-      this.model = new customerSingleModel();
+      this.model = new branchSingleModel();
       var selfobj = this;
       this.dynamicFieldRenderobj = new dynamicFieldRender({
         ViewObj: selfobj,
@@ -28,31 +29,25 @@ define([
       });
       this.multiselectOptions = new multiselectOptions();
       $(".modelbox").hide();
-      scanDetails = options.searchCustomer;
+      scanDetails = options.searchbranch;
+      console.log(options);
       $(".popupLoader").show();
-      var customerList = new customerCollection();
-      customerList.fetch({
+      var branchList = new branchCollection();
+      branchList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y'}
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
-        selfobj.model.set("customerList", res.data);
+        selfobj.model.set("branchList", res.data);
         selfobj.render();
       });
 
-      if (options.customer_id != "") {
-        this.model.set({ customer_id: options.customer_id });
-        this.model.fetch({
-          headers: {
-            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-          }, error: selfobj.onErrorHandler
-        }).done(function (res) {
-          var birthDate = selfobj.model.get("birth_date");
-          if (birthDate != null && birthDate != "0000-00-00") {
-            selfobj.model.set({ "birth_date": moment(birthDate).format("DD-MM-YYYY") });
-          }
+      if (options.branchID  != "") {
+        this.model.set({ branchID : options.branchID  });
+        this.model.fetch({ headers: {'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler }).done(function (res) {
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".popupLoader").hide();
           selfobj.render();
@@ -61,30 +56,24 @@ define([
       }
     },
     events: {
-      "click .saveCustomerDetails": "saveCustomerDetails",
+      "click .savebranchDetails": "savebranchDetails",
       "click .item-container li": "setValues",
       "blur .txtchange": "updateOtherDetails",
       "click .multiSel": "setValues",
       "change .dropval": "updateOtherDetails",
-      "change .logoAdded": "updateImageLogo",
-      "click .loadMedia": "loadMedia",
     },
     attachEvents: function () {
       // Detach previous event bindings
-      this.$el.off("click", ".saveCustomerDetails", this.saveCustomerDetails);
+      this.$el.off("click", ".savebranchDetails", this.savebranchDetails);
       // Reattach event bindings
-      this.$el.on("click", ".saveCustomerDetails", this.saveCustomerDetails.bind(this));
+      this.$el.on("click", ".savebranchDetails", this.savebranchDetails.bind(this));
       this.$el.off("click", ".multiSel", this.setValues);
       this.$el.on("click", ".multiSel", this.setValues.bind(this));
       this.$el.off("change", ".dropval", this.updateOtherDetails);
       this.$el.on("change", ".dropval", this.updateOtherDetails.bind(this));
-      this.$el.off("click", ".iconSelection", this.setIconValues);
       this.$el.off("blur", ".txtchange", this.updateOtherDetails);
       this.$el.on("blur", ".txtchange", this.updateOtherDetails.bind(this));
-      this.$el.off("click", ".loadMedia", this.loadMedia);
-      this.$el.on("click", ".loadMedia", this.loadMedia.bind(this));
     },
-
     onErrorHandler: function (collection, response, options) {
       alert(
         "Something was wrong ! Try to refresh the page or contact administer. :("
@@ -104,31 +93,16 @@ define([
       setvalues = ["status"];
       selfobj.multiselectOptions.setValues(setvalues, selfobj);
     },
-    getSelectedFile: function (url) {
-      $('.' + this.elm).val(url);
-      $('.' + this.elm).change();
-      $("#profile_pic_view").attr("src", url);
-      $("#profile_pic_view").css({ "max-width": "100%" });
-      $('#largeModal').modal('toggle');
-      this.model.set({ "customer_image": url });
-
-    },
-    loadMedia: function (e) {
-      e.stopPropagation();
-      $('#largeModal').modal('toggle');
-      this.elm = "profile_pic";
-      var menusingleview = new readFilesView({ loadFrom: "addpage", loadController: this });
-    },
     setValues: function (e) {
       var selfobj = this;
       var da = selfobj.multiselectOptions.setCheckedValue(e);
       selfobj.model.set(da);
     },
 
-    saveCustomerDetails: function (e) {
+    savebranchDetails: function (e) {
       e.preventDefault();
       let selfobj = this;
-      var mid = this.model.get("customer_id");
+      var mid = this.model.get("branchID ");
       let isNew = $(e.currentTarget).attr("data-action");
       if (permission.edit != "yes") {
         alert("You dont have permission to edit");
@@ -139,7 +113,7 @@ define([
       } else {
         var methodt = "POST";
       }
-      if ($("#customerDetails").valid()) {
+      if ($("#branchDetails").valid()) {
         $(e.currentTarget).html("<span>Saving..</span>");
         $(e.currentTarget).attr("disabled", "disabled");
         this.model.save({}, {
@@ -175,85 +149,33 @@ define([
     initializeValidate: function () {
       var selfobj = this;
       var feilds = {
-        company_name: {
+        branchName: {
           required: true,
         },
-        GST_no: {
-          minlength: 15,
-          maxlength: 15,
-        },
-        mobile_no: {
-          minlength: 10,
-          maxlength: 10,
-        },
-        adhar_number: {
-          minlength: 12,
-          maxlength: 12,
-        },
-        pan_number: {
-          minlength: 10,
-          maxlength: 10,
-        },
-        // website: {
-        //   url:true,
-        // },
-        // pan_number: {
-        //   required: true,
-        // },
-        // email: {
-        //   email: true,
-        //   required: true,
-        // },
-        // mobile_no: {
-        //   required: true,
-        //   minlength: 10,
-        //   maxlength: 10,
-        //   number: true,
-        // },
       };
       var feildsrules = feilds;
       var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
 
       if (!_.isEmpty(dynamicRules)) {
         var feildsrules = $.extend({}, feilds, dynamicRules);
-       
+        // var feildsrules = {
+        //   ...feilds,
+        //   ...dynamicRules
+        //   };
       }
       var messages = {
-        company_name: "Please enter Company Name",
+        branchName: "Please enter Branch Name",
       };
-      $("#mobile_no").inputmask("Regex", { regex: "^[0-9](\\d{1,9})?$" });
-      $("#adhar_number").inputmask("Regex", { regex: "^[0-9](\\d{1,11})?$" });
-      $("#GST_no").inputmask("Regex", { regex: "^[A-Za-z0-9]*$" });
-      $("#pan_number").inputmask("Regex", { regex: "^[A-Za-z0-9]*$" });
-      $('#email').inputmask({ alias: "email" });
-
-      $("#customerDetails").validate({
+      $("#branchDetails").validate({
         rules: feildsrules,
         messages: messages,
       });
       
-      var input = document.getElementById('address');
-      var autocomplete = new google.maps.places.Autocomplete(input);
-      autocomplete.addListener('place_changed', function () {
-
-        var place = autocomplete.getPlace();
-        if (place == "") {
-
-          selfobj.model.set({ "address": input.value() });
-        } else {
-          selfobj.model.set({ "address": place.formatted_address });
-          selfobj.model.set({ "latitude": place.geometry['address'].lat() });
-          selfobj.model.set({ "longitude": place.geometry['address'].lng() });
-          selfobj.model.set({ "address_url": place.url });
-        }
-      });
     },
 
     render: function () {
-      //var isexits = checkisoverlay(this.toClose);
-      //if(!isexits){
       var selfobj = this;
-      var source = customertemp;
+      var source = branchtemp;
       var template = _.template(source);
       $("#" + this.toClose).remove();
       this.$el.html(template({ model: this.model.attributes }));
@@ -269,7 +191,7 @@ define([
       this.setOldValues();
       $(".ws-select").selectpicker();
       this.attachEvents();
-      rearrageOverlays("Company", this.toClose);
+      rearrageOverlays("Branches", this.toClose);
       return this;
     },
     onDelete: function () {
@@ -277,5 +199,5 @@ define([
     },
   });
 
-  return customerSingleView;
+  return branchSingleView;
 });

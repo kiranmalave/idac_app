@@ -148,7 +148,9 @@ class Proposal extends CI_Controller {
 
 				$proposalDetails['proposal_id'] = $this->validatedata->validate('proposal_id','proposal_id',false,'',array());
 				$proposalDetails['proposal_name'] = $this->validatedata->validate('proposal_name','proposal Name',true,'',array());
-				
+				$proposalDetails['description'] = $this->validatedata->validate('description','Description',true,'',array());
+				$proposalDetails['company_name'] = $this->validatedata->validate('company_name','Companuy Name',true,'',array());
+
 				
 					  
 					if($method=="PUT")
@@ -208,7 +210,7 @@ class Proposal extends CI_Controller {
 		}elseif($method=="dele")
 		{
 			$proposalDetails = array();
-			$where=array('sID'=>$sID);
+			$where=array('sID'=>$proposal_id);
 				if(!isset($sID) || empty($sID)){
 					$status['msg'] = $this->systemmsg->getErrorCode(996);
 					$status['statusCode'] = 996;

@@ -5,15 +5,37 @@ define([
   'custom',
   '../models/dashboardModel',
   '../views/filterdataView',
+  '../../customer/views/customerSingleView',
+  '../../customer/models/customerSingleModel',
   '../views/addUserView',
   'text!../templates/dashboard_temp.html',
-], function ($, _, Backbone, custom, dashboardModel, filterUser, addUserView, dashBoard_temp) {
+], function ($, _, Backbone, custom, dashboardModel, filterUser, customerSingleView, customerSingleModel, addUserView, dashBoard_temp) {
 
   var dashboardView = Backbone.View.extend({
     model: dashboardModel,
     tagName: "div",
     initialize: function (options) {
-
+      var customerID = options.action;
+      this.customerID = customerID;
+      this.customerModel = new customerSingleModel();
+      var selfobj = this;
+      if (this.customerID != "") {
+        this.customerModel.set({ customer_id: this.customerID });
+        this.customerModel.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler
+        }).done(function (res) {
+          var birthDate = selfobj.customerModel.get("birth_date");
+          if (birthDate != null && birthDate != "0000-00-00") {
+            selfobj.customerModel.set({ "birth_date": moment(birthDate).format("DD-MM-YYYY") });
+          }
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".popupLoader").hide();
+          selfobj.render();
+        });
+      }
+      console.log(this.customerModel);
       // // Initialize Firebase with your configuration
       // var firebaseConfig = {
       //   // Your Firebase SDK configuration (apiKey, authDomain, projectId, etc.)
@@ -123,6 +145,8 @@ define([
       "change .saveOtherDetail": "updateDetails",
       "click .getPaymentData": "getPaymentDetails",
       "click .showOverlay": "showOverlay",
+      "click .loadview" : "loadSubView",
+      "click .tablinks": "tablinks",
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
@@ -134,6 +158,16 @@ define([
     updateNote: function (e) {
       var note = $(e.currentTarget).val();
       this.model.set({ note: note });
+    },
+    loadSubView:function(e){
+      var show = $(e.currentTarget).attr("data-view");
+      switch(show){
+        case "singlecustomerview":{
+          var customer_id = $(e.currentTarget).attr("data-customer_id");
+          new customerSingleView({customer_id: customer_id,loadfrom:"dashboard"});
+        }
+
+      }
     },
     showOverlay: function (e) {
       var view = $(e.currentTarget).data("view");
@@ -150,11 +184,13 @@ define([
     },
     render: function () {
       var template = _.template(dashBoard_temp);
-      var res = template();
+      var res = template({"customerModel":this.customerModel});
       this.$el.html(res);
       $(".app_playground").append(this.$el);
       return this;
     },
+
+   
     getBannersDetails: function (e) {
       $.ajax({
         url: APIPATH + 'bannersCountDetails/',
@@ -177,7 +213,27 @@ define([
 
         }
       });
-    }
+    },
+
+    tablinks:function(e){
+      let ctab = $(e.currentTarget).attr("data-type");
+      $(".tablinks").removeClass("active");
+      $(".taskcard").hide();
+      $(e.currentTarget).addClass("active");
+      $("#"+ctab).show();
+      
+      // var i, tabcontent, tablinks;
+      // tabcontent = document.getElementsByClassName("card");
+      // for (i = 0; i < tabcontent.length; i++) {
+      //   tabcontent[i].style.display = "none";
+      // }
+      // tablinks = document.getElementsByClassName("tablinks");
+      // for (i = 0; i < tablinks.length; i++) {
+      //   tablinks[i].className = tablinks[i].className.replace(" active", "");
+      // }
+      // document.getElementById(cityName).style.display = "block";
+      // evt.currentTarget.className += " active";
+    }, 
 
   });
 

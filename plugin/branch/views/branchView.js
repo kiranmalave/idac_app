@@ -5,19 +5,18 @@ define([
   'backbone',
   'datepickerBT',
   'moment',
-  '../views/customerSingleView',
-  '../../dashboard/views/dashboardView',
-  '../collections/customerCollection',
-  '../models/customerFilterOptionModel',
-  'text!../templates/customerRow.html',
-  'text!../templates/customer_temp.html',
-  'text!../templates/customerFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, moment, customerSingleView, dashboardView, customerCollection, customerFilterOptionModel, customerRowTemp, customerTemp, customerFilterTemp) {
+  '../views/branchSingleView',
+  '../collections/branchCollection',
+  '../models/branchFilterOptionModel',
+  'text!../templates/branchRow.html',
+  'text!../templates/branch_temp.html',
+  'text!../templates/branchFilterOption_temp.html',
+], function ($, _, Backbone, datepickerBT, moment, branchSingleView, branchCollection, branchFilterOptionModel, branchRowTemp, branchTemp, branchFilterTemp) {
 
-  var customerView = Backbone.View.extend({
+  var branchView = Backbone.View.extend({
 
     initialize: function (options) {
-      this.toClose = "customerFilterView";
+      this.toClose = "branchFilterView";
       var selfobj = this;
       $(".profile-loader").show();
       var mname = Backbone.history.getFragment();
@@ -25,30 +24,30 @@ define([
       //$("#"+mname).addClass("active");
       readyState = true;
       this.render();
-      filterOption = new customerFilterOptionModel();
-      searchCustomer = new customerCollection();
-      searchCustomer.fetch({
+      filterOption = new branchFilterOptionModel();
+      searchbranch = new branchCollection();
+      searchbranch.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
       }).done(function (res) {
 
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".preloader").hide();
+        $(".profile-loader").hide();
         setPagging(res.paginginfo, res.loadstate, res.msg);
       });
 
-      this.customerList = new customerCollection();
-      this.customerList.fetch({
+      this.branchList = new branchCollection();
+      this.branchList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, error: selfobj.onErrorHandler, data: { status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".preloader").hide();
+        $(".popupLoader").hide();
         // selfobj.render();
       });
-      this.collection = searchCustomer;
+      this.collection = searchbranch;
       this.collection.on('add', this.addOne, this);
       this.collection.on('reset', this.addAll, this);
       /* $(".right_col").on("scroll",function(){
@@ -81,31 +80,16 @@ define([
       filterOption.set(newdetails);
       console.log(filterOption);
     },
-    changeBox: function (e) {
-      var selVal = $(e.currentTarget).val();
-      $(".hidetextval").hide();
-      $(".filterClear").val("");
-      if (selVal == "searchList") {
-        $(".customerList").show();
-      } else {
-        $(".textvalBox").show();
-      }
-    },
-    settextSearch: function (e) {
-      var usernametxt = $(e.currentTarget).val();
-      filterOption.set({ textSearch: usernametxt });
-    },
     changeStatusListElement: function (e) {
       var selfobj = this;
       var removeIds = [];
       var status = $(e.currentTarget).attr("data-action");
       var action = "changeStatus";
-      $('#customerList input:checkbox').each(function () {
+      $('#branchList input:checkbox').each(function () {
         if ($(this).is(":checked")) {
-          removeIds.push($(this).attr("data-customer_id"));
+          removeIds.push($(this).attr("data-branchID"));
         }
       });
-
 
       $(".action-icons-div").hide();
       $(".memberlistcheck").click(function () {
@@ -122,7 +106,7 @@ define([
         return false;
       }
       $.ajax({
-        url: APIPATH + 'customerMaster/status',
+        url: APIPATH + 'branch/status',
         method: 'POST',
         data: { list: idsToRemove, action: action, status: status },
         datatype: 'JSON',
@@ -157,14 +141,10 @@ define([
       var selfobj = this;
       var show = $(e.currentTarget).attr("data-view");
       switch (show) {
-        case "singleCustomerData": {
-          var customer_id = $(e.currentTarget).attr("data-customer_id");
-          var customersingleView = new customerSingleView({ customer_id: customer_id, searchCustomer: this });
+        case "singlebranchData": {
+          var branchID  = $(e.currentTarget).attr("data-branchID");
+          new branchSingleView({ branchID : branchID , searchbranch: this });
           break;
-        }
-        case "dashboard":{
-          var customer_id = $(e.currentTarget).attr("data-customer_id");
-          new dashboardView({ customer_id: customer_id})
         }
       }
     },
@@ -193,12 +173,10 @@ define([
       selfobj.filterSearch();
     },
     resetSearch: function () {
-      //filterOption.set({curpage:0,customer_id:null,textval: null,textSearch:'company_name',status:'active',orderBy:'created_date',order:'DESC'});
+      //filterOption.set({curpage:0,branchID :null,textval: null,textSearch:'company_name',status:'active',orderBy:'created_date',order:'DESC'});
       //filterOption.reset();
       filterOption.clear().set(filterOption.defaults);
       $(".multiOptionSel").removeClass("active");
-      $(".nav-item").removeClass("active");
-
       // $("#textval").val("");
       $(".filterClear").val("");
       $(".hidetextval").hide();
@@ -209,11 +187,11 @@ define([
       var memberDetails = new singlememberDataModel();
     },
     addOne: function (objectModel) {
-      var template = _.template(customerRowTemp);
-      $("#customerList").append(template({ customerDetails: objectModel }));
+      var template = _.template(branchRowTemp);
+      $("#branchList").append(template({ branchDetails: objectModel }));
     },
     addAll: function () {
-      $("#customerList").empty();
+      $("#branchList").empty();
       this.collection.forEach(this.addOne, this);
     },
     filterRender: function (e) {
@@ -221,11 +199,11 @@ define([
 
       if (!isexits) {
 
-        var source = customerFilterTemp;
+        var source = branchFilterTemp;
         var template = _.template(source);
 
         var cont = $("<div>");
-        cont.html(template({"customerList": this.customerList.models }));
+        cont.html(template({"branchList": this.branchList.models }));
         cont.attr('id', this.toClose);
 
         /*  
@@ -244,7 +222,7 @@ define([
         $(".ws_filterOptions").addClass("open");
         /* 
           INFO
-          make current customer active
+          make current branch active
         */
         $(e.currentTarget).addClass("active");
 
@@ -345,17 +323,16 @@ define([
         $('.' + this.toClose).remove();
         rearrageOverlays();
       }
-      searchCustomer.reset();
+      searchbranch.reset();
       var selfobj = this;
       readyState = true;
       filterOption.set({ curpage: 0 });
       var $element = $('#loadMember');
       $(".profile-loader").show();
-      $(".ws_filterOptions").removeClass("open");
       $element.attr("data-index", 1);
       $element.attr("data-currPage", 0);
 
-      searchCustomer.fetch({
+      searchbranch.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, add: true, remove: false, merge: false, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
@@ -387,7 +364,7 @@ define([
       } else {
 
         $element.attr("data-index", cid);
-        searchCustomer.reset();
+        searchbranch.reset();
         var index = $element.attr("data-index");
         var currPage = $element.attr("data-currPage");
 
@@ -395,7 +372,7 @@ define([
         var requestData = filterOption.attributes;
 
         $(".profile-loader").show();
-        searchCustomer.fetch({
+        searchbranch.fetch({
           headers: {
             'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
           }, add: true, remove: false, merge: false, type: 'post', error: selfobj.onErrorHandler, data: requestData
@@ -412,7 +389,7 @@ define([
     },
    
     render: function () {
-      var template = _.template(customerTemp);
+      var template = _.template(branchTemp);
       this.$el.html(template({ closeItem: this.toClose }));
       $(".app_playground").append(this.$el);
       setToolTip();
@@ -420,6 +397,6 @@ define([
     }
   });
 
-  return customerView;
+  return branchView;
 
 });
