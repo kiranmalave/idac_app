@@ -5,6 +5,7 @@ define([
   'backbone',
   'datepickerBT',
   'moment',
+  'Swal',
   '../views/customerSingleView',
   '../../dashboard/views/dashboardView',
   '../collections/customerCollection',
@@ -12,7 +13,7 @@ define([
   'text!../templates/customerRow.html',
   'text!../templates/customer_temp.html',
   'text!../templates/customerFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, moment, customerSingleView, dashboardView, customerCollection, customerFilterOptionModel, customerRowTemp, customerTemp, customerFilterTemp) {
+], function ($, _, Backbone, datepickerBT, moment, Swal, customerSingleView, dashboardView, customerCollection, customerFilterOptionModel, customerRowTemp, customerTemp, customerFilterTemp) {
 
   var customerView = Backbone.View.extend({
 
@@ -96,57 +97,75 @@ define([
       filterOption.set({ textSearch: usernametxt });
     },
     changeStatusListElement: function (e) {
-      var selfobj = this;
-      var removeIds = [];
-      var status = $(e.currentTarget).attr("data-action");
-      var action = "changeStatus";
-      $('#customerList input:checkbox').each(function () {
-        if ($(this).is(":checked")) {
-          removeIds.push($(this).attr("data-customer_id"));
-        }
-      });
 
-
-      $(".action-icons-div").hide();
-      $(".memberlistcheck").click(function () {
-        if ($(this).is(":checked")) {
-          $(".action-icons-div").show(300);
-        } else {
-          $(".action-icons-div").hide(200);
-        }
-      });
-
-      var idsToRemove = removeIds.toString();
-      if (idsToRemove == '') {
-        alert("Please select at least one record.");
-        return false;
-      }
-      $.ajax({
-        url: APIPATH + 'customerMaster/status',
-        method: 'POST',
-        data: { list: idsToRemove, action: action, status: status },
-        datatype: 'JSON',
-        beforeSend: function (request) {
-          //$(e.currentTarget).html("<span>Updating..</span>");
-          request.setRequestHeader("token", $.cookie('_bb_key'));
-          request.setRequestHeader("SadminID", $.cookie('authid'));
-          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
-          request.setRequestHeader("Accept", 'application/json');
-        },
-        success: function (res) {
-          if (res.flag == "F")
-            alert(res.msg);
-
-          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          if (res.flag == "S") {
-            selfobj.filterSearch();
+      Swal.fire({
+        title: 'Do you want to delete ?',
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: 'Yes',
+        denyButtonText: `No`,
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+         if (result.isConfirmed) {
+         Swal.fire('Saved!', '', 'success')
+         var selfobj = this;
+         var removeIds = [];
+         var status = $(e.currentTarget).attr("data-action");
+         var action = "changeStatus";
+         $('#customerList input:checkbox').each(function () {
+           if ($(this).is(":checked")) {
+             removeIds.push($(this).attr("data-customer_id"));
+           }
+         });
+   
+   
+         $(".action-icons-div").hide();
+         $(".memberlistcheck").click(function () {
+           if ($(this).is(":checked")) {
+             $(".action-icons-div").show(300);
+           } else {
+             $(".action-icons-div").hide(200);
+           }
+         });
+   
+         var idsToRemove = removeIds.toString();
+         if (idsToRemove == '') {
+           alert("Please select at least one record.");
+           return false;
+         }
+        $.ajax({
+          url: APIPATH + 'customerMaster/status',
+          method: 'POST',
+          data: { list: idsToRemove, action: action, status: status },
+          datatype: 'JSON',
+          beforeSend: function (request) {
+            //$(e.currentTarget).html("<span>Updating..</span>");
+            request.setRequestHeader("token", $.cookie('_bb_key'));
+            request.setRequestHeader("SadminID", $.cookie('authid'));
+            request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+            request.setRequestHeader("Accept", 'application/json');
+          },
+          success: function (res) {
+            if (res.flag == "F")
+              alert(res.msg);
+  
+            if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+            if (res.flag == "S") {
+              selfobj.filterSearch();
+            }
+            setTimeout(function () {
+              $(e.currentTarget).html(status);
+            }, 3000);
+  
           }
-          setTimeout(function () {
-            $(e.currentTarget).html(status);
-          }, 3000);
+        });
+        } else if (result.isDenied) {
+        Swal.fire('Changes are not saved', '', 'info')
+         }
+      })
 
-        }
-      });
+     
+      
     },
 
     onErrorHandler: function (collection, response, options) {
@@ -235,7 +254,6 @@ define([
         $(".overlay-main-container").removeClass("open");
         // append filter html here
         $(".ws_filterOptions").append(cont);
-        // $(".ws-select").selectpicker();
 
         /*  
           INFO
