@@ -164,6 +164,7 @@ define([
 
     },
     createNestable: function () {
+      let selfobj = this;
       $('#nestableMenu').nestable({
         maxDepth: 2,
         group: $(this).prop('id')
