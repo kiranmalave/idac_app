@@ -121,7 +121,7 @@ define([
       },
       setOldValues: function () {
         var selfobj = this;
-        setvalues = ["type"];
+        setvalues = ["status"];
         selfobj.multiselectOptions.setValues(setvalues, selfobj);
       },
       getSelectedFile: function (url) {

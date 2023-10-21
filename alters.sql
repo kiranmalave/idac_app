@@ -50,3 +50,7 @@ ALTER TABLE `ab_branches` CHANGE `createdBy` `created_by` INT(11) NOT NULL;
 ALTER TABLE `ab_branches` CHANGE `modifiedBy` `modified_by` INT(11) NOT NULL;
 ALTER TABLE `ab_branches` CHANGE `createdDate` `created_date` DATETIME NOT NULL;
 ALTER TABLE `ab_branches` CHANGE `modifiedDate` `modified_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+
+
+ALTER TABLE `ab_project` ADD `project_number` VARCHAR(20) NOT NULL AFTER `project_id`;

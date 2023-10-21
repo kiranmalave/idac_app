@@ -13,13 +13,39 @@
             <div class="col-md-12">
                 <div class="clearfix">&nbsp;</div>
                 <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                        </div>
+                    </div>
                     <div class="right-layout">
                         <div class="row">
-                            <div class="col">
+                            <div class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick" title="Select Client">
+                                            <% _.each(customerList, function(model1) { %>
+                                                    <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected
+                                                        <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
+                                             <%}); %>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line">
                                         <select class="form-control dropval ws-select show-tick mt-2" title="Select Client">
-                                            <option>Select Client</option>
+                                            <option>Select Project</option>
                                             <option>
                                                 test
                                             </option>
@@ -29,62 +55,43 @@
                                         </select>
                                     </div>
                                 </div>
-                                
                             </div>
                         </div>
                     </div>
                 </div>
-                
                 <div class="list-row">
-                    <div class="right-layout">
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group form-float">
-                                    <div class="form-line">
-                                        <select class="form-control dropval ws-select show-tick mt-2" title="Select">
-                                            <option>Select Project</option>
-                                            <option>
-                                                testThree
-                                            </option>
-                                            <option>
-                                                testFour
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                            </div>
+                    <div class="icon-left">
+                        <div class="ws-icon">
                         </div>
                     </div>
-                </div>
-
-                <div class="list-row">
                     <div class="right-layout">
                         <div class="row">
-                            <div class="col">
+                            <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <select class="form-control dropval ws-select show-tick mt-2" title="Select Proposal Template">
+                                        <select class="form-control dropval ws-select show-tick mt-2" title="Select Client">
                                             <option>Select Proposal Template</option>
                                             <option>
-                                                testThree
+                                                test
                                             </option>
                                             <option>
-                                                testFour
+                                                testOne
                                             </option>
                                         </select>
                                     </div>
                                 </div>
-                                
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                        </div>
+                    </div>
                     <div class="right-layout">
                         <div class="row">
-                            <div class="col">       
+                            <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line">
                                         <label for="proposal_name" class="form-label">Proposal Name</label>
@@ -95,7 +102,27 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <div class="input-group ws-input-group"> <span class="input-group-addon ">
+                                    <i class="material-icons"></i> </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="status">Status <span class="error">*</span> :</label>
+                                <ul class="item-container" data-valid="status">
+                                  <li class="status multiSel" data-single="Y" data-value="active">Active</li>
+                                  <li class="status multiSel" data-single="Y" data-value="inactive">InActive</li>
+                                  <li class="status multiSel" data-single="Y" data-value="delete">Delete</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="list-row">
                     <div class="icon-left">
                         <div class="ws-icon">
