@@ -164,8 +164,16 @@ class Project extends CI_Controller {
 						$iticode=$projectDetails['project_id'];
 						$projectDetails['status'] = "active";
 						$projectDetails['created_by'] = $this->input->post('SadminID');
+						$projectDetails['project_number'] = $lastInvoiceDetails[0]->docPrefixCD.$lastInvoiceDetails[0]->docCurrNo.$lastInvoiceDetails[0]->docYearCD;
 						$projectDetails['created_date'] = $updateDate;
-						
+						$lastInvoiceDetails = $this->CommonModel->getMasterDetails("docPrefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"2"));
+						if(!$lastInvoiceDetails){
+							$status['data'] = array();
+							$status['msg'] = $this->systemmsg->getErrorCode(267);
+							$status['statusCode'] = 267;
+							$status['flag'] = 'F';
+							$this->response->output($status,200);
+						}
 						$iscreated = $this->CommonModel->saveMasterDetails('project',$projectDetails);
 						
 						if(!$iscreated){
@@ -176,11 +184,21 @@ class Project extends CI_Controller {
 							$this->response->output($status,200);
 
 						}else{
-							$status['msg'] = $this->systemmsg->getSucessCode(400);
-							$status['statusCode'] = 400;
-							$status['data'] =array();
-							$status['flag'] = 'S';
-							$this->response->output($status,200);
+							$inID = array("docCurrNo"=>($lastInvoiceDetails[0]->docCurrNo+1));
+							$isupdate = $this->CommonModel->updateMasterDetails("docPrefix",$inID,array("docTypeID"=>"1"));
+							if(!$isupdate){
+								$status['msg'] = $this->systemmsg->getErrorCode(998);
+								$status['statusCode'] = 998;
+								$status['data'] = array();
+								$status['flag'] = 'F';
+								$this->response->output($status,200);
+							}else{
+								$status['msg'] = $this->systemmsg->getSucessCode(400);
+								$status['statusCode'] = 400;
+								$status['data'] =array();
+								$status['flag'] = 'S';
+								$this->response->output($status,200);
+							}
 						}
 
 					}elseif($method=="POST")
