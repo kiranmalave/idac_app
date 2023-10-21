@@ -2357,7 +2357,7 @@ label.label-style {
 .job_post {
   display: block;
 }
-.text-center {
+.alineCenter {
   display: flex !important;
     justify-content: center !important;
     align-items: center !important;
