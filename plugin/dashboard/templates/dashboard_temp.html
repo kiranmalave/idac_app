@@ -32,7 +32,12 @@
                 
                    <div class="profile-image float-md-right">
                        <!-- <img src="https://wrraptheme.com/templates/nexa/html/assets/images/profile_av.jpg"/> -->
-                       <img src="<%=customerModel.attributes.customer_image%>"/>
+                       <!-- <img src="<%=customerModel.attributes.customer_image%>"/> -->
+                       <% if(customerModel.attributes.customer_image =="") {%>
+                        <img src = "<%=APPPATH%>images/site/defaultImage.jpg"/>
+                        <%}else{%>
+                          <img id="profile_pic_view1" style="max-width: 100%;" src="<%=customerModel.attributes.customer_image%>" />
+                        <%}%>
                    </div>
                   
                </div>
