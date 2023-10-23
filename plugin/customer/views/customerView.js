@@ -107,7 +107,7 @@ define([
       }).then((result) => {
         /* Read more about isConfirmed, isDenied below */
          if (result.isConfirmed) {
-         Swal.fire('Saved!', '', 'success')
+         Swal.fire('Deleted!', '', 'success')
          var selfobj = this;
          var removeIds = [];
          var status = $(e.currentTarget).attr("data-action");
