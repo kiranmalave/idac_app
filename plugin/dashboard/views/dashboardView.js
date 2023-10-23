@@ -7,9 +7,11 @@ define([
   '../views/filterdataView',
   '../../customer/views/customerSingleView',
   '../../customer/models/customerSingleModel',
+  '../../project/views/projectSingleView',
+  '../../taxInvoice/views/taxInvoiceSingleView',
   '../views/addUserView',
   'text!../templates/dashboard_temp.html',
-], function ($, _, Backbone, custom, dashboardModel, filterUser, customerSingleView, customerSingleModel, addUserView, dashBoard_temp) {
+], function ($, _, Backbone, custom, dashboardModel, filterUser, customerSingleView, customerSingleModel, projectSingleView,taxInvoiceSingleView, addUserView, dashBoard_temp) {
 
   var dashboardView = Backbone.View.extend({
     model: dashboardModel,
@@ -169,8 +171,21 @@ define([
           var customer_id = $(e.currentTarget).attr("data-customer_id");
           new customerSingleView({customer_id: customer_id,loadfrom:"dashboard"});
         }
+
+        case "singleprojectview":{
+          var project_id = $(e.currentTarget).attr("data-project_id");
+          // alert(project_id);
+          new projectSingleView({project_id: project_id,loadfrom:"dashboard"});
+        }
+
+        case "singletaxinvoiceview":{
+          var invoiceID = $(e.currentTarget).attr("data-invoiceID");
+          alert(invoiceID);
+          new taxInvoiceSingleView({invoiceID: invoiceID,loadfrom:"dashboard"});
+        }
       }
     },
+
     showOverlay: function (e) {
       var view = $(e.currentTarget).data("view");
       switch (view) {
@@ -184,14 +199,7 @@ define([
         }
       }
     },
-    render: function () {
-      var template = _.template(dashBoard_temp);
-      var res = template({"customerModel":this.customerModel});
-      this.$el.html(res);
-      $(".app_playground").append(this.$el);
-      return this;
-    },
-
+  
    
     getBannersDetails: function (e) {
       $.ajax({
@@ -255,7 +263,16 @@ define([
           element.classList.remove("hideFolder");
        var element = document.querySelector(".hideTable");
           element.classList.remove("ShowTable");
-    }
+    },
+    render: function () {
+      var template = _.template(dashBoard_temp);
+      var res = template({"customerModel":this.customerModel});
+      var res = template({"customerModel":this.customerModel});
+      this.$el.html(res);
+      $(".app_playground").append(this.$el);
+      return this;
+    },
+
 
   });
 

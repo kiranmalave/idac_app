@@ -2552,7 +2552,7 @@ div:where(.swal2-icon) .swal2-icon-content {
 }
 
 .backbutton {
-  float: right;
+  float: left;
   margin-bottom: 10px;
 }
 /******Custom Dashbord end********/
