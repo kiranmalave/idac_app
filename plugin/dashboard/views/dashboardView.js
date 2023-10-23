@@ -147,6 +147,9 @@ define([
       "click .showOverlay": "showOverlay",
       "click .loadview" : "loadSubView",
       "click .tablinks": "tablinks",
+      "click .openTable": "showTable",
+      "click .backbutton": "backBtn",
+      
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
@@ -166,7 +169,6 @@ define([
           var customer_id = $(e.currentTarget).attr("data-customer_id");
           new customerSingleView({customer_id: customer_id,loadfrom:"dashboard"});
         }
-
       }
     },
     showOverlay: function (e) {
@@ -234,6 +236,26 @@ define([
       // document.getElementById(cityName).style.display = "block";
       // evt.currentTarget.className += " active";
     }, 
+
+    showTable:function(e){
+      var element = document.querySelector(".addFlex");
+          element.classList.add("hideFolder");
+
+
+    var element = document.querySelector(".hideTable");
+          element.classList.add("ShowTable");     
+    },
+
+    // backBtn:funtion(e){
+    
+    // },
+
+    backBtn:function(){
+       var element = document.querySelector(".addFlex");
+          element.classList.remove("hideFolder");
+       var element = document.querySelector(".hideTable");
+          element.classList.remove("ShowTable");
+    }
 
   });
 

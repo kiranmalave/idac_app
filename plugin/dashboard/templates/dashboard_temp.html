@@ -164,11 +164,11 @@
                 <h2>Tasks</h2>
                 <ul class="header-dropdown m-r--5">
                     <li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <i class="material-icons">filter_list</i> </a>
-                        <ul class="dropdown-menu slideUp ">
+                        <!-- <ul class="dropdown-menu slideUp ">
                             <li><a href="javascript:void(0);">Action</a></li>
                             <li><a href="javascript:void(0);">Another action</a></li>
                             <li><a href="javascript:void(0);">Something else</a></li>
-                        </ul>
+                        </ul> -->
                     </li>
                 </ul>
             </div>
@@ -281,45 +281,94 @@
               <ul class="row list-unstyled c_review addFlex">
                   <li class="col-12">
                      <div class="projectFolder">
-                        <div class="projectFolderTop">
+                        <div class="projectFolderTop openTable">
                             <i class="material-icons">folder</i>
                         </div>
                         <div class="projectFolderBottom">
                             <h2>Project Name One</h2>
                         </div>
+                        <button type="button" class="ws-btn-default loadview editButton" data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
                      </div>                             
                   </li>
+
+
                   <li class="col-12">
                     <div class="projectFolder">
-                      <div class="projectFolderTop">
-                          <i class="material-icons">folder</i>
-                      </div>
-                      <div class="projectFolderBottom">
-                          <h2>Project Name One</h2>
-                      </div>
-                   </div>                         
-                  </li>
-                  <li class="col-12">
-                    <div class="projectFolder">
-                      <div class="projectFolderTop">
-                          <i class="material-icons">folder</i>
-                      </div>
-                      <div class="projectFolderBottom">
-                          <h2>Project Name One</h2>
-                      </div>
-                   </div>                            
-                  </li>
-                  <li class="col-12">
-                    <div class="projectFolder">
-                      <div class="projectFolderTop">
-                          <i class="material-icons">folder</i>
-                      </div>
-                      <div class="projectFolderBottom">
-                          <h2>Project Name One</h2>
-                      </div>
-                   </div>                         
-                  </li>
+                       <div class="projectFolderTop openTable">
+                           <i class="material-icons">folder</i>
+                       </div>
+                       <div class="projectFolderBottom">
+                           <h2>Project Name One</h2>
+                       </div>
+                       <button type="button" class="ws-btn-default loadview editButton" data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+                    </div>                             
+                 </li>
+
+
+                 <li class="col-12">
+                  <div class="projectFolder">
+                     <div class="projectFolderTop openTable">
+                         <i class="material-icons">folder</i>
+                     </div>
+                     <div class="projectFolderBottom">
+                         <h2>Project Name One</h2>
+                     </div>
+                     <button type="button" class="ws-btn-default loadview editButton" data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+                  </div>                             
+                </li>
+                <li class="col-12">
+                  <div class="projectFolder">
+                     <div class="projectFolderTop openTable">
+                         <i class="material-icons">folder</i>
+                     </div>
+                     <div class="projectFolderBottom">
+                         <h2>Project Name One</h2>
+                     </div>
+                     <button type="button" class="ws-btn-default loadview editButton" data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+                  </div>                             
+               </li>
               </ul>
+              <div class="hideTable">
+                <button type="button" class="ws-btn-default loadview backbutton" data-toggle="tooltip"  data-placement="top" title="Back to folder"><i class="material-icons">keyboard_backspace</i></button>
+                <table  class="table jambo_table bulk_action tableList">
+                  <thead>
+                    <tr class="headings">
+                      <th class="column-title">Invoice Number</th>
+                      
+                      <th class="column-title">Total Amount</th>
+                      <!-- <th class="column-title"> Amount</th> -->
+                      <th class="column-title">Invoice Date</th>
+                      <th class="column-title">Created Date</th>
+                      <th class="column-title">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="even pointer bg-active">
+                      <td class="loadview"><u>In234</u></a></td></td>
+                      <td class="">22,8765.00</td>
+                      <td class="">Oct 19, 2023</td>
+                      <td class="">Oct 19, 2023</td>
+                      <td>
+                        <button type="button" class="ws-btn-default loadview" data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+                        <button type="button" class="ws-btn-default loadview" data-toggle="tooltip"  data-placement="top" title="Download"><i class="material-icons">file_download</i></button>
+                      
+                      </td>
+                    </tr>
+                    <tr class="even pointer bg-active">
+                      <td class="loadview"><u>In234</u></a></td></td>
+                      <td class="">22,8765.00</td>
+                       <td class="">Oct 19, 2023</td>
+                      <td class="">Oct 19, 2023</td>
+                      <td>
+                        <button type="button" class="ws-btn-default loadview" data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+                        <button type="button" class="ws-btn-default loadview" data-toggle="tooltip"  data-placement="top" title="Download"><i class="material-icons">file_download</i></button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+             
+
           </div>
         </div>
 
