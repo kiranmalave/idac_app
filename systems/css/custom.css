@@ -2433,6 +2433,7 @@ label.label-style {
 
 .projectFolder .projectFolderTop i {
   font-size: 60px;
+  cursor: pointer;
 }
 
 .projectFolder .projectFolderBottom h2 {
@@ -2467,7 +2468,6 @@ label.label-style {
   font-size: 14px;
   color: #616161;
 }
-/******Custom Dashbord end********/
 .profile-header{
   position: relative;
 }
@@ -2528,6 +2528,32 @@ div:where(.swal2-icon) .swal2-icon-content {
   display: flex;
   align-items: center;
   font-size: 50px !important;
+}
+
+.projectFolder{
+  position: relative;
+}
+
+.editButton {
+  position: absolute;
+  top: 0px;
+  right: 0;
+}
+
+.addFlex.hideFolder{
+  display: none;
+}
+
+.hideTable{
+  display: none;
+}
+.hideTable.ShowTable{
+  display: block;
+}
+
+.backbutton {
+  float: right;
+  margin-bottom: 10px;
 }
 /******Custom Dashbord end********/
 .ws-disable-cursor{
