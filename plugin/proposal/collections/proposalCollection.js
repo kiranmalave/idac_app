@@ -11,7 +11,7 @@ define([
   
         },
         url : function() {
-          return APIPATH+'proposalMasterList';
+          return APIPATH+'proposalList';
         },
         parse : function(response){
           this.pageinfo = response.paginginfo;

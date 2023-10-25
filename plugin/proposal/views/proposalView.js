@@ -114,7 +114,7 @@ define([
           return false;
         }
         $.ajax({
-          url: APIPATH + 'proposalMaster/status',
+          url: APIPATH + 'proposal/status',
           method: 'POST',
           data: { list: idsToRemove, action: action, status: status },
           datatype: 'JSON',

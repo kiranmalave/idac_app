@@ -22,27 +22,6 @@ ALTER TABLE `ab_customer` CHANGE `adhar_number` `adhar_number` VARCHAR(15) NULL 
 ALTER TABLE `ab_project` CHANGE `desicription` `description` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
 
 
-CREATE TABLE `ab_customer` (
-  `customer_id` int(11) NOT NULL,
-  `pan_number` varchar(20) NOT NULL,
-  `company_name` varchar(100) NOT NULL,
-  `person_name` varchar(200) NOT NULL,
-  `billing_name` varchar(500) NOT NULL,
-  `billing_address` varchar(500) NOT NULL,
-  `branch_id` varchar(200) NOT NULL,
-  `GST_no` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `mobile_no` varchar(11) NOT NULL,
-  `adhar_number` int(15) DEFAULT NULL,
-  `customer_image` varchar(250) NOT NULL,
-  `website` varchar(200) NOT NULL,
-  `address` varchar(200) NOT NULL,
-  `created_date` datetime NOT NULL,
-  `created_by` datetime DEFAULT NULL,
-  `modified_by` int(11) NOT NULL,
-  `modified_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `status` enum('Active','InActive','Delete') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 ## Branches ###
 

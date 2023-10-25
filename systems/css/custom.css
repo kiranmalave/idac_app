@@ -2190,12 +2190,11 @@ label.label-style {
 }
 
 #description {
-  height: 150px;
+  height: auto;
 }
 
 .ws-quill {
   display: unset !important;
-  width: 93% !important;
 }
 
 .addNew {
