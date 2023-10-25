@@ -5,13 +5,13 @@ define([
   ], function(_, Backbone,proposalTemplateModel){
   
     var proposalTemplateCollection = Backbone.Collection.extend({
-      proposalTemplate_id:null,
+      temp_id:null,
         model: proposalTemplateModel,
         initialize : function(){
   
         },
         url : function() {
-          return APIPATH+'projectList';
+          return APIPATH+'proposalTemplateList';
         },
         parse : function(response){
           this.pageinfo = response.paginginfo;

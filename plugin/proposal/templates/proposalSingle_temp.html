@@ -3,7 +3,7 @@
         <div class="text-right actionBtns">
             <!-- <button type="button" class="btn bg-indigo saveconfirmProposal" data-action="new">Confirm Proposal</button> -->
             <!-- <button type="button" class="btn bg-indigo saveproposalDetails" data-action="close">Save</button> -->
-            <button type="button" class="btn bg-indigo saveconfirmProposal" data-action="new">Save</button>
+            <button type="button" class="btn bg-indigo saveproposalDetails" data-action="new">Save</button>
             <button type="button" class="btn bg-indigo saveproposalDetails" data-action="new">Save & new</button>
         </div>
         
@@ -20,12 +20,10 @@
                             <div class="col-md-12">       
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <label for="proposal_number" class="form-label pl-2">Proposal Id</label>
-                                        <input id="proposal_number" class="form-control txtchange ws-disable-cursor"  type="text" value="" disabled >
+                                        <input id="proposal_number" class="form-control txtchange ws-disable-cursor"  type="text" value="" disabled placeholder="Proposal Id">
                                     </div>
                                 </div>
-                            </div>
-                            
+                            </div>  
                         </div>
                     </div>
                 </div>
@@ -57,9 +55,9 @@
                             <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
+                                        <select id="customer_id" name="customer_id" class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
                                             <% _.each(customerList, function(model1) { %>
-                                                    <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected
+                                                    <option <% if(model1.attributes.customer_id == model.customer_id ) { %>selected
                                                         <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
                                              <%}); %>
                                         </select>
@@ -101,7 +99,7 @@
                             <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <select class="form-control dropval ws-select show-tick mt-2" title="Select Client">
+                                        <select class="form-control dropval ws-select show-tick mt-2" title="Select Proposal Template">
                                             <option>Select Proposal Template</option>
                                             <option>test</option>
                                             <option> testOne </option>
