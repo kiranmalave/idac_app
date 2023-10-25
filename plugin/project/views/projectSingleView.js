@@ -199,6 +199,10 @@ define([
           project_name: {
             required: true,
           },
+
+          client_id:{
+            required: true,
+          }
           
         };
         var feildsrules = feilds;
@@ -212,7 +216,8 @@ define([
           //   };
         }
         var messages = {
-          project_name: "Please enter First Name",
+          project_name: "Please enter Project Name",
+          client_id: "Please select Client",
         };
         $("#projectDetails").validate({
           rules: feildsrules,
