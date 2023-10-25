@@ -2190,12 +2190,11 @@ label.label-style {
 }
 
 #description {
-  height: 150px;
+  height: auto;
 }
 
 .ws-quill {
   display: unset !important;
-  width: 93% !important;
 }
 
 .addNew {
@@ -2263,7 +2262,7 @@ label.label-style {
 }
 
 .ws-country{
-  width: 30%;
+  width: 25%;
 }
 .ws-number{
   width: 80%;
@@ -2556,3 +2555,6 @@ div:where(.swal2-icon) .swal2-icon-content {
   margin-bottom: 10px;
 }
 /******Custom Dashbord end********/
+.ws-disable-cursor{
+  cursor:not-allowed;
+}

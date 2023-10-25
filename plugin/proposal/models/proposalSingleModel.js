@@ -7,12 +7,13 @@ define([
       idAttribute: "proposal_id",
       defaults: {
         proposal_id: null,
-        salutation: "mr",
+        description: null,
         proposal_name: null,
+        proposal_number:null,
         status: 'active',
       },
       urlRoot: function () {
-        return APIPATH + 'proposalMaster/'
+        return APIPATH + 'proposal/'
       },
       parse: function (response) {
         return response.data[0];

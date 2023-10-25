@@ -147,18 +147,27 @@ class Proposal extends CI_Controller {
 				// $proposalDetails['regiNoYSF'] = $this->validatedata->validate('regiNoYSF','regiNoYSF',true,'',array());
 
 				$proposalDetails['proposal_id'] = $this->validatedata->validate('proposal_id','proposal_id',false,'',array());
-				$proposalDetails['proposal_name'] = $this->validatedata->validate('proposal_name','proposal Name',true,'',array());
-				$proposalDetails['description'] = $this->validatedata->validate('description','Description',true,'',array());
-				$proposalDetails['company_name'] = $this->validatedata->validate('company_name','Companuy Name',true,'',array());
+				$proposalDetails['proposal_name'] = $this->validatedata->validate('proposal_name','proposal Name',false,'',array());
+				// $proposalDetails['description'] = $this->validatedata->validate('description','Description',false,'',array());
+				// $proposalDetails['company_name'] = $this->validatedata->validate('company_name','Company Name',false,'',array());
 
 				
 					  
 					if($method=="PUT")
 					{
+						$lastProposalDetails = $this->CommonModel->getMasterDetails("doc_prefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"2"));
+						if(!$lastProposalDetails){
+							$status['data'] = array();
+							$status['msg'] = $this->systemmsg->getErrorCode(267);
+							$status['statusCode'] = 267;
+							$status['flag'] = 'F';
+							$this->response->output($status,200);
+						}
 						
-						$iticode=$proposalDetails['proposal_id'];
+						// $iticode=$proposalDetails['proposal_id'];
 						$proposalDetails['status'] = "active";
 						$proposalDetails['created_by'] = $this->input->post('SadminID');
+						$projectDetails['proposal_number'] = $lastProposalDetails[0]->docPrefixCD.$lastProposalDetails[0]->docCurrNo."/".$lastProposalDetails[0]->docYearCD;
 						$proposalDetails['created_date'] = $updateDate;
 						
 						$iscreated = $this->CommonModel->saveMasterDetails('proposal',$proposalDetails);
@@ -171,11 +180,21 @@ class Proposal extends CI_Controller {
 							$this->response->output($status,200);
 
 						}else{
-							$status['msg'] = $this->systemmsg->getSucessCode(400);
-							$status['statusCode'] = 400;
-							$status['data'] =array();
-							$status['flag'] = 'S';
-							$this->response->output($status,200);
+							$inID = array("docCurrNo"=>($lastProposalDetails[0]->docCurrNo+1));
+							$isupdate = $this->CommonModel->updateMasterDetails("doc_prefix",$inID,array("docTypeID"=>"2"));
+							if(!$isupdate){
+								$status['msg'] = $this->systemmsg->getErrorCode(998);
+								$status['statusCode'] = 998;
+								$status['data'] = array();
+								$status['flag'] = 'F';
+								$this->response->output($status,200);
+							}else{
+								$status['msg'] = $this->systemmsg->getSucessCode(400);
+								$status['statusCode'] = 400;
+								$status['data'] =array();
+								$status['flag'] = 'S';
+								$this->response->output($status,200);
+							}
 						}
 
 					}elseif($method=="POST")
