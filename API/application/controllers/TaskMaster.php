@@ -146,6 +146,12 @@ class TaskMaster extends CI_Controller
 		$join[2]['key1'] ="task_priority";
 		$join[2]['key2'] ="category_id";
 
+		$join[3]['type'] ="LEFT JOIN";
+		$join[3]['table']="project";
+		$join[3]['alias'] ="p";
+		$join[3]['key1'] ="project";
+		$join[3]['key2'] ="project_id";
+
 		$config["base_url"] = base_url() . "taskDetails";
 		$config["total_rows"] = $this->CommonModel->getCountByParameter('task_id', 'tasks', $wherec, $other);
 		$config["uri_segment"] = 2;
@@ -158,7 +164,7 @@ class TaskMaster extends CI_Controller
 			$page = 0;
 		}
 		//  print_r($textSearch);exit;
-		$selectC = "t.*, c.categoryName AS status_slug, ca.categoryName AS priority_slug, a.name";
+		$selectC = "t.*, c.categoryName AS status_slug, ca.categoryName AS priority_slug, a.name, p.project_name AS projectName, p.project_number AS projectNumb";
 		if ($isAll == "Y") {
 			$join = array();
 			$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, '', '', $join, $other);
@@ -211,12 +217,9 @@ class TaskMaster extends CI_Controller
 		$method = $this->input->method(TRUE);
 		$watchers_name = $this->input->post("tasksWatchers");
 		$task_attachments = $this->input->post("attachment_file");
-		//print_r($task_attachments);exit;
-		// echo $method;
 		if ($method == "PUT" || $method == "POST") {
 			$taskDetails = array();
 			$updateDate = date("Y/m/d H:i:s");
-			// $taskDetails['regiNoYSF'] = $this->validatedata->validate('regiNoYSF','regiNoYSF',true,'',array());
 			$taskDetails['task_id'] = $this->validatedata->validate('task_id', 'task ID', false, '', array());
 			$taskDetails['subject'] = $this->validatedata->validate('subject', 'Subject', false, '', array());
 			$taskDetails['description'] = $this->validatedata->validate('description', 'Description', false, '', array());
@@ -245,10 +248,9 @@ class TaskMaster extends CI_Controller
 
 				$cat = $this->input->post("category_id");
 
-
-			//   print_r($method);exit();
+				
+			//   
 			if ($method == "PUT") {
-				//$iticode=$taskDetails['task_id'];
 				$taskDetails['status'] = "active";
 				$taskDetails['created_by'] = $this->input->post('SadminID');
 				$taskDetails['created_date'] = $updateDate;
@@ -294,7 +296,6 @@ class TaskMaster extends CI_Controller
 							$this->response->output($status, 200);
 						}
 					}
-					// print_r($task_attachments);exit;
 					$status['msg'] = $this->systemmsg->getSucessCode(400);
 					$status['statusCode'] = 400;
 					$status['data'] = array();
@@ -311,7 +312,6 @@ class TaskMaster extends CI_Controller
 					$this->response->output($status, 200);
 				} else {
 			        $taskDetails['category_id'] = implode(",", $cat);
-					//$this->validatedata->validate('category_id', 'Category', false, '', array());
 				}
 
 				$taskDetails['modified_by'] = $this->input->post('SadminID');
@@ -326,7 +326,6 @@ class TaskMaster extends CI_Controller
 					$this->response->output($status, 200);
 				} else {
 
-					$this->addTaskHistory($task_id, 'Task Updated', 'Updated', $taskDetails['modified_by']);
 					if (isset($watchers_name) && !empty($watchers_name)) {
 						$saveFlag = $this->saveWatchersDetails($watchers_name, $task_id, $taskDetails['modified_by']);
 					}
@@ -359,82 +358,75 @@ class TaskMaster extends CI_Controller
 							$this->response->output($status,200);
 						}
 
-					}elseif($method=="POST")
-					{
-						$where=array('task_id'=>$task_id);
-						if(!isset($task_id) || empty($task_id)){
-						$status['msg'] = $this->systemmsg->getErrorCode(998);
-						$status['statusCode'] = 998;
-						$status['data'] = array();
-						$status['flag'] = 'F';
-						$this->response->output($status,200);
-						}
+					}
+				}
+			}elseif($method=="POST"){
+				$where=array('task_id'=>$task_id);
+				if(!isset($task_id) || empty($task_id)){
+				$status['msg'] = $this->systemmsg->getErrorCode(998);
+				$status['statusCode'] = 998;
+				$status['data'] = array();
+				$status['flag'] = 'F';
+				$this->response->output($status,200);
+				}
+				
+				$taskDetails['modified_by'] = $this->input->post('SadminID');
+				$taskDetails['modified_date'] = $updateDate;
+				
+				$iscreated = $this->CommonModel->updateMasterDetails('tasks',$taskDetails,$where);
+				if(!$iscreated){
+					$status['msg'] = $this->systemmsg->getErrorCode(998);
+					$status['statusCode'] = 998;
+					$status['data'] = array();
+					$status['flag'] = 'F';
+					$this->response->output($status,200);
+				}else{
+					
+					// $this->addTaskHistory($task_id, 'Task Updated', 'Updated', $taskDetails['modified_by']);
+					if(isset($watchers_name) && !empty($watchers_name)){
+						$saveFlag = $this->saveWatchersDetails($watchers_name,$task_id,$taskDetails['modified_by']);
+					}
+					if(isset($task_attachments) && !empty($task_attachments)){
 						
-						$taskDetails['modified_by'] = $this->input->post('SadminID');
-						$taskDetails['modified_date'] = $updateDate;
-						
-						$iscreated = $this->CommonModel->updateMasterDetails('tasks',$taskDetails,$where);
-						if(!$iscreated){
-							$status['msg'] = $this->systemmsg->getErrorCode(998);
+						$saveFlag1 = $this->saveAttachments($task_attachments,$task_id,$taskDetails['modified_by']);	
+					}
+					
+					if(isset($saveFlag1)&&!empty($saveFlag1)){
+						if($saveFlag1 == true){
+							$status['msg'] = $this->systemmsg->getSucessCode(400);
+							$status['statusCode'] = 400;
+							$status['data'] =array();
+							$status['flag'] = 'S';
+							$this->response->output($status,200);
+						}else{
+							$status['msg'] = $this->systemmsg->getErrorCode(424);
 							$status['statusCode'] = 998;
 							$status['data'] = array();
 							$status['flag'] = 'F';
 							$this->response->output($status,200);
-						}else{
-							
-							$this->addTaskHistory($task_id, 'Task Updated', 'Updated', $taskDetails['modified_by']);
-							if(isset($watchers_name) && !empty($watchers_name)){
-								$saveFlag = $this->saveWatchersDetails($watchers_name,$task_id,$taskDetails['modified_by']);
-							}
-							if(isset($task_attachments) && !empty($task_attachments)){
-								
-								$saveFlag1 = $this->saveAttachments($task_attachments,$task_id,$taskDetails['modified_by']);	
-							}
-							
-							if(isset($saveFlag1)&&!empty($saveFlag1)){
-								if($saveFlag1 == true){
-									$status['msg'] = $this->systemmsg->getSucessCode(400);
-									$status['statusCode'] = 400;
-									$status['data'] =array();
-									$status['flag'] = 'S';
-									$this->response->output($status,200);
-								}else{
-									$status['msg'] = $this->systemmsg->getErrorCode(424);
-									$status['statusCode'] = 998;
-									$status['data'] = array();
-									$status['flag'] = 'F';
-									$this->response->output($status,200);
-								}
-							}elseif(isset($saveFlag)&&!empty($saveFlag)){
-								if($saveFlag == true){
-									$status['msg'] = $this->systemmsg->getSucessCode(400);
-									$status['statusCode'] = 400;
-									$status['data'] =array();
-									$status['flag'] = 'S';
-									$this->response->output($status,200);
-								}else{
-									$status['msg'] = $this->systemmsg->getErrorCode(424);
-									$status['statusCode'] = 998;
-									$status['data'] = array();
-									$status['flag'] = 'F';
-									$this->response->output($status,200);
-								}
-							}else{
-								$status['msg'] = $this->systemmsg->getSucessCode(400);
-									$status['statusCode'] = 400;
-									$status['data'] =array();
-									$status['flag'] = 'S';
-									$this->response->output($status,200);
-							}
-
 						}
-					} else {
+					}elseif(isset($saveFlag)&&!empty($saveFlag)){
+						if($saveFlag == true){
+							$status['msg'] = $this->systemmsg->getSucessCode(400);
+							$status['statusCode'] = 400;
+							$status['data'] =array();
+							$status['flag'] = 'S';
+							$this->response->output($status,200);
+						}else{
+							$status['msg'] = $this->systemmsg->getErrorCode(424);
+							$status['statusCode'] = 998;
+							$status['data'] = array();
+							$status['flag'] = 'F';
+							$this->response->output($status,200);
+						}
+					}else{
 						$status['msg'] = $this->systemmsg->getSucessCode(400);
-						$status['statusCode'] = 400;
-						$status['data'] = array();
-						$status['flag'] = 'S';
-						$this->response->output($status, 200);
+							$status['statusCode'] = 400;
+							$status['data'] =array();
+							$status['flag'] = 'S';
+							$this->response->output($status,200);
 					}
+
 				}
 			} elseif ($method == "dele") {
 				$taskDetails = array();

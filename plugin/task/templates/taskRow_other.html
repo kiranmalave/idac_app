@@ -10,7 +10,16 @@
     <div class="comment-actionHeading">
       <div class="comment-actionHeading_left">
         <h5 class="loadview textwrap c_name" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"><%=taskDetails.attributes.subject%></h5> 
-        <!-- <div class="badge badge-success">Completed</div> -->
+        
+
+        <% if(taskDetails.attributes.projectNumb == null) {%>
+            -
+           <%}else{%>
+            <%=taskDetails.attributes.projectNumb%>
+              <!-- <div class="badge badge-secondary"> <%=taskDetails.attributes.projectName%> </div> -->
+              
+          <%}%>
+          <!-- <h6>Project Name: <%=taskDetails.attributes.projectName%></h6> -->
       </div>
       <div class="comment-actionHeading_right">
       </div>
@@ -28,7 +37,11 @@
       <% }else if(taskDetails.attributes.status_slug=='In progress'){ %><span class="badge badge-info">In progress</span>
       <%}else if(taskDetails.attributes.priority_slug=='To-do'){%><span class="badge badge-primary">To-do</span><%}
       %>
-
+      <span class="badge badge-info"> <%=taskDetails.attributes.name%> </span>
+      
     <small class="comment-date float-sm-right"><%=taskDetails.attributes.due_date%>   </small>
+
+    <button type="button" class="ws-btn-default loadview editButton" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"  data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+
   </div>
 </li>
