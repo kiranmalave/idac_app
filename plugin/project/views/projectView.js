@@ -5,6 +5,7 @@ define([
     'backbone',
     'datepickerBT',
     'moment',
+    'Swal',
     '../views/projectSingleView',
     '../collections/projectCollection',
     '../models/projectFilterOptionModel',
@@ -12,7 +13,7 @@ define([
     'text!../templates/projectRow.html',
     'text!../templates/project_temp.html',
     'text!../templates/projectFilterOption_temp.html',
-  ], function ($, _, Backbone, datepickerBT, moment, projectSingleView, projectCollection, projectFilterOptionModel, customerCollection, projectRowTemp, projectTemp, projectFilterTemp) {
+  ], function ($, _, Backbone, datepickerBT, moment, Swal,  projectSingleView, projectCollection, projectFilterOptionModel, customerCollection, projectRowTemp, projectTemp, projectFilterTemp) {
   
     var projectView = Backbone.View.extend({
   
@@ -92,6 +93,18 @@ define([
         filterOption.set({ textSearch: usernametxt });
       },
       changeStatusListElement: function (e) {
+        // alert("aniruddha");
+
+        Swal.fire({
+          title: 'Do you want to delete ?',
+          showDenyButton: true,
+          showCancelButton: false,
+          confirmButtonText: 'Yes',
+          denyButtonText: `No`,
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+           if (result.isConfirmed) {
+           Swal.fire('Deleted!', '', 'success')
         var selfobj = this;
         var removeIds = [];
         var status = $(e.currentTarget).attr("data-action");
@@ -143,7 +156,12 @@ define([
   
           }
         });
-      },
+
+       } else if (result.isDenied) {
+        Swal.fire('Changes are not saved', '', 'info')
+         }
+      })
+    },
   
       onErrorHandler: function (collection, response, options) {
         alert("Something was wrong ! Try to refresh the page or contact administer. :(");
