@@ -86,6 +86,7 @@ define([
                selfobj.loadData();
                
            });*/
+
       },
       events:
       {
@@ -95,6 +96,7 @@ define([
         "click .multiOptionSel": "multioption",
         "click .filterSearch": "filterSearch",
         "click #filterOption": "filterRender",
+        "click #removeFlyOut": "removeFlyOut",
         "click .resetval": "resetSearch",
         "click .loadview": "loadSubView",
         "click .sortColumns": "sortColumn",
@@ -103,6 +105,13 @@ define([
         "click .showpage": "loadData",
         "change .changeBox": "changeBox",
         "click .sortbydate": "sortByDate",
+        
+      },
+
+      attachEvents: function () {
+        console.log("attachEvents");
+        this.$el.off('click', '#removeFlyOut', this.removeFlyOut);
+        this.$el.on('click', '#removeFlyOut', this.removeFlyOut.bind(this));
       },
       updateOtherDetails: function (e) {
         e.stopPropagation();
@@ -322,6 +331,108 @@ define([
           }, 500);
         }
       },
+      filterRender: function (e) {
+        console.log("filterRender");
+        var isexits = checkisoverlay(this.toClose);
+        if (!isexits) {
+          var source = taskFilterTemp;
+          var template = _.template(source);
+  
+          var cont = $("<div>");
+          cont.html(template({ "adminList": this.adminList.models, "categoryList": this.categoryList.models, "customerList": this.customerList.models }));
+          cont.attr('id', this.toClose);
+          /*  
+            INFO
+            this line use to hide if any other overlay is open first close it.
+          */
+          $(".overlay-main-container").removeClass("open");
+          // append filter html here
+          $(".ws_filterOptions").append(cont);
+          // $(".ws-select").selectpicker();
+          /*  
+            INFO
+            open filter popup by adding class open here
+          */
+          $(".ws_filterOptions").addClass("open");
+          $(".ws-select").selectpicker();
+          /* 
+            INFO
+            make current task active
+          */
+          $(e.currentTarget).addClass("active");
+  
+        } else {
+          // check here we alreay open it or not. if open toggle that popup here
+          var isOpen = $(".ws_filterOptions").hasClass("open");
+          if (isOpen) {
+            $(".ws_filterOptions").removeClass("open");
+            $(e.currentTarget).removeClass("active");
+            return;
+          } else {
+            $(e.currentTarget).addClass("active");
+            // this function will handel other exiting open popus
+          }
+        }
+        this.setValues();
+        this.setupFilter();
+        rearrageOverlays("Filter", this.toClose, "small");
+      },
+
+      removeFlyOut: function () {
+        console.log("removeFlyOut");
+      },
+
+      resetSearch: function () {
+        // console.log("resetSearch");
+        filterOption.clear().set(filterOption.defaults);
+        $(".multiOptionSel").removeClass("active");
+        $("#textval").val("");
+        $(".hidetextval").hide();
+        $(".txtchange").val("");
+        $(".ws-select").selectpicker("refresh");
+        $('#textSearch option[value=task_id]').attr('selected', 'selected');
+        this.filterSearch(false);
+      },
+
+      filterSearch: function (isClose = false) {
+        console.log("filterSearch");
+        if (isClose && typeof isClose != 'object') {
+          $('.' + this.toClose).remove();
+          rearrageOverlays();
+        }
+        searchtask.reset();
+        var selfobj = this;
+        readyState = true;
+        filterOption.set({ curpage: 0 });
+        var $element = $('#loadMember');
+        $(".profile-loader").show();
+        $element.attr("data-index", 1);
+        $element.attr("data-currPage", 0);
+  
+        searchtask.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, add: true, remove: false, merge: false, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".profile-loader").hide();
+  
+          setPagging(res.paginginfo, res.loadstate, res.msg);
+          $element.attr("data-currPage", 1);
+          $element.attr("data-index", res.paginginfo.nextpage);
+  
+          //$(".page-info").html(recset);
+          if (res.loadstate === false) {
+            $(".profile-loader-msg").html(res.msg);
+            $(".profile-loader-msg").show();
+          } else {
+            $(".profile-loader-msg").hide();
+          }
+          selfobj.setValues();
+        });
+      },
+
+
       loadData: function (e) {
         var selfobj = this;
         var $element = $('#loadMember');
@@ -447,11 +558,14 @@ define([
         });
       },
       render: function () {
+        this.attachEvents();
+        console.log("render...");
         var template = _.template(taskTemp);
         this.$el.html(template({ closeItem: this.toClose }));
         $("#dasboradHolder").empty().append(this.$el);
         return this;
-      }
+      },
+
     });
     return taskView;
   });

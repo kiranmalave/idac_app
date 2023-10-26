@@ -2558,3 +2558,14 @@ div:where(.swal2-icon) .swal2-icon-content {
 .ws-disable-cursor{
   cursor:not-allowed;
 }
+
+.ws_filterOptions.open i {
+  position: absolute;
+  top: -1px;
+  right: 6px;
+  cursor: pointer;
+}
+
+#removeFlyOut{
+  cursor: pointer;
+}
