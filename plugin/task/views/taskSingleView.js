@@ -76,18 +76,17 @@ define([
         // $(".popupLoader").hide();
         selfobj.render();
       });
-
       this.projectList = new projectCollection();
       this.projectList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: {  status: "active" }
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        // $(".popupLoader").hide();
-        selfobj.render();
+        $(".preloader").hide();
+        // selfobj.render();
       });
-
+      console.log(this.projectList);
       this.categoryList = new slugCollection();
       this.categoryList.fetch({
         headers: {
@@ -660,7 +659,7 @@ define([
       var template = _.template(source);
       $("#" + this.toClose).remove();
       // console.log(this.model);
-      this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID, "projectList":this.projectList.models, }))
+      this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "projectList": this.projectList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID }))
       this.$el.addClass("tab-pane in active panel_overflow");
       this.$el.attr("id", this.toClose);
       this.$el.addClass(this.toClose);

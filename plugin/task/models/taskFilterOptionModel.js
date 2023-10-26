@@ -11,6 +11,7 @@ define([
       toDate: null,
       fromDate2: null,
       toDate2: null,
+      due_date:null,
       task_priority: null,
       task_status: null,
       customer_id: null,

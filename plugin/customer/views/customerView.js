@@ -7,7 +7,7 @@ define([
   'moment',
   'Swal',
   '../views/customerSingleView',
-  '../../dashboard/views/dashboardView',
+  '../views/dashboardView',
   '../collections/customerCollection',
   '../models/customerFilterOptionModel',
   'text!../templates/customerRow.html',

@@ -6,10 +6,11 @@ define([
   "inputmask",
   "datepickerBT",
   "../../core/views/multiselectOptions",
+  "../../core/views/timeselectOptions",
   "../../dynamicForm/views/dynamicFieldRender",
   "../collections/historyCollection",
   "text!../templates/historySingle_temp.html",
-], function ($, _, Backbone, validate, inputmask, datepickerBT, multiselectOptions, dynamicFieldRender, historyCollection, historyTemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, multiselectOptions, timeselectOptions, dynamicFieldRender, historyCollection, historyTemp) {
   var historySingleView = Backbone.View.extend({
     initialize: function (options) {
       this.dynamicData = null;
@@ -19,6 +20,7 @@ define([
       // use this valiable for dynamic fields to featch the data from server
       this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {}, });
       this.multiselectOptions = new multiselectOptions();
+      this.timeselectOptions = new timeselectOptions();
       scanDetails = options.searchhistory;
       // this.collection.on('add',this.addOne,this);
       // this.collection.on('reset',this.addAll,this);
@@ -33,10 +35,12 @@ define([
         }).done(function (res) {
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".popupLoader").hide();
+          selfobj.preparetime();
+          setPagging(res.paginginfo, res.loadstate, res.msg);
           selfobj.render();
         });
-
       }
+      console.log(this.historyList);
     },
     events: {
       "click .savehistoryDetails": "savehistoryDetails",
@@ -56,12 +60,19 @@ define([
       this.$el.off('click', '.item-container li', this.setValues);
       this.$el.on('click', '.item-container li', this.setValues.bind(this));
       this.$el.off("change", ".dropval", this.updateOtherDetails);
-      // this.$el.on("change", ".dropval", this.updateOtherDetails.bind(this));
-      // this.$el.off("blur", ".txtchange", this.updateOtherDetails);
-      // this.$el.on("blur", ".txtchange", this.updateOtherDetails.bind(this));   
-
     },
-
+    preparetime: function () {
+      let selfobj = this;
+      var models = this.historyList.models;
+      for (var i = 0; i < models.length; i++) {
+        var model = models[i];
+        var timestamp = model.get('timestamp');
+        selfobj.timeselectOptions.displayRelativeTime(timestamp);
+        model.set({ "timeString": selfobj.timeselectOptions.displayRelativeTime(timestamp) });
+        // console.log(model);
+      }
+      this.render();
+    },
     onErrorHandler: function (collection, response, options) {
       alert(
         "Something was wrong ! Try to refresh the page or contact administer. :("
@@ -83,7 +94,10 @@ define([
       }
       console.log(this.model);
     },
-
+    getTimeData: function () {
+      var selfobj = this;
+      var model = selfobj.historyList.models
+    },
     setOldValues: function () {
       var selfobj = this;
       setvalues = ["is_custom", "category", "admin"];
@@ -181,6 +195,7 @@ define([
       this.$el.addClass(this.toClose);
       this.$el.data("role", "tabpanel");
       this.$el.data("current", "yes");
+      this.getTimeData();
       $(".showHistory").append(this.$el);
       $("#" + this.toClose).show();
       // this is used to append the dynamic form in the single view html
