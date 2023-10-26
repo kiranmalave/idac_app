@@ -82,6 +82,18 @@ class Project extends CI_Controller {
 		}
 		if($isAll=="Y"){
 			$join = array();
+			$join[0]['type'] ="LEFT JOIN";
+			$join[0]['table']="customer";
+			$join[0]['alias'] ="c";
+			$join[0]['key1'] ="client_id";
+			$join[0]['key2'] ="customer_id";
+
+			$selectC = "t.*, c.company_name as client_id";
+
+			if(isset($statuscode) && !empty($statuscode)){
+				$statusStr = str_replace(",",'","',$statuscode);
+				$wherec["c.status"] = 'IN ("'.$statusStr.'")';
+				}
 			$projectDetails = $this->CommonModel->GetMasterListDetails($selectC='*','project',$wherec,'','',$join,$other);	
 		}else{
 			

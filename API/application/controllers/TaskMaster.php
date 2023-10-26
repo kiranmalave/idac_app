@@ -228,6 +228,7 @@ class TaskMaster extends CI_Controller
 			$taskDetails['due_date'] = $this->validatedata->validate('due_date', 'End Date', false, '', array());
 			$taskDetails['completed_date'] = $this->validatedata->validate('completed_date', 'Completed Date', false, '', array());
 			$taskDetails['assignee'] = $this->validatedata->validate('assignee', 'Assignee', false, '', array());
+			$taskDetails['project'] = $this->validatedata->validate('project', 'Project', true, '', array());
 			$taskDetails['task_type'] = $this->validatedata->validate('task_type', 'Task_Type', false, '', array());
 			$taskDetails['status'] = $this->validatedata->validate('status', 'Status', true, '', array());
 			$taskDetails['does_repeat'] = $this->validatedata->validate('does_repeat', 'does_repeat', false, '', array());

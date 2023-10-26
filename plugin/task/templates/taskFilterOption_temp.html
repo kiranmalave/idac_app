@@ -18,9 +18,8 @@
 
   <div class="row">
     <div class="col-md-6 assigneeList">
-      <select for="assignee" id="assignee" name="assignee" data-live-search="true"
-        class="form-control dropval ws-select show-tick txtchange">
-        <option value="">Assignee</option>
+      <select for="assignee" id="assignee" name="assignee" data-live-search="true" title="Assignee"
+        class="form-control dropval ws-select show-tick txtchange" multiple>
         <% _.each(adminList, function(model1) { %>
           <option value="<%=model1.attributes.adminID%>">
             <%=model1.attributes.name%>
@@ -30,8 +29,7 @@
     </div>
     <div class="col-md-6">
       <select for="task_priority" id="task_priority" name="task_priority" title="Task priority"
-        class="form-control dropval ws-select show-tick txtchange repeatChange">
-        <option value="">Task Priority</option>
+        class="form-control dropval ws-select show-tick txtchange repeatChange" multiple>
         <% _.each(categoryList, function(modelcat) { %>
           <% if(modelcat.attributes.slug=="task_priority" ) _.each(modelcat.attributes.sublist, function(model1) { %>
             <option value="<%=model1.category_id%>">
@@ -47,8 +45,8 @@
 
   <div class="row">
     <div class="col-md-6">
-      <select id="task_status" name="task_status" class="form-control dropval txtchange" title="Task Status">
-        <option value="">Task Status</option>
+      <select id="task_status" name="task_status" class="form-control ws-select dropval txtchange" title="Task Status"
+        multiple>
         <% _.each(categoryList, function(modelcat) { %>
           <% if(modelcat.attributes.slug=="task_status" ) _.each(modelcat.attributes.sublist, function(model1) { %>
             <option value="<%=model1.category_id%>">
@@ -60,8 +58,7 @@
     </div>
     <div class="col-md-6">
       <select id="customer_id" name="customer_id" class="form-control dropval ws-select show-tick txtchange"
-        title="Select Customer">
-        <option value="">Customer</option>
+        title="Select Customer" multiple>
         <% _.each(customerList, function(model1) { %>
           <option value="<%=model1.attributes.customer_id%>">
             <%=model1.attributes.first_name%>
@@ -70,9 +67,22 @@
       </select>
     </div>
   </div>
+  <div class="clearfix">&nbsp;</div>
+  <div class="row">
+    <div class="col-md-6">
+      <select id="created_by" name="created_by" class="form-control ws-select dropval txtchange" title="Created By"
+        multiple>
+        <% _.each(adminList, function(model1) { %>
+          <option value="<%=model1.attributes.adminID%>">
+            <%=model1.attributes.name%>
+          </option>
+          <%}); %>
+      </select>
+    </div>
+  </div>
 
   <div class="clearfix">&nbsp;</div>
-  <label>Task   Start date</label>
+  <label>Task Start date</label>
   <div class="row dateList">
     <div class="col-5">
       <input type="text" id="fromDate" class="form-control txtchange filterClear" placeholder="Start Date" readonly>

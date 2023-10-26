@@ -3,13 +3,17 @@ define([
     'underscore',
     'backbone',
     'custom',
+    'Swal',
+    "../../core/views/multiselectOptions",
     '../models/dashboardModel',
     '../views/customerSingleView',
     '../models/customerSingleModel',
+    
     '../../project/views/projectSingleView',
+    '../../task/views/taskViewDashbord',
     '../../taxInvoice/views/taxInvoiceSingleView',
     'text!../templates/dashboard_temp.html',
-  ], function ($, _, Backbone, custom, dashboardModel, customerSingleView, customerSingleModel, projectSingleView,taxInvoiceSingleView, dashBoard_temp) {
+  ], function ($, _, Backbone, custom, Swal,multiselectOptions, dashboardModel, customerSingleView, customerSingleModel, projectSingleView,taskViewDashbord,taxInvoiceSingleView, dashBoard_temp) {
   
     var dashboardView = Backbone.View.extend({
       model: dashboardModel,
@@ -17,6 +21,7 @@ define([
       initialize: function (options) {
         var customerID = options.action;
         this.customerID = customerID;
+        this.multiselectOptions = new multiselectOptions();
         this.customerModel = new customerSingleModel();
         var selfobj = this;
         if (this.customerID != "") {
@@ -138,7 +143,7 @@ define([
         // });
   
         selfobj = this;
-        selfobj.render();
+       // selfobj.render();
       },
       events:
       {
@@ -149,6 +154,7 @@ define([
         "click .tablinks": "tablinks",
         "click .openTable": "showTable",
         "click .backbutton": "backBtn",
+        "click .multiSel": "setValues",
         
       },
       onErrorHandler: function (collection, response, options) {
@@ -191,8 +197,6 @@ define([
           
         }
       },
-    
-     
       getBannersDetails: function (e) {
         $.ajax({
           url: APIPATH + 'bannersCountDetails/',
@@ -256,13 +260,26 @@ define([
          var element = document.querySelector(".hideTable");
             element.classList.remove("ShowTable");
       },
+
+      setValues: function (e) {
+        var selfobj = this;
+        var da = selfobj.multiselectOptions.setCheckedValue(e);
+        selfobj.model.set(da);
+
+
+      },
+  
       render: function () {
         var template = _.template(dashBoard_temp);
         var res = template({"customerModel":this.customerModel});
-        var res = template({"customerModel":this.customerModel});
         this.$el.html(res);
         $(".app_playground").append(this.$el);
+        // new taskView({ action: "",loadFrom:"other"});
+        new taskViewDashbord({ action:""});
+        
         return this;
+        
+        
       },
   
   

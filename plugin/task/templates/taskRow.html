@@ -1,4 +1,29 @@
-<tr class="even pointer bg-<%=taskDetails.attributes.status%>">
+<%
+const currentDate = new Date();
+const currentYear = currentDate.getFullYear();
+const currentMonth = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+const currentDay = ('0' + currentDate.getDate()).slice(-2);
+
+const formattedDate = `${currentDay}-${currentMonth}-${currentYear}`;
+
+const dueDate = new Date(taskDetails.attributes.newDate);
+
+let cssClass = "even pointer";
+
+if (taskDetails.attributes.status_slug !== "Completed") {
+  if (dueDate.toDateString() === currentDate.toDateString()) {
+    cssClass = "even pointer backg-orange";
+  } else if (dueDate < currentDate) {
+    cssClass = "even pointer backg-red";
+  } else if (dueDate == currentDate){
+    cssClass = "even pointer backg-orange";
+  }
+}else{
+  cssClass = "even pointer backg-green";
+}
+%>
+
+<tr class="<%=cssClass%>">
   <td class="a-center">
     <div class="listCheckbox">
       <input id="cAll_<%= taskDetails.attributes.task_id %>" class="memberlistcheck chk-col-amber"
@@ -6,11 +31,7 @@
       <label for="cAll_<%= taskDetails.attributes.task_id %>">&nbsp;</label>
     </div>
   </td>
-  <td class="loadview" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"><a
-      href="javascript:;"><u>
-        <%=taskDetails.attributes.subject%>
-      </u></a></td>
-  </td>
+  <td class="loadview textwrap" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"><a href="javascript:;"><u><%=taskDetails.attributes.subject%></u></a></td>
   <td class="">
     <%=taskDetails.attributes.name%>
   </td>

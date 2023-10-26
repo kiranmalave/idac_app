@@ -130,6 +130,8 @@ define([
       let selfobj = this;
       var mid = this.model.get("customer_id");
       let isNew = $(e.currentTarget).attr("data-action");
+
+      
       if (permission.edit != "yes") {
         alert("You dont have permission to edit");
         return false;

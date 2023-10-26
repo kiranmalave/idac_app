@@ -14,17 +14,29 @@ define([
   "../../customer/collections/customerCollection",
   "../../category/collections/slugCollection",
   'text!../templates/taskRow.html',
+  'text!../templates/taskRow_other.html',
   'text!../templates/task_temp.html',
+  'text!../templates/task_temp_other.html',
   'text!../templates/taskFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, moment, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
+], function ($, _, Backbone, datepickerBT, moment, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, slugCollection, taskRowTemp,taskRowTempOther, taskTemp,taskTempOther, taskFilterTemp) {
 
   var taskView = Backbone.View.extend({
+    loadFrom:null,
+    permission:null,
     initialize: function (options) {
+      if(options.loadFrom != undefined){
+        this.loadFrom = options.loadFrom;
+      }
       this.toClose = "taskFilterView";
       var selfobj = this;
       $(".profile-loader").show();
       var mname = Backbone.history.getFragment();
-      permission = ROLE[mname];
+      if(this.loadFrom != null){
+        permission = ROLE['task'];
+      }else{
+        permission = ROLE[mname];
+      }
+      
       readyState = true;
       this.render();
       filterOption = new taskFilterOptionModel();
@@ -36,7 +48,7 @@ define([
         }, error: selfobj.onErrorHandler, type: 'post', data: { status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".profile-loader").hide();
+        $(".preloader").hide();
         // selfobj.render();
       });
 
@@ -47,7 +59,7 @@ define([
         }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y', slug: 'task_priority,task_type,task_status' }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".popupLoader").hide();
+        $(".preloader").hide();
         // selfobj.render();
       });
 
@@ -58,7 +70,7 @@ define([
         }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".popupLoader").hide();
+        $(".preloader").hide();
         // selfobj.render();
       });
 
@@ -69,7 +81,7 @@ define([
       }).done(function (res) {
 
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".profile-loader").hide();
+        $(".preloader").hide();
         setPagging(res.paginginfo, res.loadstate, res.msg);
       });
 
@@ -99,6 +111,7 @@ define([
       "click .changeStatus": "changeStatusListElement",
       "click .showpage": "loadData",
       "change .changeBox": "changeBox",
+      "click .sortbydate": "sortByDate",
     },
     updateOtherDetails: function (e) {
       e.stopPropagation();
@@ -237,12 +250,33 @@ define([
       filterOption.set(newsetval);
       selfobj.filterSearch();
     },
+    sortByDate: function (e) {
+      var order = $(e.currentTarget).attr("data-filter");
+      let selfobj = this;
+      let newsetval = [];
+      var date;
+      $('.taskfilbtn').removeClass('active');
+      $(e.currentTarget).addClass('active');
+      if (order === "today") {
+        date = moment().format('YYYY-MM-DD');
+        newsetval["due_date"] = date;
+      } else if (order === "tomorrow") {
+        date = moment().add(1, 'days').format('YYYY-MM-DD');
+        newsetval["due_date"] = date;
+      } else if (order === "yesterday") {
+        date = moment().subtract(1, 'days').format('YYYY-MM-DD');
+        newsetval["due_date"] = date;
+      }
+      filterOption.set(newsetval);
+      selfobj.filterSearch();
+    },
     resetSearch: function () {
       filterOption.clear().set(filterOption.defaults);
       $(".multiOptionSel").removeClass("active");
       $("#textval").val("");
       $(".hidetextval").hide();
       $(".txtchange").val("");
+      $(".ws-select").selectpicker("refresh");
       $('#textSearch option[value=task_id]').attr('selected', 'selected');
       this.filterSearch(false);
     },
@@ -250,10 +284,15 @@ define([
       var memberDetails = new singlememberDataModel();
     },
     addOne: function (objectModel) {
-      var template = _.template(taskRowTemp);
+      if(this.loadFrom != null){
+        var template = _.template(taskRowTempOther);
+      }else{
+        var template = _.template(taskRowTemp);
+      }
       var dueDateMoment = moment(objectModel.attributes.due_date);
+      objectModel.attributes.newDate = objectModel.attributes.due_date;
       if (objectModel.attributes.due_date != "0000-00-00") {
-        objectModel.attributes.due_date = dueDateMoment.format("DD-MM-YYYY");
+        objectModel.attributes.due_date = dueDateMoment.format("DD-MMM-YYYY");
         var today = moment();
         if (dueDateMoment.isSame(today, 'day')) {
           objectModel.attributes.due_date = "Today";
@@ -265,7 +304,12 @@ define([
           objectModel.attributes.date_status = dueDateMoment.format("MMMM Do, YYYY");
         }
       }
-      $("#taskList").append(template({ taskDetails: objectModel }));
+      if(this.loadFrom != null){
+        $("#taskListOther").append(template({ taskDetails: objectModel }));
+      }else{
+        $("#taskList").append(template({ taskDetails: objectModel }));
+      }
+      
     },
     addAll: function () {
       $("#taskList").empty();
@@ -293,6 +337,7 @@ define([
           open filter popup by adding class open here
         */
         $(".ws_filterOptions").addClass("open");
+        $(".ws-select").selectpicker();
         /* 
           INFO
           make current task active
@@ -553,10 +598,17 @@ define([
       });
     },
     render: function () {
-      var template = _.template(taskTemp);
-      this.$el.html(template({ closeItem: this.toClose }));
-      $(".app_playground").append(this.$el);
-
+      if(this.loadFrom != null){
+        var template = _.template(taskTempOther);
+      }else{
+        var template = _.template(taskTemp);
+      }this.$el.html(template({ closeItem: this.toClose }));
+      if(this.loadFrom != null){
+        $("#dasboradHolder").append(this.$el);
+      }else{
+        $(".app_playground").append(this.$el);
+      }
+      
       return this;
     }
   });

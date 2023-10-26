@@ -199,7 +199,7 @@
                     </div>
                     <div class="right-layout">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group form-float">
                                     <div class="from-line">
                                         <select id="customer_id" name="customer_id"
@@ -208,18 +208,14 @@
                                                 <option class="addNew" value="addCustomer">Add customer </option>
                                                 <%}%>
                                                     <% _.each(customerList, function(model1) { %>
-
-                                                        <option <% if(model1.attributes.customer_id==model.customer_id )
-                                                            { %>
-                                                            selected <% } %>value="<%=model1.attributes.customer_id%>">
-                                                                    <%=model1.attributes.company_name%>
+                                                        <option <% if(model1.attributes.customer_id==model.customer_id ){ %>selected <% } %>value="<%=model1.attributes.customer_id%>"> <%=model1.attributes.company_name%><!-- <%=model1.attributes.last_name%> -->
                                                         </option>
-                                                     <%}); %>
+                                                    <%}); %>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="ws-icon">
                                     <span class="input-group-addon lg"></span>
                                 </div>
@@ -253,36 +249,24 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="list-row">
-                    <div class="icon-left">
-                        <div class="ws-icon">
-                            <span class="input-group-addon lg" style="margin-top:8px;">
-                                <i class="material-icons">group</i>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="right-layout">
-                        <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="ws-icon">
+                                    <span class="input-group-addon lg"></span>
+                                </div>
                                 <div class="form-group form-float">
                                     <div class="from-line">
-                                        <select id="project_id" name="project_id" class="form-control dropval ws-select show-tick mt-2" title="Select Project" data-live-search="true"data-live-search="true">
+                                        <select for="project" id="project" name="project"
+                                            class="form-control dropval ws-select show-tick" title="Select Project">
                                             <% _.each(projectList, function(model1) { %>
-                                                    <option <% if(model1.attributes.project_id == model.project_id ) { %>selected
-                                                        <%}%>value="<%=model1.attributes.project_id%>"><%=model1.attributes.project_name%></option>
-                                             <%}); %>
+                                                <option <%if(model1.attributes.project_id==model.project ){%>selected<%}%> value="<%=model1.attributes.project_id%>"><%=model1.attributes.project_name%></option>
+                                            <%}); %>
                                         </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-
                 <%if(model.task_id !=null){%>
                     <div class="list-row">
                         <div class="icon-left">
@@ -343,12 +327,12 @@
                                 <div class="col-md-4">
                                     <p class="mt-2">Attachments</p>
                                 </div>
-                                <button <% if(model.task_id==undefined ){%>disabled <%}%> type="button" class="loadMedia
-                                        ws-taskModalbtn" data-change="ws-bg-image"
-                                        data-toggle="modal" data-target="#largeModal"><span
-                                            class="material-icons">add</span></button>
                             </div>
-                            <div id="attachedDoc" class="row"></div>
+                            <div class="row attachupdate">
+                                <button <% if(model.task_id==undefined ){%>disabled <%}%> type="button" class="loadMedia ws-taskModalbtn dotborder" data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal"><span class="material-icons">add</span></button>
+                                <div id="attachedDoc" class="row"></div>
+                            </div>
+                            
                         </div>
                     </div>
                     <ul id="taskCom" class="nav nav-tabs task-nav-tab">
@@ -439,7 +423,7 @@
                                     </div>
                         </div>
                     </div>
-                <% } %>
+                    <% } %>
             </div>
             <div class="col-md-4 ws-assignee-container">
                 <div class="row">
