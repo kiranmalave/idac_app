@@ -115,7 +115,6 @@ define([
           }
         });
   
-  
         $(".action-icons-div").hide();
         $(".memberlistcheck").click(function () {
           if ($(this).is(":checked")) {
@@ -159,7 +158,14 @@ define([
 
        } else if (result.isDenied) {
         Swal.fire('Changes are not saved', '', 'info')
-         }
+        $('#projectList input:checkbox').each(function () {
+          if ($(this).is(":checked")) {
+            $(this).prop('checked', false);
+          }
+        });
+        $(".listCheckbox").find('.checkall').prop('checked', false);
+        $(".deleteAll").hide();
+      }
       })
     },
   
