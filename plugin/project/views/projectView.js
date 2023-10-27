@@ -209,10 +209,13 @@ define([
         filterOption.clear().set(filterOption.defaults);
         $(".multiOptionSel").removeClass("active");
         $("#textval").val("");
+        $(".ws-select").val('default');
+        $(".ws-select").selectpicker("refresh");
         $(".filterClear").val("");
         $(".hidetextval").hide();
         $('#textSearch option[value=project_id]').attr('selected', 'selected');
         this.filterSearch(false);
+        
       },
       loaduser: function () {
         var memberDetails = new singlememberDataModel();
@@ -248,6 +251,7 @@ define([
             open filter popup by adding class open here
           */
           $(".ws_filterOptions").addClass("open");
+          $(".ws-select").selectpicker();
           /* 
             INFO
             make current project active
