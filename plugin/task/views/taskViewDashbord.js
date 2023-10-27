@@ -5,6 +5,7 @@ define([
     'backbone',
     'datepickerBT',
     'moment',
+    'Swal',
     '../views/taskSingleView',
     '../views/repeatTaskCustomView',
     '../views/historySingleView',
@@ -16,7 +17,7 @@ define([
     'text!../templates/taskRow_other.html',
     'text!../templates/task_temp_other.html',
     'text!../templates/taskFilterOption_temp.html',
-  ], function ($, _, Backbone, datepickerBT, moment, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
+  ], function ($, _, Backbone, datepickerBT, moment, Swal, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
   
     var taskView = Backbone.View.extend({
       initialize: function (options) {
@@ -105,6 +106,7 @@ define([
         "click .showpage": "loadData",
         "change .changeBox": "changeBox",
         "click .sortbydate": "sortByDate",
+        "click .showpoup": "showpoup",
         
       },
 
@@ -113,6 +115,38 @@ define([
         this.$el.off('click', '#removeFlyOut', this.removeFlyOut);
         this.$el.on('click', '#removeFlyOut', this.removeFlyOut.bind(this));
       },
+
+      showpoup:function(e){
+        // alert("testAniruddha")
+        // Swal.fire({
+        //   title: 'Do you want to delete ?',
+        //   showDenyButton: true,
+        //   showCancelButton: false,
+        //   confirmButtonText: 'Yes',
+        //   denyButtonText: `No`,
+        // }).then((result) => {
+        //   if (result.isConfirmed) {
+        //     Swal.fire('Deleted!', '', 'success')
+        //   })
+        // }, else if (result.isDenied) {
+        //   Swal.fire('Changes are not saved', '', 'info')
+        //  }
+        Swal.fire({
+          // title: 'Are you sure you want to confirm the proposal?',
+          showDenyButton: true,
+          showCancelButton: false,
+          confirmButtonText: 'Mark As Completed',
+          denyButtonText: `Delete`,
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          // if (result.isConfirmed) {
+          //   Swal.fire('Saved!', '', 'success')
+          // } else if (result.isDenied) {
+          //   Swal.fire('Changes are not saved', '', 'info')
+          // }
+        })
+      },
+      
       updateOtherDetails: function (e) {
         e.stopPropagation();
         var valuetxt = $(e.currentTarget).val();
