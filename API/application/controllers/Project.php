@@ -43,6 +43,8 @@ class Project extends CI_Controller {
 		$statuscode = $this->input->post('status');
 		$filterSName = $this->input->post('filterSName');
 		$company_name = $this->input->post('company_name');
+		$company = $this->input->post('company');
+
 		
 		$config = array();
 		if(!isset($orderBy) || empty($orderBy)){

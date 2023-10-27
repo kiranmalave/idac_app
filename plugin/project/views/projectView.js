@@ -71,11 +71,13 @@ define([
         "click .sortColumns": "sortColumn",
       },
       updateOtherDetails: function (e) {
+        e.stopPropagation();
         var valuetxt = $(e.currentTarget).val();
         var toID = $(e.currentTarget).attr("id");
         var newdetails = [];
         newdetails["" + toID] = valuetxt;
         filterOption.set(newdetails);
+        console.log(filterOption);
       },
       changeBox: function (e) {
         var selVal = $(e.currentTarget).val();
