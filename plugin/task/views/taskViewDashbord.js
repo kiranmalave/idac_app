@@ -132,7 +132,7 @@ define([
         //   Swal.fire('Changes are not saved', '', 'info')
         //  }
         Swal.fire({
-          // title: 'Are you sure you want to confirm the proposal?',
+          title: 'Are you sure you want to  delete?',
           showDenyButton: true,
           showCancelButton: false,
           confirmButtonText: 'Mark As Completed',
