@@ -2295,6 +2295,11 @@ label.label-style {
 .ws-number{
   width: 80%;
 }
+.form-group.ws-number label.error {
+  width: 200px;
+  left: -49px;
+}
+
 
 /******Custom Dashbord start********/
 .profile-header {
