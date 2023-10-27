@@ -1340,7 +1340,36 @@ input::-webkit-inner-spin-button {
 .card .header {
   padding-bottom: 0px;
 }
+.dashbordTask{
+  padding-bottom: 0px;
+  display: flex;
+  flex-direction: row;
+  align-items: self-start;
+  justify-content: space-between;
+}
 
+.addHover {
+  padding: 10px;
+  /* background: #f0f; */
+  margin-bottom: 0;
+  display: block;
+  margin-left: 10px;
+  -webkit-transition: all 0.40s ease-in-out;
+	-moz-transition: all 0.40s ease-in-out;
+	-o-transition: all 0.40s ease-in-out;
+	transition: all 0.40s ease-in-out;
+  cursor: pointer;
+}
+.addHover:hover{
+  background: #ffc100;
+}
+
+.dashbordTask ul {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 0;
+}
 .right-content {
   position: absolute;
   right: 15px;
@@ -2568,4 +2597,7 @@ div:where(.swal2-icon) .swal2-icon-content {
 
 #removeFlyOut{
   cursor: pointer;
+  position: absolute;
+  top: -1px;
+  right: 6px;
 }
