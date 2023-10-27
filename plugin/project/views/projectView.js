@@ -71,11 +71,13 @@ define([
         "click .sortColumns": "sortColumn",
       },
       updateOtherDetails: function (e) {
+        e.stopPropagation();
         var valuetxt = $(e.currentTarget).val();
         var toID = $(e.currentTarget).attr("id");
         var newdetails = [];
         newdetails["" + toID] = valuetxt;
         filterOption.set(newdetails);
+        console.log(filterOption);
       },
       changeBox: function (e) {
         var selVal = $(e.currentTarget).val();
@@ -114,7 +116,6 @@ define([
             removeIds.push($(this).attr("data-project_id"));
           }
         });
-  
   
         $(".action-icons-div").hide();
         $(".memberlistcheck").click(function () {
@@ -159,7 +160,14 @@ define([
 
        } else if (result.isDenied) {
         Swal.fire('Changes are not saved', '', 'info')
-         }
+        $('#projectList input:checkbox').each(function () {
+          if ($(this).is(":checked")) {
+            $(this).prop('checked', false);
+          }
+        });
+        $(".listCheckbox").find('.checkall').prop('checked', false);
+        $(".deleteAll").hide();
+      }
       })
     },
   
@@ -209,10 +217,13 @@ define([
         filterOption.clear().set(filterOption.defaults);
         $(".multiOptionSel").removeClass("active");
         $("#textval").val("");
+        $(".ws-select").val('default');
+        $(".ws-select").selectpicker("refresh");
         $(".filterClear").val("");
         $(".hidetextval").hide();
         $('#textSearch option[value=project_id]').attr('selected', 'selected');
         this.filterSearch(false);
+        
       },
       loaduser: function () {
         var memberDetails = new singlememberDataModel();
@@ -248,6 +259,7 @@ define([
             open filter popup by adding class open here
           */
           $(".ws_filterOptions").addClass("open");
+          $(".ws-select").selectpicker();
           /* 
             INFO
             make current project active

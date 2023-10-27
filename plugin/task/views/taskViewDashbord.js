@@ -114,6 +114,8 @@ define([
         console.log("attachEvents");
         this.$el.off('click', '#removeFlyOut', this.removeFlyOut);
         this.$el.on('click', '#removeFlyOut', this.removeFlyOut.bind(this));
+        this.$el.off('click', '.filterSearch', this.filterSearch);
+        this.$el.on('click', '.filterSearch', this.filterSearch.bind(this));
       },
 
       showpoup:function(e){
@@ -366,7 +368,6 @@ define([
         }
       },
       filterRender: function (e) {
-        console.log("filterRender");
         var isexits = checkisoverlay(this.toClose);
         if (!isexits) {
           var source = taskFilterTemp;
@@ -410,6 +411,7 @@ define([
         this.setValues();
         this.setupFilter();
         rearrageOverlays("Filter", this.toClose, "small");
+        this.attachEvents();
       },
 
       removeFlyOut: function () {
@@ -592,11 +594,10 @@ define([
         });
       },
       render: function () {
-        this.attachEvents();
-        console.log("render...");
         var template = _.template(taskTemp);
         this.$el.html(template({ closeItem: this.toClose }));
         $("#dasboradHolder").empty().append(this.$el);
+        this.attachEvents();
         return this;
       },
 
