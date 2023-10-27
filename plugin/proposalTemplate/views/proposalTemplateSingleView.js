@@ -56,9 +56,9 @@ define([
         selfobj.render();
       });
 
-  
-        if (options.project_id != "") {
-          this.model.set({ project_id: options.project_id });
+        if (options.proposalTemplate_id != "") {
+          this.model.set({ temp_id: options.proposalTemplate_id });
+          console.log(this.model);
           this.model.fetch({
             headers: {
               'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
