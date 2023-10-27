@@ -2104,10 +2104,9 @@ label.label-style {
 .textwrap {
   max-width: 200px;
   text-overflow: ellipsis;
-
   overflow: hidden;
   white-space: nowrap;
-
+  margin-bottom: 0;
 }
 
 .ddm {
@@ -2425,11 +2424,12 @@ label.label-style {
 
 .comment-actionHeading_left {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   width: 50%;
   align-items: center;
+  gap: 20px;
+  margin-bottom: 5px;
 }
-
 .projectFolder .projectFolderTop i {
   font-size: 60px;
   cursor: pointer;
@@ -2557,4 +2557,15 @@ div:where(.swal2-icon) .swal2-icon-content {
 /******Custom Dashbord end********/
 .ws-disable-cursor{
   cursor:not-allowed;
+}
+
+.ws_filterOptions.open i {
+  position: absolute;
+  top: -1px;
+  right: 6px;
+  cursor: pointer;
+}
+
+#removeFlyOut{
+  cursor: pointer;
 }
