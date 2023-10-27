@@ -20,7 +20,7 @@
                             <div class="col-md-12">       
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <input id="proposal_number" class="form-control txtchange ws-disable-cursor"  type="text" value="" disabled placeholder="Proposal Id">
+                                        <input id="proposal_number" class="form-control txtchange ws-disable-cursor"  type="text" value="" disabled placeholder="Project Id Auto Generated  ">
                                     </div>
                                 </div>
                             </div>  
@@ -99,10 +99,11 @@
                             <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <select class="form-control dropval ws-select show-tick mt-2" title="Select Proposal Template">
-                                            <option>Select Proposal Template</option>
-                                            <option>test</option>
-                                            <option> testOne </option>
+                                        <select id="temp_id" name="temp_id" class="form-control dropval ws-select show-tick mt-2" title="Select Project" data-live-search="true"data-live-search="true">
+                                            <% _.each(proposalTemplateList, function(model1) { %>
+                                                    <option <% if(model1.attributes.temp_id == model.temp_id ) { %>selected
+                                                        <%}%>value="<%=model1.attributes.temp_id%>"><%=model1.attributes.temp_name%></option>
+                                             <%}); %>
                                         </select>
                                     </div>
                                 </div>
