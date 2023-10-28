@@ -36,7 +36,8 @@ define([
           $(".profile-loader").hide();
           setPagging(res.paginginfo, res.loadstate, res.msg);
         });
-  
+        
+        console.log(searchproject);
         this.collection = searchproject;
         this.collection.on('add', this.addOne, this);
         this.collection.on('reset', this.addAll, this);
@@ -112,7 +113,7 @@ define([
           return false;
         }
         $.ajax({
-          url: APIPATH + 'project/status',
+          url: APIPATH + 'proposalTemplate/status',
           method: 'POST',
           data: { list: idsToRemove, action: action, status: status },
           datatype: 'JSON',
@@ -144,12 +145,11 @@ define([
         $(".profile-loader").hide();
       },
       loadSubView: function (e) {
-        console.log("loadSubView");
         var selfobj = this;
         var show = $(e.currentTarget).attr("data-view");
         switch (show) {
-          case "singleprojectData": {
-            var proposalTemplate_id = $(e.currentTarget).attr("data-proposalTemplate_id");
+          case "singleproposalDetail": {
+            var proposalTemplate_id = $(e.currentTarget).attr("data-temp_id");
             new proposalTemplateSingleView({ proposalTemplate_id: proposalTemplate_id, searchproject: this });
             break;
           }
@@ -171,7 +171,7 @@ define([
       },
       addOne: function (objectModel) {
         var template = _.template(proposalTemplateRow);
-        $("#projectList").append(template({ projectDetails: objectModel }));
+        $("#projectList").append(template({ proposalDetails: objectModel }));
       },
       addAll: function () {
         $("#projectList").empty();

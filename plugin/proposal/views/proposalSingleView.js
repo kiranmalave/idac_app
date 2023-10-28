@@ -12,10 +12,11 @@ define([
   '../collections/proposalCollection',
   "../../customer/collections/customerCollection",
   "../../project/collections/projectCollection",
+  "../../proposalTemplate/collections/proposalTemplateCollection",
   '../models/proposalSingleModel',
   '../../readFiles/views/readFilesView',
   'text!../templates/proposalSingle_temp.html',
-], function ($, _, Backbone, validate, inputmask, datepickerBT, moment,Swal, multiselectOptions, dynamicFieldRender, proposalCollection,customerCollection,projectCollection, proposalSingleModel, readFilesView, proposaltemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, moment,Swal, multiselectOptions, dynamicFieldRender, proposalCollection,customerCollection, projectCollection, proposalTemplateCollection, proposalSingleModel, readFilesView, proposaltemp) {
   var proposalSingleView = Backbone.View.extend({
     model: proposalSingleModel,
     initialize: function (options) {
@@ -44,6 +45,7 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
         selfobj.model.set("proposalList", res.data);
+        console.log("proposalList",JSON.stringify(res.data));
         selfobj.render();
       });
 
@@ -78,6 +80,17 @@ define([
 
       this.projectList = new projectCollection();
       this.projectList.fetch({
+       headers: {
+         'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: {status:'active'}
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        selfobj.render();
+      });
+
+      this.proposalTemplateList = new proposalTemplateCollection();
+      this.proposalTemplateList.fetch({
        headers: {
          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, error: selfobj.onErrorHandler, data: {status:'active'}
@@ -183,20 +196,20 @@ define([
       //   //   )
       //   // }
       // })
-      Swal.fire({
-        title: 'Do you want to save the changes?',
-        showDenyButton: true,
-        showCancelButton: false,
-        confirmButtonText: 'Make an another copy',
-        denyButtonText: `Text as keep the same`,
-      }).then((result) => {
-        /* Read more about isConfirmed, isDenied below */
-        // if (result.isConfirmed) {
-        //   Swal.fire('Saved!', '', 'success')
-        // } else if (result.isDenied) {
-        //   Swal.fire('Changes are not saved', '', 'info')
-        // }
-      })
+    //   Swal.fire({
+    //     title: 'Do you want to save the changes?',
+    //     showDenyButton: true,
+    //     showCancelButton: false,
+    //     confirmButtonText: 'Make an another copy',
+    //     denyButtonText: `Text as keep the same`,
+    //   }).then((result) => {
+    //     /* Read more about isConfirmed, isDenied below */
+    //     // if (result.isConfirmed) {
+    //     //   Swal.fire('Saved!', '', 'success')
+    //     // } else if (result.isDenied) {
+    //     //   Swal.fire('Changes are not saved', '', 'info')
+    //     // }
+    //   })
     },
     setValues: function (e) {
       var selfobj = this;
@@ -227,17 +240,12 @@ define([
           }, error: selfobj.onErrorHandler, type: methodt
         }).done(function (res) {
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-
           if (isNew == "new") {
             showResponse(e, res, "Save & New");
           } else {
             showResponse(e, res, "Save");
           }
-          if (selfobj.loadFrom == "TaskSingleView") {
-            scanDetails.refreshCust();
-          } else {
-            scanDetails.filterSearch();
-          }
+          scanDetails.filterSearch();
           if (res.flag == "S") {
             if (isNew == "new") {
               selfobj.model.clear().set(selfobj.model.defaults);
@@ -245,6 +253,7 @@ define([
               selfobj.render();
             } else {
               // alert("here");
+              console.log("proposalList",JSON.stringify(res.data));
               handelClose(selfobj.toClose);
             }
           }
@@ -320,7 +329,7 @@ define([
       var source = proposaltemp;
       var template = _.template(source);
       $("#" + this.toClose).remove();
-      this.$el.html(template({ model: this.model.attributes ,"customerList": this.customerList.models, "projectList":this.projectList.models}));
+      this.$el.html(template({ model: this.model.attributes ,"customerList": this.customerList.models, "projectList":this.projectList.models, "proposalTemplateList":this.proposalTemplateList.models,}));
       this.$el.addClass("tab-pane in active panel_overflow");
       this.$el.attr("id", this.toClose);
       this.$el.addClass(this.toClose);

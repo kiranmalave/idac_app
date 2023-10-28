@@ -13,7 +13,7 @@ define([
         status: 'active',
       },
       urlRoot: function () {
-        return APIPATH + 'proposal/'
+        return APIPATH + 'proposalMaster/'
       },
       parse: function (response) {
         return response.data[0];

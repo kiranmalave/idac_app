@@ -45,7 +45,7 @@ class Proposal extends CI_Controller {
 		
 		$config = array();
 		if(!isset($orderBy) || empty($orderBy)){
-			$orderBy = "proposal_name";
+			$orderBy = "name";
 			$order ="ASC";
 		}
 		$other = array("orderBy"=>$orderBy,"order"=>$order);
@@ -147,12 +147,12 @@ class Proposal extends CI_Controller {
 				// $proposalDetails['regiNoYSF'] = $this->validatedata->validate('regiNoYSF','regiNoYSF',true,'',array());
 
 				$proposalDetails['proposal_id'] = $this->validatedata->validate('proposal_id','proposal_id',false,'',array());
-				$proposalDetails['proposal_name'] = $this->validatedata->validate('proposal_name','proposal Name',false,'',array());
-				// $proposalDetails['description'] = $this->validatedata->validate('description','Description',false,'',array());
-				// $proposalDetails['company_name'] = $this->validatedata->validate('company_name','Company Name',false,'',array());
+				$proposalDetails['name'] = $this->validatedata->validate('name','Proposal Name',false,'',array());
+				$proposalDetails['description'] = $this->validatedata->validate('description','Description',false,'',array());
+				$proposalDetails['client_id'] = $this->validatedata->validate('client_id','Client Name',false,'',array());
+				$proposalDetails['project_id'] = $this->validatedata->validate('project_id','Project Name',false,'',array());
+				$proposalDetails['status'] = $this->validatedata->validate('status','Status',false,'',array());
 
-				
-					  
 					if($method=="PUT")
 					{
 						$lastProposalDetails = $this->CommonModel->getMasterDetails("doc_prefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"2"));

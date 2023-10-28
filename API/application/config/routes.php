@@ -160,6 +160,12 @@ $route['branch'] = 'Branch/branch';
 $route['branch/(:num)'] = 'Branch/branch/$1';
 $route['branch/status'] = 'Branch/branchChangeStatus';
 
+######proposaltemplate
+$route['proposalTemplateList'] = 'ProposalTemplateMaster/getproposalMasterList';
+$route['proposalTemplateSingle'] = 'ProposalTemplateMaster/proposalTemplateMasterData';
+$route['proposalTemplateSingle/(:num)'] = 'ProposalTemplateMaster/proposalTemplateMasterData/$1';
+$route['proposalTemplate/status'] = 'ProposalTemplateMaster/proposalTemplateDataChangeStatus';
+
 ######proposal
 $route['proposalMasterList'] = 'proposal/getproposalDetails';
 $route['proposalMaster'] = 'proposal/proposal';

@@ -114,8 +114,8 @@ define([
         console.log("attachEvents");
         this.$el.off('click', '#removeFlyOut', this.removeFlyOut);
         this.$el.on('click', '#removeFlyOut', this.removeFlyOut.bind(this));
-        this.$el.off('click', '.filterSearch', this.filterSearch);
-        this.$el.on('click', '.filterSearch', this.filterSearch.bind(this));
+        //this.$el.off('click', '.filterSearch', this.filterSearch);
+        //this.$el.on('click', '.filterSearch', this.filterSearch.bind(this));
       },
 
       showpoup:function(e){
@@ -286,7 +286,7 @@ define([
           $("#taskListOther").append(template({ taskDetails: objectModel }));
       },
       addAll: function () {
-        $("#taskList").empty();
+        $("#taskListOther").empty();
         this.collection.forEach(this.addOne, this);
       },
       
