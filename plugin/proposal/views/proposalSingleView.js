@@ -12,11 +12,14 @@ define([
   '../collections/proposalCollection',
   "../../customer/collections/customerCollection",
   "../../project/collections/projectCollection",
+ 
   "../../proposalTemplate/collections/proposalTemplateCollection",
+  "../../proposalTemplate/models/proposalTemplateSingleModel",
   '../models/proposalSingleModel',
   '../../readFiles/views/readFilesView',
   'text!../templates/proposalSingle_temp.html',
-], function ($, _, Backbone, validate, inputmask, datepickerBT, moment,Swal, multiselectOptions, dynamicFieldRender, proposalCollection,customerCollection, projectCollection, proposalTemplateCollection, proposalSingleModel, readFilesView, proposaltemp) {
+  
+], function ($, _, Backbone, validate, inputmask, datepickerBT, moment,Swal, multiselectOptions, dynamicFieldRender, proposalCollection,customerCollection, projectCollection, proposalTemplateCollection,proposalTempSingel, proposalSingleModel, readFilesView, proposaltemp) {
   var proposalSingleView = Backbone.View.extend({
     model: proposalSingleModel,
     initialize: function (options) {
@@ -111,6 +114,8 @@ define([
       "change .logoAdded": "updateImageLogo",
       "click .loadMedia": "loadMedia",
       "click .saveconfirmProposal": "saveconfirmProposal",
+      "change .getTemplate": "getTemplate",
+      
 
     },
     attachEvents: function () {
@@ -131,6 +136,8 @@ define([
       this.$el.on("click", ".loadMedia", this.loadMedia.bind(this));
       this.$el.off("click", ".saveconfirmProposal", this.saveconfirmProposal);
       this.$el.on("click", ".saveconfirmProposal", this.saveconfirmProposal.bind(this));
+      this.$el.off("change", ".getTemplate", this.getTemplate);
+      this.$el.on("change", ".getTemplate", this.getTemplate.bind(this));
 
 
     },
@@ -170,7 +177,25 @@ define([
       this.elm = "profile_pic";
       var menusingleview = new readFilesView({ loadFrom: "addpage", loadController: this });
     },
-
+    getTemplate:function (e){
+      var selfobj= this;
+    let tempID = $(e.currentTarget).val();
+      var tempDetails = new proposalTempSingel();
+      // if (options.proposal_id != "") {
+        tempDetails.set({ temp_id: tempID });
+        tempDetails.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".popupLoader").hide();
+          selfobj.model.set({ description: tempDetails.attributes.description });
+          selfobj.render();
+          
+        });
+      // }
+    },
     saveconfirmProposal: function (e) {
       e.stopPropagation();
       // $('#confirmProposal').modal('toggle');
@@ -266,7 +291,7 @@ define([
         salutation: {
           required: true,
         },
-        proposal_name: {
+        name: {
           required: true,
         },
         
@@ -283,7 +308,7 @@ define([
       }
       var messages = {
         salutation: "select salutation",
-        proposal_name: "Please enter First Name",
+        name: "Please enter First Name",
       };
       $("#mobile_no").inputmask("Regex", { regex: "^[0-9](\\d{1,9})?$" });
       $("#proposalDetails").validate({

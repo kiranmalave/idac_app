@@ -38,7 +38,7 @@ class Proposal extends CI_Controller {
 		$curPage = $this->input->post('curpage');
 		$ITIID = $this->input->post('proposal_id');
 		$textval = $this->input->post('textval');
-		$orderBy = $this->input->post('proposal_name');
+		$orderBy = $this->input->post('name');
 		$order = $this->input->post('order');
 		$statuscode = $this->input->post('status');
 		$filterSName = $this->input->post('filterSName');
@@ -81,20 +81,20 @@ class Proposal extends CI_Controller {
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,'','',$join,$other);	
 		}else{
 			
-			// $join = array();
-			// $join[0]['type'] ="LEFT JOIN";
-			// $join[0]['table']="stateMaster";
-			// $join[0]['alias'] ="s";
-			// $join[0]['key1'] ="state";
-			// $join[0]['key2'] ="stateID";
+			$join = array();
+			$join[0]['type'] ="LEFT JOIN";
+			$join[0]['table']="project";
+			$join[0]['alias'] ="p";
+			$join[0]['key1'] ="project_id";
+			$join[0]['key2'] ="project_id";
 
-			// $join[1]['type'] ="LEFT JOIN";
-			// $join[1]['table']="districtMaster";
-			// $join[1]['alias'] ="d";
-			// $join[1]['key1'] ="district";
-			// $join[1]['key2'] ="districtID";
+			$join[1]['type'] ="LEFT JOIN";
+			$join[1]['table']="customer";
+			$join[1]['alias'] ="c";
+			$join[1]['key1'] ="client_id";
+			$join[1]['key2'] ="customer_id";
 			
-			$selectC = "*";
+			$selectC = "t.*,c.company_name";
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,$config["per_page"],$page,$join,$other);
 
 		}
