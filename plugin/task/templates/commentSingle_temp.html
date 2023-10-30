@@ -2,42 +2,61 @@
     <div class="card ">
         <div class="body">
             <% _.each(commentList, function(model1) { %>
-
                 <ul class="inbox-widget list-unstyled clearfix">
                     <li class="inbox-inner">
                         <div class="inbox-item">
-                            <div class="inbox-img"> <img
-                                    src="http://localhost/projects/LMS/website/uploads/user-def.jpg" alt=""> </div>
+                            <div class="inbox-img">
+                                <img src="<%=PROFILEPHOTOUPLOAD%><%=model1.attributes.adminID%>/profilePic/<%=model1.attributes.photo%>"
+                                    width="48" height="48" alt="User" />
+                            </div>
                             <div class="inbox-item-info">
                                 <p class="author">
                                     <%=model1.attributes.name%>
                                 </p>
-                                <p class="m-b-5 m-t-10">
+                                <div id="editCmt_<%=model1.attributes.comment_id%>"
+                                    class="inbox-message editComment"
+                                    data-commentID="<%=model1.attributes.comment_id%>">
                                     <%=model1.attributes.comment_text%>
-                                </p>
+                                </div>
+                                <!-- <div >
+                                <div id="editComment"
+                                    class="form-control edit_comment_<%=model1.attributes.comment_id%>"
+                                    style="display: none;"></div>
+                                </div> -->
+                                <div class="col-md-12 text-right editCmtBtn_<%=model1.attributes.comment_id%>" style="display: none;">
+                                    <button name="post" id="post" type="button"
+                                        data-commentID="<%=model1.attributes.comment_id%>"
+                                        class="btn bg-indigo saveComment" data-action="cpost">Post</button>
+                                    <button type="button" class="btn bg-indigo cancelEditedComment">Cancel</button>
+                                </div>
                                 <p class="inbox-date">
                                     <%=model1.attributes.created_date%>
                                 </p>
+                                <button type="button" data-commentID="<%=model1.attributes.comment_id%>"
+                                    class="ws-btn-default editBtn" data-toggle="tooltip" data-placement="top"
+                                    title="Edit" <%if(ADMINID !=model1.attributes.adminID){%> style="display: none;"
+                                    <%}%> ><i class="material-icons">mode_edit</i>
+                                </button>
                             </div>
                         </div>
-                        </a>
                     </li>
                 </ul>
                 <%}); %>
-                <!-- paggination -->
-                <div class="footer row">
-                    <div class="col-sm-5">
-                        <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite">
-                            <span class="page-info"></span></div>
-                    </div>
-                    <div class="col-sm-7">
-                        <div class="showPageDetails dataTables_paginate paging_simple_numbers">
-                            <ul class="pagination">
-                            </ul>
+                    <!-- paggination -->
+                    <!-- <div class="footer row">
+                        <div class="col-sm-5">
+                            <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite">
+                                <span class="page-info"></span>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <!-- paggination -->
+                        <div class="col-sm-7">
+                            <div class="showPageDetails dataTables_paginate paging_simple_numbers">
+                                <ul class="pagination">
+                                </ul>
+                            </div>
+                        </div>
+                    </div> -->
+                    <!-- paggination -->
         </div>
     </div>
 

@@ -14,31 +14,21 @@ define([
   "../../customer/collections/customerCollection",
   "../../category/collections/slugCollection",
   'text!../templates/taskRow.html',
-  'text!../templates/taskRow_other.html',
   'text!../templates/task_temp.html',
-  'text!../templates/task_temp_other.html',
   'text!../templates/taskFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, moment, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, slugCollection, taskRowTemp,taskRowTempOther, taskTemp,taskTempOther, taskFilterTemp) {
+], function ($, _, Backbone, datepickerBT, moment, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
 
   var taskView = Backbone.View.extend({
-    loadFrom:null,
-    permission:null,
     initialize: function (options) {
-      if(options.loadFrom != undefined){
-        this.loadFrom = options.loadFrom;
-      }
       this.toClose = "taskFilterView";
       var selfobj = this;
+      this.filterCount = null;
       $(".profile-loader").show();
       var mname = Backbone.history.getFragment();
-      if(this.loadFrom != null){
-        permission = ROLE['task'];
-      }else{
-        permission = ROLE[mname];
-      }
-      
+      permission = ROLE[mname];
       readyState = true;
       this.render();
+      this.filterCount = null;
       filterOption = new taskFilterOptionModel();
       searchtask = new taskCollection();
       this.adminList = new adminCollection();
@@ -48,7 +38,7 @@ define([
         }, error: selfobj.onErrorHandler, type: 'post', data: { status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".preloader").hide();
+        $(".profile-loader").hide();
         // selfobj.render();
       });
 
@@ -59,7 +49,7 @@ define([
         }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y', slug: 'task_priority,task_type,task_status' }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".preloader").hide();
+        $(".profile-loader").hide();
         // selfobj.render();
       });
 
@@ -70,7 +60,7 @@ define([
         }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".preloader").hide();
+        $(".profile-loader").hide();
         // selfobj.render();
       });
 
@@ -81,7 +71,7 @@ define([
       }).done(function (res) {
 
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".preloader").hide();
+        $(".profile-loader").hide();
         setPagging(res.paginginfo, res.loadstate, res.msg);
       });
 
@@ -112,30 +102,33 @@ define([
       "click .showpage": "loadData",
       "change .changeBox": "changeBox",
       "click .sortbydate": "sortByDate",
+      "change .dropval": "singleFilterOptions",
     },
     updateOtherDetails: function (e) {
       e.stopPropagation();
-      var valuetxt = $(e.currentTarget).val();
       var toID = $(e.currentTarget).attr("id");
+      var valuetxt = $(e.currentTarget).val()
       var newdetails = [];
       newdetails["" + toID] = valuetxt;
       filterOption.set(newdetails);
       console.log(filterOption);
     },
-    changeBox: function (e) {
-      var selVal = $(e.currentTarget).val();
-      $(".hidetextval").hide();
-      $(".filterClear").val("");
-      if (selVal == "assignee") {
-        $(".assigneeList").show();
-      } else if (selVal == "start_date") {
-        $(".dateList").show();
-      } else if (selVal == "due_date") {
-        $(".dateList").show();
-      } else {
-        $(".textvalBox").show();
-      }
+    singleFilterOptions: function (e) {
+      e.stopPropagation();
+      var toID = $(e.currentTarget).attr("id");
+      var valuetxt = $(e.currentTarget).val().join(",");
+      var newdetails = [];
+      newdetails["" + toID] = valuetxt;
+      filterOption.set(newdetails);
     },
+    // changeBox: function (e) {
+    //   var selVal = $(e.currentTarget).val();
+    //   $(".hidetextval").hide();
+    //   $(".filterClear").val("");
+    //   if (selVal == "subject") {
+    //     $(".textvalBox").show();
+    //   }
+    // },
     settextSearch: function (e) {
       var usernametxt = $(e.currentTarget).val();
       filterOption.set({ textSearch: usernametxt });
@@ -198,10 +191,8 @@ define([
               selfobj.filterSearch();
             });
           }
-          // setTimeout(function () {
           $(".deleteAll").hide();
-          // }, 3000);
-
+          $('.checkall').prop('checked', false);
         }
       });
     },
@@ -274,21 +265,28 @@ define([
       filterOption.clear().set(filterOption.defaults);
       $(".multiOptionSel").removeClass("active");
       $("#textval").val("");
-      $(".hidetextval").hide();
-      $(".txtchange").val("");
+      // $(".hidetextval").hide();
+      // $(".txtchange").val("");
+      $(".ws-select").val('default');
       $(".ws-select").selectpicker("refresh");
       $('#textSearch option[value=task_id]').attr('selected', 'selected');
+      this.filterCount = null;
       this.filterSearch(false);
+      $('.taskfilbtn').removeClass('active');
+      $("#clist").find(".up").removeClass("active");
+      $("#clist").find(".down").removeClass("active");
+      // Find the <li> element with the id "filterOption"
+      let filterOptionLi = document.getElementById('filterOption');
+      let taskBadgeSpan = filterOptionLi.querySelector('span.taskBadge');
+      if (taskBadgeSpan) {
+        taskBadgeSpan.remove();
+      }
     },
     loaduser: function () {
       var memberDetails = new singlememberDataModel();
     },
     addOne: function (objectModel) {
-      if(this.loadFrom != null){
-        var template = _.template(taskRowTempOther);
-      }else{
-        var template = _.template(taskRowTemp);
-      }
+      var template = _.template(taskRowTemp);
       var dueDateMoment = moment(objectModel.attributes.due_date);
       objectModel.attributes.newDate = objectModel.attributes.due_date;
       if (objectModel.attributes.due_date != "0000-00-00") {
@@ -304,12 +302,7 @@ define([
           objectModel.attributes.date_status = dueDateMoment.format("MMMM Do, YYYY");
         }
       }
-      if(this.loadFrom != null){
-        $("#taskListOther").append(template({ taskDetails: objectModel }));
-      }else{
-        $("#taskList").append(template({ taskDetails: objectModel }));
-      }
-      
+      $("#taskList").append(template({ taskDetails: objectModel }));
     },
     addAll: function () {
       $("#taskList").empty();
@@ -451,6 +444,20 @@ define([
       $element.attr("data-index", 1);
       $element.attr("data-currPage", 0);
 
+      var specificFilters = ["textval", "fromDate", "toDate", "fromDate2", "toDate2", "due_date", "task_priority", "task_status", "customer_id", "assignee", "created_by"];
+      // Initialize a count variable
+      var appliedFilterCount = 0;
+
+      // Reset the count to zero
+      appliedFilterCount = 0;
+      for (var i = 0; i < specificFilters.length; i++) {
+        var filterKey = specificFilters[i];
+        if (filterOption.attributes[filterKey] !== null && filterOption.attributes[filterKey] !== "") {
+          console.log(filterOption.attributes[filterKey]);
+          appliedFilterCount++;
+        }
+      }
+
       searchtask.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
@@ -472,6 +479,22 @@ define([
         }
         selfobj.setValues();
       });
+
+      if (appliedFilterCount > 0) {
+        document.getElementById('filterOption').classList.add('active');
+      } else {
+        document.getElementById('filterOption').classList.remove('active');
+      }
+
+      let filterOptionLi = document.getElementById('filterOption');
+      let taskBadgeSpan = filterOptionLi.querySelector('span.taskBadge');
+      if (taskBadgeSpan) {
+        taskBadgeSpan.remove();
+      }
+      if (appliedFilterCount != 0) {
+        let url = "<span class='badge bg-pink taskBadge'>" + appliedFilterCount + "</span>"
+        document.getElementById('filterOption').innerHTML += url;
+      }
     },
     loadData: function (e) {
       var selfobj = this;
@@ -519,9 +542,6 @@ define([
         $('#fromDate').change();
         var valuetxt = $("#fromDate").val();
         var temp = moment(valuetxt, 'DD-MM-YYYY').valueOf();
-        filterOption.set({ trainingStartDate: valuetxt });
-        //selfobj.model.set({trainingStartDate:valuetxt});
-        //endDate.datepicker({"StartDate":new Date("10/03/2023")});
         var valuetxt = $("#toDate").val();
         var temp2 = moment(valuetxt, 'DD-MM-YYYY').valueOf();
         if (temp > temp2) {
@@ -540,16 +560,11 @@ define([
         $('#toDate').change();
         var valuetxt = $("#toDate").val();
         var temp = moment(valuetxt, 'DD-MM-YYYY').valueOf();
-        filterOption.set({ trainingStartDate: valuetxt });
         var valuetxt = $("#fromDate").val();
         var temp2 = moment(valuetxt, 'DD-MM-YYYY').valueOf();
         if (temp2 > temp) {
           $("#fromDate").val("");
         }
-        //selfobj.model.set({trainingStartDate:valuetxt});
-        //startDate.datepicker("option","minDate",$.datepicker.parseDate("dd/mm/yy",ev.value));
-        // startDate.datepicker("setEndDate", moment(valuetxt).format('l'));
-
       });
 
       startDate = $('#fromDate2').datepickerBT({
@@ -564,15 +579,11 @@ define([
         $('#fromDate2').change();
         var valuetxt = $("#fromDate2").val();
         var temp = moment(valuetxt, 'DD-MM-YYYY').valueOf();
-        filterOption.set({ trainingStartDate: valuetxt });
-        //selfobj.model.set({trainingStartDate:valuetxt});
-        //endDate.datepicker({"StartDate":new Date("10/03/2023")});
         var valuetxt = $("#toDate2").val();
         var temp2 = moment(valuetxt, 'DD-MM-YYYY').valueOf();
         if (temp > temp2) {
           $("#toDate2").val("");
         }
-
       });
       endDate = $('#toDate2').datepickerBT({
         format: "dd-mm-yyyy",
@@ -585,30 +596,18 @@ define([
         $('#toDate2').change();
         var valuetxt = $("#toDate2").val();
         var temp = moment(valuetxt, 'DD-MM-YYYY').valueOf();
-        filterOption.set({ trainingStartDate: valuetxt });
         var valuetxt = $("#fromDate2").val();
         var temp2 = moment(valuetxt, 'DD-MM-YYYY').valueOf();
         if (temp2 > temp) {
           $("#fromDate2").val("");
         }
-        //selfobj.model.set({trainingStartDate:valuetxt});
-        //startDate.datepicker("option","minDate",$.datepicker.parseDate("dd/mm/yy",ev.value));
-        // startDate.datepicker("setEndDate", moment(valuetxt).format('l'));
-
       });
     },
     render: function () {
-      if(this.loadFrom != null){
-        var template = _.template(taskTempOther);
-      }else{
-        var template = _.template(taskTemp);
-      }this.$el.html(template({ closeItem: this.toClose }));
-      if(this.loadFrom != null){
-        $("#dasboradHolder").append(this.$el);
-      }else{
-        $(".app_playground").append(this.$el);
-      }
-      
+      var template = _.template(taskTemp);
+      this.$el.html(template({ closeItem: this.toClose, }));
+      $(".app_playground").append(this.$el);
+
       return this;
     }
   });

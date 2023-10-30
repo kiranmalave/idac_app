@@ -17,7 +17,6 @@ define([
       task_repeat: "does_not_repeat",
       start_date: null,
       end_date: null,
-      project: null,
       completed_date: null,
       created_by: null,
       modified_by: null,

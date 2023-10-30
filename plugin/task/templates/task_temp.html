@@ -6,9 +6,13 @@
         <div class="header">
           <h2>Task Navigator</h2>
           <div class="filterbuttons">
-              <input type="button" id="yesterday" class="taskfilbtn sortbydate btn bg-indigo waves-effect" data-filter="yesterday" value="Yesterday"></button>
-              <input type="button" id="today" class="taskfilbtn sortbydate btn bg-indigo waves-effect" data-filter="today" value="Today"></button>
-              <input type="button" id="tomorrow" class="taskfilbtn sortbydate btn bg-indigo waves-effect" data-filter="tomorrow" value="Tomorrow"></button>
+            <input type="button" id="yesterday" class="taskfilbtn sortbydate btn bg-indigo waves-effect"
+              data-filter="yesterday" value="Yesterday"></button>
+            <input type="button" id="today" class="taskfilbtn sortbydate btn bg-indigo waves-effect" data-filter="today"
+              value="Today"></button>
+            <input type="button" id="tomorrow" class="taskfilbtn sortbydate btn bg-indigo waves-effect"
+              data-filter="tomorrow" value="Tomorrow"></button>
+            <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval" value="Reset"></button>
           </div>
         </div>
         <div class="body">
@@ -20,7 +24,7 @@
                   style="background-color: #F5BF00; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px;"
                   data-toggle="tooltip" data-placement="top" title="Delete">delete</i></span>
               <% } %>
-              
+
           </div>
           <table id="clist" class="table bulk_action tableList table-hover">
             <thead id="thead">
@@ -31,6 +35,7 @@
                     <label for="cAll">&nbsp;</label>
                   </div>
                 </th>
+                <th class="order sortColumns column-title">Task ID</th>
                 <th class="order sortColumns column-title" data-value="" data-field="subject">Task Name
                   <span class="material-symbols-outlined sortarrow up">
                     north
@@ -118,19 +123,14 @@
 </div>
 <div class="sidebar-right">
   <ul class="nav side-menu">
-    <li id="filterOption" class="nav-item" data-item="<%=closeItem%>" data-toggle="tooltip" data-placement="top"
-      title="Filter">
-      <!-- <span class="material-icons">filter</span> -->
-      <span class="material-symbols-outlined">
-        filter_alt
-      </span>
-      <!-- <button type="button" class="btn btn-info loadview" data-target="#myModal" data-taskID="" data-show="singletaskData"data-toggle="modal">Add Task Details</button> -->
+    <li id="filterOption" class="nav-item " data-item="<%=closeItem%>" data-toggle="tooltip" data-placement="top" title="Filter">
+      <span class="material-symbols-outlined">filter_alt</span>
+      <!-- <span class="badge bg-pink taskBadge"></span> -->
     </li>
     <%if(permission.add=="yes" ) { %>
       <li class="loadview nav-item" data-view="singletaskData" data-item="taskSingleView" data-toggle="tooltip"
         data-placement="top" title="Add">
         <span class="material-icons">add</span>
-        <!-- <button type="button" class="btn btn-info loadview" data-target="#myModal" data-taskID="" data-show="singletaskData"data-toggle="modal">Add Task Details</button> -->
       </li>
       <% } %>
   </ul>
