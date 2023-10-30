@@ -2606,3 +2606,18 @@ div:where(.swal2-icon) .swal2-icon-content {
   top: -1px;
   right: 6px;
 }
+
+/* .comment-action p span{
+  max-width: 90px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-bottom: 0;
+} */
+
+.overflowHide .ql-editor.ql-blank {
+  overflow: hidden !important;
+}
+.overflowHide .ql-editor{
+  overflow: hidden !important;
+}
