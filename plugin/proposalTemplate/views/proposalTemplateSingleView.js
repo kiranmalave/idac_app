@@ -148,7 +148,7 @@ define([
       saveprojectDetails: function (e) {
         e.preventDefault();
         let selfobj = this;
-        var mid = this.model.get("project_id");
+        var mid = this.model.get("temp_id");
         let isNew = $(e.currentTarget).attr("data-action");
         if (permission.edit != "yes") {
           alert("You dont have permission to edit");

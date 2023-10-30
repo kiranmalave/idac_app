@@ -11,9 +11,10 @@ define([
     
     '../../project/views/projectSingleView',
     '../../task/views/taskViewDashbord',
+    '../../project/views/projectViewOther',
     '../../taxInvoice/views/taxInvoiceSingleView',
     'text!../templates/dashboard_temp.html',
-  ], function ($, _, Backbone, custom, Swal,multiselectOptions, dashboardModel, customerSingleView, customerSingleModel, projectSingleView,taskViewDashbord,taxInvoiceSingleView, dashBoard_temp) {
+  ], function ($, _, Backbone, custom, Swal,multiselectOptions, dashboardModel, customerSingleView, customerSingleModel, projectSingleView,taskViewDashbord,projectViewOther, taxInvoiceSingleView, dashBoard_temp) {
   
     var dashboardView = Backbone.View.extend({
       model: dashboardModel,
@@ -227,7 +228,12 @@ define([
         $(".taskcard").hide();
         $(e.currentTarget).addClass("active");
         $("#"+ctab).show();
-        
+        if(ctab =="projects"){
+          $("#projectListOther").empty();
+          new projectViewOther({ action:""});
+        }else if(ctab =="task"){
+          new taskViewDashbord({ action:""});
+        }
         // var i, tabcontent, tablinks;
         // tabcontent = document.getElementsByClassName("card");
         // for (i = 0; i < tabcontent.length; i++) {
@@ -275,11 +281,8 @@ define([
         this.$el.html(res);
         $(".app_playground").append(this.$el);
         // new taskView({ action: "",loadFrom:"other"});
-        new taskViewDashbord({ action:""});
-        
+        new taskViewDashbord({ action:""}); 
         return this;
-        
-        
       },
   
   

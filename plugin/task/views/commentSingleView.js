@@ -66,6 +66,8 @@ define([
       this.$el.off('click', '.item-container li', this.setValues);
       this.$el.on('click', '.item-container li', this.setValues.bind(this));
       this.$el.off("change", ".dropval", this.updateOtherDetails);
+      this.$el.off('click', '.editBtn', this.editComment);
+      this.$el.on('click', '.editBtn', this.editComment.bind(this));
       // this.$el.on("change", ".dropval", this.updateOtherDetails.bind(this));
       // this.$el.off("blur", ".txtchange", this.updateOtherDetails);
       // this.$el.on("blur", ".txtchange", this.updateOtherDetails.bind(this));   
@@ -108,6 +110,45 @@ define([
       var comment = $(e.currentTarget).val();
       $("#comment").val(comment);
       this.model1.set({ "comment_text": comment });
+    },
+    editComment: function (e) {
+      let selfobj = this;
+      var $parentContainer = $(e.target).closest('.inbox-widget');
+      var commentID = $(e.currentTarget).attr("data-commentID");
+      $parentContainer.find('.inbox-message').hide();
+      $("#editCmt_" + commentID).show();
+      // $(".edit_comment_" + commentID).show();
+      $(".editCmtBtn_" + commentID).show();
+      var __toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+        [{ 'direction': 'rtl' }],                         // text direction
+        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+        [{ 'align': [] }],
+        ['link'],
+        ['clean']                                         // remove formatting button
+      ];
+      var myid = "editCmt_" + commentID;
+      if (!$("#" + myid).hasClass("ql-container")) {
+        var editor = new Quill($("#" + myid).get(0), {
+          modules: {
+            toolbar: __toolbarOptions
+          },
+          theme: 'snow'  // or 'bubble'
+        });
+        //const delta = editor.clipboard.convert();
+        //editor.setContents(delta, 'silent');
+        editor.on('text-change', function (delta, oldDelta, source) {
+          if (source == 'api') {
+            console.log("An API call triggered this change.");
+          } else if (source == 'user') {
+            var delta = editor.getContents();
+            var text = editor.getText();
+            var justHtml = editor.root.innerHTML;
+            selfobj.model1.set({ "comment_text": justHtml });
+          }
+        });
+      }
     },
     saveComment: function (e) {
       e.preventDefault();

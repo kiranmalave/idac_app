@@ -17,18 +17,23 @@
                                         <%=model1.attributes.timeString%>
                                     </span><br>
                                     <%if(model1.attributes.description !="Created" ){%>
-                                        <% if(model1.attributes.col=="description" ){%>from "
-                                            <%=model1.attributes.old_desc%>" to "<%=model1.attributes.new_desc%>"
-                                                    <%}else{%>from "<%=model1.attributes.old_val%>" to "
-                                                            <%=model1.attributes.new_val%>"<%}%>
-                                                                    <%}%>
+                                        <% if(model1.attributes.col=="description" ){%>
+                                            from "<%=model1.attributes.old_desc%>" to "<%=model1.attributes.new_desc%>"
+                                        <%}else if(model1.attributes.col=="Start Date"){%>
+                                            from "<%=model1.attributes.old_date%>" to "<%=model1.attributes.new_date%>"
+                                        <%}else if(model1.attributes.col=="Due Date"){%>
+                                            from "<%=model1.attributes.old_date%>" to "<%=model1.attributes.new_date%>"
+                                        <%}else{%>
+                                            from "<%=model1.attributes.old_val%>" to "<%=model1.attributes.new_val%>"
+                                        <%}%>
+                                        <%}%>
                             </div>
                         </div>
                     </div>
                 </div>
                 <%}); %>
                     <!-- paggination -->
-                    <div class="footer row">
+                    <!-- <div class="footer row">
                         <div class="col-sm-5">
                             <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite">
                                 <span class="page-info"></span>
@@ -40,7 +45,7 @@
                                 </ul>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <!-- paggination -->
         </div>
     </div>

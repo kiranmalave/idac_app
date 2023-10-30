@@ -31,7 +31,10 @@ if (taskDetails.attributes.status_slug !== "Completed") {
       <label for="cAll_<%= taskDetails.attributes.task_id %>">&nbsp;</label>
     </div>
   </td>
-  <td class="loadview textwrap" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"><a href="javascript:;"><u><%=taskDetails.attributes.subject%></u></a></td>
+  <td class="">
+    <%=taskDetails.attributes.task_id%>
+  </td>
+  <td class="loadview textwrap" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"><a href="javascript:;"><%=taskDetails.attributes.subject%></a></td>
   <td class="">
     <%=taskDetails.attributes.name%>
   </td>

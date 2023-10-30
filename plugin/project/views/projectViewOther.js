@@ -23,7 +23,8 @@ define([
         this.toClose = "projectFilterView";
         var selfobj = this;
         $(".profile-loader").show();
-        var mname = Backbone.history.getFragment();
+        //var mname = Backbone.history.getFragment();
+        mname = 'project';
         permission = ROLE[mname];
         //$("#"+mname).addClass("active");
         readyState = true;
@@ -41,16 +42,7 @@ define([
           setPagging(res.paginginfo, res.loadstate, res.msg);
         });
 
-        this.customerList = new customerCollection();
-        this.customerList.fetch({
-          headers: {
-            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-          }, error: selfobj.onErrorHandler, data: { status: "active" }
-        }).done(function (res) {
-          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          $(".popupLoader").hide();
-          // selfobj.render();
-        });
+       
         this.collection = searchproject;
         this.collection.on('add', this.addOne, this);
         this.collection.on('reset', this.addAll, this);
@@ -237,17 +229,11 @@ define([
         // }else{
         //   var template = _.template(projectRowTemp);
         // }
-        var template = _.template(projectRowTemp);
-
-        $("#projectList").append(template({ projectDetails: objectModel }));
-        // if(this.loadFrom != null){
-        //   $("#projectListOther").append(template({ projectDetails: objectModel }));
-        // }else{
-        //   $("#projectList").append(template({ projectDetails: objectModel }));
-        // }
+        var template = _.template(projectRowTempOther);
+        $("#projectListOther").append(template({ projectDetails: objectModel }));
       },
       addAll: function () {
-        $("#projectList").empty();
+        $("#projectListOther").empty();
         this.collection.forEach(this.addOne, this);
       },
       filterRender: function (e) {
@@ -493,25 +479,16 @@ define([
         });
       },
       render: function () {
-        if(this.loadFrom !=null){
-          var template = _.template(projectTempOther);
-        }else{
-          var template = _.template(projectTemp);
-        }
-        // var template = _.template(projectTemp);
+       
+        var template = _.template(projectTempOther);
         this.$el.html(template({ closeItem: this.toClose }));
-        if(this.loadFrom != null){
-          $("#dasboradHolder").append(this.$el);
-        }else{
-          $(".app_playground").append(this.$el);
-        }
-        // $(".app_playground").append(this.$el);
-        setToolTip();
+        $("#project").append(this.$el);
+        //$("#projects").show();
+        // setToolTip();
         return this;
       }
     });
     
-
     return projectView;
   
   });

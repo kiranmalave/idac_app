@@ -1,5 +1,5 @@
 <div class="tab-pane in active">
-    <div class="popuploader" style="display: none;">
+    <div class="popuploader">
         <div class="profile-loader text-center circleloader">
             <div class="preloader">
                 <div class="spinner-layer pl-amber">
@@ -14,9 +14,9 @@
         </div>
     </div>
     <form id="taskDetails" name="taskDetails" action="#">
-        <div class="text-right actionBtns mt-2">
+        <div class="actionBtns taskAction">
             <%if(model.task_id !=null){%>
-                <div class="taskAction">
+                <div>
                     <span class="input-group-addon lg mr-2 scroll" data-scroll="comment">
                         <i class="material-icons">chat</i>
                     </span>
@@ -58,10 +58,10 @@
                         </div>
                     </div>
                     <div class="right-layout ws-quill">
-                        <div class="row mb-3">
+                        <div class="row ">
                             <div class="col-md-12">
                                 <label for="description">Description</label>
-                                <div id="description" class="form-control">
+                                <div id="task_description" class="form-control">
                                     <%=model.description%>
                                 </div>
                             </div>
@@ -199,7 +199,7 @@
                     </div>
                     <div class="right-layout">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group form-float">
                                     <div class="from-line">
                                         <select id="customer_id" name="customer_id"
@@ -208,58 +208,43 @@
                                                 <option class="addNew" value="addCustomer">Add customer </option>
                                                 <%}%>
                                                     <% _.each(customerList, function(model1) { %>
-                                                        <option <% if(model1.attributes.customer_id==model.customer_id ){ %>selected <% } %>value="<%=model1.attributes.customer_id%>"> <%=model1.attributes.company_name%><!-- <%=model1.attributes.last_name%> -->
+
+                                                        <option <% if(model1.attributes.customer_id==model.customer_id )
+                                                            { %>
+                                                            selected <% } %>value="<%=model1.attributes.customer_id%>">
+                                                                    <%=model1.attributes.first_name%>
+                                                                        <%=model1.attributes.last_name%>
                                                         </option>
-                                                    <%}); %>
+                                                        <%}); %>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="ws-icon">
                                     <span class="input-group-addon lg"></span>
                                 </div>
                                 <div class="form-group form-float">
                                     <div class="from-line">
                                         <select for="assignee" id="assignee" name="assignee"
-                                            class="form-control dropval ws-select show-tick" title="Select Assignee"
-                                            <%if(userRoll!=101 ){%>disabled<%}%>>
-                                                <%if(permission.add=="yes" ) { %>
-                                                    <option class="addNew" value="addAssignee">Add Assignee</option>
-                                                    <%}%>
-                                                        <% _.each(adminList, function(model1) { %>
-                                                            <% if(model.task_id==undefined ){%>
-                                                                <option <%if(model1.attributes.adminID==loggedInID ){%>
-                                                                    selected
-                                                                    <%}%>
-                                                                        value="<%=model1.attributes.adminID%>">
+                                            class="form-control dropval ws-select show-tick" title="Select Assignee">
+                                            <%if(permission.add=="yes" ) { %>
+                                                <option class="addNew" value="addAssignee">Add Assignee</option>
+                                                <%}%>
+                                                    <% _.each(adminList, function(model1) { %>
+                                                        <% if(model.task_id==undefined ){%>
+                                                            <option <%if(model1.attributes.adminID==loggedInID ){%>
+                                                                selected <%}%> value="<%=model1.attributes.adminID%>">
+                                                                        <%=model1.attributes.name%>
+                                                            </option>
+                                                            <%}else{%>
+                                                                <option <% if(model1.attributes.adminID==model.assignee
+                                                                    ){%>selected<%}%> value="
+                                                                        <%=model1.attributes.adminID%>">
                                                                             <%=model1.attributes.name%>
                                                                 </option>
-                                                                <%}else{%>
-                                                                    <option <%
-                                                                        if(model1.attributes.adminID==model.assignee
-                                                                        ){%>
-                                                                        selected<%}%> value="
-                                                                            <%=model1.attributes.adminID%>">
-                                                                                <%=model1.attributes.name%>
-                                                                    </option>
-                                                                    <%}%>
-                                                                        <%}); %>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="ws-icon">
-                                    <span class="input-group-addon lg"></span>
-                                </div>
-                                <div class="form-group form-float">
-                                    <div class="from-line">
-                                        <select for="project" id="project" name="project"
-                                            class="form-control dropval ws-select show-tick" title="Select Project">
-                                            <% _.each(projectList, function(model1) { %>
-                                                <option <%if(model1.attributes.project_id==model.project ){%>selected<%}%> value="<%=model1.attributes.project_id%>"><%=model1.attributes.project_name%></option>
-                                            <%}); %>
+                                                                <%}%>
+                                                                    <%}); %>
                                         </select>
                                     </div>
                                 </div>
@@ -267,55 +252,58 @@
                         </div>
                     </div>
                 </div>
-                <%if(model.task_id !=null){%>
-                    <div class="list-row">
-                        <div class="icon-left">
-                            <div class="ws-icon">
-                                &nbsp;
-                            </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            &nbsp;
                         </div>
-                        <div class="right-layout">
-                            <div class="row">
-                                <!-- <div class="col-md-4">
-                                        <div class="form-group form-float">
-                                            <label> Is Repeate ?</label>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group form-float d-flex">
+                                    <div class="rept-time">
+                                        <div>
+                                            <select id="does_repeat" name="does_repeat"
+                                                class="form-control dropval ws-select show-tick repeatChange">
+                                                <option <% if(model.does_repeat=="does_not_repeat" ){%> selected
+                                                    <%}%>
+                                                        value="does_not_repeat">Does not Repeat
+                                                </option>
+                                                <option <% if(model.does_repeat=="daily" ){%>selected<%}%>
+                                                        value="daily">Daily</option>
+                                                <option <% if(model.does_repeat=="mon_to_fir" ){%>selected<%}%>
+                                                        value="mon_to_fir">Mon-Fri</option>
+                                                <option <% if(model.does_repeat=="weekend" ){%>selected<%}%>
+                                                        value="weekend">Weekend (Sat-Sun)</option>
+                                                <option <% if(model.does_repeat=="custom" ){%>selected<%}%>
+                                                        value="custom">Custom</option>
+                                            </select>
                                         </div>
-                                    </div> -->
-                                <div class="col-md-4">
-                                    <div class="form-group form-float d-flex">
-                                        <div class="rept-time">
-                                            <div>
-                                                <select id="does_repeat" name="does_repeat"
-                                                    class="form-control dropval ws-select show-tick repeatChange">
-                                                    <option <% if(model.does_repeat=="does_not_repeat" ){%> selected
-                                                        <%}%>
-                                                            value="does_not_repeat">Does not Repeat
-                                                    </option>
-                                                    <option <% if(model.does_repeat=="daily" ){%>selected<%}%>
-                                                            value="daily">Daily</option>
-                                                    <option <% if(model.does_repeat=="mon_to_fir" ){%>selected<%}%>
-                                                            value="mon_to_fir">Mon-Fri</option>
-                                                    <option <% if(model.does_repeat=="weekend" ){%>selected<%}%>
-                                                            value="weekend">Weekend (Sat-Sun)</option>
-                                                    <option <% if(model.does_repeat=="custom" ){%>selected<%}%>
-                                                            value="custom">Custom</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="ws-repeatTask" <%if(model.does_repeat=="custom" ){%>
-                                            style="display:block;"<%}else{%>style="display: none;"<%}%> >
-                                                    <button type="button" class="loadCustom ws-repeatTaskbtn bg-white"
-                                                        data-item="repeatTaskCustomView" data-view="repeatTask"
-                                                        data-task_id="<%=model.task_id%>" data-toggle="modal"
-                                                        data-target="#defaultModal">
-                                                        <span class="material-icons">add</span>
-                                                    </button>
-                                        </div>
+                                    </div>
+                                    <div class="ws-repeatTask" <%if(model.does_repeat=="custom" ){%>
+                                        style="display:block;"<%}else{%>style="display: none;"<%}%> >
+                                                <button type="button" class="loadCustom ws-repeatTaskbtn bg-white"
+                                                    data-item="repeatTaskCustomView" data-view="repeatTask"
+                                                    data-task_id="<%=model.task_id%>" data-toggle="modal"
+                                                    data-target="#defaultModal"><span
+                                                        class="material-icons">add</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control" disabled
+                                            value="<%=model.createdByname%>">
+                                        <label class="form-label">Created By</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <%if(model.task_id !=null){%>
                     <div class="list-row mb-3">
                         <div class="icon-left">
                             <div class="ws-icon "><span class="input-group-addon lg" style="margin-top:8px;">
@@ -329,10 +317,12 @@
                                 </div>
                             </div>
                             <div class="row attachupdate">
-                                <button <% if(model.task_id==undefined ){%>disabled <%}%> type="button" class="loadMedia ws-taskModalbtn dotborder" data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal"><span class="material-icons">add</span></button>
+                                <button <% if(model.task_id==undefined ){%>disabled <%}%> type="button" class="loadMedia
+                                        ws-taskModalbtn dotborder" data-change="ws-bg-image" data-toggle="modal"
+                                        data-target="#largeModal"><span class="material-icons">add</span></button>
                                 <div id="attachedDoc" class="row"></div>
                             </div>
-                            
+
                         </div>
                     </div>
                     <ul id="taskCom" class="nav nav-tabs task-nav-tab">
@@ -364,7 +354,7 @@
                                     </div>
                                     <div class="col-md-12 text-right">
                                         <button name="post" id="post" type="button" class="btn bg-indigo saveComment"
-                                            data-action="cpost">Post</button>
+                                            data-action="cput">Post</button>
                                         <button type="button" class="btn bg-indigo cancelPost">Cancel</button>
                                     </div>
                                 </div>
@@ -386,26 +376,58 @@
                                                 </div>
                                                 <div class="showPages">
                                                     <% var count=0; _.each(commentList, function(model1) { if (count <
-                                                        3) { %>
+                                                        6) { %>
                                                         <ul class="inbox-widget list-unstyled clearfix">
                                                             <li class="inbox-inner">
                                                                 <div class="inbox-item">
-                                                                    <div class="inbox-img"> <img
-                                                                            src="http://localhost/projects/LMS/website/uploads/user-def.jpg"
-                                                                            alt=""> </div>
+                                                                    <div class="inbox-img">
+                                                                        <img src="<%=PROFILEPHOTOUPLOAD%><%=model1.attributes.adminID%>/profilePic/<%=model1.attributes.photo%>"
+                                                                            width="48" height="48" alt="User" />
+                                                                    </div>
                                                                     <div class="inbox-item-info">
                                                                         <p class="author">
                                                                             <%=model1.attributes.name%>
                                                                         </p>
-                                                                        <p class="inbox-message m-b-5 m-t-10">
+                                                                        <div id="editCmt_<%=model1.attributes.comment_id%>"
+                                                                            class="inbox-message m-b-5 m-t-10 editComment"
+                                                                            data-commentID="<%=model1.attributes.comment_id%>">
                                                                             <%=model1.attributes.comment_text%>
-                                                                        </p>
+                                                                        </div>
+                                                                        <!-- <div >
+                                                                        <div id="editComment"
+                                                                            class="form-control edit_comment_<%=model1.attributes.comment_id%>"
+                                                                            style="display: none;"></div>
+                                                                        </div> -->
+                                                                        <div class="col-md-12 text-right editCmtBtn_<%=model1.attributes.comment_id%>"
+                                                                            style="display: none;">
+                                                                            <button name="post" id="post" type="button"
+                                                                                data-commentID="<%=model1.attributes.comment_id%>"
+                                                                                class="btn bg-indigo saveComment"
+                                                                                data-action="cpost">Post</button>
+                                                                            <button type="button"
+                                                                                class="btn bg-indigo cancelEditedComment">Cancel</button>
+                                                                        </div>
                                                                         <p class="inbox-date">
                                                                             <%=model1.attributes.created_date%>
                                                                         </p>
+                                                                        <button type="button"
+                                                                            data-commentID="<%=model1.attributes.comment_id%>"
+                                                                            class="ws-btn-default editBtn"
+                                                                            data-toggle="tooltip" data-placement="top"
+                                                                            title="Edit" <%if(ADMINID
+                                                                            !=model1.attributes.adminID ){%>
+                                                                            style="display: none;" <%}%> ><i
+                                                                                    class="material-icons">mode_edit</i></button>
+                                                                        <button type="button"
+                                                                            data-commentID="<%=model1.attributes.comment_id%>"
+                                                                            class="ws-btn-default deleteBtn"
+                                                                            data-toggle="tooltip" data-placement="top"
+                                                                            title="Delete" <%if(ADMINID
+                                                                            !=model1.attributes.adminID ){%>
+                                                                            style="display: none;" <%}%> ><i
+                                                                                    class="material-icons">delete</i></button>
                                                                     </div>
                                                                 </div>
-                                                                </a>
                                                             </li>
                                                         </ul>
                                                         <% count++; } }); %>

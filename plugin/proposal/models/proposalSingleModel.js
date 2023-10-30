@@ -7,8 +7,10 @@ define([
       idAttribute: "proposal_id",
       defaults: {
         proposal_id: null,
+        name: null,
+        project_id:null,
+        client_id:null,
         description: null,
-        proposal_name: null,
         proposal_number:null,
         status: 'active',
       },

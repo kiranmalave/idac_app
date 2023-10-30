@@ -36,7 +36,7 @@ define([
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".popupLoader").hide();
           selfobj.preparetime();
-          setPagging(res.paginginfo, res.loadstate, res.msg);
+          // setPagging(res.paginginfo, res.loadstate, res.msg);
           selfobj.render();
         });
       }

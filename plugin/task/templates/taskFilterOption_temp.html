@@ -1,19 +1,15 @@
-
 <form id="demo-form" action="#">
-  <!-- <span class="material-icons" id="removeFlyOut">
-    cancel
-  </span> -->
-  <h6>Filter Search</h6>
+  <h6>Advance Filter Search</h6>
   <hr>
   <div class="clearfix">&nbsp;</div>
   <div class="row">
     <div class="col-md-6">
       <select id="textSearch" class="form-control txtchange changeBox" name="textSearch">
-        <option value="">Select</option>
+        <option value="task_id">Task ID</option>
         <option value="subject">Task Name</option>
       </select>
     </div>
-    <div class="col-md-6 textvalBox hidetextval" style="display: none;">
+    <div class="col-md-6 textvalBox hidetextval">
       <input id="textval" class="form-control txtchange filterClear" name="textval" type="text">
     </div>
   </div>
@@ -23,7 +19,7 @@
   <div class="row">
     <div class="col-md-6 assigneeList">
       <select for="assignee" id="assignee" name="assignee" data-live-search="true" title="Assignee"
-        class="form-control dropval ws-select show-tick txtchange" multiple>
+        class="form-control ws-select show-tick dropval" multiple>
         <% _.each(adminList, function(model1) { %>
           <option value="<%=model1.attributes.adminID%>">
             <%=model1.attributes.name%>
@@ -33,7 +29,7 @@
     </div>
     <div class="col-md-6">
       <select for="task_priority" id="task_priority" name="task_priority" title="Task priority"
-        class="form-control dropval ws-select show-tick txtchange repeatChange" multiple>
+        class="form-control ws-select show-tick dropval repeatChange" multiple>
         <% _.each(categoryList, function(modelcat) { %>
           <% if(modelcat.attributes.slug=="task_priority" ) _.each(modelcat.attributes.sublist, function(model1) { %>
             <option value="<%=model1.category_id%>">
@@ -49,8 +45,7 @@
 
   <div class="row">
     <div class="col-md-6">
-      <select id="task_status" name="task_status" class="form-control ws-select dropval txtchange" title="Task Status"
-        multiple>
+      <select id="task_status" name="task_status" class="form-control ws-select dropval" title="Task Status" multiple>
         <% _.each(categoryList, function(modelcat) { %>
           <% if(modelcat.attributes.slug=="task_status" ) _.each(modelcat.attributes.sublist, function(model1) { %>
             <option value="<%=model1.category_id%>">
@@ -61,7 +56,7 @@
       </select>
     </div>
     <div class="col-md-6">
-      <select id="customer_id" name="customer_id" class="form-control dropval ws-select show-tick txtchange"
+      <select id="customer_id" name="customer_id" class="form-control ws-select show-tick dropval"
         title="Select Customer" multiple>
         <% _.each(customerList, function(model1) { %>
           <option value="<%=model1.attributes.customer_id%>">
@@ -74,8 +69,7 @@
   <div class="clearfix">&nbsp;</div>
   <div class="row">
     <div class="col-md-6">
-      <select id="created_by" name="created_by" class="form-control ws-select dropval txtchange" title="Created By"
-        multiple>
+      <select id="created_by" name="created_by" class="form-control ws-select dropval" title="Created By" multiple>
         <% _.each(adminList, function(model1) { %>
           <option value="<%=model1.attributes.adminID%>">
             <%=model1.attributes.name%>
@@ -132,6 +126,6 @@
     <input type="button" id="filterSearch" class="filterSearch btn btn-raised bg-green waves-effect"
       value="Search"></button>
     <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval" value="Reset"></button>
-    <input type="button" id="filterOption" class="btn btn-raised bg-blue-grey closeFil" value="Close"></button>
+    <input id="filterOption" type="button" class="btn btn-raised bg-blue-grey colseFil" value="Close"></button>
   </div>
 </form>

@@ -596,7 +596,7 @@ define([
       render: function () {
         var template = _.template(taskTemp);
         this.$el.html(template({ closeItem: this.toClose }));
-        $("#dasboradHolder").empty().append(this.$el);
+        $("#tasks").empty().append(this.$el);
         this.attachEvents();
         return this;
       },

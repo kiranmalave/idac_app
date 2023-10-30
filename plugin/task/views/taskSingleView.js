@@ -16,7 +16,6 @@ define([
   '../../category/views/categorySingleView',
   "../../dynamicForm/views/dynamicFieldRender",
   "../../customer/collections/customerCollection",
-  "../../project/collections/projectCollection",
   "../../category/collections/slugCollection",
   "../../admin/collections/adminCollection",
   "../collections/taskCollection",
@@ -25,7 +24,7 @@ define([
   "../models/singleTaskModel",
   "../models/commentModel",
   "text!../templates/taskSingle_temp.html",
-], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, moment, repeatTaskCustomView, commentSingleView, historySingleView, customerSingleView, addAdminView, multiselectOptions, categorySingleView, dynamicFieldRender, customerCollection,projectCollection, slugCollection, adminCollection, taskCollection, commentCollection, readFilesView, singleTaskModel, commentModel, tasktemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, moment, repeatTaskCustomView, commentSingleView, historySingleView, customerSingleView, addAdminView, multiselectOptions, categorySingleView, dynamicFieldRender, customerCollection, slugCollection, adminCollection, taskCollection, commentCollection, readFilesView, singleTaskModel, commentModel, tasktemp) {
   var taskSingleView = Backbone.View.extend({
     model: singleTaskModel,
     enteredWatchersArray: [],
@@ -50,7 +49,6 @@ define([
       scanDetails = options.searchtask;
       if (options.task_id != "") {
         this.model.set({ task_id: options.task_id });
-
         this.model.fetch({
           headers: { 'contentType': "application/x-www-form-urlencoded", 'SadminID': $.cookie("authid"), token: $.cookie("_bb_key"), Accept: "application/json", },
           error: selfobj.onErrorHandler,
@@ -62,10 +60,11 @@ define([
             selfobj.model.set({ "start_date": moment(startDate).format("DD-MM-YYYY") });
           }
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          // $(".popupLoader").hide();
+          $(".popupLoader").hide();
           selfobj.render();
         });
       }
+      $(".popuploader").show();
       this.customerList = new customerCollection();
       this.customerList.fetch({
         headers: {
@@ -73,20 +72,10 @@ define([
         }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        // $(".popupLoader").hide();
+        $(".popupLoader").hide();
         selfobj.render();
       });
-      this.projectList = new projectCollection();
-      this.projectList.fetch({
-        headers: {
-          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
-      }).done(function (res) {
-        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".preloader").hide();
-        // selfobj.render();
-      });
-      console.log(this.projectList);
+      $(".popuploader").show();
       this.categoryList = new slugCollection();
       this.categoryList.fetch({
         headers: {
@@ -94,10 +83,10 @@ define([
         }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y', slug: 'task_priority,task_type,task_status' }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        // $(".popupLoader").hide();
+        $(".popupLoader").hide();
         selfobj.render();
       });
-
+      $(".popuploader").show();
       this.adminList = new adminCollection();
       this.adminList.fetch({
         headers: {
@@ -105,7 +94,7 @@ define([
         }, error: selfobj.onErrorHandler, type: 'post', data: { status: "active" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        // $(".profile-loader").hide();
+        $(".popuploader").hide();
         selfobj.render();
       });
       this.getCommentList()
@@ -114,7 +103,6 @@ define([
       let selfobj = this;
       this.commentList = new commentCollection();
       var task_id = this.model.get("task_id");
-      // alert(task_id);
       if (task_id !== "") {
         this.model1.set({ task_id: task_id });
         this.commentList.fetch({
@@ -127,6 +115,7 @@ define([
           selfobj.render();
         });
       }
+      console.log(this.commentList);
     },
     events: {
       "click .saveTaskDetails": "saveTaskDetails",
@@ -141,6 +130,8 @@ define([
       "click .cancelPost": "cancelPost",
       "click .deleteAttachment": "deleteAttachment",
       "click .scroll": "scroll",
+      "click .editBtn": "editComment",
+      "click .deleteBtn": "deleteComment",
     },
     attachEvents: function () {
       // Detach previous event bindings
@@ -171,6 +162,10 @@ define([
       this.$el.on('click', '.deleteAttachment', this.deleteAttachment.bind(this));
       this.$el.off('click', '.scroll', this.scroll);
       this.$el.on('click', '.scroll', this.scroll.bind(this));
+      this.$el.off('click', '.editBtn', this.editComment);
+      this.$el.on('click', '.editBtn', this.editComment.bind(this));
+      this.$el.off('click', '.deleteBtn', this.deleteComment);
+      this.$el.on('click', '.deleteBtn', this.deleteComment.bind(this));
     },
     showCommentBox: function (e) {
       let selfobj = this;
@@ -207,6 +202,95 @@ define([
           }
         });
       }
+    },
+    deleteComment: function (e) {
+      let selfobj = this;
+      let status = "delete"
+      let id = $(e.currentTarget).attr("data-commentID");
+      $.ajax({
+        url: APIPATH + 'commentDelete',
+        method: 'POST',
+        data: { list: id, status: status },
+        datatype: 'JSON',
+        beforeSend: function (request) {
+          request.setRequestHeader("token", $.cookie('_bb_key'));
+          request.setRequestHeader("SadminID", $.cookie('authid'));
+          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+          request.setRequestHeader("Accept", 'application/json');
+        },
+        success: function (res) {
+          if (res.flag == "F")
+            alert(res.msg);
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          if (res.flag == "S") {
+            selfobj.getCommentList();
+          }
+        }
+      });
+    },
+    editComment: function (e) {
+      let selfobj = this;
+      var $parentContainer = $(e.target).closest('.inbox-widget');
+      var commentID = $(e.currentTarget).attr("data-commentID");
+      $parentContainer.find('.inbox-message').hide();
+      $(e.currentTarget).hide();
+      $('.deleteBtn').hide();
+      $("#editCmt_" + commentID).show();
+      // $(".edit_comment_" + commentID).show();
+      $(".editCmtBtn_" + commentID).show();
+      var __toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+        [{ 'direction': 'rtl' }],                         // text direction
+        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+        [{ 'align': [] }],
+        ['link'],
+        ['clean']                                         // remove formatting button
+      ];
+      var myid = "editCmt_" + commentID;
+      if (!$("#" + myid).hasClass("ql-container")) {
+        var editor = new Quill($("#" + myid).get(0), {
+          modules: {
+            toolbar: __toolbarOptions
+          },
+          theme: 'snow'  // or 'bubble'
+        });
+        //const delta = editor.clipboard.convert();
+        //editor.setContents(delta, 'silent');
+        editor.on('text-change', function (delta, oldDelta, source) {
+          if (source == 'api') {
+            console.log("An API call triggered this change.");
+          } else if (source == 'user') {
+            var delta = editor.getContents();
+            var text = editor.getText();
+            var justHtml = editor.root.innerHTML;
+            selfobj.model1.set({ "comment_text": justHtml });
+          }
+        });
+      }
+    },
+    saveComment: function (e) {
+      e.preventDefault();
+      let selfobj = this;
+      let isNew = $(e.currentTarget).attr("data-action");
+      let commentID = $(e.currentTarget).attr("data-commentID");
+      selfobj.model1.set({ "comment_id": commentID });
+      if (isNew == "cpost") {
+        var methodt = "POST";
+      } else {
+        var methodt = "PUT";
+      }
+      this.model1.save({}, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: methodt,
+      }).done(function (res) {
+        if (res.flag == "S") {
+          selfobj.model1.clear().set(selfobj.model1.defaults);
+          selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {}, });
+          selfobj.getCommentList();
+        }
+      });
     },
     deleteAttachment: function (e) {
       let file_id = $(e.currentTarget).attr("data-file_id");
@@ -433,32 +517,9 @@ define([
         selfobj.render();
       });
     },
-    saveComment: function (e) {
-      e.preventDefault();
-      let selfobj = this;
-      let isNew = $(e.currentTarget).attr("data-action");
-      let mid = "";
-      isNew = "new";
-      if (mid == "" || mid == null) {
-        var methodt = "PUT";
-      } else {
-        var methodt = "POST";
-      }
-      this.model1.save({}, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, type: methodt
-      }).done(function (res) {
-        if (res.flag == "S") {
-          selfobj.model1.clear().set(selfobj.model1.defaults);
-          selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {}, });
-          selfobj.getCommentList();
-        }
-      });
-    },
     addWatchers: function () {
       let selfobj = this;
-      // tagApi = $(".tm-input").tagsManager();
+      tagApi = $(".tm-input").tagsManager();
       $("#typehead").typeahead({
         name: 'tags',
         displayKey: 'name',
@@ -659,7 +720,7 @@ define([
       var template = _.template(source);
       $("#" + this.toClose).remove();
       // console.log(this.model);
-      this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "projectList": this.projectList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID }))
+      this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID }))
       this.$el.addClass("tab-pane in active panel_overflow");
       this.$el.attr("id", this.toClose);
       this.$el.addClass(this.toClose);
@@ -685,7 +746,7 @@ define([
         ['link'],
         ['clean']                                         // remove formatting button
       ];
-      var editor = new Quill($("#description").get(0), {
+      var editor = new Quill($("#task_description").get(0), {
         modules: {
           toolbar: __toolbarOptions
         },
