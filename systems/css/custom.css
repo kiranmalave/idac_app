@@ -2587,7 +2587,12 @@ div:where(.swal2-icon) .swal2-icon-content {
 .hideTable.ShowTable{
   display: block;
 }
-
+.hideheader{
+  display: block;
+}
+.hideheader.headerHide{
+  display: none  !important;
+}
 .backbutton {
   float: left;
   margin-bottom: 10px;
@@ -2610,6 +2615,11 @@ div:where(.swal2-icon) .swal2-icon-content {
   top: -1px;
   right: 6px;
 }
+/* 
+#task_description{
+  height: 150px;
+  margin-bottom: 30px;
+} */
 
 /* .comment-action p span{
   max-width: 90px;
@@ -2625,7 +2635,15 @@ div:where(.swal2-icon) .swal2-icon-content {
 .overflowHide .ql-editor{
   overflow: hidden !important;
 }
+
 #task_description {
   height: 150px;
   margin-bottom: 30px;
+}
+
+.backbutton{
+  position: absolute;
+  top: 14px;
+  left: 10px;
+  z-index: 9;
 }
