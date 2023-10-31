@@ -1,5 +1,5 @@
 <div class="tab-pane in active">
-    <div class="popuploader">
+    <div class="popuploader" style="display: none;">
         <div class="profile-loader text-center circleloader">
             <div class="preloader">
                 <div class="spinner-layer pl-amber">
@@ -202,7 +202,7 @@
                             <div class="col-md-6">
                                 <div class="form-group form-float">
                                     <div class="from-line">
-                                        <select id="customer_id" name="customer_id"
+                                        <!-- <select id="customer_id" name="customer_id"
                                             class="form-control dropval ws-select show-tick" title="Select Customer">
                                             <%if(permission.add=="yes" ) { %>
                                                 <option class="addNew" value="addCustomer">Add customer </option>
@@ -216,6 +216,12 @@
                                                                         <%=model1.attributes.last_name%>
                                                         </option>
                                                         <%}); %>
+                                        </select> -->
+                                        <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
+                                            <% _.each(customerList, function(model1) { %>
+                                                    <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected
+                                                        <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
+                                             <%}); %>
                                         </select>
                                     </div>
                                 </div>
