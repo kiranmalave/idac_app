@@ -42,7 +42,7 @@ define([
       this.loggedInID = $.cookie("authid");
       this.userRoll = $.cookie('roleOfUser');
       this.model = new singleTaskModel();
-      this.model.set({ assignee: this.loggedInID });
+
       this.model1 = new commentModel();
       // use this valiable for dynamic fields to featch the data from server
       this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {}, });
@@ -367,6 +367,7 @@ define([
       var newdetails = [];
       newdetails["" + toID] = valuetxt;
       this.model.set(newdetails);
+      console.log(this.model);
       if (toID == "does_repeat") {
         if (valuetxt == "custom") {
           $(".ws-repeatTask").show();

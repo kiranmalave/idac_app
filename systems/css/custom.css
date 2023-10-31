@@ -2636,6 +2636,11 @@ div:where(.swal2-icon) .swal2-icon-content {
   overflow: hidden !important;
 }
 
+#task_description {
+  height: 150px;
+  margin-bottom: 30px;
+}
+
 .backbutton{
   position: absolute;
   top: 14px;
