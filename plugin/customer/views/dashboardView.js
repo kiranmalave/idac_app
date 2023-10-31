@@ -174,7 +174,6 @@ define([
         switch(show){
           case "singlecustomerview":{
             var customer_id = $(e.currentTarget).attr("data-customer_id");
-            //alert(customer_id);
             new customerSingleView({customer_id: customer_id,loadfrom:"dashboard"});
             break;
           }
@@ -223,6 +222,7 @@ define([
       },
   
       tablinks:function(e){
+        let selfobj = this;
         let ctab = $(e.currentTarget).attr("data-type");
         $(".tablinks").removeClass("active");
         $(".taskcard").hide();
@@ -232,7 +232,7 @@ define([
           $("#projectListOther").empty();
           new projectViewOther({ action:""});
         }else if(ctab =="task"){
-          new taskViewDashbord({ action:""});
+          new taskViewDashbord({ action:"", customerID: selfobj.customerID});
         }
         // var i, tabcontent, tablinks;
         // tabcontent = document.getElementsByClassName("card");
@@ -281,7 +281,7 @@ define([
         this.$el.html(res);
         $(".app_playground").append(this.$el);
         // new taskView({ action: "",loadFrom:"other"});
-        new taskViewDashbord({ action:""}); 
+        new taskViewDashbord({ action:"", customerID: this.customerID}); 
         return this;
       },
   
