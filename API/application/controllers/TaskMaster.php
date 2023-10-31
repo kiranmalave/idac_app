@@ -468,6 +468,21 @@ class TaskMaster extends CI_Controller
 					$whereAttachment = array(
 						"task_id" => $task_id
 					);
+					$wherec["task_id ="] = "'".$task_id."'";
+					// $wherec = array("task_id"=>$task_id);
+					$join=array();
+					$join[0]['type'] ="LEFT JOIN";
+					$join[0]['table']="admin";
+					$join[0]['alias'] ="aa";
+					$join[0]['key1'] ="created_by";
+					$join[0]['key2'] ="adminID";
+
+					$selectC = "aa.name AS adminName";
+					$createdBy = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, '', '', $join, '');
+					if(!empty($createdBy)){
+						$created = array_column($createdBy,'adminName');
+						$taskDetails[0]->createdByname = $created;
+					}
 					$watchersDetailsName = $this->CommonModel->getMasterDetails('tasks_watchers', '', $whereGuest);
 					if (!empty($watchersDetailsName)) {
 						$watchers_name = array_column($watchersDetailsName,'watchers_name');

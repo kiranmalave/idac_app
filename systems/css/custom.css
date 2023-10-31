@@ -2625,3 +2625,7 @@ div:where(.swal2-icon) .swal2-icon-content {
 .overflowHide .ql-editor{
   overflow: hidden !important;
 }
+#task_description {
+  height: 150px;
+  margin-bottom: 30px;
+}
