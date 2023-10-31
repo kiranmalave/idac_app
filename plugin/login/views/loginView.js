@@ -108,6 +108,7 @@ define([
               $.cookie('roleOfUser', res.data.roleOfUser, { path: COKI, expires: expDate });
               var bbauth = $.cookie('bbauth');
               ADMINNAME = $.cookie('name');
+              ADMINID = $.cookie('authid');
               getLocalData();
               $(e.currentTarget).html("<span>Sign In</span>");
               app_router.navigate("dashboard", { trigger: true });
