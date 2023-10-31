@@ -13,11 +13,12 @@ define([
     '../models/taskFilterOptionModel',
     "../../admin/collections/adminCollection",
     "../../customer/collections/customerCollection",
+    "../../project/collections/projectCollection",
     "../../category/collections/slugCollection",
     'text!../templates/taskRow_other.html',
     'text!../templates/task_temp_other.html',
     'text!../templates/taskFilterOption_temp.html',
-  ], function ($, _, Backbone, datepickerBT, moment, Swal, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
+  ], function ($, _, Backbone, datepickerBT, moment, Swal, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, projectCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
   
     var taskView = Backbone.View.extend({
       initialize: function (options) {
@@ -63,6 +64,16 @@ define([
           // selfobj.render();
         });
 
+        this.projectList = new projectCollection();
+        this.projectList.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".preloader").hide();
+          // selfobj.render();
+        });
      
   
         searchtask.fetch({
@@ -374,7 +385,7 @@ define([
           var template = _.template(source);
   
           var cont = $("<div>");
-          cont.html(template({ "adminList": this.adminList.models, "categoryList": this.categoryList.models, "customerList": this.customerList.models }));
+          cont.html(template({ "adminList": this.adminList.models, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "projectList": this.projectList.models }));
           cont.attr('id', this.toClose);
           /*  
             INFO
