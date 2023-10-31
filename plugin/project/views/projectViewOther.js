@@ -36,12 +36,21 @@ define([
             'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
           }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
         }).done(function (res) {
-  
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".profile-loader").hide();
           setPagging(res.paginginfo, res.loadstate, res.msg);
         });
 
+        this.customerList = new customerCollection();
+        this.customerList.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler, data: { status: "active" }
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".popupLoader").hide();
+          // selfobj.render();
+        });
        
         this.collection = searchproject;
         this.collection.on('add', this.addOne, this);
@@ -237,6 +246,7 @@ define([
         this.collection.forEach(this.addOne, this);
       },
       filterRender: function (e) {
+        // alert("TESTONE");
         var isexits = checkisoverlay(this.toClose);
   
         if (!isexits) {
@@ -245,7 +255,8 @@ define([
           var template = _.template(source);
   
           var cont = $("<div>");
-        cont.html(template({"customerList": this.customerList.models }));
+          console.log(this.customerList);
+          cont.html(template({"customerList": this.customerList.models }));
           cont.attr('id', this.toClose);
           /*  
             INFO
@@ -382,9 +393,8 @@ define([
         }).done(function (res) {
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".profile-loader").hide();
-  
           setPagging(res.paginginfo, res.loadstate, res.msg);
-          $element.attr("data-currPage", 1);
+          $element.attr("data-currPage", z);
           $element.attr("data-index", res.paginginfo.nextpage);
   
           //$(".page-info").html(recset);
