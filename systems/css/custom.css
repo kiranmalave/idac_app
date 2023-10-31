@@ -2611,6 +2611,11 @@ div:where(.swal2-icon) .swal2-icon-content {
   right: 6px;
 }
 
+#task_description{
+  height: 150px;
+  margin-bottom: 30px;
+}
+
 /* .comment-action p span{
   max-width: 90px;
   text-overflow: ellipsis;
