@@ -34,6 +34,7 @@ define([
     initialize: function (options) {
       this.dynamicData = null;
       this.toClose = "taskSingleView";
+      this.customer_id = options.customerID;
       this.tagID = null;
       var selfobj = this;
       $(".popuploader").show();
@@ -722,7 +723,7 @@ define([
       var template = _.template(source);
       $("#" + this.toClose).remove();
       // console.log(this.model);
-      this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID }))
+      this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID , "customerID":this.customer_id}))
       this.$el.addClass("tab-pane in active panel_overflow");
       this.$el.attr("id", this.toClose);
       this.$el.addClass(this.toClose);
