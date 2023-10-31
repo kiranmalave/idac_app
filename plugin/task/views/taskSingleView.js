@@ -75,6 +75,8 @@ define([
         $(".popupLoader").hide();
         selfobj.render();
       });
+
+      
       $(".popuploader").show();
       this.categoryList = new slugCollection();
       this.categoryList.fetch({
@@ -111,7 +113,7 @@ define([
           }, error: selfobj.onErrorHandler, type: 'post', data: { status: "active", getAll: 'Y', task_id: task_id }
         }).done(function (res) {
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          // $(".popupLoader").hide();
+          $(".popupLoader").hide();
           selfobj.render();
         });
       }
@@ -519,7 +521,7 @@ define([
     },
     addWatchers: function () {
       let selfobj = this;
-      tagApi = $(".tm-input").tagsManager();
+      // tagApi = $(".tm-input").tagsManager();
       $("#typehead").typeahead({
         name: 'tags',
         displayKey: 'name',
