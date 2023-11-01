@@ -890,7 +890,7 @@ class TaskMaster extends CI_Controller
 	public function addTaskHistory($task_id, $action_type, $description, $user_id)
 	{
 		$taskDetails = array(
-			'task_id' => $task_id,
+			'record_id' => $task_id,
 			'action_type' => $action_type,
 			'description' => $description,
 			'user_id' => $user_id,
