@@ -10,6 +10,7 @@ define([
       description: null,
       customer_id: null,
       category_id: null,
+      project_id:null,
       assignee: null,
       task_status: null,
       task_type: null,
