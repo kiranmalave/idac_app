@@ -2659,3 +2659,19 @@ div:where(.swal2-icon) .swal2-icon-content {
 .hideTable .container-fluid .col-lg-12 .card .header {
   padding: 20px 40px 11px;
 }
+
+section.content.dashBordTotal{
+  margin-left: 0;
+  padding: 0;
+  margin-top: 15px;
+  margin-right: 0px;
+}
+.block-header.dashBordTotal {
+  padding: 15px !important;
+}
+i.material-icons.bigsize {
+  font-size: 60px;
+  margin-bottom: 0;
+  padding: 0;
+  color: #5a5a5a !important;
+}
