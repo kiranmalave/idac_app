@@ -12,6 +12,7 @@ define([
         client_id:null,
         description: null,
         proposal_number:null,
+        copy: "no",
         status: 'active',
       },
       urlRoot: function () {
