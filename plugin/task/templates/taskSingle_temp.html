@@ -217,7 +217,7 @@
                                                         </option>
                                                         <%}); %>
                                         </select> -->
-                                        <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
+                                        <select id="customer_id" name="customer_id"  <% if(customerID != null){%> disabled <%}%> class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
                                             <% _.each(customerList, function(model1) { %>
 
                                                 <% if(customerID == null){%>
@@ -225,7 +225,7 @@
                                                         <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
                                                     <%}else{%>
                                                         <option <% if(model1.attributes.customer_id == customerID ) { %>selected
-                                                            <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
+                                                             <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
                                                     <%}%>
 
                                              <%}); %>
@@ -245,19 +245,14 @@
                                                 <option class="addNew" value="addAssignee">Add Assignee</option>
                                                 <%}%>
                                                     <% _.each(adminList, function(model1) { %>
-                                                        <% if(model.task_id==undefined ){%>
-                                                            <option <%if(model1.attributes.adminID==loggedInID ){%>
-                                                                selected <%}%> value="<%=model1.attributes.adminID%>">
-                                                                        <%=model1.attributes.name%>
-                                                            </option>
-                                                            <%}else{%>
+                                                        
                                                                 <option <% if(model1.attributes.adminID==model.assignee
                                                                     ){%>selected<%}%> value="
                                                                         <%=model1.attributes.adminID%>">
                                                                             <%=model1.attributes.name%>
                                                                 </option>
-                                                                <%}%>
-                                                                    <%}); %>
+                                                                 <%}); %>  
+                                                                 
                                         </select>
                                     </div>
                                 </div>
@@ -307,8 +302,11 @@
                             <div class="col-md-4">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <input type="text" class="form-control" disabled
-                                            value="<%=model.createdByname%>">
+                                        <%if (model.task_id == null){%>
+                                            <input type="text" class="form-control" disabled value="<%=ADMINNAME%>">
+                                        <%}else{%>
+                                            <input type="text" class="form-control" disabled value="<%=model.createdByname%>">
+                                        <%}%>
                                         <label class="form-label">Created By</label>
                                     </div>
                                 </div>
