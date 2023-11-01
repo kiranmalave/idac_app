@@ -19,7 +19,7 @@ define([
       initialize: function (options) {
         this.toClose = "proposalFilterView";
         var selfobj = this;
-        alert(options.loadFrom);
+        // alert(options.loadFrom);
         if(options.loadFrom != undefined){
           selfobj.loadFrom = options.loadFrom;
         }
@@ -132,7 +132,7 @@ define([
           },
           success: function (res) {
             if (res.flag == "F")
-              alert(res.msg);
+              // alert(res.msg);
   
             if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
             if (res.flag == "S") {
@@ -455,11 +455,10 @@ define([
         console.log("render....");
         var template = _.template(proposalTemp);
           this.$el.html(template({ closeItem: this.toClose }));
-          alert(this.loadFrom);
+          // alert(this.loadFrom);
         if(this.loadFrom != null){
           $("#dasboradProposalHolder").append(this.$el);
         }else{
-          
           $(".app_playground").append(this.$el);
           setToolTip();
         }
