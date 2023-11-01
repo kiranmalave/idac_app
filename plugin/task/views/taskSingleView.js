@@ -16,6 +16,7 @@ define([
   '../../category/views/categorySingleView',
   "../../dynamicForm/views/dynamicFieldRender",
   "../../customer/collections/customerCollection",
+  "../../project/collections/projectCollection",
   "../../category/collections/slugCollection",
   "../../admin/collections/adminCollection",
   "../collections/taskCollection",
@@ -24,7 +25,7 @@ define([
   "../models/singleTaskModel",
   "../models/commentModel",
   "text!../templates/taskSingle_temp.html",
-], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, moment, repeatTaskCustomView, commentSingleView, historySingleView, customerSingleView, addAdminView, multiselectOptions, categorySingleView, dynamicFieldRender, customerCollection, slugCollection, adminCollection, taskCollection, commentCollection, readFilesView, singleTaskModel, commentModel, tasktemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, moment, repeatTaskCustomView, commentSingleView, historySingleView, customerSingleView, addAdminView, multiselectOptions, categorySingleView, dynamicFieldRender, customerCollection, projectCollection, slugCollection, adminCollection, taskCollection, commentCollection, readFilesView, singleTaskModel, commentModel, tasktemp) {
   var taskSingleView = Backbone.View.extend({
     model: singleTaskModel,
     enteredWatchersArray: [],
@@ -77,7 +78,18 @@ define([
         selfobj.render();
       });
 
-      
+      $(".popuploader").show();
+      this.projectList = new projectCollection();
+      this.projectList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        selfobj.render();
+      });
+
       $(".popuploader").show();
       this.categoryList = new slugCollection();
       this.categoryList.fetch({
@@ -724,7 +736,7 @@ define([
       var template = _.template(source);
       $("#" + this.toClose).remove();
       // console.log(this.model);
-      this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID , "customerID":this.customer_id}))
+      this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models,"projectList":this.projectList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID , "customerID":this.customer_id}))
       this.$el.addClass("tab-pane in active panel_overflow");
       this.$el.attr("id", this.toClose);
       this.$el.addClass(this.toClose);

@@ -2641,9 +2641,21 @@ div:where(.swal2-icon) .swal2-icon-content {
   margin-bottom: 30px;
 }
 
-.backbutton{
+.backbutton {
   position: absolute;
-  top: 14px;
-  left: 10px;
+  top: 31px;
+  left: 11px;
   z-index: 9;
+}
+
+.hideTable .container-fluid .col-lg-12 {
+    padding: 0;
+}
+
+.hideTable .container-fluid .col-lg-12 .card .body {
+  padding: 0;
+}
+
+.hideTable .container-fluid .col-lg-12 .card .header {
+  padding: 20px 40px 11px;
 }
