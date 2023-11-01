@@ -8,17 +8,16 @@ define([
   '../../customer/views/customerSingleView',
   '../../customer/models/customerSingleModel',
   '../../project/views/projectSingleView',
+  '../../proposal/views/proposalView',
   '../../taxInvoice/views/taxInvoiceSingleView',
   '../views/addUserView',
-  'text!../templates/dashboard_temp.html',
-], function ($, _, Backbone, custom, dashboardModel, filterUser, customerSingleView, customerSingleModel, projectSingleView,taxInvoiceSingleView, addUserView, dashBoard_temp) {
+  'text!../templates/dashbord_temp.html'
+], function ($, _, Backbone, custom, dashboardModel, filterUser, customerSingleView, customerSingleModel, projectSingleView,proposalView,taxInvoiceSingleView, addUserView,dashBord_temp) {
 
   var dashboardView = Backbone.View.extend({
     model: dashboardModel,
     tagName: "div",
     initialize: function (options) {
-      var customerID = options.action;
-      this.customerID = customerID;
       this.customerModel = new customerSingleModel();
       var selfobj = this;
       if (this.customerID != "") {
@@ -174,7 +173,8 @@ define([
 
         case "singleprojectview":{
           var project_id = $(e.currentTarget).attr("data-project_id");
-          // alert(project_id);
+          alert(project_id);
+         
           new projectSingleView({project_id: project_id,loadfrom:"dashboard"});
         }
 
@@ -255,8 +255,8 @@ define([
     },
 
     // backBtn:funtion(e){
+      
     
-    // },
 
     backBtn:function(){
        var element = document.querySelector(".addFlex");
@@ -265,7 +265,8 @@ define([
           element.classList.remove("ShowTable");
     },
     render: function () {
-      var template = _.template(dashBoard_temp);
+      
+      var template = _.template(dashBord_temp);
       var res = template({"customerModel":this.customerModel});
       var res = template({"customerModel":this.customerModel});
       this.$el.html(res);

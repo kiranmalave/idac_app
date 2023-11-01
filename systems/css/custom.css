@@ -2641,9 +2641,37 @@ div:where(.swal2-icon) .swal2-icon-content {
   margin-bottom: 30px;
 }
 
-.backbutton{
+.backbutton {
   position: absolute;
-  top: 14px;
-  left: 10px;
+  top: 31px;
+  left: 11px;
   z-index: 9;
+}
+
+.hideTable .container-fluid .col-lg-12 {
+    padding: 0;
+}
+
+.hideTable .container-fluid .col-lg-12 .card .body {
+  padding: 0;
+}
+
+.hideTable .container-fluid .col-lg-12 .card .header {
+  padding: 20px 40px 11px;
+}
+
+section.content.dashBordTotal{
+  margin-left: 0;
+  padding: 0;
+  margin-top: 15px;
+  margin-right: 0px;
+}
+.block-header.dashBordTotal {
+  padding: 15px !important;
+}
+i.material-icons.bigsize {
+  font-size: 60px;
+  margin-bottom: 0;
+  padding: 0;
+  color: #5a5a5a !important;
 }

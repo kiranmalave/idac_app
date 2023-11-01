@@ -15,10 +15,15 @@ define([
   ], function ($, _, Backbone, datepickerBT, moment,Swal,  proposalSingleView, proposalCollection, proposalFilterOptionModel, proposalRowTemp, proposalTemp, proposalFilterTemp) {
   
     var proposalView = Backbone.View.extend({
-  
+      loadFrom:null,
       initialize: function (options) {
         this.toClose = "proposalFilterView";
         var selfobj = this;
+        // alert(options.loadFrom);
+        if(options.loadFrom != undefined){
+          selfobj.loadFrom = options.loadFrom;
+        }
+        //
         $(".profile-loader").show();
         var mname = Backbone.history.getFragment();
         permission = ROLE[mname];
@@ -127,7 +132,7 @@ define([
           },
           success: function (res) {
             if (res.flag == "F")
-              alert(res.msg);
+              // alert(res.msg);
   
             if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
             if (res.flag == "S") {
@@ -447,10 +452,16 @@ define([
         });
       },
       render: function () {
+        console.log("render....");
         var template = _.template(proposalTemp);
-        this.$el.html(template({ closeItem: this.toClose }));
-        $(".app_playground").append(this.$el);
-        setToolTip();
+          this.$el.html(template({ closeItem: this.toClose }));
+          // alert(this.loadFrom);
+        if(this.loadFrom != null){
+          $("#dasboradProposalHolder").append(this.$el);
+        }else{
+          $(".app_playground").append(this.$el);
+          setToolTip();
+        }
         return this;
       }
     });
