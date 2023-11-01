@@ -8,11 +8,11 @@
                  <div class="body">
                    <div class="actionList">
                      <!-- <div class="action-icons-div ml-1"> -->
-                      <%if(permission.delete=="yes" ) { %>
+                     
                         <span type="button" style="display:none;" class="changeStatus deleteAll" data-action="delete" data-toggle="tooltip" data-placement="top" title="Delete"><i
                             class="material-icons" data-toggle="tooltip" data-placement="top" title="Delete"
                             style="background-color: #F5BF00; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px;">delete</i></span>
-                        <% } %>
+                        
                    </div>
                     <table id="clist" class="table bulk_action tableList table-hover">
                      <thead id="thead">
@@ -77,12 +77,12 @@
           </span>
         <!-- <button type="button" class="btn btn-info loadview" data-target="#myModal" data-proposalID="" data-show="singleproposalData"data-toggle="modal">Add proposal Details</button>  -->
       </li>
-    <%if(permission.add=="yes" ) { %>
+    
     <li class="loadview nav-item" data-view="singleproposalData" data-item="proposalSingleView" data-toggle="tooltip" data-placement="top" title="Add">
       <span class="material-icons">add</span>
       <!-- <button type="button" class="btn btn-info loadview" data-target="#myModal" data-proposalID="" data-show="singleproposalData"data-toggle="modal">Add proposal Details</button> -->
     </li>
-    <% } %>
+    
   
     </ul>
   </div>

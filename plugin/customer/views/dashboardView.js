@@ -8,13 +8,14 @@ define([
     '../models/dashboardModel',
     '../views/customerSingleView',
     '../models/customerSingleModel',
-    
     '../../project/views/projectSingleView',
+    '../../proposal/views/proposalView',
     '../../task/views/taskViewDashbord',
     '../../project/views/projectViewOther',
     '../../taxInvoice/views/taxInvoiceSingleView',
     'text!../templates/dashboard_temp.html',
-  ], function ($, _, Backbone, custom, Swal,multiselectOptions, dashboardModel, customerSingleView, customerSingleModel, projectSingleView,taskViewDashbord,projectViewOther, taxInvoiceSingleView, dashBoard_temp) {
+  
+  ], function ($, _, Backbone, custom, Swal,multiselectOptions, dashboardModel, customerSingleView, customerSingleModel, projectSingleView,proposalView, taskViewDashbord,projectViewOther, taxInvoiceSingleView, dashBoard_temp, ) {
   
     var dashboardView = Backbone.View.extend({
       model: dashboardModel,
@@ -249,11 +250,15 @@ define([
   
       showTable:function(e){
         var element = document.querySelector(".addFlex");
-            element.classList.add("hideFolder");
-  
-  
-      var element = document.querySelector(".hideTable");
-            element.classList.add("ShowTable");     
+        element.classList.add("hideFolder");
+        var element = document.querySelector(".hideTable");
+        element.classList.add("ShowTable"); 
+        
+        var element = document.querySelector(".hideheader");
+        element.classList.add("headerHide"); 
+        console.log("showtable");  
+        new proposalView({loadFrom:'dashboard'});
+
       },
   
       // backBtn:funtion(e){
@@ -265,6 +270,8 @@ define([
             element.classList.remove("hideFolder");
          var element = document.querySelector(".hideTable");
             element.classList.remove("ShowTable");
+            var element = document.querySelector(".hideheader");
+        element.classList.remove("headerHide"); 
       },
 
       setValues: function (e) {
