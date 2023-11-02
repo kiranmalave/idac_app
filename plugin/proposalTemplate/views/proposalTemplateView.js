@@ -5,13 +5,14 @@ define([
     'backbone',
     'datepickerBT',
     'moment',
+    'Swal',
     '../views/proposalTemplateSingleView',
     '../collections/proposalTemplateCollection',
     '../models/proposalTemplateFilterOptionModel',
     'text!../templates/proposalTemplateRow.html',
     'text!../templates/proposalTemplate_temp.html',
     'text!../templates/proposalTemplateFilterOption_temp.html',
-  ], function ($, _, Backbone, datepickerBT, moment, proposalTemplateSingleView, proposalTemplateCollection, proposalTemplateFilterOption, proposalTemplateRow, proposalTemplate, proposalTemplateFilter) {
+  ], function ($, _, Backbone, datepickerBT, moment, Swal, proposalTemplateSingleView, proposalTemplateCollection, proposalTemplateFilterOption, proposalTemplateRow, proposalTemplate, proposalTemplateFilter) {
   
     var projectView = Backbone.View.extend({
   
@@ -87,6 +88,16 @@ define([
         filterOption.set({ textSearch: usernametxt });
       },
       changeStatusListElement: function (e) {
+        Swal.fire({
+          title: 'Do you want to delete ?',
+          showDenyButton: true,
+          showCancelButton: false,
+          confirmButtonText: 'Yes',
+          denyButtonText: `No`,
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+           if (result.isConfirmed) {
+           Swal.fire('Deleted!', '', 'success')
         var selfobj = this;
         var removeIds = [];
         var status = $(e.currentTarget).attr("data-action");
@@ -96,7 +107,7 @@ define([
             removeIds.push($(this).attr("data-project_id"));
           }
         });
-  
+        $(".deleteAll").hide();
   
         $(".action-icons-div").hide();
         $(".memberlistcheck").click(function () {
@@ -135,9 +146,22 @@ define([
             setTimeout(function () {
               $(e.currentTarget).html(status);
             }, 3000);
-  
+            $(".deleteAll").hide();
+          }
+          
+        });
+
+       } else if (result.isDenied) {
+        Swal.fire('Changes are not saved', '', 'info')
+        $('#projectList input:checkbox').each(function () {
+          if ($(this).is(":checked")) {
+            $(this).prop('checked', false);
           }
         });
+        $(".listCheckbox").find('.checkall').prop('checked', false);
+        $(".deleteAll").hide();
+      }
+      })
       },
   
       onErrorHandler: function (collection, response, options) {

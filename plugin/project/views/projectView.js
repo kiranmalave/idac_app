@@ -109,56 +109,58 @@ define([
           /* Read more about isConfirmed, isDenied below */
            if (result.isConfirmed) {
            Swal.fire('Deleted!', '', 'success')
-            var selfobj = this;
-            var removeIds = [];
-            var status = $(e.currentTarget).attr("data-action");
-            var action = "changeStatus";
-            $('#projectList input:checkbox').each(function () {
-              if ($(this).is(":checked")) {
-                removeIds.push($(this).attr("data-project_id"));
-              }
-            });
-      
-            $(".action-icons-div").hide();
-            $(".memberlistcheck").click(function () {
-              if ($(this).is(":checked")) {
-                $(".action-icons-div").show(300);
-              } else {
-                $(".action-icons-div").hide(200);
-              }
-            });
-      
-            var idsToRemove = removeIds.toString();
-            if (idsToRemove == '') {
-              alert("Please select at least one record.");
-              return false;
+        var selfobj = this;
+        var removeIds = [];
+        var status = $(e.currentTarget).attr("data-action");
+        var action = "changeStatus";
+        $('#projectList input:checkbox').each(function () {
+          if ($(this).is(":checked")) {
+            removeIds.push($(this).attr("data-project_id"));
+          }
+        });
+        $(".deleteAll").hide();
+  
+        $(".action-icons-div").hide();
+        $(".memberlistcheck").click(function () {
+          if ($(this).is(":checked")) {
+            $(".action-icons-div").show(300);
+          } else {
+            $(".action-icons-div").hide(200);
+          }
+        });
+  
+        var idsToRemove = removeIds.toString();
+        if (idsToRemove == '') {
+          alert("Please select at least one record.");
+          return false;
+        }
+        $.ajax({
+          url: APIPATH + 'project/status',
+          method: 'POST',
+          data: { list: idsToRemove, action: action, status: status },
+          datatype: 'JSON',
+          beforeSend: function (request) {
+            //$(e.currentTarget).html("<span>Updating..</span>");
+            request.setRequestHeader("token", $.cookie('_bb_key'));
+            request.setRequestHeader("SadminID", $.cookie('authid'));
+            request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+            request.setRequestHeader("Accept", 'application/json');
+          },
+          success: function (res) {
+            if (res.flag == "F")
+              alert(res.msg);
+  
+            if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+            if (res.flag == "S") {
+              selfobj.filterSearch();
             }
-            $.ajax({
-              url: APIPATH + 'project/status',
-              method: 'POST',
-              data: { list: idsToRemove, action: action, status: status },
-              datatype: 'JSON',
-              beforeSend: function (request) {
-                //$(e.currentTarget).html("<span>Updating..</span>");
-                request.setRequestHeader("token", $.cookie('_bb_key'));
-                request.setRequestHeader("SadminID", $.cookie('authid'));
-                request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
-                request.setRequestHeader("Accept", 'application/json');
-              },
-              success: function (res) {
-                if (res.flag == "F")
-                  alert(res.msg);
-      
-                if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-                if (res.flag == "S") {
-                  selfobj.filterSearch();
-                }
-                setTimeout(function () {
-                  $(e.currentTarget).html(status);
-                }, 3000);
-      
-              }
-            });
+            setTimeout(function () {
+              $(e.currentTarget).html(status);
+            }, 3000);
+            $(".deleteAll").hide();
+          }
+          
+        });
 
           } else if (result.isDenied) {
             Swal.fire('Changes are not saved', '', 'info')

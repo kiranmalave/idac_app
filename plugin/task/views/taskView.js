@@ -5,6 +5,7 @@ define([
   'backbone',
   'datepickerBT',
   'moment',
+  'Swal',
   '../views/taskSingleView',
   '../views/repeatTaskCustomView',
   '../views/historySingleView',
@@ -16,7 +17,7 @@ define([
   'text!../templates/taskRow.html',
   'text!../templates/task_temp.html',
   'text!../templates/taskFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, moment, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
+], function ($, _, Backbone, datepickerBT, moment, Swal, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
 
   var taskView = Backbone.View.extend({
     loadfrom:null,
@@ -142,21 +143,27 @@ define([
       filterOption.set({ textSearch: usernametxt });
     },
     changeStatusListElement: function (e) {
+      Swal.fire({
+        title: 'Do you want to delete ?',
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: 'Yes',
+        denyButtonText: `No`,
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+         if (result.isConfirmed) {
+         Swal.fire('Deleted!', '', 'success')
       var selfobj = this;
       var removeIds = [];
       var status = $(e.currentTarget).attr("data-action");
-      if (status == "delete") {
-        var r = confirm("Are you sure to delete task?");
-        if (r == false) {
-          return false;
-        }
-        var action = "changeStatus";
-      }
+      var action = "changeStatus";
       $('#clist input:checkbox').each(function () {
         if ($(this).is(":checked")) {
           removeIds.push($(this).attr("data-task_id"));
         }
       });
+      $(".deleteAll").hide();
+
       $(".action-icons-div").hide();
       $(".memberlistcheck").click(function () {
         if ($(this).is(":checked")) {
@@ -165,6 +172,7 @@ define([
           $(".action-icons-div").hide(200);
         }
       });
+
       var idsToRemove = removeIds.toString();
       if (idsToRemove == '') {
         alert("Please select at least one record.");
@@ -186,23 +194,29 @@ define([
           if (res.flag == "F")
             alert(res.msg);
 
-
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           if (res.flag == "S") {
-            selfobj.collection.fetch({
-              headers: {
-                'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-              }, error: selfobj.onErrorHandler
-            }).done(function (res) {
-              if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-              $(".profile-loader").hide();
-              selfobj.filterSearch();
-            });
+            selfobj.filterSearch();
           }
+          setTimeout(function () {
+            $(e.currentTarget).html(status);
+          }, 3000);
           $(".deleteAll").hide();
-          $('.checkall').prop('checked', false);
+        }
+        
+      });
+
+     } else if (result.isDenied) {
+      Swal.fire('Changes are not saved', '', 'info')
+      $('#clist input:checkbox').each(function () {
+        if ($(this).is(":checked")) {
+          $(this).prop('checked', false);
         }
       });
+      $(".listCheckbox").find('.checkall').prop('checked', false);
+      $(".deleteAll").hide();
+    }
+    })
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
