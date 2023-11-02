@@ -18,12 +18,12 @@
         <div class="body">
           <div class="actionList">
             <!-- <div class="action-icons-div ml-1"> -->
-            <%if(permission.delete=="yes" ) { %>
+           
               <span type="button" style="display: none;" class="changeStatus deleteAll" data-action="delete"><i
                   class="material-icons"
                   style="background-color: #F5BF00; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px;"
                   data-toggle="tooltip" data-placement="top" title="Delete">delete</i></span>
-              <% } %>
+            
 
           </div>
           <table id="clist" class="table bulk_action tableList table-hover">
@@ -127,12 +127,12 @@
       <span class="material-symbols-outlined">filter_alt</span>
       <!-- <span class="badge bg-pink taskBadge"></span> -->
     </li>
-    <%if(permission.add=="yes" ) { %>
+  
       <li class="loadview nav-item" data-view="singletaskData" data-item="taskSingleView" data-toggle="tooltip"
         data-placement="top" title="Add">
         <span class="material-icons">add</span>
       </li>
-      <% } %>
+      
   </ul>
 </div>
 <div class="ws_filterOptions"></div>

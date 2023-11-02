@@ -5,19 +5,19 @@ define([
   'custom',
   '../models/dashboardModel',
   '../views/filterdataView',
-  '../../customer/views/customerSingleView',
-  '../../customer/models/customerSingleModel',
-  '../../project/views/projectSingleView',
-  '../../proposal/views/proposalView',
-  '../../taxInvoice/views/taxInvoiceSingleView',
   '../views/addUserView',
+  '../../task/views/taskView',
+  '../../customer/collections/customerCollection',
+  '../../project/collections/projectCollection',
   'text!../templates/dashbord_temp.html'
-], function ($, _, Backbone, custom, dashboardModel, filterUser, customerSingleView, customerSingleModel, projectSingleView,proposalView,taxInvoiceSingleView, addUserView,dashBord_temp) {
+], function ($, _, Backbone, custom, dashboardModel, filterUser, addUserView,taskView,customerCollection, projectCollection,dashBord_temp) {
 
   var dashboardView = Backbone.View.extend({
+
     model: dashboardModel,
     tagName: "div",
     initialize: function (options) {
+
 
       this.customerModel = new customerSingleModel();
       var selfobj = this;
@@ -155,7 +155,9 @@ define([
       // });
 
       selfobj = this;
+
       selfobj.render();
+      new taskView({loadfrom:"dashboard"});
     },
     events:
     {
@@ -199,6 +201,7 @@ define([
           alert(invoiceID);
           new taxInvoiceSingleView({invoiceID: invoiceID,loadfrom:"dashboard"});
         }
+        
       }
     },
 
@@ -281,12 +284,18 @@ define([
           element.classList.remove("ShowTable");
     },
     render: function () {
-      
+      var selfobj = this;
       var template = _.template(dashBord_temp);
+
       var res = template({"customerModel":this.customerModel, "model":this.model});
-      // var res = template({"customerModel":this.customerModel});
+
+
       this.$el.html(res);
+      $('.number').text(selfobj.recordCount);
+      $('.numberProject').text(selfobj.projectCnt);
       $(".app_playground").append(this.$el);
+      // alert('count');
+      
       return this;
     },
 

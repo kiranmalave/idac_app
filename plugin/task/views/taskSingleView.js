@@ -732,8 +732,7 @@ define([
     },
     render: function () {
       var selfobj = this;
-      var source = tasktemp;
-      var template = _.template(source);
+      var template = _.template(tasktemp);
       $("#" + this.toClose).remove();
       // console.log(this.model);
       this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models,"projectList":this.projectList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID , "customerID":this.customer_id}))

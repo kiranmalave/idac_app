@@ -22,6 +22,7 @@ define([
 
   var taskView = Backbone.View.extend({
     initialize: function (options) {
+      console.log("task initialize");
       var customer_id = options.customerID
       this.customerID = customer_id;
       this.toClose = "taskFilterView";
@@ -236,7 +237,7 @@ define([
         },
         success: function (res) {
           if (res.flag == "F")
-            alert(res.msg);
+            // alert(res.msg);
 
 
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }

@@ -93,6 +93,16 @@ define([
         filterOption.set({ textSearch: usernametxt });
       },
       changeStatusListElement: function (e) {
+        Swal.fire({
+          title: 'Do you want to delete ?',
+          showDenyButton: true,
+          showCancelButton: false,
+          confirmButtonText: 'Yes',
+          denyButtonText: `No`,
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+           if (result.isConfirmed) {
+           Swal.fire('Deleted!', '', 'success')
         var selfobj = this;
         var removeIds = [];
         var status = $(e.currentTarget).attr("data-action");
@@ -102,7 +112,6 @@ define([
             removeIds.push($(this).attr("data-proposal_id"));
           }
         });
-  
   
         $(".action-icons-div").hide();
         $(".memberlistcheck").click(function () {
@@ -119,7 +128,7 @@ define([
           return false;
         }
         $.ajax({
-          url: APIPATH + 'proposal/status',
+          url: APIPATH + 'proposalMaster/status',
           method: 'POST',
           data: { list: idsToRemove, action: action, status: status },
           datatype: 'JSON',
@@ -132,7 +141,7 @@ define([
           },
           success: function (res) {
             if (res.flag == "F")
-              // alert(res.msg);
+              alert(res.msg);
   
             if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
             if (res.flag == "S") {
@@ -144,6 +153,20 @@ define([
   
           }
         });
+
+       } else if (result.isDenied) {
+        Swal.fire('Changes are not saved', '', 'info')
+        $('#proposalList input:checkbox').each(function () {
+          if ($(this).is(":checked")) {
+            $(this).prop('checked', false);
+          }
+        });
+        $(".listCheckbox").find('.checkall').prop('checked', false);
+        $(".deleteAll").hide();
+      }
+      })
+
+        
       },
   
       onErrorHandler: function (collection, response, options) {
