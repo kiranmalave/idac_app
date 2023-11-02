@@ -161,7 +161,7 @@ define([
             }
           });
         }else if (result.isDenied) {
-          alert("hello");
+          $(e.currentTarget).prop('checked', false);
         }
       })
     },
