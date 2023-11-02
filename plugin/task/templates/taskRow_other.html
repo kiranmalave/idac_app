@@ -2,7 +2,7 @@
 <li class="col-12">
   <div class="avatar">
       <div class="">
-          <input type="radio" id="cAll_<%= taskDetails.attributes.task_id %>"  data-task_id="<%= taskDetails.attributes.task_id %>" class="radio-col-green showpoup" />
+          <input type="radio" id="cAll_<%= taskDetails.attributes.task_id %>"  data-task_id="<%= taskDetails.attributes.task_id %>" <% if(taskDetails.attributes.status_slug =='Complete' ) { %> checked <%}%> class="radio-col-green showpoup" />
           <label for="cAll_<%= taskDetails.attributes.task_id %>">&nbsp;</label>
       </div>
   </div>

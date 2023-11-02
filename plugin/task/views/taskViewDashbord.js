@@ -122,8 +122,8 @@ define([
     },
 
     showpoup: function (e) {
+      let selfobj = this;
       let task_id = $(e.currentTarget).attr("data-task_id");
-
       Swal.fire({
         title: 'Are you sure you want to  delete?',
         showDenyButton: true,
@@ -132,7 +132,36 @@ define([
         denyButtonText: `Cancel`,
       }).then((result) => {
         if(result.isConfirmed){
-          alert("hi");
+          $.ajax({
+            url: APIPATH + 'taskDashboard/status',
+            method: 'POST',
+            data: { list: task_id },
+            datatype: 'JSON',
+            beforeSend: function (request) {
+              request.setRequestHeader("token", $.cookie('_bb_key'));
+              request.setRequestHeader("SadminID", $.cookie('authid'));
+              request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+              request.setRequestHeader("Accept", 'application/json');
+            },
+            success: function (res) {
+              if (res.flag == "F")
+                alert(res.msg);
+              if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+              if (res.flag == "S") {
+                selfobj.searchtask.fetch({
+                  headers: {
+                    'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+                  }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+                }).done(function (res) {
+                  if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+                  $(".preloader").hide();
+                  setPagging(res.paginginfo, res.loadstate, res.msg);
+                });
+              }
+            }
+          });
+        }else if (result.isDenied) {
+          alert("hello");
         }
       })
     },
