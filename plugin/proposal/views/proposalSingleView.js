@@ -12,14 +12,12 @@ define([
   '../collections/proposalCollection',
   "../../customer/collections/customerCollection",
   "../../project/collections/projectCollection",
- 
   "../../proposalTemplate/collections/proposalTemplateCollection",
   "../../proposalTemplate/models/proposalTemplateSingleModel",
   '../models/proposalSingleModel',
   '../../readFiles/views/readFilesView',
   'text!../templates/proposalSingle_temp.html',
-  
-], function ($, _, Backbone, validate, inputmask, datepickerBT, moment,Swal, multiselectOptions, dynamicFieldRender, proposalCollection,customerCollection, projectCollection, proposalTemplateCollection,proposalTempSingel, proposalSingleModel, readFilesView, proposaltemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, multiselectOptions, dynamicFieldRender, proposalCollection, customerCollection, projectCollection, proposalTemplateCollection, proposalTempSingel, proposalSingleModel, readFilesView, proposaltemp) {
   var proposalSingleView = Backbone.View.extend({
     model: proposalSingleModel,
     initialize: function (options) {
@@ -48,7 +46,7 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
         selfobj.model.set("proposalList", res.data);
-        console.log("proposalList",JSON.stringify(res.data));
+        console.log("proposalList", JSON.stringify(res.data));
         selfobj.render();
       });
 
@@ -72,9 +70,9 @@ define([
 
       this.customerList = new customerCollection();
       this.customerList.fetch({
-       headers: {
-         'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status:'active'}
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: 'active' }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
@@ -83,9 +81,9 @@ define([
 
       this.projectList = new projectCollection();
       this.projectList.fetch({
-       headers: {
-         'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: {status:'active'}
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { status: 'active' }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
@@ -94,9 +92,9 @@ define([
 
       this.proposalTemplateList = new proposalTemplateCollection();
       this.proposalTemplateList.fetch({
-       headers: {
-         'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: {status:'active'}
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { status: 'active' }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
@@ -115,7 +113,7 @@ define([
       "click .loadMedia": "loadMedia",
       "click .saveconfirmProposal": "saveconfirmProposal",
       "change .getTemplate": "getTemplate",
-      
+
 
     },
     attachEvents: function () {
@@ -177,23 +175,23 @@ define([
       this.elm = "profile_pic";
       var menusingleview = new readFilesView({ loadFrom: "addpage", loadController: this });
     },
-    getTemplate:function (e){
-      var selfobj= this;
-    let tempID = $(e.currentTarget).val();
+    getTemplate: function (e) {
+      var selfobj = this;
+      let tempID = $(e.currentTarget).val();
       var tempDetails = new proposalTempSingel();
       // if (options.proposal_id != "") {
-        tempDetails.set({ temp_id: tempID });
-        tempDetails.fetch({
-          headers: {
-            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-          }, error: selfobj.onErrorHandler
-        }).done(function (res) {
-          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          $(".popupLoader").hide();
-          selfobj.model.set({ description: tempDetails.attributes.description });
-          selfobj.render();
-          
-        });
+      tempDetails.set({ temp_id: tempID });
+      tempDetails.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        selfobj.model.set({ description: tempDetails.attributes.description });
+        selfobj.render();
+
+      });
       // }
     },
     saveconfirmProposal: function (e) {
@@ -221,20 +219,20 @@ define([
       //   //   )
       //   // }
       // })
-    //   Swal.fire({
-    //     title: 'Do you want to save the changes?',
-    //     showDenyButton: true,
-    //     showCancelButton: false,
-    //     confirmButtonText: 'Make an another copy',
-    //     denyButtonText: `Text as keep the same`,
-    //   }).then((result) => {
-    //     /* Read more about isConfirmed, isDenied below */
-    //     // if (result.isConfirmed) {
-    //     //   Swal.fire('Saved!', '', 'success')
-    //     // } else if (result.isDenied) {
-    //     //   Swal.fire('Changes are not saved', '', 'info')
-    //     // }
-    //   })
+      //   Swal.fire({
+      //     title: 'Do you want to save the changes?',
+      //     showDenyButton: true,
+      //     showCancelButton: false,
+      //     confirmButtonText: 'Make an another copy',
+      //     denyButtonText: `Text as keep the same`,
+      //   }).then((result) => {
+      //     /* Read more about isConfirmed, isDenied below */
+      //     // if (result.isConfirmed) {
+      //     //   Swal.fire('Saved!', '', 'success')
+      //     // } else if (result.isDenied) {
+      //     //   Swal.fire('Changes are not saved', '', 'info')
+      //     // }
+      //   })
     },
     setValues: function (e) {
       var selfobj = this;
@@ -256,33 +254,109 @@ define([
       } else {
         var methodt = "POST";
       }
-      if ($("#proposalDetails").valid()) {
-        $(e.currentTarget).html("<span>Saving..</span>");
-        $(e.currentTarget).attr("disabled", "disabled");
-        this.model.save({}, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-          }, error: selfobj.onErrorHandler, type: methodt
-        }).done(function (res) {
-          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          if (isNew == "new") {
-            showResponse(e, res, "Save & New");
-          } else {
-            showResponse(e, res, "Save");
-          }
-          scanDetails.filterSearch();
-          if (res.flag == "S") {
-            if (isNew == "new") {
-              selfobj.model.clear().set(selfobj.model.defaults);
-              selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
-              selfobj.render();
-            } else {
-              // alert("here");
-              console.log("proposalList",JSON.stringify(res.data));
-              handelClose(selfobj.toClose);
+
+      if (mid != undefined) {
+        Swal.fire({
+          title: 'Are you Sure you want to Save?',
+          showDenyButton: true,
+          showCancelButton: false,
+          confirmButtonText: 'Save as copy ',
+          denyButtonText: `Save in Eixsting`,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            if ($("#proposalDetails").valid()) {
+              $(e.currentTarget).html("<span>Saving..</span>");
+              $(e.currentTarget).attr("disabled", "disabled");
+              this.model.set({ copy: "yes" });
+              this.model.save({}, {
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+                }, error: selfobj.onErrorHandler, type: methodt
+              }).done(function (res) {
+                if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+                if (isNew == "new") {
+                  showResponse(e, res, "Save & New");
+                } else {
+                  showResponse(e, res, "Save");
+                }
+                scanDetails.filterSearch();
+                if (res.flag == "S") {
+                  if (isNew == "new") {
+                    selfobj.model.clear().set(selfobj.model.defaults);
+                    selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                    selfobj.render();
+                  } else {
+                    // alert("here");
+                    console.log("proposalList", JSON.stringify(res.data));
+                    handelClose(selfobj.toClose);
+                  }
+                }
+              });
             }
+            Swal.fire('Saved!', '', 'success')
+
+
+          } else if (result.isDenied) {
+
+            if ($("#proposalDetails").valid()) {
+              $(e.currentTarget).html("<span>Saving..</span>");
+              $(e.currentTarget).attr("disabled", "disabled");
+              this.model.save({}, {
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+                }, error: selfobj.onErrorHandler, type: methodt
+              }).done(function (res) {
+                if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+                if (isNew == "new") {
+                  showResponse(e, res, "Save & New");
+                } else {
+                  showResponse(e, res, "Save");
+                }
+                scanDetails.filterSearch();
+                if (res.flag == "S") {
+                  if (isNew == "new") {
+                    selfobj.model.clear().set(selfobj.model.defaults);
+                    selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                    selfobj.render();
+                  } else {
+                    // alert("here");
+                    console.log("proposalList", JSON.stringify(res.data));
+                    handelClose(selfobj.toClose);
+                  }
+                }
+              });
+            }
+            Swal.fire('Changes saved in Existing record!', '', 'info')
           }
         });
+      }
+      if (methodt == "PUT") {
+        if ($("#proposalDetails").valid()) {
+          $(e.currentTarget).html("<span>Saving..</span>");
+          $(e.currentTarget).attr("disabled", "disabled");
+          this.model.save({}, {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+            }, error: selfobj.onErrorHandler, type: methodt
+          }).done(function (res) {
+            if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+            if (isNew == "new") {
+              showResponse(e, res, "Save & New");
+            } else {
+              showResponse(e, res, "Save");
+            }
+            scanDetails.filterSearch();
+            if (res.flag == "S") {
+              if (isNew == "new") {
+                selfobj.model.clear().set(selfobj.model.defaults);
+                selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                selfobj.render();
+              } else {
+                handelClose(selfobj.toClose);
+              }
+            }
+          });
+        }
       }
     },
     initializeValidate: function () {
@@ -294,7 +368,7 @@ define([
         name: {
           required: true,
         },
-        
+
       };
       var feildsrules = feilds;
       var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
@@ -354,7 +428,7 @@ define([
       var source = proposaltemp;
       var template = _.template(source);
       $("#" + this.toClose).remove();
-      this.$el.html(template({ model: this.model.attributes ,"customerList": this.customerList.models, "projectList":this.projectList.models, "proposalTemplateList":this.proposalTemplateList.models,}));
+      this.$el.html(template({ model: this.model.attributes, "customerList": this.customerList.models, "projectList": this.projectList.models, "proposalTemplateList": this.proposalTemplateList.models, }));
       this.$el.addClass("tab-pane in active panel_overflow");
       this.$el.attr("id", this.toClose);
       this.$el.addClass(this.toClose);
@@ -375,27 +449,27 @@ define([
         [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
         [{ 'align': [] }],
         ['link'],
-          ['clean']                                         // remove formatting button
+        ['clean']                                         // remove formatting button
       ];
-    var editor = new Quill($("#description").get(0),{
+      var editor = new Quill($("#description").get(0), {
         modules: {
-            toolbar: __toolbarOptions
+          toolbar: __toolbarOptions
         },
-        theme: 'snow' 
-        });
-  
-        //const delta = editor.clipboard.convert();
-        //editor.setContents(delta, 'silent');
-        editor.on('text-change', function(delta, oldDelta, source) {
-            if (source == 'api') {
-                console.log("An API call triggered this change.");
-              } else if (source == 'user') {
-                var delta = editor.getContents();
-                var text = editor.getText();
-                var justHtml = editor.root.innerHTML;
-                selfobj.model.set({"description":justHtml});
-              }
-        });
+        theme: 'snow'
+      });
+
+      //const delta = editor.clipboard.convert();
+      //editor.setContents(delta, 'silent');
+      editor.on('text-change', function (delta, oldDelta, source) {
+        if (source == 'api') {
+          console.log("An API call triggered this change.");
+        } else if (source == 'user') {
+          var delta = editor.getContents();
+          var text = editor.getText();
+          var justHtml = editor.root.innerHTML;
+          selfobj.model.set({ "description": justHtml });
+        }
+      });
 
 
       return this;

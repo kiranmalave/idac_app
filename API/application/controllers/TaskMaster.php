@@ -145,11 +145,10 @@ class TaskMaster extends CI_Controller
 		$wherec1=array("t.adminID ="=>$adminID);
 		$taskDetailsList = $this->CommonModel->GetMasterListDetails($selectC1,'admin',$wherec1,'','',$join1,$other1=array());
 		
-		if($taskDetailsList[0]->roleOfUser!=101){
+		if($taskDetailsList[0]->roleID!=1){
 			$wherec["assignee = "] = "'".$this->input->post('SadminID')."'";
 		}
-		// print_r("<pre>");
-		// print_r($taskDetailsList);exit();
+
 		$join=array();
 		
 		$join[0]['type'] ="LEFT JOIN";
@@ -181,7 +180,9 @@ class TaskMaster extends CI_Controller
 			$curPage = 0;
 			$page = 0;
 		}
-		$selectC = "t.*, c.categoryName AS status_slug, ca.categoryName AS priority_slug, a.name";
+
+		$selectC = "t.*, c.categoryName AS status_slug, ca.categoryName AS priority_slug, a.name, p.project_name AS projectName, p.project_number AS projectNumb";
+
 		if ($isAll == "Y") {
 			$join = array();
 			$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, '', '', $join, $other);
@@ -585,7 +586,6 @@ class TaskMaster extends CI_Controller
 			}
 		}
 	}
-
 	public function deleteComment()
 	{
 		$this->access->checkTokenKey();
@@ -624,6 +624,29 @@ class TaskMaster extends CI_Controller
 		// 	$status['flag'] = 'F';
 		// 	$this->response->output($status, 200);
 		// }
+  }
+
+	public function dashboardStatus()
+	{
+		$this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$ids = $this->input->post("list");
+		$updateDate = date("Y/m/d H:i:s");
+		$where=array('task_id'=>$ids);
+		
+			if(!isset($ids) || empty($ids)){
+			$status['msg'] = $this->systemmsg->getErrorCode(998);
+			$status['statusCode'] = 998;
+			$status['data'] = array();
+			$status['flag'] = 'F';
+			$this->response->output($status,200);
+			}
+			$taskDetails['task_status'] = "40";
+			$taskDetails['modified_by'] = $this->input->post('SadminID');
+			$taskDetails['modified_date'] = $updateDate;
+			// print_r($taskDetails);exit;
+			$iscreated = $this->CommonModel->updateMasterDetails('tasks',$taskDetails,$where);
+
 	}
 
 	public function saveAttachments($attachment = '', $task_id = '', $adminID = '')

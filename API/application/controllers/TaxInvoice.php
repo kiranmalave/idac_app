@@ -57,12 +57,11 @@ class TaxInvoice extends CI_Controller {
 			$wherec["$textSearch like  "] = "'".$textval."%'";
 		}
 		if(isset($filterCName) && !empty($filterCName)){
-			$wherec["i.companyID"] = ' = "'.$filterCName.'"';
+			$wherec["i.customer_id"] = ' = "'.$filterCName.'"';
 		}
 		
 		// get comapny access list
 		$adminID = $this->input->post('SadminID');
-		$where = array("adminID ="=>"'".$adminID."'");
 		
 		$config["base_url"] = base_url() . "members";
         $config["total_rows"] = $this->TaxInvoiceModel->getTotalTaxInvoice($wherec);
@@ -76,7 +75,6 @@ class TaxInvoice extends CI_Controller {
 			$curPage = 0;
 			$page = 0;
 		}
-        
         $memberDetails = $this->TaxInvoiceModel->getTaxInvoiceDetails($selectC='',$wherec,$config["per_page"],$page,$join,$other);
 		
 		$status['data'] = $memberDetails;
@@ -150,7 +148,7 @@ class TaxInvoice extends CI_Controller {
 			if(trim($action) == "changeStatus"){
 				$ids = $this->input->post("list");
 				$statusCode = $this->input->post("status");	
-				$changestatus = $this->TaxInvoiceModel->changeTaxInvoiceStatus('invoice_header',$statusCode,$ids,'invoiceID');
+				$changestatus = $this->TaxInvoiceModel->changeTaxInvoiceStatus('invoiceHeader',$statusCode,$ids,'invoiceID');
 				
 			if($changestatus){
 
@@ -216,7 +214,7 @@ class TaxInvoice extends CI_Controller {
 			}
 		}
 		
-		if(!isset($invoiceLine[0]->companyID) && !empty($invoiceLine[0]->companyID)){
+		if(!isset($invoiceLine[0]->customerID) && !empty($invoiceLine[0]->customerID)){
 			$status['data'] = array();
 			$status['msg'] = $this->systemmsg->getErrorCode(236);
 			$status['statusCode'] = 236;
@@ -234,7 +232,7 @@ class TaxInvoice extends CI_Controller {
 		$inline = array();
 		$i=0;
 		// Get Last Count for Invoice
-		$lastInvoiceDetails = $this->CommonModel->getMasterDetails("docPrefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"1"));
+		$lastInvoiceDetails = $this->CommonModel->getMasterDetails("doc_prefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"1"));
 		if(!$lastInvoiceDetails){
 			$status['data'] = array();
 			$status['msg'] = $this->systemmsg->getErrorCode(267);
@@ -245,11 +243,8 @@ class TaxInvoice extends CI_Controller {
 		$this->db->trans_begin();
 		if($isNew=="yes"){
 			$datacc = array(
-				"processingYear"=>$invoiceLine[0]->processingYear,
-				"processingMonth"=>$invoiceLine[0]->processingMonth,
-				"traineeCount"=>$invoiceLine[0]->traineeCount,
 				"invoiceDate"=>dateFormat($invoiceLine[0]->invoiceDate),
-				"companyID"=>$invoiceLine[0]->companyID,
+				"customer_id"=>$invoiceLine[0]->customerID,
 				"stateGstPercent"=>$invoiceLine[0]->stateGstPercent,
 				"centralGstPercent"=>$invoiceLine[0]->centralGstPercent,
 				"interGstAmount"=>$invoiceLine[0]->interGstPercent,
@@ -266,7 +261,7 @@ class TaxInvoice extends CI_Controller {
 				$this->response->output($status,200);
 			}else{
 				$inID = array("docCurrNo"=>($lastInvoiceDetails[0]->docCurrNo+1));
-				$isupdate = $this->CommonModel->updateMasterDetails("docPrefix",$inID,array("docTypeID"=>"1"));
+				$isupdate = $this->CommonModel->updateMasterDetails("doc_prefix",$inID,array("docTypeID"=>"1"));
 				if(!$isupdate){
 					$this->db->trans_rollback();
 				   	$status['data'] = array();
@@ -404,7 +399,7 @@ class TaxInvoice extends CI_Controller {
 			$datain['modified_by'] = $this->input->post('SadminID');
 			$datain['modified_date'] = date("Y-m-d H:i:s");
 			$datain['status'] ='active';
-			$wherec = array("invoiceID"=>$invoiceLine[0]->invoiceID,"companyID"=>$invoiceLine[0]->companyID);
+			$wherec = array("invoiceID"=>$invoiceLine[0]->invoiceID,"customer_id"=>$invoiceLine[0]->customerID);
 			$isup = $this->TaxInvoiceModel->saveTaxInvoiceInfo($datain,$wherec);
 
 			if(!$isup){
@@ -531,7 +526,7 @@ class TaxInvoice extends CI_Controller {
 		$data= array();
 		$wherec = array("infoID"=>1);
 	 	$contract = $this->CommonModel->getMasterDetails("info_settings","*",$wherec);
-	 	$data['info_settings']= $contract;
+	 	$data['infoSettings']= $contract;
 
 		$invoiceLine = $this->input->post();
 		// check is bill created
@@ -544,33 +539,19 @@ class TaxInvoice extends CI_Controller {
 		$wher = array("invoiceID"=>$invoiceID);
 		$invoiceLineDetails = $this->TaxInvoiceModel->getTaxInvoiceLineDetails($sel,$wher);
 		$data['invoiceLineDetails']= $invoiceLineDetails;
-		$wherec = array("companyID = "=>$taxInvoiceData[0]->companyID);
-	 	$companyDetails = $this->CommonModel->GetMasterListDetails("companyName,companyBillingName,companyAddress,companyGstNo,companyPanNo,currency,companyStateid","companyMaster",$wherec);
-
-	 	if(isset($taxInvoiceData[0]->processingMonth) && !empty($taxInvoiceData[0]->processingMonth)){
-	 			$pmonth = $this->CommonModel->getMonth($taxInvoiceData[0]->processingMonth,'string');
-	 			$wherecc = array("companyID = '"=>$taxInvoiceData[0]->companyID."'","uploadMonth = '"=>$pmonth."'","uploadYear = '"=>$taxInvoiceData[0]->processingYear."'");
-			 	$counDetails = $this->CommonModel->GetMasterListDetails("count(companyID) as totalRecords","monthlyDataUploadProcessed",$wherecc);
-			 	$data['counDetails']= $counDetails[0]->totalRecords;	
-	 		}else{
-	 			$data['counDetails']= "-";	
-	 		}
-	 	
+		$data['counDetails']= "-";	
 		//this the the PDF filename that user will get to download
 	
-		$wherec = array("stateID"=>$companyDetails[0]->companyStateid);
-	 	$state = $this->CommonModel->getMasterDetails("stateMaster","stateName",$wherec);
-	 	$companyDetails[0]->stateName = $state[0]->stateName;
-		$data['companyDetails'] = $companyDetails;
-		//print_r($companyDetails);exit;
+		$wherec = array("customer_id"=>$taxInvoiceData[0]->customer_id);
+	 	$customerDetails = $this->CommonModel->getMasterDetails("customer","first_name, address",$wherec);
+		$data['companyDetails'] = $customerDetails;
+		
         $pdfFilePath = $this->load->view("invoicepdf",$data,true);
+
         //load mPDF library
         $this->load->library('MPDFCI');
         $this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
-        //$this->mpdfci->setFooter('{PAGENO}');
- 	    //generate the PDF from the given html
  	    $this->mpdfci->WriteHTML($pdfFilePath);
-        //download it.
        	$this->mpdfci->Output();  
 	}
 	

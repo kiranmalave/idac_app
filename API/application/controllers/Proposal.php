@@ -139,23 +139,23 @@ class Proposal extends CI_Controller {
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$method = $this->input->method(TRUE);
-		// echo $method;
 		if($method=="POST"||$method=="PUT")
 		{
 				$proposalDetails = array();
 				$updateDate = date("Y/m/d H:i:s");
 				// $proposalDetails['regiNoYSF'] = $this->validatedata->validate('regiNoYSF','regiNoYSF',true,'',array());
-
 				$proposalDetails['proposal_id'] = $this->validatedata->validate('proposal_id','proposal_id',false,'',array());
 				$proposalDetails['name'] = $this->validatedata->validate('name','Proposal Name',false,'',array());
 				$proposalDetails['description'] = $this->validatedata->validate('description','Description',false,'',array());
 				$proposalDetails['client_id'] = $this->validatedata->validate('client_id','Client Name',false,'',array());
 				$proposalDetails['project_id'] = $this->validatedata->validate('project_id','Project Name',false,'',array());
 				$proposalDetails['status'] = $this->validatedata->validate('status','Status',false,'',array());
+				$isCopy = $this->validatedata->validate('copy','copy',false,'',array());
 
 					if($method=="PUT")
 					{
 						$lastProposalDetails = $this->CommonModel->getMasterDetails("doc_prefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"2"));
+						
 						if(!$lastProposalDetails){
 							$status['data'] = array();
 							$status['msg'] = $this->systemmsg->getErrorCode(267);
@@ -167,9 +167,10 @@ class Proposal extends CI_Controller {
 						// $iticode=$proposalDetails['proposal_id'];
 						$proposalDetails['status'] = "active";
 						$proposalDetails['created_by'] = $this->input->post('SadminID');
-						$projectDetails['proposal_number'] = $lastProposalDetails[0]->docPrefixCD.$lastProposalDetails[0]->docCurrNo."/".$lastProposalDetails[0]->docYearCD;
+						$proposalDetails['proposal_number'] = $lastProposalDetails[0]->docPrefixCD.$lastProposalDetails[0]->docCurrNo."/".$lastProposalDetails[0]->docYearCD."/1";
 						$proposalDetails['created_date'] = $updateDate;
-						
+						// print_r("<pre>");
+						// print_r($proposalDetails);exit;
 						$iscreated = $this->CommonModel->saveMasterDetails('proposal',$proposalDetails);
 						
 						if(!$iscreated){
@@ -199,33 +200,70 @@ class Proposal extends CI_Controller {
 
 					}elseif($method=="POST")
 					{
-						$where=array('proposal_id'=>$proposal_id);
-						if(!isset($proposal_id) || empty($proposal_id)){
-						$status['msg'] = $this->systemmsg->getErrorCode(998);
-						$status['statusCode'] = 998;
-						$status['data'] = array();
-						$status['flag'] = 'F';
-						$this->response->output($status,200);
-					}
-					$proposalDetails['modified_by'] = $this->input->post('SadminID');
-					$proposalDetails['modified_date'] = $updateDate;
-					$iscreated = $this->CommonModel->updateMasterDetails('proposal',$proposalDetails,$where);
-					if(!$iscreated){
-						$status['msg'] = $this->systemmsg->getErrorCode(998);
-						$status['statusCode'] = 998;
-						$status['data'] = array();
-						$status['flag'] = 'F';
-						$this->response->output($status,200);
+						if($isCopy == "yes"){
+							$where=array('proposal_id'=>$proposal_id);
+							$proposalDetail = $this->CommonModel->getMasterDetails('proposal','',$where);
+							if(isset($proposalDetail)&&!empty($proposalDetail)){
+							$proposalDetail = json_decode(json_encode($proposalDetail[0]), true);
+							$currentProposalNumber = $proposalDetail['proposal_number'];
+							$matches = array();	
+							if (preg_match('/_(\d+)$/', $currentProposalNumber, $matches)) {
+								$currentSuffix = $matches[1];
+								$nextSuffix = '_' . ($currentSuffix + 1);
+								$proposalDetail['proposal_number'] = preg_replace('/_(\d+)$/', $nextSuffix, $currentProposalNumber);
+							} else {
+								$proposalDetail['proposal_number'] .= '_1';
+							}
+							$proposalDetail['name'] = $this->validatedata->validate('name','Proposal Name',false,'',array());
+							unset($proposalDetail['proposal_id']);
+							$iscreated = $this->CommonModel->saveMasterDetails('proposal',$proposalDetail);
+							if(!$iscreated){
+								$status['msg'] = $this->systemmsg->getErrorCode(998);
+								$status['statusCode'] = 998;
+								$status['data'] = array();
+								$status['flag'] = 'F';
+								$this->response->output($status,200);
 
-					}else{
-						$status['msg'] = $this->systemmsg->getSucessCode(400);
-						$status['statusCode'] = 400;
-						$status['data'] =array();
-						$status['flag'] = 'S';
-						$this->response->output($status,200);
-					}
-			
+							}else{
+								$status['msg'] = $this->systemmsg->getSucessCode(400);
+								$status['statusCode'] = 400;
+								$status['data'] =array();
+								$status['flag'] = 'S';
+								$this->response->output($status,200);
+							}
+
+						}
+
+						}else{
+							$where=array('proposal_id'=>$proposal_id);
+								
+							if(!isset($proposal_id) || empty($proposal_id)){
+								$status['msg'] = $this->systemmsg->getErrorCode(998);
+								$status['statusCode'] = 998;
+								$status['data'] = array();
+								$status['flag'] = 'F';
+								$this->response->output($status,200);
+							}
+							$proposalDetails['modified_by'] = $this->input->post('SadminID');
+							$proposalDetails['modified_date'] = $updateDate;
+							$iscreated = $this->CommonModel->updateMasterDetails('proposal',$proposalDetails,$where);
+							
+							if(!$iscreated){
+								$status['msg'] = $this->systemmsg->getErrorCode(998);
+								$status['statusCode'] = 998;
+								$status['data'] = array();
+								$status['flag'] = 'F';
+								$this->response->output($status,200);
 	
+							}else{
+								$status['msg'] = $this->systemmsg->getSucessCode(400);
+								$status['statusCode'] = 400;
+								$status['data'] =array();
+								$status['flag'] = 'S';
+								$this->response->output($status,200);
+							}
+						}
+						
 		}elseif($method=="dele")
 		{
 			$proposalDetails = array();
