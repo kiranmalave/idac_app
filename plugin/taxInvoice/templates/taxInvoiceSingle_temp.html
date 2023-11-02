@@ -11,7 +11,7 @@
       <div class="col-sm-4 form-details">
         <div class="form-group form-float">
           <div class="form-line">
-            <label for="skillDesc" class="form-label"><span><%=model.invoiceNumber%></span> Invoice Number:</label>
+            <label for="skillDesc" class="form-label">Invoice Number:</label>
             <input type="text" name="invoiceNumber" id="invoiceNumber" class="form-control" value="<%=model.invoiceNumber%>"/>
           </div>
         </div>
@@ -19,14 +19,12 @@
       <div class="col-sm-4 form-details">
         <div class="form-group form-float">
           <div class="form-line">
-            <% const catID=model.customer_id ? model.customer_id.split(','):[]%>
-            <label for="customer_id" class="form-label">customer</label>
-            <select id="customer_id" name="customer_id" class="form-control dropval ws-select">
-                <% _.each(customerList, function(model1) { %>
-                    <option <% if(catID.includes(model1.attributes.customer_id) ){ %> selected <% } %> 
-                    value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
-                <%})%>
-           </select>
+            <select id="customer_id" name="customer_id" class="form-control dropval ws-select show-tick" title="Select Customer">
+              <option value="">Select Customer</option>
+              <% _.each(model.customerList, function(model1) { %>
+                <option <% if(model1.customer_id==model.customer_id ){ %>selected <% } %>value="<%=model1.customer_id%>"><%=model1.first_name%></option>
+              <%}); %>
+          </select>
           </div>
         </div>
       </div>
@@ -75,46 +73,44 @@
     <!--tax invoice heade ends-->
     <div class="col-xs-12">
       <table class="table table-striped">
-       
         <tbody class="items-holder">
           <tr id="item-header" class="text-center">
-            <th style="width: 50px;">SR No.</th>
+            <th>SR No.</th>
             <th>Type</th>
             <th style="width: 39%">Description</th>
             <th style="width: 10%">Quantity.</th>
             <th>Unit</th>
             <th>Rate</th>
             <th>Amount</th>
-            <!-- <th style="width: 4%"><i class="material-icons" aria-hidden="true">delete_forever</i></th> -->
-            <th style="width: 4%">&nbsp;</th>
+            <th style="width: 4%"><i class="material-icons" aria-hidden="true">delete_forever</i></th>
           </tr>
           <% if(model.invoiceID != '' && model.invoiceID != null){
-            _.each(invoiceLine, function(model) { 
+            _.each(model.invoiceLine, function(modelLine) { 
           %>
-            <tr id="item-<%=model.srNo%>" class="item-list-box">
-              <td class="sno text-center"><%=model.srNo%></td>
+            <tr id="item-<%=modelLine.srNo%>" class="item-list-box">
+              <td class="sno"><%=modelLine.srNo%></td>
               <td>
-                <select id="narr_<%=model.srNo%>" name="narr_<%=model.srNo%>" class="form-control dropval setnarr ws-select show-tick repeatChange">
+                <select id="narr_<%=modelLine.srNo%>" name="narr_<%=modelLine.srNo%>" class="form-control dropval setnarr ws-select show-tick repeatChange">
                   <option value="">Type</option>
                   <% _.each(model.narrList, function(model2) { %>
-                    <option <% if(model2.invoiceChargeID == model2.invoiceLineChrgID){ %> selected <% } %>  value="<%=model2.invoiceChargeID%>"><%=model2.invoiceChargeName%></option>
+                    <option <% if(model2.invoiceChargeID == modelLine.invoiceLineChrgID){ %> selected <% } %>  value="<%=model2.invoiceChargeID%>"><%=model2.invoiceChargeName%></option>
                   <%}); %>
                 </select>
               </td>
-              <td><input type="text" name="itemName_<%=model.srNo%>" id="itemName_<%=model.srNo%>" class="form-control amtChange narration" value="<%=model.invoiceLineNarr%>"></td>
+              <td><input type="text" name="itemName_<%=modelLine.srNo%>" id="itemName_<%=modelLine.srNo%>" class="form-control amtChange narration" value="<%=modelLine.invoiceLineNarr%>"></td>
               <td>
-                <input <% if(model.isEdit =='no'){ %> disabled <% } %> type="text" name="itemQuantity_<%=model.srNo%>" id="itemQuantity_<%=model.srNo%>" class="form-control amtChange digits" value="<%=model.invoiceLineQty%>">
+                <input <% if(modelLine.isEdit =='no'){ %> disabled <% } %> type="text" name="itemQuantity_<%=modelLine.srNo%>" id="itemQuantity_<%=modelLine.srNo%>" class="form-control amtChange digits" value="<%=modelLine.invoiceLineQty%>">
               </td>
               <td>
-                <input <% if(model.isEdit =='no'){ %> disabled <% } %>  type="text" name="itemUnit_<%=model.srNo%>" id="itemUnit_<%=model.srNo%>" class="form-control" value="<%=model.invoiceLineUnit%>">
+                <input <% if(modelLine.isEdit =='no'){ %> disabled <% } %>  type="text" name="itemUnit_<%=modelLine.srNo%>" id="itemUnit_<%=modelLine.srNo%>" class="form-control" value="<%=modelLine.invoiceLineUnit%>">
               </td>
               <td class="text-right">
-                <input <% if(model.isEdit =='no'){ %> disabled <% } %> type="text" name="itemRate_<%=model.srNo%>" id="itemRate_<%=model.srNo%>" class="form-control amtChange digits" value="<%=model.invoiceLineRate%>">
+                <input <% if(modelLine.isEdit =='no'){ %> disabled <% } %> type="text" name="itemRate_<%=modelLine.srNo%>" id="itemRate_<%=modelLine.srNo%>" class="form-control amtChange digits" value="<%=modelLine.invoiceLineRate%>">
               </td>
-              <td class="text-center diginum" id="itemtotal_<%=model.srNo%>"><%=numberFormat(model.invoiceLineAmount,2)%></td>
+              <td class="text-right diginum" id="itemtotal_<%=modelLine.srNo%>"><%=numberFormat(modelLine.invoiceLineAmount,2)%></td>
               <td class="text-right">
-                <% if(model.isEdit !='no'){ %>
-                 <button id="itemdel_<%=model.srNo%>" class="del-row btn-small btn-default"><i class="material-icons" aria-hidden="true">delete_forever</i></button>
+                <% if(modelLine.isEdit !='no'){ %>
+                 <button id="itemdel_<%=modelLine.srNo%>" class="del-row btn-small btn-default"><i class="material-icons" aria-hidden="true">delete_forever</i></button>
                 <% }else{ %>
                  &nbsp;
                 <% } %>
@@ -123,7 +119,7 @@
           <%  });
           }else{ %>
             <tr id="item-1" class="item-list-box">
-              <td class="sno text-center">1</td>
+              <td class="sno">1</td>
               <td>
                 <select id="narr_1" name="narr_1" class="form-control dropval setnarr">
                   <option value="">Type</option>
@@ -136,23 +132,16 @@
               <td><input type="text" name="itemQuantity_1" id="itemQuantity_1" class="form-control amtChange"></td>
               <td><input type="text" name="itemUnit_1" id="itemUnit_1" class="form-control"></td>
               <td class="text-right"><input type="text" name="itemRate_1" id="itemRate_1" class="form-control amtChange"></td>
-              <td class="text-center diginum" id="itemtotal_1"></td>
-              <td class="text-right">
-
-                <% if(model.isEdit !='no'){ %>
-                  <button id="itemdel_<%=model.srNo%>" class="del-row btn-small btn-default"><i class="material-icons" aria-hidden="true">delete_forever</i></button>
-                 <% }else{ %>
-                  &nbsp;
-                 <% } %>
-              </td>
+              <td class="text-right diginum" id="itemtotal_1"></td>
+              <td class="text-right">&nbsp;</td>
             </tr>
           <% } %>
         </tbody>
       </table>
-      <div class="col-xs-12 text-right buttonborder">
-        
+      <div class="col-xs-12 text-right">
+        <hr>
         <button id="addRow" class="btn btn-default">Add Row</button>
-     
+        <hr>
       </div>
     </div>
     <div class="row">
@@ -162,7 +151,7 @@
       <div class="clearfix">&nbsp;</div>
       <div class="clearfix">&nbsp;</div>
       <div class="clearfix">&nbsp;</div>
-      <div class="col-md-6  ml-auto mt-5">
+      <div class="col-xs-6">
         <div class="table-responsive">
           <table class="table">
             <tbody>

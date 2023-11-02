@@ -64,7 +64,7 @@
 		<h1 align="left"><strong>INVOICE</strong></h1>
 	</div>
 	<div class="text-right" style="float: right;width:50%;">
-		<img src="<?php echo $this->config->item("imagesPATH");?>logo.png" style="width:150px;">
+		<img src="<?php echo $this->config->item("imagesPATH");?>site/left.png" style="width:150px;">
 	</div>
 </div>
 <br>
@@ -75,7 +75,8 @@
 				<table>
 					<tr>
 						<td>
-							<h2><strong>Invoice No:</strong></td><td><?php echo $taxInvoiceData[0]->invoiceNumber; ?></h3></td>
+							<h2><strong>Invoice No:</strong></td><td><?php echo $this->config->item("imagesPATH"); ?></h3>
+						</td>
 					</tr>
 				</table>
 			</td>
@@ -98,10 +99,10 @@
 						<td><strong>Client Details</strong></td>
 					</tr>
 					<tr>
-						<td><strong><?php echo $companyDetails[0]->companyBillingName; ?></strong></td>
+						<td><strong><?php echo $companyDetails[0]->first_name; ?></strong></td>
 					</tr>
 					<tr >
-						<td><?php echo $companyDetails[0]->companyAddress; ?></td>
+						<td><?php echo $companyDetails[0]->address; ?></td>
 					</tr>
 				</table>
 			</td>
@@ -111,10 +112,10 @@
 						<td><strong>Company Details</strong></td>
 					</tr>
 					<tr>
-						<td><?php echo $infoSettings[0]->companyName; ?><br><?php echo $infoSettings[0]->contractLetter; ?></td>
+						<td><?php echo $infoSettings[0]->companyName; ?><br><?php echo $infoSettings[0]->company_address; ?></td>
 					</tr>
 					<tr>
-						<td><strong>PAN :</strong><?php echo $infoSettings[0]->panNo; ?></td>
+						<td><strong>PAN :</strong><?php echo $infoSettings[0]->pan; ?></td>
 					</tr>
 				</table>
 			</td>
@@ -160,22 +161,22 @@
 						<td><hr><h5>Bank Details:</h5></td>
 					</tr>
 					<tr>
-						<td><strong>Bank Name:</strong> <?php echo $infoSettings[0]->bankAndBranch; ?></td>
+						<td><strong>Bank Name:</strong> <?php echo $infoSettings[0]->bank_details; ?></td>
 					</tr>
 					<tr>
-						<td><strong>Bank A/C No.:</strong> <?php echo $infoSettings[0]->bankAccNo; ?></td>
+						<td><strong>Bank A/C No.:</strong> <?php echo $infoSettings[0]->bank_acc_no; ?></td>
 					</tr>
 					<tr>
-						<td><strong>Bank IFSC:</strong> <?php echo $infoSettings[0]->ifscCode; ?></td>
+						<td><strong>Bank IFSC:</strong> <?php echo $infoSettings[0]->ifsc_code; ?></td>
 					</tr>
 					<tr>
-						<td><strong>SWIFT Code:</strong> <?php echo $infoSettings[0]->mcirCode; ?></td>
+						<td><strong>SWIFT Code:</strong> <?php echo $infoSettings[0]->mcir_code; ?></td>
 					</tr>
 				</table>
 			</td>
-			<td class="half border-left">
+			<td style="vertical-align: top;" class="half border-left">
 				<table width="100%">
-					<tr class="borderBottom">
+					<tr  class="borderBottom">
 						<td class="text-left"><strong>Sub Total:</strong></td>
 						<td class="text-right"><?php echo number_format($taxInvoiceData[0]->invoiceTotal,2, '.', ''); ?></td>
 					</tr>		
@@ -217,7 +218,7 @@
 	<tbady>
 		<tr>
 			<td>
-				<strong>CHEQUE IN FAVOR OF(PAYABLE AT OR @ METRO LOCATIONS) <?php echo $infoSettings[0]->chequeFavourOf; ?></strong><br>
+				<strong>CHEQUE IN FAVOR OF(PAYABLE AT OR @ METRO LOCATIONS) <?php echo $infoSettings[0]->cheque_in_favour; ?></strong><br>
 			</td>
 		</tr>
 		<tr>
