@@ -233,20 +233,8 @@ define([
         var memberDetails = new singlememberDataModel();
       },
       addOne: function (objectModel) {
-       
-        // if(this.loadFrom != null){
-        //   var template = _.template(projectRowTempOther);
-        // }else{
-        //   var template = _.template(projectRowTemp);
-        // }
         var template = _.template(projectRowTemp);
-
         $("#projectList").append(template({ projectDetails: objectModel }));
-        // if(this.loadFrom != null){
-        //   $("#projectListOther").append(template({ projectDetails: objectModel }));
-        // }else{
-        //   $("#projectList").append(template({ projectDetails: objectModel }));
-        // }
       },
       addAll: function () {
         $("#projectList").empty();
@@ -254,7 +242,6 @@ define([
       },
       filterRender: function (e) {
         var isexits = checkisoverlay(this.toClose);
-  
         if (!isexits) {
   
           var source = projectFilterTemp;

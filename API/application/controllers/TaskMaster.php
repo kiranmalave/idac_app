@@ -172,7 +172,7 @@ class TaskMaster extends CI_Controller
 		$join[3]['type'] ="LEFT JOIN";
 		$join[3]['table']="project";
 		$join[3]['alias'] ="p";
-		$join[3]['key1'] ="project";
+		$join[3]['key1'] ="project_id";
 		$join[3]['key2'] ="project_id";
 
 		$config["base_url"] = base_url() . "taskDetails";
@@ -1055,12 +1055,12 @@ class TaskMaster extends CI_Controller
 			}
 			if($value->col == "Customer"){
 				$whereu["customer_id"] =$value->old_val;
-				$custoldval = $this->CommonModel->GetMasterDetails('customer','first_name,last_name',$whereu);
-				$historyDetails[$key]->old_val = $custoldval[0]->first_name . ' ' . $custoldval[0]->last_name;
+				$custoldval = $this->CommonModel->GetMasterDetails('customer','company_name',$whereu);
+				$historyDetails[$key]->old_val = $custoldval[0]->company_name ;
 
 				$whereu["customer_id"] =  $value->new_val;
-				$custoldval = $this->CommonModel->GetMasterDetails('customer','first_name,last_name',$whereu);
-				$historyDetails[$key]->new_val = $custoldval[0]->first_name . ' ' . $custoldval[0]->last_name;
+				$custoldval = $this->CommonModel->GetMasterDetails('customer','company_name',$whereu);
+				$historyDetails[$key]->new_val = $custoldval[0]->company_name ;
 			}
 		}
 		$status['data'] = $historyDetails;

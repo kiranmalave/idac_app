@@ -69,7 +69,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	public function getInvoiceNumber($select="*",$where=array(),$join=array())
 	{
 		$this->db->select($select);
-		$this->db->from('invoiceHeader');
+		$this->db->from('invoice_header');
 		if(isset($where) && !empty($where)){
 			$this->db->where($where);	
 		}
@@ -82,7 +82,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 	public function saveinvoiceInfo($data)
 	{
-		$res = $this->db->insert("invoiceHeader",$data);
+		$res = $this->db->insert("invoice_header",$data);
 		$sqlerror = $this->db->error();
 		$this->errorlogs->checkDBError($sqlerror,dirname(__FILE__),__LINE__,__METHOD__);
 		return $this->db->insert_id();
@@ -99,7 +99,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	public function delInvioce($ID)
 	{
 		$this->db->where("invoiceID",$ID);
-		$this->db->delete("invoiceHeader");
+		$this->db->delete("invoice_header");
 		$sqlerror = $this->db->error();
 		$this->errorlogs->checkDBError($sqlerror,dirname(__FILE__),__LINE__,__METHOD__);
 		return $res;

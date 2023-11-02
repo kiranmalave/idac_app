@@ -85,11 +85,6 @@
           </option>
           <%}); %>
       </select> -->
-      <select id="project_id" name="project_id" class="form-control dropval ws-select show-tick mt-2" title="Select Project" data-live-search="true"data-live-search="true">
-        <% _.each(projectList, function(model1) { %>
-                <option value="<%=model1.attributes.project_id%>"><%=model1.attributes.project_name%></option>
-         <%}); %>
-    </select>
     </div>  
   </div>
 
@@ -140,6 +135,6 @@
     <input type="button" id="filterSearch" class="filterSearch btn btn-raised bg-green waves-effect"
       value="Search"></button>
     <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval" value="Reset"></button>
-    <input id="filterOption" type="button" class="btn btn-raised bg-blue-grey colseFil" value="Close"></button>
+    <input id="filterOption" type="button" class="btn btn-raised bg-blue-grey colseFil" data-item="taskFilterView" value="Close"></button>
   </div>
 </form>
