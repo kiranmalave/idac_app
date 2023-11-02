@@ -2713,3 +2713,6 @@ i.material-icons.bigsize {
 .comment-action .editButton {
   right: 20px;
 }
+.comment-actionHeading_left span {
+  color: #7a7a7a !important;
+}
