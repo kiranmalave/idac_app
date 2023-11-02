@@ -1363,6 +1363,12 @@ input::-webkit-inner-spin-button {
 	-o-transition: all 0.40s ease-in-out;
 	transition: all 0.40s ease-in-out;
   cursor: pointer;
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .addHover:hover{
   background: #ffc100;
