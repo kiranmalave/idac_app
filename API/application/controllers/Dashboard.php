@@ -23,13 +23,12 @@ class Dashboard extends CI_Controller {
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$adminID=$this->input->post('SadminID');
-		$customerTable = 'ab_customer';
-		$projectTable = 'ab_project';
-		
-		$dashboardCustCount = $this->CommonModel->getMasterDetails('customer','*',$where = array());
-		$customerLength = count($dashboardCustCount);
-		$dashboardProjectCount = $this->CommonModel->getMasterDetails('project','*',$where = array());
-		$projectLength = count($dashboardProjectCount);
+		$wherec["status"] = 'active';
+
+		$dashboardCustCount = $this->CommonModel->getMasterDetails('customer','count(customer_id) as totalcut',$wherec);
+		$customerLength = $dashboardCustCount[0]->totalcut;
+		$dashboardProjectCount = $this->CommonModel->getMasterDetails('project','count(project_id) as totalcut',$wherec);
+		$projectLength = $dashboardProjectCount[0]->totalcut;
 		
 		$countArray = array(
 			'customerCount' => $customerLength,
