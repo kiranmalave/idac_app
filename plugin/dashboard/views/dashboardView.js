@@ -16,7 +16,9 @@ define([
     model: dashboardModel,
     tagName: "div",
     initialize: function (options) {
+      selfobj = this;
       this.model = new dashboardModel();
+      selfobj.render();
       this.model.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
@@ -26,9 +28,6 @@ define([
         $(".popupLoader").hide();
         selfobj.render();
       });
-      console.log(this.model);
-      selfobj = this;
-      selfobj.render();
       new taskView({loadfrom:"dashboard"});
     },
     events:
