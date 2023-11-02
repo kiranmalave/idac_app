@@ -136,7 +136,7 @@ define([
     render: function () {
       var selfobj = this;
       var template = _.template(dashBord_temp);
-      var res = template({"customerModel":this.customerModel, "model":this.model});
+      var res = template({"model":this.model});
       this.$el.html(res);
       $('.number').text(selfobj.recordCount);
       $('.numberProject').text(selfobj.projectCnt);
