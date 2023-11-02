@@ -19,18 +19,26 @@ define([
 ], function ($, _, Backbone, datepickerBT, moment, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
 
   var taskView = Backbone.View.extend({
+    loadfrom:null,
+    searchtask:null,
     initialize: function (options) {
       this.toClose = "taskFilterView";
       var selfobj = this;
       this.filterCount = null;
-      $(".profile-loader").show();
-      var mname = Backbone.history.getFragment();
+      if(options.loadfrom != undefined){
+        selfobj.loadfrom = options.loadfrom;
+        permission = ROLE['task'];
+      }else{
+        var mname = Backbone.history.getFragment();
       permission = ROLE[mname];
+      }
+      $(".profile-loader").show();
+      
       readyState = true;
       this.render();
       this.filterCount = null;
       filterOption = new taskFilterOptionModel();
-      searchtask = new taskCollection();
+      this.searchtask = new taskCollection();
       this.adminList = new adminCollection();
       this.adminList.fetch({
         headers: {
@@ -64,7 +72,7 @@ define([
         // selfobj.render();
       });
 
-      searchtask.fetch({
+      this.searchtask.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
@@ -77,7 +85,7 @@ define([
 
 
 
-      this.collection = searchtask;
+      this.collection = this.searchtask;
       this.collection.on('add', this.addOne, this);
       this.collection.on('reset', this.addAll, this);
       /* $(".right_col").on("scroll",function(){
@@ -211,7 +219,7 @@ define([
           } else {
             handelClose("historySingleView");
           }
-          new taskSingleView({ task_id: task_id, searchtask: selfobj });
+          new taskSingleView({ task_id: task_id,searchtask: selfobj });
           break;
 
         }
@@ -276,11 +284,10 @@ define([
       $("#clist").find(".up").removeClass("active");
       $("#clist").find(".down").removeClass("active");
       // Find the <li> element with the id "filterOption"
-      let filterOptionLi = document.getElementById('filterOption');
-      let taskBadgeSpan = filterOptionLi.querySelector('span.taskBadge');
-      if (taskBadgeSpan) {
-        taskBadgeSpan.remove();
+      if($("#filterOption").length){
+        $("#filterOption").find('span.taskBadge').remove();
       }
+      
     },
     loaduser: function () {
       var memberDetails = new singlememberDataModel();
@@ -303,6 +310,7 @@ define([
         }
       }
       $("#taskList").append(template({ taskDetails: objectModel }));
+      // $("#taskList").append(template({ taskDetails: objectModel }));
     },
     addAll: function () {
       $("#taskList").empty();
@@ -431,12 +439,12 @@ define([
       }
     },
     filterSearch: function (isClose = false) {
+      var selfobj = this;
       if (isClose && typeof isClose != 'object') {
         $('.' + this.toClose).remove();
         rearrageOverlays();
       }
-      searchtask.reset();
-      var selfobj = this;
+      this.searchtask.reset();
       readyState = true;
       filterOption.set({ curpage: 0 });
       var $element = $('#loadMember');
@@ -446,19 +454,15 @@ define([
 
       var specificFilters = ["textval", "fromDate", "toDate", "fromDate2", "toDate2", "due_date", "task_priority", "task_status", "customer_id", "assignee", "created_by"];
       // Initialize a count variable
-      var appliedFilterCount = 0;
-
-      // Reset the count to zero
-      appliedFilterCount = 0;
+      let appliedFilterCount = 0;
       for (var i = 0; i < specificFilters.length; i++) {
         var filterKey = specificFilters[i];
-        if (filterOption.attributes[filterKey] !== null && filterOption.attributes[filterKey] !== "") {
+        if (filterOption.attributes[filterKey] !== null && filterOption.attributes[filterKey] !== "" && filterOption.attributes[filterKey] !== undefined) {
           console.log(filterOption.attributes[filterKey]);
           appliedFilterCount++;
         }
       }
-
-      searchtask.fetch({
+      this.searchtask.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, add: true, remove: false, merge: false, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
@@ -470,7 +474,6 @@ define([
         $element.attr("data-currPage", 1);
         $element.attr("data-index", res.paginginfo.nextpage);
 
-        //$(".page-info").html(recset);
         if (res.loadstate === false) {
           $(".profile-loader-msg").html(res.msg);
           $(".profile-loader-msg").show();
@@ -479,21 +482,17 @@ define([
         }
         selfobj.setValues();
       });
-
-      if (appliedFilterCount > 0) {
-        document.getElementById('filterOption').classList.add('active');
-      } else {
-        document.getElementById('filterOption').classList.remove('active');
-      }
-
-      let filterOptionLi = document.getElementById('filterOption');
-      let taskBadgeSpan = filterOptionLi.querySelector('span.taskBadge');
-      if (taskBadgeSpan) {
-        taskBadgeSpan.remove();
-      }
-      if (appliedFilterCount != 0) {
-        let url = "<span class='badge bg-pink taskBadge'>" + appliedFilterCount + "</span>"
-        document.getElementById('filterOption').innerHTML += url;
+      if($("#filterOption").length){
+        if (appliedFilterCount > 0) {
+          $("#filterOption").addClass("active");
+        }else {
+          $("#filterOption").removeClass("active");
+        }
+      
+        $("#filterOption").find('span.taskBadge').remove();
+        if (appliedFilterCount != 0) {
+          $("#filterOption").append("<span class='badge bg-pink taskBadge'>" + appliedFilterCount + "</span>");
+        }
       }
     },
     loadData: function (e) {
@@ -505,7 +504,7 @@ define([
       } else {
 
         $element.attr("data-index", cid);
-        searchtask.reset();
+        this.searchtask.reset();
         var index = $element.attr("data-index");
         var currPage = $element.attr("data-currPage");
 
@@ -513,7 +512,7 @@ define([
         var requestData = filterOption.attributes;
 
         $(".profile-loader").show();
-        searchtask.fetch({
+        this.searchtask.fetch({
           headers: {
             'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
           }, add: true, remove: false, merge: false, type: 'post', error: selfobj.onErrorHandler, data: requestData
@@ -606,7 +605,13 @@ define([
     render: function () {
       var template = _.template(taskTemp);
       this.$el.html(template({ closeItem: this.toClose, }));
-      $(".app_playground").append(this.$el);
+      console.log("this.loadfrom",this.loadfrom);
+      if(this.loadfrom != null){
+        $("body").find("#dasboradTaskHolder").append(this.$el);
+      }else{
+        $(".app_playground").append(this.$el);
+        setToolTip();
+      }
 
       return this;
     }
