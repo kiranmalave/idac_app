@@ -380,6 +380,7 @@ var taxInvoiceView = Backbone.View.extend({
     render: function(){
         var template = _.template(taxInvoice_temp);
         this.$el.html(template({closeItem:this.toClose}));
+        $(".ws-select").selectpicker();
         $(".main_container").append(this.$el);
         return this;
     }
