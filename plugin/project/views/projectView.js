@@ -259,7 +259,7 @@ define([
           var template = _.template(source);
   
           var cont = $("<div>");
-        cont.html(template({"customerList": this.customerList.models }));
+          cont.html(template({"customerList": this.customerList.models }));
           cont.attr('id', this.toClose);
           /*  
             INFO
