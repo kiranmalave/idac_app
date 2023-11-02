@@ -98,7 +98,6 @@ define([
     function preTemp() {
 
       // setup toggle and other function for menu
-
       if (typeof ($.cookie('authid')) == "undefined") {
         app_router.navigate("login", { trigger: true });
         return false;
