@@ -11,14 +11,16 @@
       <div class="comment-actionHeading_left">
         <h5 class="loadview textwrap c_name" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"><%=taskDetails.attributes.subject%></h5> 
         
-
-        <% if(taskDetails.attributes.projectNumb == null) {%>
+        <span>
+          <% if(taskDetails.attributes.projectNumb == null) {%>
             -
            <%}else{%>
             <%=taskDetails.attributes.projectNumb%>
               <!-- <div class="badge badge-secondary"> <%=taskDetails.attributes.projectName%> </div> -->
               
           <%}%>
+        </span>
+        
           <!-- <h6>Project Name: <%=taskDetails.attributes.projectName%></h6> -->
       </div>
       <div class="comment-actionHeading_right">
@@ -39,7 +41,7 @@
       %>
       <span class="badge badge-info" data-toggle="tooltip"  data-placement="top" title="Assignee"> <%=taskDetails.attributes.name%> </span>
       
-    <small class="comment-date float-sm-right"><%=taskDetails.attributes.due_date%>   </small>
+    <small class="comment-date float-sm-right"><span><i class="material-icons">date_range</i></span><%=taskDetails.attributes.due_date%>   </small>
 
     <button type="button" class="ws-btn-default loadview editButton" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"  data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
 

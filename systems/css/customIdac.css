@@ -2716,3 +2716,10 @@ i.material-icons.bigsize {
 .comment-actionHeading_left span {
   color: #7a7a7a !important;
 }
+
+small.comment-date.float-sm-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
