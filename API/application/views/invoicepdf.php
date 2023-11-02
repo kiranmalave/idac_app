@@ -64,7 +64,7 @@
 		<h1 align="left"><strong>INVOICE</strong></h1>
 	</div>
 	<div class="text-right" style="float: right;width:50%;">
-		<img src="<?php echo $this->config->item("imagesPATH");?>site/left.png" style="width:150px;">
+		<img src="<?php echo $this->config->item("imagesPATH");?>site/logo.svg" style="width:150px;">
 	</div>
 </div>
 <br>
