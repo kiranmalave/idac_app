@@ -27,6 +27,7 @@ class TaskMaster extends CI_Controller
 		$this->load->library("pagination");
 		$this->load->library("response");
 		$this->load->library("ValidateData");
+		// $this->load->library("notifications");
 	}
 
 
@@ -35,7 +36,7 @@ class TaskMaster extends CI_Controller
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$isAll = $this->input->post('getAll');
-		$textSearch = trim($this->input->post('textSearch'));
+		$textSearch = $this->input->post('textSearch');
 		$curPage = $this->input->post('curpage');
 		$ITIID = $this->input->post('task_id');
 		$textval = $this->input->post('textval');
@@ -51,63 +52,85 @@ class TaskMaster extends CI_Controller
 		$task_priority =$this->input->post('task_priority');
 		$task_status = $this->input->post('task_status');
 		$customer =$this->input->post('customer_id');
-		// print_r($task_priority);exit;
+		$createdBy = $this->input->post('created_by');
+		$due_date = $this->input->post('due_date');
+		// print_r($createdBy);exit;
+
+		$customOrder = "CASE
+			WHEN DATE(t.due_date) = CURDATE() THEN 1
+			WHEN DATE(t.due_date) = CURDATE() + INTERVAL 1 DAY THEN 2
+			ELSE 3
+		END";
 
 		$config = array();
 		if (!isset($orderBy) || empty($orderBy)) {
-			$orderBy = "subject";
-			$order = "DESC";
+			$orderBy = $customOrder . ", subject"; // You can add your default sorting field here
+			$order = "ASC"; // Change this to "DESC" if you want descending order
+		} else {
+			$orderBy = $customOrder . ", " . $orderBy;
 		}
 		$other = array("orderBy" => $orderBy, "order" => $order);
 
 		$config = $this->config->item('pagination');
 		$wherec = $join = array();
 		if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
-
-			$wherec["$textSearch like  "] = "'" . $textval . "%'";
+			$textSearch = trim($textSearch);
+			$wherec["$textSearch like  "] = "'%" . $textval . "%'";
 		}
 
 		if (isset($statuscode) && !empty($statuscode)) {
 			$statusStr = str_replace(",", '","', $statuscode);
 			$wherec["t.status"] = 'IN ("' . $statusStr . '")';
 		}
-
+		
 		if (isset($assignee) && !empty($assignee)) {
-			$wherec["assignee like"] = $assignee;
+			$assigneeString = str_replace(",", '","', $assignee);
+			$wherec["assignee "] = 'IN ("' . $assigneeString . '")';
 		}
 
 		if (isset($task_priority) && !empty($task_priority)) {
-			$wherec["task_priority ="] = $task_priority;
+			$task_priorityString = str_replace(",", '","', $task_priority);
+			$wherec["task_priority"] = 'IN ("' . $task_priorityString . '")';
 		}
 
 
 		if(isset($task_status) && !empty($task_status)){
-			$wherec["task_status ="] = $task_status;
+			$task_statusString = str_replace(",", '","', $task_status);
+			$wherec["task_status"] = 'IN ("' . $task_statusString . '")';
 		}
 
 		if(isset($customer) && !empty($customer)){
-			$wherec["customer_id ="] = $customer;
+			$customerString = str_replace(",", '","', $customer);
+			$wherec["customer_id"] = 'IN ("' . $customerString . '")';
+		}
+		
+		if(isset($createdBy) && !empty($createdBy)){
+			$createdByString = str_replace(",", '","', $createdBy);
+			$wherec["t.created_by"] = 'IN ("' . $createdByString . '")';
 		}
 
-		// if($textSearch === 'start_date'){
-			if(isset($startDate) && !empty($startDate)){
-				$sDate = date("Y-m-d",strtotime($startDate));
-				$wherec["start_date >="] = "'".$sDate."'";
-			}
-			if (isset($endDate) && !empty($endDate)) {
-				$eDate = date("Y-m-d", strtotime($endDate));
-				$wherec["start_date <="] = "'" . $eDate . "'";
-			}
-		
-			if(isset($startDate2) && !empty($startDate2)){
-				$sDate = date("Y-m-d",strtotime($startDate2));
-				$wherec["due_date >="] = "'".$sDate."'";
-			}
-			if(isset($endDate2) && !empty($endDate2)){
-				$eDate = date("Y-m-d",strtotime($endDate2));
-				$wherec["due_date <="] = "'".$eDate."'";
-			}
+		if(isset($startDate) && !empty($startDate)){
+			$sDate = date("Y-m-d",strtotime($startDate));
+			$wherec["start_date >="] = "'".$sDate."'";
+		}
+		if (isset($endDate) && !empty($endDate)) {
+			$eDate = date("Y-m-d", strtotime($endDate));
+			$wherec["start_date <="] = "'" . $eDate . "'";
+		}
+	
+		if(isset($startDate2) && !empty($startDate2)){
+			$sDate = date("Y-m-d",strtotime($startDate2));
+			$wherec["due_date >="] = "'".$sDate."'";
+		}
+		if(isset($endDate2) && !empty($endDate2)){
+			$eDate = date("Y-m-d",strtotime($endDate2));
+			$wherec["due_date <="] = "'".$eDate."'";
+		}
 
+		if(isset($due_date) && !empty($due_date)){
+			$eDate = date("Y-m-d",strtotime($due_date));
+			$wherec["due_date ="] = "'".$eDate."'";
+		}
 
 		$adminID = $this->input->post('SadminID');
 
@@ -126,8 +149,9 @@ class TaskMaster extends CI_Controller
 			$wherec["assignee = "] = "'".$this->input->post('SadminID')."'";
 		}
 		// print_r("<pre>");
-		// print_r($wherec);exit();
+		// print_r($taskDetailsList);exit();
 		$join=array();
+		
 		$join[0]['type'] ="LEFT JOIN";
 		$join[0]['table']="admin";
 		$join[0]['alias'] ="a";
@@ -146,12 +170,6 @@ class TaskMaster extends CI_Controller
 		$join[2]['key1'] ="task_priority";
 		$join[2]['key2'] ="category_id";
 
-		$join[3]['type'] ="LEFT JOIN";
-		$join[3]['table']="project";
-		$join[3]['alias'] ="p";
-		$join[3]['key1'] ="project";
-		$join[3]['key2'] ="project_id";
-
 		$config["base_url"] = base_url() . "taskDetails";
 		$config["total_rows"] = $this->CommonModel->getCountByParameter('task_id', 'tasks', $wherec, $other);
 		$config["uri_segment"] = 2;
@@ -163,19 +181,14 @@ class TaskMaster extends CI_Controller
 			$curPage = 0;
 			$page = 0;
 		}
-		//  print_r($textSearch);exit;
-		$selectC = "t.*, c.categoryName AS status_slug, ca.categoryName AS priority_slug, a.name, p.project_name AS projectName, p.project_number AS projectNumb";
+		$selectC = "t.*, c.categoryName AS status_slug, ca.categoryName AS priority_slug, a.name";
 		if ($isAll == "Y") {
 			$join = array();
 			$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, '', '', $join, $other);
 		} else {
-
-			$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, $config["per_page"], $page, $join, $other);
-
 			$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, $config["per_page"], $page, $join, $other);
 		}
-		// print_r("<pre>");
-		//  print_r($taskDetails);exit;
+		
 		$status['data'] = $taskDetails;
 		$status['paginginfo']["curPage"] = $curPage;
 		if ($curPage <= 1)
@@ -189,13 +202,25 @@ class TaskMaster extends CI_Controller
 		$status['paginginfo']["start"] =  $page;
 		$status['paginginfo']["end"] =  $page + $config["per_page"];
 		$status['loadstate'] = true;
-		if ($config["total_rows"] <= $status['paginginfo']["end"]) {
-			$status['msg'] = $this->systemmsg->getErrorCode(232);
-			$status['statusCode'] = 400;
-			$status['flag'] = 'S';
-			$status['loadstate'] = false;
-			$this->response->output($status, 200);
+		
+		if(empty($taskDetails)){
+			if ($config["total_rows"] <= $status['paginginfo']["end"]) {
+				$status['msg'] = $this->systemmsg->getErrorCode(227);
+				$status['statusCode'] = 400;
+				$status['flag'] = 'S';
+				$status['loadstate'] = false;
+				$this->response->output($status, 200);
+			}
+		}else{
+			if ($config["total_rows"] <= $status['paginginfo']["end"]) {
+				$status['msg'] = $this->systemmsg->getErrorCode(232);
+				$status['statusCode'] = 400;
+				$status['flag'] = 'S';
+				$status['loadstate'] = false;
+				$this->response->output($status, 200);
+			}
 		}
+		
 		if ($taskDetails) {
 			$status['msg'] = "sucess";
 			$status['statusCode'] = 400;
@@ -220,7 +245,6 @@ class TaskMaster extends CI_Controller
 		if ($method == "PUT" || $method == "POST") {
 			$taskDetails = array();
 			$updateDate = date("Y/m/d H:i:s");
-			$taskDetails['task_id'] = $this->validatedata->validate('task_id', 'task ID', false, '', array());
 			$taskDetails['subject'] = $this->validatedata->validate('subject', 'Subject', false, '', array());
 			$taskDetails['description'] = $this->validatedata->validate('description', 'Description', false, '', array());
 			$taskDetails['customer_id'] = $this->validatedata->validate('customer_id', 'Customer', false, '', array());
@@ -229,9 +253,7 @@ class TaskMaster extends CI_Controller
 			$taskDetails['task_repeat'] = $this->validatedata->validate('task_repeat', 'Task Repeat', false, '', array());
 			$taskDetails['start_date'] = $this->validatedata->validate('start_date', 'Start Date', false, '', array());
 			$taskDetails['due_date'] = $this->validatedata->validate('due_date', 'End Date', false, '', array());
-			$taskDetails['completed_date'] = $this->validatedata->validate('completed_date', 'Completed Date', false, '', array());
 			$taskDetails['assignee'] = $this->validatedata->validate('assignee', 'Assignee', false, '', array());
-			$taskDetails['project'] = $this->validatedata->validate('project_id', 'Project', true, '', array());
 			$taskDetails['task_type'] = $this->validatedata->validate('task_type', 'Task_Type', false, '', array());
 			$taskDetails['status'] = $this->validatedata->validate('status', 'Status', true, '', array());
 			$taskDetails['does_repeat'] = $this->validatedata->validate('does_repeat', 'does_repeat', false, '', array());
@@ -263,9 +285,16 @@ class TaskMaster extends CI_Controller
 					$this->response->output($status, 200);
 				} else {
 					$taskID = $this->db->insert_id();
+					$notification = array(
+						'title' => "Task assigned to you",
+						'body' => $taskDetails['subject'],
+					);
+					// $this->notifications->sendmessage($notification,$taskDetails['assignee']);
 					$this->addTaskHistory($taskID, 'Task Created', 'Created', $taskDetails['created_by']);
 					if (isset($watchers_name) && !empty($watchers_name)) {
 						$saveFlag = $this->saveWatchersDetails($watchers_name, $taskID, $taskDetails['created_by']);
+						// send notification to user
+						
 						if ($saveFlag == true) {
 							$status['msg'] = $this->systemmsg->getSucessCode(400);
 							$status['statusCode'] = 400;
@@ -381,7 +410,11 @@ class TaskMaster extends CI_Controller
 					$status['flag'] = 'F';
 					$this->response->output($status,200);
 				}else{
-					
+					$notification = array(
+						'title' => "Task assigned to you",
+						'body' => $taskDetails['subject'],
+					);
+					// $this->notifications->sendmessage($notification,$taskDetails['assignee']);
 					// $this->addTaskHistory($task_id, 'Task Updated', 'Updated', $taskDetails['modified_by']);
 					if(isset($watchers_name) && !empty($watchers_name)){
 						$saveFlag = $this->saveWatchersDetails($watchers_name,$task_id,$taskDetails['modified_by']);
@@ -429,6 +462,17 @@ class TaskMaster extends CI_Controller
 
 				}
 			} elseif ($method == "dele") {
+
+				$join=array();
+				$join[0]['type'] ="LEFT JOIN";
+				$join[0]['table']="admin";
+				$join[0]['alias'] ="aa";
+				$join[0]['key1'] ="created_by";
+				$join[0]['key2'] ="adminID";
+
+				$selectC = "t.*,aa.name AS adminName";
+				$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, '', '', $join, $other);
+
 				$taskDetails = array();
 				$where = array('sID' => $sID);
 				if (!isset($sID) || empty($sID)) {
@@ -483,6 +527,7 @@ class TaskMaster extends CI_Controller
 						$created = array_column($createdBy,'adminName');
 						$taskDetails[0]->createdByname = $created;
 					}
+
 					$watchersDetailsName = $this->CommonModel->getMasterDetails('tasks_watchers', '', $whereGuest);
 					if (!empty($watchersDetailsName)) {
 						$watchers_name = array_column($watchersDetailsName,'watchers_name');
@@ -539,6 +584,46 @@ class TaskMaster extends CI_Controller
 				$this->response->output($status, 200);
 			}
 		}
+	}
+
+	public function deleteComment()
+	{
+		$this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$action = $this->input->post("action");
+		if (trim($action) == "changeStatus") {
+			$ids = $this->input->post("list");
+			$statusCode = $this->input->post("status");
+			$changestatus = $this->CommonModel->changeMasterStatus('task_comments', $statusCode, $ids, 'comment_id ');
+			if ($changestatus) {
+
+				$status['data'] = array();
+				$status['statusCode'] = 200;
+				$status['flag'] = 'S';
+				$this->response->output($status, 200);
+			} else {
+				$status['data'] = array();
+				$status['msg'] = $this->systemmsg->getErrorCode(996);
+				$status['statusCode'] = 996;
+				$status['flag'] = 'F';
+				$this->response->output($status, 200);
+			}
+		}
+		// $commentID= $this->input->post("list");
+		// $wherec["comment_id ="] = $commentID;
+		// $changestatus = $this->CommonModel->deleteMasterDetails('task_comments',$wherec);
+		// if($changestatus){
+		// 	$status['data'] = array();
+		// 	$status['statusCode'] = 200;
+		// 	$status['flag'] = 'S';
+		// 	$this->response->output($status, 200);
+		// } else {
+		// 	$status['data'] = array();
+		// 	$status['msg'] = $this->systemmsg->getErrorCode(996);
+		// 	$status['statusCode'] = 996;
+		// 	$status['flag'] = 'F';
+		// 	$this->response->output($status, 200);
+		// }
 	}
 
 	public function saveAttachments($attachment = '', $task_id = '', $adminID = '')
@@ -636,9 +721,6 @@ class TaskMaster extends CI_Controller
 				$taskId= $this->input->post("taskID");
 				$wherec["task_id ="] = $taskId;
 				$wherec["admin_id ="] = $ids;
-				// print_r($wherec);exit;
-				// $changestatus = $this->CommonModel->changeMasterStatus('tasks_watchers',$statusCode,$ids,'admin_id');
-				// $tableName = '', $where = '', $whereIn = array()
 				$changestatus = $this->CommonModel->deleteMasterDetails('tasks_watchers',$wherec);
 			if($changestatus){
 
@@ -681,12 +763,14 @@ class TaskMaster extends CI_Controller
 			}
 		}	
 	}
-	public function taskCommentMaster($task_id="")
+	public function taskCommentMaster($comment_id="")
 	{
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$method = $this->input->method(TRUE);
+		$commentID = $this->input->post("id");
 
+		// print_r($method);exit;
 		if ($method == "POST" || $method == "PUT") {
 			//echo "|Dddd"; exit;
 			$taskDetails = array();
@@ -697,9 +781,9 @@ class TaskMaster extends CI_Controller
 			$taskDetails['user_id'] = $this->validatedata->validate('user_id', 'User ID', false, '', array());
 			$taskDetails['comment_text'] = $this->validatedata->validate('comment_text', 'Comment', true, '', array());
 			$taskDetails['status'] = $this->validatedata->validate('status', 'Status', true, '', array());
-			$method = "PUT";
 			//print_r($taskDetails);exit();
 			if ($method == "PUT") {
+				
 				$iticode = $taskDetails['task_id'];
 				$taskDetails['status'] = "active";
 				$taskDetails['user_id'] = $this->input->post('SadminID');
@@ -721,8 +805,9 @@ class TaskMaster extends CI_Controller
 					$this->response->output($status, 200);
 				}
 			} elseif ($method == "POST") {
-				$where = array('task_id' => $task_id);
-				if (!isset($task_id) || empty($task_id)) {
+				$where = array('comment_id' => $comment_id);
+				$taskDetails['user_id'] = $this->input->post('SadminID');
+				if (!isset($comment_id) || empty($comment_id)) {
 					$status['msg'] = $this->systemmsg->getErrorCode(998);
 					$status['statusCode'] = 998;
 					$status['data'] = array();
@@ -796,7 +881,7 @@ class TaskMaster extends CI_Controller
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$isAll = $this->input->post('getAll');
-		$textSearch = trim($this->input->post('textSearch'));
+		$textSearch = $this->input->post('textSearch');
 		$curPage = $this->input->post('curpage');
 		$textval = $this->input->post('textval');
 		$orderBy = $this->input->post('orderBy');
@@ -814,7 +899,7 @@ class TaskMaster extends CI_Controller
 		$config = $this->config->item('pagination');
 		$wherec = $join = array();
 		if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
-
+			$textSearch = trim($textSearch);
 			$wherec["$textSearch like  "] = "'" . $textval . "%'";
 		}
 
@@ -889,28 +974,16 @@ class TaskMaster extends CI_Controller
 
 	public function addTaskHistory($task_id, $action_type, $description, $user_id)
 	{
+		
 		$taskDetails = array(
-			'task_id' => $task_id,
+			'record_id' => $task_id,
 			'action_type' => $action_type,
 			'description' => $description,
 			'user_id' => $user_id,
+			'col'=> 'Task',
 			'timestamp' => date('Y-m-d H:i:s')
 		);
 		$iscreated = $this->CommonModel->saveMasterDetails('task_history', $taskDetails);
-		// if (!$iscreated) {
-		// 	$status['msg'] = $this->systemmsg->getErrorCode(998);
-		// 	$status['statusCode'] = 998;
-		// 	$status['data'] = array();
-		// 	$status['flag'] = 'F';
-		// 	$this->response->output($status, 200);
-		// } else {
-		// 	$status['msg'] = $this->systemmsg->getSucessCode(400);
-		// 	$status['statusCode'] = 400;
-		// 	$status['data'] = array();
-		// 	$status['flag'] = 'S';
-		// 	$this->response->output($status, 200);
-		// }
-		//$this->db->insert('task_history', $data);
 	}
 
 	public function getTaskHistory()
@@ -918,7 +991,7 @@ class TaskMaster extends CI_Controller
 		$task_id = $this->input->post('task_id');
 		$wherec = $join = array();
 		if (isset($task_id) && !empty($task_id)) {
-			$wherec["task_id"] = '= (' . $task_id . ')';
+			$wherec["record_id"] = '= (' . $task_id . ')';
 		}
 		$join[0]['type'] = "LEFT JOIN";
 		$join[0]['table'] = "admin";
@@ -931,6 +1004,36 @@ class TaskMaster extends CI_Controller
 		$order = "DESC";
 		$other = array("orderBy" => $orderBy, "order" => $order);
 		$historyDetails = $this->CommonModel->GetMasterListDetails($selectC = '*', 'task_history', $wherec, '', '', $join, $other);
+		// print_r($historyDetails);exit;
+		foreach ($historyDetails as $key => $value) {
+			if($value->col == "Task Priority" || $value->col == "Task Type" || $value->col == "Task Status"){
+			$where["category_id"] =$value->old_val;
+			$catoldval = $this->CommonModel->GetMasterDetails('categories','categoryName',$where);
+			$historyDetails[$key]->old_val = $catoldval[0]->categoryName;
+
+			$where["category_id"] =  $value->new_val;
+			$catoldval = $this->CommonModel->GetMasterDetails('categories','categoryName',$where);
+			$historyDetails[$key]->new_val = $catoldval[0]->categoryName;
+			}
+			if($value->col == "Assignee" ){
+				$wherea["adminID"] =$value->old_val;
+				$adminoldval = $this->CommonModel->GetMasterDetails('admin','name',$wherea);
+				$historyDetails[$key]->old_val = $adminoldval[0]->name;
+
+				$wherea["adminID"] =  $value->new_val;
+				$adminoldval = $this->CommonModel->GetMasterDetails('admin','name',$wherea);
+				$historyDetails[$key]->new_val = $adminoldval[0]->name;
+			}
+			if($value->col == "Customer"){
+				$whereu["customer_id"] =$value->old_val;
+				$custoldval = $this->CommonModel->GetMasterDetails('customer','first_name,last_name',$whereu);
+				$historyDetails[$key]->old_val = $custoldval[0]->first_name . ' ' . $custoldval[0]->last_name;
+
+				$whereu["customer_id"] =  $value->new_val;
+				$custoldval = $this->CommonModel->GetMasterDetails('customer','first_name,last_name',$whereu);
+				$historyDetails[$key]->new_val = $custoldval[0]->first_name . ' ' . $custoldval[0]->last_name;
+			}
+		}
 		$status['data'] = $historyDetails;
 		if ($historyDetails) {
 			$status['msg'] = "sucess";
@@ -943,9 +1046,6 @@ class TaskMaster extends CI_Controller
 			$status['flag'] = 'F';
 			$this->response->output($status, 200);
 		}
-		// $this->db->where('task_id', $task_id);
-		// $this->db->order_by('timestamp', 'desc');
-		//return $this->db->get('task_history')->result_array();
 	}
 
 	public function stateList()
@@ -953,7 +1053,7 @@ class TaskMaster extends CI_Controller
 
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
-		$textSearch = trim($this->input->post('textSearch'));
+		$textSearch = $this->input->post('textSearch');
 		$isAll = $this->input->post('getAll');
 		$curPage = $this->input->post('curpage');
 		$textval = $this->input->post('textval');
@@ -973,6 +1073,7 @@ class TaskMaster extends CI_Controller
 		$config = $this->config->item('pagination');
 		$wherec = $join = array();
 		if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
+			$textSearch = trim($textSearch);
 			$wherec["$textSearch like  "] = "'" . $textval . "%'";
 		}
 
@@ -1037,7 +1138,7 @@ class TaskMaster extends CI_Controller
 
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
-		$textSearch = trim($this->input->post('textSearch'));
+		$textSearch = $this->input->post('textSearch');
 		$task_id = $this->input->post('task_id');
 		$isAll = $this->input->post('getAll');
 		$curPage = $this->input->post('curpage');
@@ -1062,6 +1163,7 @@ class TaskMaster extends CI_Controller
 		}
 
 		if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
+			$textSearch = trim($textSearch);
 			$wherec["$textSearch like  "] = "'" . $textval . "%'";
 		}
 
@@ -1267,7 +1369,7 @@ class TaskMaster extends CI_Controller
 
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
-		$textSearch = trim($this->input->post('textSearch'));
+		$textSearch = $this->input->post('textSearch');
 		$task_id = $this->input->post('task_id');
 		$isAll = $this->input->post('getAll');
 		$curPage = $this->input->post('curpage');
@@ -1292,6 +1394,7 @@ class TaskMaster extends CI_Controller
 		}
 
 		if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
+			$textSearch = trim($textSearch);
 			$wherec["$textSearch like  "] = "'" . $textval . "%'";
 		}
 
@@ -1471,7 +1574,7 @@ class TaskMaster extends CI_Controller
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$isAll = $this->input->post('getAll');
-		$textSearch = trim($this->input->post('textSearch'));
+		$textSearch = $this->input->post('textSearch');
 		$curPage = $this->input->post('curpage');
 		$ITIID = $this->input->post('contactID');
 		$textval = $this->input->post('textval');
@@ -1490,7 +1593,7 @@ class TaskMaster extends CI_Controller
 		$config = $this->config->item('pagination');
 		$wherec = $join = array();
 		if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
-
+			$textSearch = trim($textSearch);
 			$wherec["$textSearch like  "] = "'" . $textval . "%'";
 		}
 
