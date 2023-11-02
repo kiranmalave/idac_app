@@ -6,6 +6,7 @@ define([
     'inputmask',
     'datepickerBT',
     'moment',
+    'Swal',
     '../../core/views/multiselectOptions',
     '../../dynamicForm/views/dynamicFieldRender',
     '../collections/projectCollection',
@@ -13,7 +14,7 @@ define([
     '../models/projectSingleModel',
     '../../readFiles/views/readFilesView',
     'text!../templates/projectSingle_temp.html',
-  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, multiselectOptions, dynamicFieldRender, projectCollection, customerCollection, projectSingleModel, readFilesView, projecttemp) {
+  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, multiselectOptions, dynamicFieldRender, projectCollection, customerCollection, projectSingleModel, readFilesView, projecttemp) {
     var projectSingleView = Backbone.View.extend({
       model: projectSingleModel,
       initialize: function (options) {
@@ -73,6 +74,7 @@ define([
             selfobj.render();
             selfobj.setOldValues();
           });
+          console.log("aniruddha test",this.model)
         }
       },
       events: {
@@ -146,6 +148,8 @@ define([
       },
   
       saveprojectDetails: function (e) {
+
+
         e.preventDefault();
         let selfobj = this;
         var mid = this.model.get("project_id");

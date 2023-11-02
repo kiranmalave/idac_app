@@ -6,13 +6,14 @@ define([
   'inputmask',
   'datepickerBT',
   'moment',
+  'Swal',
   '../../core/views/multiselectOptions',
   '../../dynamicForm/views/dynamicFieldRender',
   '../collections/customerCollection',
   '../models/customerSingleModel',
   '../../readFiles/views/readFilesView',
   'text!../templates/customerSingle_temp.html',
-], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, multiselectOptions, dynamicFieldRender, customerCollection, customerSingleModel, readFilesView, customertemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, multiselectOptions, dynamicFieldRender, customerCollection, customerSingleModel, readFilesView, customertemp) {
   var customerSingleView = Backbone.View.extend({
     model: customerSingleModel,
     initialize: function (options) {
@@ -173,6 +174,7 @@ define([
           }
         });
       }
+
     },
     initializeValidate: function () {
       var selfobj = this;

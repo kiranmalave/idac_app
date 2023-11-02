@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',	
-	'hostname' => '127.0.0.1',//192.168.2.13
-	'username' => 'root',//ysf
-	'password' => '',
-	'database' => 'idac_app',//ysf
+	'hostname' => '3.109.158.92',//'127.0.0.1',//192.168.2.13
+	'username' => 'webtrixDev',//'root',//ysf
+	'password' => 'dujZ8b1q2pr5QaeTo@',
+	'database' => 'webtrixDev_idac',//ysf
 	'dbdriver' => 'mysqli',
 	'dbprefix' => 'ab_',
 	'pconnect' => FALSE,

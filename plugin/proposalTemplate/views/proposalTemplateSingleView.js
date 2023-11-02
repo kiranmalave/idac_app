@@ -6,6 +6,7 @@ define([
     'inputmask',
     'datepickerBT',
     'moment',
+    'Swal',
     '../../core/views/multiselectOptions',
     '../../dynamicForm/views/dynamicFieldRender',
     '../collections/proposalTemplateCollection',
@@ -13,7 +14,7 @@ define([
     '../models/proposalTemplateSingleModel',
     '../../readFiles/views/readFilesView',
     'text!../templates/proposalTemplateSingle_temp.html',
-  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, multiselectOptions, dynamicFieldRender, proposalTemplateCollection, ourClientsCollection, proposalTemplateSingleModel, readFilesView, projecttemp) {
+  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, multiselectOptions, dynamicFieldRender, proposalTemplateCollection, ourClientsCollection, proposalTemplateSingleModel, readFilesView, projecttemp) {
     var projectSingleView = Backbone.View.extend({
       model: proposalTemplateSingleModel,
       initialize: function (options) {
@@ -191,6 +192,13 @@ define([
             }
           });
         }
+        // Swal.fire({
+        //   position: 'top-end',
+        //   icon: 'success',
+        //   title: 'Your Proposal Template has been saved',
+        //   showConfirmButton: false,
+        //   timer: 1500
+        // })
       },
       initializeValidate: function () {
         var selfobj = this;
