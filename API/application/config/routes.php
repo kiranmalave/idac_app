@@ -185,6 +185,7 @@ $route['taskMasterList'] = 'taskMaster/gettaskDetails';
 $route['taskMaster'] = 'taskMaster/taskMaster';
 $route['taskMaster/(:num)'] = 'taskMaster/taskMaster/$1';
 $route['taskMaster/status'] = 'taskMaster/taskChangeStatus';
+$route['taskDashboard/status'] = 'taskMaster/dashboardStatus';
 $route['taskMaster/saveWatchersDetails'] = 'taskMaster/saveWatchersDetails';
 $route['taskMaster/removeWatchers'] = 'taskMaster/removeWatchers';
 $route['taskMaster/removeAttachment'] = 'taskMaster/removeAttachment';

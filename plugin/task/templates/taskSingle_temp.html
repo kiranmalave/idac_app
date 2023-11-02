@@ -265,20 +265,13 @@
                                 <div class="form-group form-float d-flex">
                                     <div class="rept-time">
                                         <div>
-                                            <select for="assignee" id="assignee" name="assignee"
-                                            class="form-control dropval ws-select show-tick" title="Select Assignee">
-                                            <%if(permission.add=="yes" ) { %>
-                                                <option class="addNew" value="addAssignee">Add Assignee</option>
+                                            <select for="assignee" id="assignee" name="assignee" class="form-control dropval ws-select show-tick" title="Select Assignee">
+                                                <%if(permission.add=="yes" ) { %>
+                                                    <option class="addNew" value="addAssignee">Add Assignee</option>
                                                 <%}%>
-                                                    <% _.each(adminList, function(model1) { %>
-                                                        
-                                                                <option <% if(model1.attributes.adminID==model.assignee
-                                                                    ){%>selected<%}%> value="
-                                                                        <%=model1.attributes.adminID%>">
-                                                                            <%=model1.attributes.name%>
-                                                                </option>
-                                                                 <%}); %>  
-                                                                 
+                                                <% _.each(adminList, function(model1) { %>
+                                                    <option <% if(model1.attributes.adminID==model.assignee ){%>selected<%}%> value="<%=model1.attributes.adminID%>"><%=model1.attributes.name%></option>
+                                                <%}); %>               
                                             </select>
                                         </div>
                                     </div>
