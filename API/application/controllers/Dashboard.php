@@ -23,54 +23,20 @@ class Dashboard extends CI_Controller {
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$adminID=$this->input->post('SadminID');
-		$statusInfo = new stdClass();
-		$statusInfo->ourTarget = 0;
-		$statusInfo->OurAchived = 0;
-		$statusInfo->myaTarget = 0;
-		$statusInfo->achived = 0;
-		// $statusInfo->totalItem = $totalItem;
+		$customerTable = 'ab_customer';
+		$projectTable = 'ab_project';
 		
-		$where=array("infoID"=>2);
-		$ourTarget=$this->CommonModel->getMasterDetails("info_settings","ourTarget",$where);
+		$dashboardCustCount = $this->CommonModel->getMasterDetails('customer','*',$where = array());
+		$customerLength = count($dashboardCustCount);
+		$dashboardProjectCount = $this->CommonModel->getMasterDetails('project','*',$where = array());
+		$projectLength = count($dashboardProjectCount);
 		
-		$where=array("adminID"=>$adminID);
-		$myTarget=$this->CommonModel->getMasterDetails("user_extra_details","myTarget",$where);
+		$countArray = array(
+			'customerCount' => $customerLength,
+			'projectCount' => $projectLength
+		);
 
-		$where=array("status"=>"Active","pointOfContactName"=>$adminID,"confirmationStatus"=>"Approved");
-		$achivedData=$this->CommonModel->getMasterDetails("donorRecipts","amountInFigure",$where);
-
-		$where=array("status"=>"Active","confirmationStatus"=>"Approved");
-		$OurAchivedData=$this->CommonModel->getMasterDetails("donorRecipts","amountInFigure",$where);
-
-		
-		$pocwisedata=$this->DashboardModel->getAllPOCArchivedTarget($where=array("t.status"=>"Active","confirmationStatus"=>"Approved"));
-		$pocwisedataOther=$this->DashboardModel->getAllPOCArchivedTargetOther($where=array("status"=>"Active","confirmationStatus"=>"Approved","pointOfContact"=>"Other"));
-
-
-		$ourAchivedAmt=0;
-		if(isset($OurAchivedData)&&!empty($OurAchivedData))
-		{
-			foreach ($OurAchivedData as $key => $value) {
-				$ourAchivedAmt+=$value->amountInFigure;
-			}
-
-		}
-
-		$achivedAmt=0;
-		if(isset($achivedData)&&!empty($achivedData))
-		{
-			foreach ($achivedData as $key => $value) {
-				$achivedAmt+=$value->amountInFigure;
-			}
-
-		}
-		$statusInfo->ourTarget = $ourTarget[0]->ourTarget;
-		$statusInfo->myTarget = $myTarget[0]->myTarget;
-		$statusInfo->achived = $achivedAmt;
-		$statusInfo->ourAchivedAmt = $ourAchivedAmt;
-		$statusInfo->pocwisedata = $pocwisedata;
-		$statusInfo->pocwisedataOther = $pocwisedataOther;
-		$status['data'] =$statusInfo;
+		$status['data'] =$countArray;
 		$status['statusCode'] = 200;
 		$status['flag'] = 'S';
 		$this->response->output($status,200);

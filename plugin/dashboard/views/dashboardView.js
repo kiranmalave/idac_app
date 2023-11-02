@@ -18,6 +18,7 @@ define([
     model: dashboardModel,
     tagName: "div",
     initialize: function (options) {
+
       this.customerModel = new customerSingleModel();
       var selfobj = this;
       if (this.customerID != "") {
@@ -36,7 +37,22 @@ define([
           selfobj.render();
         });
       }
-      console.log(this.customerModel);
+
+      this.model = new dashboardModel();
+      this.model.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler
+      }).done(function (res) {
+        var birthDate = selfobj.customerModel.get("birth_date");
+        if (birthDate != null && birthDate != "0000-00-00") {
+          selfobj.customerModel.set({ "birth_date": moment(birthDate).format("DD-MM-YYYY") });
+        }
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        selfobj.render();
+      });
+      console.log(this.model);
       // // Initialize Firebase with your configuration
       // var firebaseConfig = {
       //   // Your Firebase SDK configuration (apiKey, authDomain, projectId, etc.)
@@ -267,8 +283,8 @@ define([
     render: function () {
       
       var template = _.template(dashBord_temp);
-      var res = template({"customerModel":this.customerModel});
-      var res = template({"customerModel":this.customerModel});
+      var res = template({"customerModel":this.customerModel, "model":this.model});
+      // var res = template({"customerModel":this.customerModel});
       this.$el.html(res);
       $(".app_playground").append(this.$el);
       return this;
