@@ -2698,3 +2698,18 @@ i.material-icons.bigsize {
   color: black !important;
 
 }
+.comment-action p span{
+  color: rgb(0, 0, 0);
+  max-width: 568px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-bottom: 0;
+  width: auto;
+  display: block;
+  margin-top: 10px;
+}
+
+.comment-action .editButton {
+  right: 20px;
+}
