@@ -169,6 +169,12 @@ class TaskMaster extends CI_Controller
 		$join[2]['key1'] ="task_priority";
 		$join[2]['key2'] ="category_id";
 
+		$join[3]['type'] ="LEFT JOIN";
+		$join[3]['table']="project";
+		$join[3]['alias'] ="p";
+		$join[3]['key1'] ="project";
+		$join[3]['key2'] ="project_id";
+
 		$config["base_url"] = base_url() . "taskDetails";
 		$config["total_rows"] = $this->CommonModel->getCountByParameter('task_id', 'tasks', $wherec, $other);
 		$config["uri_segment"] = 2;

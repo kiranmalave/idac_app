@@ -45,6 +45,7 @@ define([
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, error: selfobj.onErrorHandler, data: { status: "active" }
       }).done(function (res) {
+        console.log("res..",JSON.stringify(res));
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".preloader").hide();
         // selfobj.render();
@@ -117,7 +118,7 @@ define([
              removeIds.push($(this).attr("data-customer_id"));
            }
          });
-   
+         $(".deleteAll").hide();
    
          $(".action-icons-div").hide();
          $(".memberlistcheck").click(function () {
@@ -161,6 +162,13 @@ define([
         });
         } else if (result.isDenied) {
         Swal.fire('Changes are not saved', '', 'info')
+        $('#customerList input:checkbox').each(function () {
+          if ($(this).is(":checked")) {
+            $(this).prop('checked', false);
+          }
+        });
+        $(".listCheckbox").find('.checkall').prop('checked', false);
+        $(".deleteAll").hide();
          }
       })
 
@@ -217,11 +225,15 @@ define([
       filterOption.clear().set(filterOption.defaults);
       $(".multiOptionSel").removeClass("active");
       $(".nav-item").removeClass("active");
-
+      
       // $("#textval").val("");
+      // $(".changeBox").val('default');
+        // $(".changeBox").selectpicker("refresh");
+
       $(".filterClear").val("");
       $(".hidetextval").hide();
       $('#textSearch option[value=company ]').attr('selected', 'selected');
+
       this.filterSearch(false);
     },
     loaduser: function () {

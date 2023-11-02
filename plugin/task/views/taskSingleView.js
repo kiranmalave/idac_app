@@ -7,6 +7,7 @@ define([
   "datepickerBT",
   'typeahead',
   'moment',
+  'Swal',
   "../views/repeatTaskCustomView",
   '../views/commentSingleView',
   '../views/historySingleView',
@@ -25,7 +26,7 @@ define([
   "../models/singleTaskModel",
   "../models/commentModel",
   "text!../templates/taskSingle_temp.html",
-], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, moment, repeatTaskCustomView, commentSingleView, historySingleView, customerSingleView, addAdminView, multiselectOptions, categorySingleView, dynamicFieldRender, customerCollection, projectCollection, slugCollection, adminCollection, taskCollection, commentCollection, readFilesView, singleTaskModel, commentModel, tasktemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, moment,Swal, repeatTaskCustomView, commentSingleView, historySingleView, customerSingleView, addAdminView, multiselectOptions, categorySingleView, dynamicFieldRender, customerCollection, projectCollection, slugCollection, adminCollection, taskCollection, commentCollection, readFilesView, singleTaskModel, commentModel, tasktemp) {
   var taskSingleView = Backbone.View.extend({
     model: singleTaskModel,
     enteredWatchersArray: [],
@@ -306,6 +307,7 @@ define([
           selfobj.getCommentList();
         }
       });
+
     },
     deleteAttachment: function (e) {
       let file_id = $(e.currentTarget).attr("data-file_id");
@@ -496,6 +498,8 @@ define([
           }
         });
       }
+
+      
     },
     refreshCust: function (e) {
       let selfobj = this;

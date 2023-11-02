@@ -112,6 +112,7 @@ define([
             removeIds.push($(this).attr("data-proposal_id"));
           }
         });
+        $(".deleteAll").hide();
   
         $(".action-icons-div").hide();
         $(".memberlistcheck").click(function () {
