@@ -15,7 +15,7 @@ define([
     '../../taxInvoice/views/taxInvoiceSingleView',
     'text!../templates/dashboard_temp.html',
   
-  ], function ($, _, Backbone, custom, Swal,multiselectOptions, dashboardModel, customerSingleView, customerSingleModel, projectSingleView,proposalView, taskViewDashbord,projectViewOther, taxInvoiceSingleView, dashBoard_temp, ) {
+  ], function ($, _, Backbone, custom, Swal,multiselectOptions, dashboardModel, customerSingleView, customerSingleModel, projectSingleView,proposalView, taskViewDashbord,projectViewOther, taxInvoiceSingleView, dashBoard_temp ) {
   
     var dashboardView = Backbone.View.extend({
       model: dashboardModel,
