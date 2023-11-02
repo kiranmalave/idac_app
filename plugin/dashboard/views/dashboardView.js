@@ -13,11 +13,9 @@ define([
 ], function ($, _, Backbone, custom, dashboardModel, filterUser, addUserView,taskView,customerCollection, projectCollection,dashBord_temp) {
 
   var dashboardView = Backbone.View.extend({
-
     model: dashboardModel,
     tagName: "div",
     initialize: function (options) {
-      //this.customerModel = new customerSingleModel();
       var selfobj = this;
       selfobj.render();
       new taskView({loadfrom:"dashboard"});
@@ -31,7 +29,6 @@ define([
       "click .tablinks": "tablinks",
       "click .openTable": "showTable",
       "click .backbutton": "backBtn",
-      
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
