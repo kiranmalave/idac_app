@@ -125,6 +125,8 @@ $(document).ready(function () {
     }
 
   });
+
+
   // handel all application tooltip setting
   //$('[data-toggle="tooltip"]').tooltip();
 
@@ -326,7 +328,7 @@ function showResponse(e, res, btnTxt) {
     $(e.currentTarget).html("<span>Error</span>");
     $(e.currentTarget).removeAttr("disabled");
   } else {
-    showNotification("alert-success", "Saved..", null, null, null, null);
+    showNotification("alert-success saveAlert", "Saved", null, null, null, null);
     $(e.currentTarget).html("<span>Saved</span>");
 
   }
