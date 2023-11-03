@@ -179,7 +179,6 @@ define([
       var selfobj = this;
       let tempID = $(e.currentTarget).val();
       var tempDetails = new proposalTempSingel();
-      // if (options.proposal_id != "") {
       tempDetails.set({ temp_id: tempID });
       tempDetails.fetch({
         headers: {
@@ -190,9 +189,8 @@ define([
         $(".popupLoader").hide();
         selfobj.model.set({ description: tempDetails.attributes.description });
         selfobj.render();
-
       });
-      // }
+      console.log(tempDetails);
     },
     saveconfirmProposal: function (e) {
       e.stopPropagation();

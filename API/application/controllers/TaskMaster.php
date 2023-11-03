@@ -1023,6 +1023,7 @@ class TaskMaster extends CI_Controller
 		if (isset($task_id) && !empty($task_id)) {
 			$wherec["record_id"] = '= (' . $task_id . ')';
 		}
+		// print_r($wherec);exit;
 		$join[0]['type'] = "LEFT JOIN";
 		$join[0]['table'] = "admin";
 		$join[0]['alias'] = "a";
@@ -1045,23 +1046,24 @@ class TaskMaster extends CI_Controller
 			$catoldval = $this->CommonModel->GetMasterDetails('categories','categoryName',$where);
 			$historyDetails[$key]->new_val = $catoldval[0]->categoryName;
 			}
-			if($value->col == "Assignee" ){
-				$wherea["adminID"] =$value->old_val;
-				$adminoldval = $this->CommonModel->GetMasterDetails('admin','name',$wherea);
-				$historyDetails[$key]->old_val = $adminoldval[0]->name;
-
-				$wherea["adminID"] =  $value->new_val;
-				$adminoldval = $this->CommonModel->GetMasterDetails('admin','name',$wherea);
-				$historyDetails[$key]->new_val = $adminoldval[0]->name;
+			if ($value->col == "Assignee") {
+				$wherea["adminID"] = $value->old_val;
+				$adminoldval = $this->CommonModel->GetMasterDetails('admin', 'name', $wherea);
+				$historyDetails[$key]->old_val = !empty($adminoldval) ? $adminoldval[0]->name : null;
+		
+				$wherea["adminID"] = $value->new_val;
+				$adminnewval = $this->CommonModel->GetMasterDetails('admin', 'name', $wherea);
+				$historyDetails[$key]->new_val = !empty($adminnewval) ? $adminnewval[0]->name : null;
 			}
-			if($value->col == "Customer"){
-				$whereu["customer_id"] =$value->old_val;
-				$custoldval = $this->CommonModel->GetMasterDetails('customer','company_name',$whereu);
-				$historyDetails[$key]->old_val = $custoldval[0]->company_name ;
-
-				$whereu["customer_id"] =  $value->new_val;
-				$custoldval = $this->CommonModel->GetMasterDetails('customer','company_name',$whereu);
-				$historyDetails[$key]->new_val = $custoldval[0]->company_name ;
+		
+			if ($value->col == "Customer") {
+				$whereu["customer_id"] = $value->old_val;
+				$custoldval = $this->CommonModel->GetMasterDetails('customer', 'company_name', $whereu);
+				$historyDetails[$key]->old_val = !empty($custoldval) ? $custoldval[0]->company_name : null;
+		
+				$whereu["customer_id"] = $value->new_val;
+				$custnewval = $this->CommonModel->GetMasterDetails('customer', 'company_name', $whereu);
+				$historyDetails[$key]->new_val = !empty($custnewval) ? $custnewval[0]->company_name : null;
 			}
 		}
 		$status['data'] = $historyDetails;

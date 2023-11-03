@@ -5,17 +5,19 @@ define([
     'custom',
     'Swal',
     "../../core/views/multiselectOptions",
+    "../../core/views/timeselectOptions",
     '../models/dashboardModel',
     '../views/customerSingleView',
     '../models/customerSingleModel',
+    '../../task/collections/historyCollection',
     '../../project/views/projectSingleView',
     '../../proposal/views/proposalView',
     '../../task/views/taskViewDashbord',
     '../../project/views/projectViewOther',
     '../../taxInvoice/views/taxInvoiceView',
     'text!../templates/dashboard_temp.html',
-  
-  ], function ($, _, Backbone, custom, Swal,multiselectOptions, dashboardModel, customerSingleView, customerSingleModel, projectSingleView,proposalView, taskViewDashbord,projectViewOther, taxInvoiceView, dashBoard_temp ) {
+
+  ], function ($, _, Backbone, custom, Swal,multiselectOptions, timeselectOptions, dashboardModel, customerSingleView, customerSingleModel, historyCollection, projectSingleView,proposalView, taskViewDashbord,projectViewOther, taxInvoiceView, dashBoard_temp ) {
   
     var dashboardView = Backbone.View.extend({
       model: dashboardModel,
@@ -25,6 +27,7 @@ define([
         this.customerID = customerID;
         this.multiselectOptions = new multiselectOptions();
         this.customerModel = new customerSingleModel();
+        this.timeselectOptions = new timeselectOptions();
         var selfobj = this;
         if (this.customerID != "") {
           this.customerModel.set({ customer_id: this.customerID });
@@ -42,6 +45,18 @@ define([
             selfobj.render();
           });
         }
+        this.historyList = new historyCollection();
+          this.historyList.fetch({
+            headers: {
+              'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+            }, error: selfobj.onErrorHandler, type: 'post', data: { getAll: 'Y', status: "active", task_id:customerID}
+          }).done(function (res) {
+            if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+            $(".popupLoader").hide();
+            selfobj.preparetime();
+            selfobj.render();
+          });
+          console.log(this.historyList);
       },
       events:
       {
@@ -61,6 +76,17 @@ define([
       },
       addOne: function (objectModel) {
         console.log(this.model);
+      },
+      preparetime: function () {
+        let selfobj = this;
+        var models = this.historyList.models;
+        for (var i = 0; i < models.length; i++) {
+          var model = models[i];
+          var timestamp = model.get('timestamp');
+          selfobj.timeselectOptions.displayRelativeTime(timestamp);
+          model.set({ "timeString": selfobj.timeselectOptions.displayRelativeTime(timestamp) });
+        }
+        this.render();
       },
       updateNote: function (e) {
         var note = $(e.currentTarget).val();
@@ -166,7 +192,7 @@ define([
   
       render: function () {
         var template = _.template(dashBoard_temp);
-        var res = template({"customerModel":this.customerModel});
+        var res = template({"customerModel":this.customerModel,"historyList":this.historyList.models});
         this.$el.html(res);
         $(".app_playground").append(this.$el);
         new taskViewDashbord({ action:"", customerID: this.customerID}); 

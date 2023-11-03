@@ -1,26 +1,38 @@
 <tr class="even pointer bg-<%=customerDetails.attributes.status%>">
   <td class="a-center">
     <div class="listCheckbox">
-        <input id="cAll_<%= customerDetails.attributes.customer_id %>" class="memberlistcheck chk-col-amber" data-customer_id="<%= customerDetails.attributes.customer_id %>" type="checkbox">
-        <label for="cAll_<%= customerDetails.attributes.customer_id %>">&nbsp;</label>
+      <input id="cAll_<%= customerDetails.attributes.customer_id %>" class="memberlistcheck chk-col-amber"
+        data-customer_id="<%= customerDetails.attributes.customer_id %>" type="checkbox">
+      <label for="cAll_<%= customerDetails.attributes.customer_id %>">&nbsp;</label>
     </div>
   </td>
   <!-- <td><%=customerDetails.attributes.customer_id%></td> -->
-  <td data-customer_id="customerDetails.attributes.customer_id" data-view="dashboard"><a target="_blank" href="#customerDashboard/<%= customerDetails.attributes.customer_id %>"><u><%=customerDetails.attributes.company_name%></u> <i class="material-icons">open_in_new</i></a></td>
-  <td><%=customerDetails.attributes.person_name%></td>
-  <td><%=customerDetails.attributes.email%></td>
-  <td><%=customerDetails.attributes.mobile_no%></td>
+  <td data-customer_id="customerDetails.attributes.customer_id" data-view="dashboard"><a target="_blank"
+      href="#customerDashboard/<%= customerDetails.attributes.customer_id %>"><u>
+        <%=customerDetails.attributes.company_name%>
+      </u> <i class="material-icons">open_in_new</i></a></td>
+  <td>
+    <%=customerDetails.attributes.person_name%>
+  </td>
+  <td>
+    <%=customerDetails.attributes.email%>
+  </td>
+  <td>
+    <%=customerDetails.attributes.mobile_no%>
+  </td>
   <td>
     <div class="dropdown ws-btn-default">
-      <button class=" ws-btn-default loadview dropdown-toggle  "  type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-     <i class="material-icons">more_vert</i>
+      <button class=" ws-btn-default loadview dropdown-toggle  " type="button" id="dropdownMenuButton"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="material-icons">more_vert</i>
       </button>
       <div class="dropdown-menu ws-select actionDropDrown" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData">Edit</a>
-        <a class="dropdown-item"  href="#projectpage/<%= customerDetails.attributes.customer_id %>">Project</a>
-        <a class="dropdown-item"  href="#proposalpage/<%= customerDetails.attributes.customer_id %>">Proposal</a>
+        <a class="dropdown-item loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-view="singleCustomerData">Edit</a>
+        <a class="dropdown-item" href="#project/<%= customerDetails.attributes.customer_id %>">Project</a>
+        <a class="dropdown-item" href="#proposalpage/<%= customerDetails.attributes.customer_id %>">Proposal</a>
       </div>
     </div>
-    
+
   </td>
 </tr>
