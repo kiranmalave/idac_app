@@ -71,10 +71,24 @@ class Proposal extends CI_Controller {
 			$wherec["t.client_id like"] = "'" . $company . "%'";
 		}
 
+		$join = array();
+		$join[0]['type'] ="LEFT JOIN";
+		$join[0]['table']="project";
+		$join[0]['alias'] ="p";
+		$join[0]['key1'] ="project_id";
+		$join[0]['key2'] ="project_id";
+
+		$join[1]['type'] ="LEFT JOIN";
+		$join[1]['table']="customer";
+		$join[1]['alias'] ="c";
+		$join[1]['key1'] ="client_id";
+		$join[1]['key2'] ="customer_id";
+
+		$wherec["c.status"] = 'IN ("active")';
 		$adminID = $this->input->post('SadminID');
 	
 		$config["base_url"] = base_url() . "proposalDetails";
-	    $config["total_rows"] = $this->CommonModel->getCountByParameter('proposal_id','proposal',$wherec,$other);
+	    $config["total_rows"] = $this->CommonModel->getCountByParameter('proposal_id','proposal',$wherec,$other,$join);
 	    $config["uri_segment"] = 2;
 	    $this->pagination->initialize($config);
 	    if(isset($curPage) && !empty($curPage)){
@@ -85,27 +99,13 @@ class Proposal extends CI_Controller {
 		$curPage = 0;
 		$page = 0;
 		}
+		
 		if($isAll=="Y"){
 			$join = array();
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,'','',$join,$other);	
 		}else{
-			
-			$join = array();
-			$join[0]['type'] ="LEFT JOIN";
-			$join[0]['table']="project";
-			$join[0]['alias'] ="p";
-			$join[0]['key1'] ="project_id";
-			$join[0]['key2'] ="project_id";
-
-			$join[1]['type'] ="LEFT JOIN";
-			$join[1]['table']="customer";
-			$join[1]['alias'] ="c";
-			$join[1]['key1'] ="client_id";
-			$join[1]['key2'] ="customer_id";
-			
 			$selectC = "t.*,c.company_name";
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,$config["per_page"],$page,$join,$other);
-
 		}
 		$status['data'] = $proposalDetails;
 		$status['paginginfo']["curPage"] = $curPage;
