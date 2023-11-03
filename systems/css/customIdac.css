@@ -2724,3 +2724,14 @@ small.comment-date.float-sm-right {
   align-items: center;
   gap: 4px;
 }
+
+.selectClientnoBorder .bootstrap-select {
+  border-bottom: none !important;
+  margin-top: 4px !important;
+}
+
+.selectClientnoBorder label.error {
+  margin-top: 0px;
+  position: absolute;
+  top: 31px;
+}

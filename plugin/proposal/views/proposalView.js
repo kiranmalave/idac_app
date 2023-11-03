@@ -79,8 +79,9 @@ define([
       },
   
       changeBox: function (e) {
+        
         var selVal = $(e.currentTarget).val();
-        $(".hidetextval").hide();
+        // $(".hidetextval").hide();
         $(".filterClear").val("");
         filterOption.set({ textval: '' });
         if (selVal == "mobile_no") {
