@@ -148,7 +148,7 @@ define([
       },
   
       saveprojectDetails: function (e) {
-
+        // alert("here");
 
         e.preventDefault();
         let selfobj = this;
@@ -180,7 +180,9 @@ define([
             }
             if (selfobj.loadFrom == "TaskSingleView") {
               scanDetails.refreshCust();
-            } else {
+            } else if (selfobj.loadFrom == "dashboard") {
+              handelClose(selfobj.toClose);
+            }else{
               scanDetails.filterSearch();
             }
             if (res.flag == "S") {
