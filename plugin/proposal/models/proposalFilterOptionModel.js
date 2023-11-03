@@ -7,6 +7,7 @@ define([
       idAttribute: "proposal_id",
       defaults: {
         textSearch: 'name',
+        project_id: null,
         textval: null,
         fromDate: null,
         toDate: null,

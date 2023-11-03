@@ -65,7 +65,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			$orderBy = "ORDER BY created_date DESC";
 		}
 
-		$sql = "SELECT i.*,invoiceID  FROM ".$this->db->dbprefix."invoice_header as i LEFT JOIN ".$this->db->dbprefix."admin as cm ON i.invoiceID  = invoiceID".$whereStr." ".$orderBy." ".$limitstr;
+		$sql = "SELECT i.*,company_name as customerName  FROM ".$this->db->dbprefix."invoice_header as i LEFT JOIN ".$this->db->dbprefix."customer as cm ON i.customer_id  = cm.customer_id".$whereStr." ".$orderBy." ".$limitstr;
 		//$sql = "SELECT * FROM ".$this->db->dbprefix."invoice_header ".$whereStr." ".$orderBy." ".$limitstr;
 		
 		$query = $this->db->query($sql);
@@ -82,7 +82,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		}
 		
 		$this->db->select($select);
-		$this->db->from('invoiceHeader');
+		$this->db->from('invoice_header');
 		$this->db->where($where);
 		$query = $this->db->get();
 		$sqlerror = $this->db->error();
@@ -98,7 +98,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		}
 		
 		$this->db->select($select);
-		$this->db->from('invoiceLine');
+		$this->db->from('invoice_line');
 		$this->db->where($where);
 		$query = $this->db->get();
 		$sqlerror = $this->db->error();
@@ -114,7 +114,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			return false;
 		}
 		$this->db->where($where);
-		$res = $this->db->update("invoiceHeader",$data);
+		$res = $this->db->update("invoice_header",$data);
 		$sqlerror = $this->db->error();
 		$this->errorlogs->checkDBError($sqlerror,dirname(__FILE__),__LINE__,__METHOD__);
 		return $res;
@@ -122,9 +122,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 	public function createTaxInvoiceInfo($data){
 
-		$res = $this->db->insert("invoiceHeader",$data);
+		$res = $this->db->insert("invoice_header",$data);
 		$sqlerror = $this->db->error();
 		$this->errorlogs->checkDBError($sqlerror,dirname(__FILE__),__LINE__,__METHOD__);
+		//print $this->db->last_query();
 		return $this->db->insert_id();
 	}
 	
@@ -158,7 +159,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     		return false;
     	}
 		$this->db->where($where);
-		$res = $this->db->update("invoiceLine",$data);
+		$res = $this->db->update("invoice_line",$data);
 		$sqlerror = $this->db->error();
 		$this->errorlogs->checkDBError($sqlerror,dirname(__FILE__),__LINE__,__METHOD__);
 		return $res;
@@ -166,9 +167,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 	public function createInvoiceLineInfo($data){
 
-		$res = $this->db->insert("invoiceLine",$data);
+		$res = $this->db->insert("invoice_line",$data);
 		$sqlerror = $this->db->error();
 		$this->errorlogs->checkDBError($sqlerror,dirname(__FILE__),__LINE__,__METHOD__);
+		//print $this->db->last_query();
 		return $this->db->insert_id();
 	}
 
@@ -180,7 +182,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			$this->db->where_in("srNo",$whereIn);
 		}
 		$this->db->where($where);
-		$res = $this->db->delete("invoiceLine");
+		$res = $this->db->delete("invoice_line");
 			   
 		$sqlerror = $this->db->error();
 		$this->errorlogs->checkDBError($sqlerror,dirname(__FILE__),__LINE__,__METHOD__);

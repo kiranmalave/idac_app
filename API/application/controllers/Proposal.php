@@ -42,6 +42,7 @@ class Proposal extends CI_Controller {
 		$order = $this->input->post('order');
 		$statuscode = $this->input->post('status');
 		$filterSName = $this->input->post('filterSName');
+		$project_id = $this->input->post('project_id');
 		
 		$config = array();
 		if(!isset($orderBy) || empty($orderBy)){
@@ -53,13 +54,16 @@ class Proposal extends CI_Controller {
 		$config = $this->config->item('pagination');
 		$wherec = $join = array();
 		if(isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)){
-
-		$wherec["$textSearch like  "] = "'".$textval."%'";
+			$wherec["$textSearch like  "] = "'".$textval."%'";
 		}
 
 		if(isset($statuscode) && !empty($statuscode)){
 		$statusStr = str_replace(",",'","',$statuscode);
 		$wherec["t.status"] = 'IN ("'.$statusStr.'")';
+		}
+
+		if(isset($project_id) && !empty($project_id)){
+			$wherec["t.project_id = "] = $project_id;
 		}
 		
 		$adminID = $this->input->post('SadminID');
