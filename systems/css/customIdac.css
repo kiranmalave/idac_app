@@ -1366,9 +1366,10 @@ input::-webkit-inner-spin-button {
   border-radius: 50%;
   height: 40px;
   width: 40px;
-  display: flex;
+  display: flex !important;
   justify-content: center;
   align-items: center;
+  margin-top: -10px;
 }
 .addHover:hover{
   background: #ffc100;
