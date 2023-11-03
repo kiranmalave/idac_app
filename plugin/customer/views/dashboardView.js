@@ -127,7 +127,7 @@ define([
         $("#"+ctab).show();
         if(ctab =="projects"){
           $("#projectListOther").empty();
-          new projectViewOther({ action:""});
+          new projectViewOther({ action:"", customerID: selfobj.customerID});
         }else if(ctab =="task"){
           new taskViewDashbord({ action:"", customerID: selfobj.customerID});
         }else if(ctab == "invoice"){

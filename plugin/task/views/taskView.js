@@ -22,21 +22,21 @@ define([
 ], function ($, _, Backbone, datepickerBT, moment, Swal, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, projectCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
 
   var taskView = Backbone.View.extend({
-    loadfrom:null,
-    searchtask:null,
+    loadfrom: null,
+    searchtask: null,
     initialize: function (options) {
       this.toClose = "taskFilterView";
       var selfobj = this;
       this.filterCount = null;
-      if(options.loadfrom != undefined){
+      if (options.loadfrom != undefined) {
         selfobj.loadfrom = options.loadfrom;
         permission = ROLE['task'];
-      }else{
+      } else {
         var mname = Backbone.history.getFragment();
-      permission = ROLE[mname];
+        permission = ROLE[mname];
       }
       $(".profile-loader").show();
-      
+
       readyState = true;
       this.render();
       this.filterCount = null;
@@ -233,7 +233,7 @@ define([
           } else {
             handelClose("historySingleView");
           }
-          new taskSingleView({ task_id: task_id,searchtask: selfobj });
+          new taskSingleView({ task_id: task_id, searchtask: selfobj });
           break;
 
         }
@@ -298,10 +298,10 @@ define([
       $("#clist").find(".up").removeClass("active");
       $("#clist").find(".down").removeClass("active");
       // Find the <li> element with the id "filterOption"
-      if($("#filterOption").length){
+      if ($("#filterOption").length) {
         $("#filterOption").find('span.taskBadge').remove();
       }
-      
+
     },
     loaduser: function () {
       var memberDetails = new singlememberDataModel();
@@ -331,10 +331,10 @@ define([
       this.collection.forEach(this.addOne, this);
     },
     filterRender: function (e) {
-      var isexits = checkisoverlay(this.toClose);
-      if (!isexits) {
-        var source = taskFilterTemp;
-        var template = _.template(source);
+      // var isexits = checkisoverlay(this.toClose);
+      // if (!isexits) {
+      var source = taskFilterTemp;
+      var template = _.template(source);
 
         var cont = $("<div>");
         cont.html(template({ "adminList": this.adminList.models, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "projectList":this.projectList.models }));
@@ -359,18 +359,18 @@ define([
         */
         $(e.currentTarget).addClass("active");
 
-      } else {
-        // check here we alreay open it or not. if open toggle that popup here
-        var isOpen = $(".ws_filterOptions").hasClass("open");
-        if (isOpen) {
-          $(".ws_filterOptions").removeClass("open");
-          $(e.currentTarget).removeClass("active");
-          return;
-        } else {
-          $(e.currentTarget).addClass("active");
-          // this function will handel other exiting open popus
-        }
-      }
+      // } else {
+      //   // check here we alreay open it or not. if open toggle that popup here
+      //   var isOpen = $(".ws_filterOptions").hasClass("open");
+      //   if (isOpen) {
+      //     $(".ws_filterOptions").removeClass("open");
+      //     $(e.currentTarget).removeClass("active");
+      //     return;
+      //   } else {
+      //     $(e.currentTarget).addClass("active");
+      //     // this function will handel other exiting open popus
+      //   }
+      // }
       this.setValues();
       this.setupFilter();
       rearrageOverlays("Filter", this.toClose, "small");
@@ -496,13 +496,13 @@ define([
         }
         selfobj.setValues();
       });
-      if($("#filterOption").length){
+      if ($("#filterOption").length) {
         if (appliedFilterCount > 0) {
           $("#filterOption").addClass("active");
-        }else {
+        } else {
           $("#filterOption").removeClass("active");
         }
-      
+
         $("#filterOption").find('span.taskBadge').remove();
         if (appliedFilterCount != 0) {
           $("#filterOption").append("<span class='badge bg-pink taskBadge'>" + appliedFilterCount + "</span>");
@@ -619,10 +619,10 @@ define([
     render: function () {
       var template = _.template(taskTemp);
       this.$el.html(template({ closeItem: this.toClose, }));
-      console.log("this.loadfrom",this.loadfrom);
-      if(this.loadfrom != null){
+      console.log("this.loadfrom", this.loadfrom);
+      if (this.loadfrom != null) {
         $("body").find("#dasboradTaskHolder").append(this.$el);
-      }else{
+      } else {
         $(".app_playground").append(this.$el);
         setToolTip();
       }

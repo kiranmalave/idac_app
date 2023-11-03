@@ -72,7 +72,7 @@ define([
       this.projectList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active", company: customer_id }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".preloader").hide();
