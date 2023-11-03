@@ -17,20 +17,22 @@ define([
     var proposalView = Backbone.View.extend({
       loadFrom:null,
       initialize: function (options) {
+        $(".profile-loader").show();
         this.toClose = "proposalFilterView";
+        filterOption = new proposalFilterOptionModel();
         var selfobj = this;
-        // alert(options.loadFrom);
         if(options.loadFrom != undefined){
           selfobj.loadFrom = options.loadFrom;
+          filterOption.set({ project_id: options.projectID });
+          permission = ROLE['proposal'];
+          console.log(filterOption);
+        }else{
+          var mname = Backbone.history.getFragment();
+          permission = ROLE[mname];
         }
-        //
-        $(".profile-loader").show();
-        var mname = Backbone.history.getFragment();
-        permission = ROLE[mname];
-        //$("#"+mname).addClass("active");
         readyState = true;
         this.render();
-        filterOption = new proposalFilterOptionModel();
+        
         searchproposal = new proposalCollection();
         searchproposal.fetch({
           headers: {

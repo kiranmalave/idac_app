@@ -18,24 +18,25 @@ define([
   'text!../templates/taskRow.html',
   'text!../templates/task_temp.html',
   'text!../templates/taskFilterOption_temp.html',
+
 ], function ($, _, Backbone, datepickerBT, moment, Swal, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, projectCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
 
   var taskView = Backbone.View.extend({
-    loadfrom:null,
-    searchtask:null,
+    loadfrom: null,
+    searchtask: null,
     initialize: function (options) {
       this.toClose = "taskFilterView";
       var selfobj = this;
       this.filterCount = null;
-      if(options.loadfrom != undefined){
+      if (options.loadfrom != undefined) {
         selfobj.loadfrom = options.loadfrom;
         permission = ROLE['task'];
-      }else{
+      } else {
         var mname = Backbone.history.getFragment();
-      permission = ROLE[mname];
+        permission = ROLE[mname];
       }
       $(".profile-loader").show();
-      
+
       readyState = true;
       this.render();
       this.filterCount = null;
@@ -155,27 +156,21 @@ define([
       filterOption.set({ textSearch: usernametxt });
     },
     changeStatusListElement: function (e) {
-      Swal.fire({
-        title: 'Do you want to delete ?',
-        showDenyButton: true,
-        showCancelButton: false,
-        confirmButtonText: 'Yes',
-        denyButtonText: `No`,
-      }).then((result) => {
-        /* Read more about isConfirmed, isDenied below */
-         if (result.isConfirmed) {
-         Swal.fire('Deleted!', '', 'success')
       var selfobj = this;
       var removeIds = [];
       var status = $(e.currentTarget).attr("data-action");
-      var action = "changeStatus";
+      if (status == "delete") {
+        var r = confirm("Are you sure to delete task?");
+        if (r == false) {
+          return false;
+        }
+        var action = "changeStatus";
+      }
       $('#clist input:checkbox').each(function () {
         if ($(this).is(":checked")) {
           removeIds.push($(this).attr("data-task_id"));
         }
       });
-      $(".deleteAll").hide();
-
       $(".action-icons-div").hide();
       $(".memberlistcheck").click(function () {
         if ($(this).is(":checked")) {
@@ -184,7 +179,6 @@ define([
           $(".action-icons-div").hide(200);
         }
       });
-
       var idsToRemove = removeIds.toString();
       if (idsToRemove == '') {
         alert("Please select at least one record.");
@@ -206,29 +200,23 @@ define([
           if (res.flag == "F")
             alert(res.msg);
 
+
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           if (res.flag == "S") {
-            selfobj.filterSearch();
+            selfobj.collection.fetch({
+              headers: {
+                'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+              }, error: selfobj.onErrorHandler
+            }).done(function (res) {
+              if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+              $(".profile-loader").hide();
+              selfobj.filterSearch();
+            });
           }
-          setTimeout(function () {
-            $(e.currentTarget).html(status);
-          }, 3000);
           $(".deleteAll").hide();
-        }
-        
-      });
-
-     } else if (result.isDenied) {
-      Swal.fire('Changes are not saved', '', 'info')
-      $('#clist input:checkbox').each(function () {
-        if ($(this).is(":checked")) {
-          $(this).prop('checked', false);
+          $('.checkall').prop('checked', false);
         }
       });
-      $(".listCheckbox").find('.checkall').prop('checked', false);
-      $(".deleteAll").hide();
-    }
-    })
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
@@ -245,7 +233,7 @@ define([
           } else {
             handelClose("historySingleView");
           }
-          new taskSingleView({ task_id: task_id,searchtask: selfobj });
+          new taskSingleView({ task_id: task_id, searchtask: selfobj });
           break;
 
         }
@@ -310,10 +298,10 @@ define([
       $("#clist").find(".up").removeClass("active");
       $("#clist").find(".down").removeClass("active");
       // Find the <li> element with the id "filterOption"
-      if($("#filterOption").length){
+      if ($("#filterOption").length) {
         $("#filterOption").find('span.taskBadge').remove();
       }
-      
+
     },
     loaduser: function () {
       var memberDetails = new singlememberDataModel();
@@ -343,10 +331,10 @@ define([
       this.collection.forEach(this.addOne, this);
     },
     filterRender: function (e) {
-      var isexits = checkisoverlay(this.toClose);
-      if (!isexits) {
-        var source = taskFilterTemp;
-        var template = _.template(source);
+      // var isexits = checkisoverlay(this.toClose);
+      // if (!isexits) {
+      var source = taskFilterTemp;
+      var template = _.template(source);
 
         var cont = $("<div>");
         cont.html(template({ "adminList": this.adminList.models, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "projectList":this.projectList.models }));
@@ -371,18 +359,18 @@ define([
         */
         $(e.currentTarget).addClass("active");
 
-      } else {
-        // check here we alreay open it or not. if open toggle that popup here
-        var isOpen = $(".ws_filterOptions").hasClass("open");
-        if (isOpen) {
-          $(".ws_filterOptions").removeClass("open");
-          $(e.currentTarget).removeClass("active");
-          return;
-        } else {
-          $(e.currentTarget).addClass("active");
-          // this function will handel other exiting open popus
-        }
-      }
+      // } else {
+      //   // check here we alreay open it or not. if open toggle that popup here
+      //   var isOpen = $(".ws_filterOptions").hasClass("open");
+      //   if (isOpen) {
+      //     $(".ws_filterOptions").removeClass("open");
+      //     $(e.currentTarget).removeClass("active");
+      //     return;
+      //   } else {
+      //     $(e.currentTarget).addClass("active");
+      //     // this function will handel other exiting open popus
+      //   }
+      // }
       this.setValues();
       this.setupFilter();
       rearrageOverlays("Filter", this.toClose, "small");
@@ -508,13 +496,13 @@ define([
         }
         selfobj.setValues();
       });
-      if($("#filterOption").length){
+      if ($("#filterOption").length) {
         if (appliedFilterCount > 0) {
           $("#filterOption").addClass("active");
-        }else {
+        } else {
           $("#filterOption").removeClass("active");
         }
-      
+
         $("#filterOption").find('span.taskBadge').remove();
         if (appliedFilterCount != 0) {
           $("#filterOption").append("<span class='badge bg-pink taskBadge'>" + appliedFilterCount + "</span>");
@@ -631,10 +619,10 @@ define([
     render: function () {
       var template = _.template(taskTemp);
       this.$el.html(template({ closeItem: this.toClose, }));
-      console.log("this.loadfrom",this.loadfrom);
-      if(this.loadfrom != null){
+      console.log("this.loadfrom", this.loadfrom);
+      if (this.loadfrom != null) {
         $("body").find("#dasboradTaskHolder").append(this.$el);
-      }else{
+      } else {
         $(".app_playground").append(this.$el);
         setToolTip();
       }

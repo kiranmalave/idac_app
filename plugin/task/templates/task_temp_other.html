@@ -2,34 +2,22 @@
     <div class="header dashbordTask">
         <h2>Tasks</h2>
         <ul>
-            <!-- <li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <i class="material-icons">filter_list</i> </a>
-                <ul class="dropdown-menu slideUp ">
-                    <li><a href="javascript:void(0);">Action</a></li>
-                    <li><a href="javascript:void(0);">Another action</a></li>
-                    <li><a href="javascript:void(0);">Something else</a></li>
-                </ul>
-            </li> -->
             <li class="loadview nav-item addHover" data-view="singletaskData"  data-item="taskSingleView" data-toggle="tooltip"
                 data-placement="top" title="Add">
                 <span class="material-icons">add</span>
-        <!-- <button type="button" class="btn btn-info loadview" data-target="#myModal" data-taskID="" data-show="singletaskData"data-toggle="modal">Add Task Details</button> -->
             </li>
             <li id="filterOption" class="nav-item dropdown addHover" data-item="<%=closeItem%>" data-toggle="tooltip" data-placement="top"
                 title="Filter">
-                <!-- <span class="material-icons">filter</span> -->
                 <span class="material-symbols-outlined">
                   filter_alt
                 </span>
-                <!-- <button type="button" class="btn btn-info loadview" data-target="#myModal" data-taskID="" data-show="singletaskData"data-toggle="modal">Add Task Details</button> -->
             </li>
         </ul>
     </div>
     <div class="body">
-        <ul id="taskListOther" class="row list-unstyled c_review">
-            
-        </ul>
-        
+        <ul id="taskListOther" class="row list-unstyled c_review"></ul> 
     </div>
+    <!-- paggination -->
     <div class="footer row">
         <div class="col-sm-5">
           <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
@@ -41,7 +29,8 @@
             </ul>
           </div>
         </div>
-    </div>
+      </div>
+      <!-- paggination -->
 </div>
 <div class="ws_filterOptions">
   

@@ -72,7 +72,7 @@ define([
       this.projectList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active", company: customer_id }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".preloader").hide();
@@ -126,13 +126,14 @@ define([
       let selfobj = this;
       let task_id = $(e.currentTarget).attr("data-task_id");
       Swal.fire({
-        title: 'Are you sure you want to  delete?',
+        title: 'Are you sure task is Complete?',
         showDenyButton: true,
         showCancelButton: false,
         confirmButtonText: 'Mark As Completed',
         denyButtonText: `Cancel`,
       }).then((result) => {
         if(result.isConfirmed){
+          $(e.currentTarget).prop('disabled', true);
           $.ajax({
             url: APIPATH + 'taskDashboard/status',
             method: 'POST',
@@ -390,7 +391,6 @@ define([
       if (!isexits) {
         var source = taskFilterTemp;
         var template = _.template(source);
-
         var cont = $("<div>");
         cont.html(template({ "adminList": this.adminList.models, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "projectList": this.projectList.models }));
         cont.attr('id', this.toClose);

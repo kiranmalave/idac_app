@@ -22,7 +22,7 @@
             <select id="customer_id" name="customer_id" class="form-control dropval ws-select show-tick" title="Select Customer">
               <option value="">Select Customer</option>
               <% _.each(model.customerList, function(model1) { %>
-                <option <% if(model1.customer_id==model.customer_id ){ %>selected <% } %>value="<%=model1.customer_id%>"><%=model1.first_name%></option>
+                <option <% if(model1.customer_id==model.customer_id ){ %>selected <% } %>value="<%=model1.customer_id%>"><%=model1.company_name%></option>
               <%}); %>
           </select>
           </div>
