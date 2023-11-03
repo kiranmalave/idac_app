@@ -37,6 +37,7 @@ define([
       this.dynamicData = null;
       this.toClose = "taskSingleView";
       this.customer_id = options.customerID;
+      let customer_id = this.customer_id
       this.tagID = null;
       var selfobj = this;
       $(".popuploader").show();
@@ -84,13 +85,13 @@ define([
       this.projectList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active", company: customer_id}
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
         selfobj.render();
       });
-
+      console.log(this.projectList);
       $(".popuploader").show();
       this.categoryList = new slugCollection();
       this.categoryList.fetch({
@@ -149,6 +150,7 @@ define([
       "click .scroll": "scroll",
       "click .editBtn": "editComment",
       "click .deleteBtn": "deleteComment",
+      "change .changeClient": "selectClient",
     },
     attachEvents: function () {
       // Detach previous event bindings
@@ -183,6 +185,25 @@ define([
       this.$el.on('click', '.editBtn', this.editComment.bind(this));
       this.$el.off('click', '.deleteBtn', this.deleteComment);
       this.$el.on('click', '.deleteBtn', this.deleteComment.bind(this));
+      this.$el.off('change', '.changeClient', this.selectClient);
+      this.$el.on('change', '.changeClient', this.selectClient.bind(this));
+    },
+    selectClient: function(e){
+      let selfobj = this;
+      e.stopPropagation();
+      var client_id = $(e.currentTarget).val();
+      if(client_id != null){
+        this.projectList.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active", company: client_id}
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".popupLoader").hide();
+          selfobj.render();
+        });
+        console.log(this.projectList);
+      }      
     },
     showCommentBox: function (e) {
       let selfobj = this;
@@ -463,6 +484,9 @@ define([
       e.preventDefault();
       let selfobj = this;
       var task_id = this.model.get("task_id");
+      if(this.customer_id != null){
+        this.model.set({customer_id:this.customer_id});
+      }
       let isNew = $(e.currentTarget).attr("data-action");
       if (permission.edit != "yes") {
         alert("You dont have permission to edit");
