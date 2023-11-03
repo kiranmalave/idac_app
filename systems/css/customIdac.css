@@ -1363,6 +1363,13 @@ input::-webkit-inner-spin-button {
 	-o-transition: all 0.40s ease-in-out;
 	transition: all 0.40s ease-in-out;
   cursor: pointer;
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  margin-top: -10px;
 }
 .addHover:hover{
   background: #ffc100;
@@ -2691,4 +2698,29 @@ i.material-icons.bigsize {
   right: -14px !important;
   color: black !important;
 
+}
+.comment-action p span{
+  color: rgb(0, 0, 0);
+  max-width: 568px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-bottom: 0;
+  width: auto;
+  display: block;
+  margin-top: 10px;
+}
+
+.comment-action .editButton {
+  right: 20px;
+}
+.comment-actionHeading_left span {
+  color: #7a7a7a !important;
+}
+
+small.comment-date.float-sm-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
 }
