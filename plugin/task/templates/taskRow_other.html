@@ -11,14 +11,16 @@
       <div class="comment-actionHeading_left">
         <h5 class="loadview textwrap c_name" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"><%=taskDetails.attributes.subject%></h5> 
         
-
-        <% if(taskDetails.attributes.projectNumb == null) {%>
+        <span>
+          <% if(taskDetails.attributes.projectNumb == null) {%>
             -
            <%}else{%>
             <%=taskDetails.attributes.projectNumb%>
               <!-- <div class="badge badge-secondary"> <%=taskDetails.attributes.projectName%> </div> -->
               
           <%}%>
+        </span>
+        
           <!-- <h6>Project Name: <%=taskDetails.attributes.projectName%></h6> -->
       </div>
       <div class="comment-actionHeading_right">
@@ -26,20 +28,20 @@
     </div>
     <p class="c_msg m-b-0 " style="display:none; margin-bottom:0 !important;"> <%=taskDetails.attributes.description%></p>
     <!-- <div class="badge badge-danger"> <%=taskDetails.attributes.priority_slug%></div> -->
-    <% if(taskDetails.attributes.priority_slug=='High' ) { %><span class="badge badge-danger">High</span>
-      <% }else if(askDetails.attributes.priority_slug=='Highest'){ %><span class="badge badge-danger">Highest</span>
-      <%}else if(askDetails.attributes.priority_slug=='Medium'){%><span class="badge badge-yellow">Medium</span><%}
-      else if(askDetails.attributes.priority_slug=='Low'){%><span class="badge badge-light">Low</span><%}
+    <% if(taskDetails.attributes.priority_slug=='High' ) { %><span class="badge badge-danger" data-toggle="tooltip" data-placement="top" title="Priority">High</span>
+      <% }else if(askDetails.attributes.priority_slug=='Highest'){ %><span class="badge badge-danger" data-toggle="tooltip"  data-placement="top" title="Priority">Highest</span>
+      <%}else if(askDetails.attributes.priority_slug=='Medium'){%><span class="badge badge-yellow" data-toggle="tooltip"  data-placement="top" title="Priority">Medium</span><%}
+      else if(askDetails.attributes.priority_slug=='Low'){%><span class="badge badge-light" data-toggle="tooltip"  data-placement="top" title="Priority">Low</span><%}
       %>
 
     <!-- <span class="m-l-10 badge badge-success">  <%=taskDetails.attributes.status_slug%></span> -->
-    <% if(taskDetails.attributes.status_slug =='Complete' ) { %><span class="badge badge-success">Completed</span>
-      <% }else if(taskDetails.attributes.status_slug=='In progress'){ %><span class="badge badge-info">In progress</span>
-      <%}else if(taskDetails.attributes.priority_slug=='To-do'){%><span class="badge badge-primary">To-do</span><%}
+    <% if(taskDetails.attributes.status_slug =='Complete' ) { %><span class="badge badge-success" data-toggle="tooltip"  data-placement="top" title="Status">Completed</span>
+      <% }else if(taskDetails.attributes.status_slug=='In progress'){ %><span class="badge badge-info" data-toggle="tooltip"  data-placement="top" title="Status"> In progress</span>
+      <%}else if(taskDetails.attributes.priority_slug=='To-do'){%><span class="badge badge-primary" data-toggle="tooltip"  data-placement="top" title="Status">To-do</span><%}
       %>
-      <span class="badge badge-info"> <%=taskDetails.attributes.name%> </span>
+      <span class="badge badge-info" data-toggle="tooltip"  data-placement="top" title="Assignee"> <%=taskDetails.attributes.name%> </span>
       
-    <small class="comment-date float-sm-right"><%=taskDetails.attributes.due_date%>   </small>
+    <small class="comment-date float-sm-right"><span><i class="material-icons">date_range</i></span><%=taskDetails.attributes.due_date%>   </small>
 
     <button type="button" class="ws-btn-default loadview editButton" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"  data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
 

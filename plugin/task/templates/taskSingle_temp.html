@@ -193,7 +193,7 @@
                     <div class="icon-left">
                         <div class="ws-icon">
                             <span class="input-group-addon lg" style="margin-top:8px;">
-                                <i class="material-icons">group</i>
+                                <i class="material-icons">account_balance</i>
                             </span>
                         </div>
                     </div>
@@ -243,7 +243,7 @@
                                         
                                         <select id="project_id" name="project_id" class="form-control dropval ws-select show-tick mt-2" title="Select Project" data-live-search="true"data-live-search="true">
                                             <% _.each(projectList, function(model1) { %>
-                                                    <option <% if(model1.attributes.project_id == model.project ) { %>selected
+                                                    <option <% if(model1.attributes.project_id == model.project_id ) { %>selected
                                                         <%}%>value="<%=model1.attributes.project_id%>"><%=model1.attributes.project_name%></option>
                                              <%}); %>
                                         </select>
@@ -256,7 +256,9 @@
                 <div class="list-row">
                     <div class="icon-left">
                         <div class="ws-icon">
-                            &nbsp;
+                            <span class="input-group-addon lg" style="margin-top:8px;">
+                                <i class="material-icons">group</i>
+                            </span>
                         </div>
                     </div>
                     <div class="right-layout">

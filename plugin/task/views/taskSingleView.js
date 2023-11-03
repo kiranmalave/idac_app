@@ -114,6 +114,7 @@ define([
         selfobj.render();
       });
       this.getCommentList()
+      console.log(this.model);
     },
     getCommentList: function () {
       let selfobj = this;
@@ -131,7 +132,7 @@ define([
           selfobj.render();
         });
       }
-      console.log(this.commentList);
+      
     },
     events: {
       "click .saveTaskDetails": "saveTaskDetails",
