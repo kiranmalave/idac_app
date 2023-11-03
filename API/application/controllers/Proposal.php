@@ -43,6 +43,7 @@ class Proposal extends CI_Controller {
 		$statuscode = $this->input->post('status');
 		$filterSName = $this->input->post('filterSName');
 		$project_id = $this->input->post('project_id');
+		$company = $this->input->post('company');
 		
 		$config = array();
 		if(!isset($orderBy) || empty($orderBy)){
@@ -65,7 +66,11 @@ class Proposal extends CI_Controller {
 		if(isset($project_id) && !empty($project_id)){
 			$wherec["t.project_id = "] = $project_id;
 		}
-		
+
+		if (isset($company) && !empty($company)) {
+			$wherec["t.client_id like"] = "'" . $company . "%'";
+		}
+
 		$adminID = $this->input->post('SadminID');
 	
 		$config["base_url"] = base_url() . "proposalDetails";
