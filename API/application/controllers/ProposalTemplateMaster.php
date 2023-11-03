@@ -77,9 +77,9 @@ class ProposalTemplateMaster extends CI_Controller
 			$page = 0;
 		}
 		if ($isAll == "Y") {
-			$pagesDetails = $this->CommonModel->GetMasterListDetails($selectC = '', 'proposal_template', $wherec, '', '', $join, $other);
+			$pagesDetails = $this->CommonModel->GetMasterListDetails($selectC = '*', 'proposal_template', $wherec, '', '', $join, $other);
 		} else {
-			$pagesDetails = $this->CommonModel->GetMasterListDetails($selectC = '', 'proposal_template', $wherec, $config["per_page"], $page, $join, $other);
+			$pagesDetails = $this->CommonModel->GetMasterListDetails($selectC = '*', 'proposal_template', $wherec, $config["per_page"], $page, $join, $other);
 		}
 
 		$status['data'] = $pagesDetails;

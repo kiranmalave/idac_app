@@ -70,62 +70,16 @@
                   </ul>
               </div>
               <div class="body">
+                <% _.each(historyList, function(model1) { %>
                   <div class="streamline b-l b-accent">
-                      <div class="sl-item">
-                          <div class="sl-content">
-                              <div class="text-muted-dk">Just now</div>
-                              <p>Finished task <a href="" class="text-info">#features 4</a>.</p>
-                          </div>
-                      </div>
-                      <div class="sl-item b-info">
-                          <div class="sl-content">
-                              <div class="text-muted-dk">11:30</div>
-                              <p><a href="">@Jessi</a> retwit your post</p>
-                          </div>
-                      </div>
-                      <div class="sl-item b-primary b-l">
-                          <div class="sl-content">
-                              <div class="text-muted-dk">10:30</div>
-                              <p>Call to customer <a href="" class="text-info">Jacob</a> and discuss the detail.</p>
-                          </div>
-                      </div>
-                      <div class="sl-item b-warning">
-                          <div class="sl-content">
-                              <div class="text-muted-dk">3 days ago</div>
-                              <p><a href="" class="text-info">Jessi</a> commented your post.</p>
-                          </div>
-                      </div>
-                      <div class="sl-item b-primary b-l">
-                          <div class="sl-content">
-                              <div class="text-muted-dk">10:30</div>
-                              <p>Call to customer <a href="" class="text-info">Jacob</a> and discuss the detail.</p>
-                          </div>
-                      </div>
-                      <div class="sl-item b-primary b-l">
-                          <div class="sl-content">
-                              <div class="text-muted-dk">10:30</div>
-                              <p>Call to customer <a href="" class="text-info">Jacob</a> and discuss the detail.</p>
-                          </div>
-                      </div>
-                      <div class="sl-item b-warning">
-                          <div class="sl-content">
-                              <div class="text-muted-dk">3 days ago</div>
-                              <p><a href="" class="text-info">Jessi</a> commented your post.</p>
-                          </div>
-                      </div>
-                      <div class="sl-item b-primary b-l">
-                          <div class="sl-content">
-                              <div class="text-muted-dk">10:30</div>
-                              <p>Call to customer <a href="" class="text-info">Jacob</a> and discuss the detail.</p>
-                          </div>
-                      </div>
-                      <div class="sl-item b-primary b-l">
-                          <div class="sl-content">
-                              <div class="text-muted-dk">10:30</div>
-                              <p>Call to customer <a href="" class="text-info">Jacob</a> and discuss the detail.</p>
-                          </div>
-                      </div>                            
+                    <div class="sl-item">
+                        <div class="sl-content">
+                            <div class="text-muted-dk"><%=model1.attributes.timeString%></div>
+                            <p><%=model1.attributes.record_type%><a href="" class="text-info"> <%=model1.attributes.col%>  <%=model1.attributes.new_val%></a>.</p>
+                        </div>
+                    </div>                            
                   </div>
+                <%})%>
               </div>
           </div>
       </div>

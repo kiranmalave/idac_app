@@ -43,7 +43,8 @@ class TaxInvoice extends CI_Controller {
 		$orderBy = $this->input->post('orderBy');
 		$order = $this->input->post('order');
 		$filterCName = $this->input->post('filterCName');
-		
+		$cutomerID = $this->input->post('customer_id');
+
 		$config = array();
 		if(!isset($orderBy) || empty($orderBy)){
 			$orderBy = "invoiceNumber";
@@ -60,6 +61,10 @@ class TaxInvoice extends CI_Controller {
 			$wherec["i.customer_id"] = ' = "'.$filterCName.'"';
 		}
 		
+		if(isset($cutomerID) && !empty($cutomerID)){
+			$wherec["i.customer_id"] = ' = "'.$cutomerID.'"';
+		}
+
 		// get comapny access list
 		$adminID = $this->input->post('SadminID');
 		
@@ -76,7 +81,7 @@ class TaxInvoice extends CI_Controller {
 			$page = 0;
 		}
         $memberDetails = $this->TaxInvoiceModel->getTaxInvoiceDetails($selectC='',$wherec,$config["per_page"],$page,$join,$other);
-		
+		// print_r($memberDetails);exit;
 		$status['data'] = $memberDetails;
 		
 		$status['paginginfo']["curPage"] = $curPage;

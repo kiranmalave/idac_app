@@ -8,11 +8,13 @@ define([
     'Swal',
     '../views/proposalSingleView',
     '../collections/proposalCollection',
+    "../../customer/collections/customerCollection",
+    "../../project/collections/projectCollection",
     '../models/proposalFilterOptionModel',
     'text!../templates/proposalRow.html',
     'text!../templates/proposal_temp.html',
     'text!../templates/proposalFilterOption_temp.html',
-  ], function ($, _, Backbone, datepickerBT, moment,Swal,  proposalSingleView, proposalCollection, proposalFilterOptionModel, proposalRowTemp, proposalTemp, proposalFilterTemp) {
+  ], function ($, _, Backbone, datepickerBT, moment,Swal,  proposalSingleView, proposalCollection, customerCollection, projectCollection, proposalFilterOptionModel, proposalRowTemp, proposalTemp, proposalFilterTemp) {
   
     var proposalView = Backbone.View.extend({
       loadFrom:null,
@@ -44,6 +46,30 @@ define([
           $(".profile-loader").hide();
           setPagging(res.paginginfo, res.loadstate, res.msg);
         });
+
+        this.customerList = new customerCollection();
+      this.customerList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { status: "active" }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        // selfobj.render();
+      });
+
+      this.projectList = new projectCollection();
+      this.projectList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { status: "active" }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        // selfobj.render();
+      });
+
+
   
         this.collection = searchproposal;
         this.collection.on('add', this.addOne, this);
@@ -79,16 +105,33 @@ define([
       },
   
       changeBox: function (e) {
-        
         var selVal = $(e.currentTarget).val();
-        // $(".hidetextval").hide();
-        $(".filterClear").val("");
-        filterOption.set({ textval: '' });
-        if (selVal == "mobile_no") {
-          $(".contacttxt").show();
-        } else if (selVal == "first_name" || selVal == "middle_name" || selVal == "last_name" || selVal == "email") {
-          $(".textval").show();
-        }
+      $(".hidetextval").hide();
+      $(".filterClear").val("");
+      if (selVal == "searchList") {
+        $(".customerList").show();
+      } else {
+        $(".textvalBox").show();
+      }
+        
+
+      var selValP = $(e.currentTarget).val();
+      $(".hidetextval").hide();
+      $(".filterClear").val("");
+      if (selValP == "searchList") {
+        $(".projectList").show();
+      } else {
+        $(".textvalBox").show();
+      }
+        // var selVal = $(e.currentTarget).val();
+        // // $(".hidetextval").hide();
+        // $(".filterClear").val("");
+        // filterOption.set({ textval: '' });
+        // if (selVal == "mobile_no") {
+        //   $(".contacttxt").show();
+        // } else if (selVal == "first_name" || selVal == "middle_name" || selVal == "last_name" || selVal == "email") {
+        //   $(".textval").show();
+        // }
       },
   
       settextSearch: function (e) {
@@ -223,6 +266,8 @@ define([
         // $("#textval").val("");
         $(".filterClear").val("");
         $(".hidetextval").hide();
+        $(".ws-select").val('default');
+        $(".ws-select").selectpicker("refresh");
         $('#textSearch option[value=proposal_id]').attr('selected', 'selected');
         this.filterSearch(false);
       },
@@ -246,7 +291,7 @@ define([
           var template = _.template(source);
   
           var cont = $("<div>");
-          cont.html(template());
+          cont.html(template({ "customerList": this.customerList.models, "projectList": this.projectList.models, }));
           cont.attr('id', this.toClose);
           /*  
             INFO
@@ -260,6 +305,7 @@ define([
             open filter popup by adding class open here
           */
           $(".ws_filterOptions").addClass("open");
+          $(".ws-select").selectpicker();
           /* 
             INFO
             make current proposal active
@@ -359,7 +405,46 @@ define([
           }, 500);
         }
       },
+
+      // filterSearch: function () {
+      //   console.log("filterSearch");
+      //   $('#myModal').modal('hide');
+      //   searchproposal.reset();
+      //   var selfobj = this;
+      //   readyState = true;
+      //   filterOption.set({ curpage: 0 });
+      //   var $element = $('#loadMember');
+  
+      //   $(".profile-loader").show();
+  
+      //   $element.attr("data-index", 1);
+      //   $element.attr("data-currPage", 0);
+  
+      //   searchproposal.fetch({
+      //     headers: {
+      //       'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+      //     }, add: true, remove: false, merge: false, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+      //   }).done(function (res) {
+      //     console.log("res",JSON.stringify(res));
+      //     if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+      //     $(".profile-loader").hide();
+  
+      //     setPagging(res.paginginfo, res.loadstate, res.msg);
+      //     $element.attr("data-currPage", res.paginginfo.nextpage);
+      //     $element.attr("data-index", res.paginginfo.nextpage);
+  
+      //     // $(".page-info").html(recset);
+      //     if (res.loadtraineeSkill === false) {
+      //       $(".profile-loader-msg").html(res.msg);
+      //       $(".profile-loader-msg").show();
+      //     } else {
+      //       $(".profile-loader-msg").hide();
+      //     }
+      //   });
+      // },
+
       filterSearch: function (isClose = false) {
+        console.log("filterSearch");
         if (isClose && typeof isClose != 'object') {
           $('.' + this.toClose).remove();
           rearrageOverlays();
@@ -384,20 +469,20 @@ define([
           $(".profile-loader").hide();
   
           setPagging(res.paginginfo, res.loadstate, res.msg);
-          $element.attr("data-currPage", 1);
+          $element.attr("data-currPage", 0);
           $element.attr("data-index", res.paginginfo.nextpage);
   
-          //$(".page-info").html(recset);
           if (res.loadstate === false) {
             $(".profile-loader-msg").html(res.msg);
             $(".profile-loader-msg").show();
           } else {
             $(".profile-loader-msg").hide();
           }
-  
+
           selfobj.setValues();
         });
       },
+      
       loadData: function (e) {
         var selfobj = this;
         var $element = $('#loadMember');

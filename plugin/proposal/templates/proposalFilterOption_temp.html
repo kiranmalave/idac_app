@@ -5,9 +5,12 @@
     <div class="row">
       <div class="col-md-6">
         <select id="textSearch" class="form-control changeBox" name="textSearch">
-          <option value="client_name">Client Name</option>
-          <option value="name">Project Name</option>
-          <option value="template_name">Proposal Template Name</option>
+          <option value="name">Proposal Name</option>
+          <option value="proposal_id">Proposal Id</option>
+          <!-- <option value="client_id">Client Name</option> -->
+          <!-- <option value="company_name">Client Name</option> -->
+          <!-- <option value="project_name">Project Name</option> -->
+          <!-- <option value="template_name">Proposal Template Name</option> -->
         </select>
       </div>
       <div class="col-md-6">
@@ -26,7 +29,31 @@
       </div>
     </div>
   
-  
+    <div class="clearfix">&nbsp;</div>
+    <div class="row">
+      <div class="col-md-6">
+        <select id="company" class="form-control dropval ws-select show-tick txtchange" name="textSearch" data-live-search="true">
+          <option>Company Name</option>
+          <% _.each(customerList, function(model1) { %>
+            <option value="<%=model1.attributes.customer_id%>">
+              <%=model1.attributes.company_name%>
+            </option>
+            <%}); %>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <select id="project_id" class="form-control dropval ws-select show-tick txtchange" name="textSearch" data-live-search="true">
+          <option>Project Name</option>
+          <% _.each(projectList, function(model1) { %>
+            <option value="<%=model1.attributes.project_id%>">
+              <%=model1.attributes.project_name%>
+            </option>
+            <%}); %>
+        </select>
+      </div>
+    </div>
+
+
     <!-- <label>Date of Birth</label> -->
     <!-- <div class="row dateList">
       <div class="col-5">

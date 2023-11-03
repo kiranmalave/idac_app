@@ -99,7 +99,7 @@
                             <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <select id="temp_id" name="temp_id" class="form-control dropval  getTemplate ws-select show-tick mt-2" title="Select Proposal Template" data-live-search="true"data-live-search="true">
+                                        <select id="temp_id" name="temp_id" class="form-control dropval getTemplate ws-select show-tick mt-2" title="Select Proposal Template" data-live-search="true"data-live-search="true">
                                             <% _.each(proposalTemplateList, function(model1) { %>
                                                     <option <% if(model1.attributes.temp_id == model.temp_id ) { %>selected
                                                         <%}%>value="<%=model1.attributes.temp_id%>"><%=model1.attributes.temp_name%></option>

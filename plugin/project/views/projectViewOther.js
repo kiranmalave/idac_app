@@ -495,6 +495,7 @@ define([
       $("#project").append(this.$el);
       //$("#projects").show();
       // setToolTip();
+      
       return this;
     }
   });
