@@ -9,6 +9,7 @@ define([
         textSearch: 'name',
         project_id: null,
         textval: null,
+        company: null,
         fromDate: null,
         toDate: null,
         status: 'Active',
