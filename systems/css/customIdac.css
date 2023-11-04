@@ -2511,6 +2511,7 @@ label.label-style {
 .projectFolder .projectFolderBottom h2 {
   font-size: 14px;
   color: #616161;
+  text-align: center;
 }
 .profile-header{
   position: relative;
