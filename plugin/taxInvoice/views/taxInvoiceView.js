@@ -5,13 +5,14 @@ define([
   'backbone',
   'datepickerBT',
   'select2',
+  'Swal',
   '../views/taxInvoiceSingleView',
   '../collections/taxInvoiceCollection',
   '../models/taxInvoiceFilterOptionModel',
   'text!../templates/taxInvoiceRow.html',
   'text!../templates/taxInvoice_temp.html',
   'text!../templates/taxInvoiceFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, select2, taxInvoiceSingleView, taxInvoiceCollection, taxInvoiceFilterOptionModel, taxInvoiceRowTemp, taxInvoice_temp, taxInvoiceFilterOption_temp) {
+], function ($, _, Backbone, datepickerBT, select2, Swal, taxInvoiceSingleView, taxInvoiceCollection, taxInvoiceFilterOptionModel, taxInvoiceRowTemp, taxInvoice_temp, taxInvoiceFilterOption_temp) {
 
   var taxInvoiceView = Backbone.View.extend({
     loadFrom: null,
@@ -59,6 +60,7 @@ define([
       "change .txtchange": "updateOtherDetails",
       "click .showpage": "loadData",
       "click .cancelInvoice": "cancelInvoice",
+      "click .changeStatus": "changeStatusListElement",
 
     },
     updateOtherDetails: function (e) {
@@ -73,7 +75,18 @@ define([
       var usernametxt = $(e.currentTarget).val();
       filterOption.set({ textSearch: usernametxt });
     },
+
     changeStatusListElement: function (e) {
+      Swal.fire({
+        title: 'Do you want to delete ?',
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: 'Yes',
+        denyButtonText: `No`,
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+         if (result.isConfirmed) {
+         Swal.fire('Deleted!', '', 'success')
       var selfobj = this;
       var removeIds = [];
       var status = $(e.currentTarget).attr("data-action");
@@ -83,6 +96,8 @@ define([
           removeIds.push($(this).attr("data-invoiceID"));
         }
       });
+
+      $(".deleteAll").hide();
 
       $(".action-icons-div").hide();
       $(".memberlistcheck").click(function () {
@@ -124,6 +139,20 @@ define([
 
         }
       });
+
+     } else if (result.isDenied) {
+      Swal.fire('Changes are not saved', '', 'info')
+      $('#taxInvoiceList input:checkbox').each(function () {
+        if ($(this).is(":checked")) {
+          $(this).prop('checked', false);
+        }
+      });
+      $(".listCheckbox").find('.checkall').prop('checked', false);
+      $(".deleteAll").hide();
+    }
+    })
+
+      
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");

@@ -2747,3 +2747,26 @@ small.comment-date.float-sm-right {
   position: absolute;
   top: 31px;
 }
+
+#dasboradProposalHolder .container-fluid .row.clearfix .table thead#thead tr.headings th:first-child {
+  /* background: #f0f; */
+  width: 40px !important;
+}
+
+#dasboradProposalHolder .container-fluid .row.clearfix .table thead#thead tr.headings th:last-child {
+  width: 170px !important;
+}
+#dasboradProposalHolder .container-fluid .row.clearfix .table thead#thead tr.headings th:nth-child(3) {
+  width: 120px !important;
+}
+#dasboradProposalHolder .container-fluid .row.clearfix .table tbody#proposalList td:last-child .confirmproposal {
+  margin: 1px 0px !important;
+}
+
+#dasboradProposalHolder .container-fluid .row.clearfix .table tbody#proposalList td:nth-child(3){
+  max-width: 100px !important;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-bottom: 0;
+}
