@@ -95,6 +95,7 @@ define([
         "click .changeStatus": "changeStatusListElement",
         "click .showpage": "loadData",
         "change .changeBox": "changeBox",
+        "click .sortColumns": "sortColumn",
       },
       updateOtherDetails: function (e) {
         var valuetxt = $(e.currentTarget).val();
@@ -246,7 +247,7 @@ define([
           title: 'Are you sure you want to confirm the proposal?',
           showDenyButton: true,
           showCancelButton: false,
-          confirmButtonText: 'Confirm',
+          confirmButtonText: 'Confirmed',
           denyButtonText: `Cancel`,
         }).then((result) => {
           /* Read more about isConfirmed, isDenied below */
@@ -257,6 +258,31 @@ define([
           // }
         })
 
+      },
+
+      sortColumn: function (e) {
+        var order = $(e.currentTarget).attr("data-value");
+        var selfobj = this;
+        var newsetval = [];
+        $("#clist").find(".up").removeClass("active");
+        $("#clist").find(".down").removeClass("active");
+        // var classname = $(e.currentTarget).attr("class").split(" ");
+        newsetval["order"] = $(e.currentTarget).attr("data-value");
+        newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+        if (order == "" || order == "DESC") {
+          order = "ASC";
+          $(e.currentTarget).find(".down").removeClass("active");
+          $(e.currentTarget).find(".up").addClass("active");
+        } else {
+          order = "DESC";
+          $(e.currentTarget).find(".down").addClass("active");
+          $(e.currentTarget).find(".up").removeClass("active");
+        }
+        $(e.currentTarget).attr("data-value", order);
+        newsetval["order"] = order;
+        newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+        filterOption.set(newsetval);
+        selfobj.filterSearch();
       },
       resetSearch: function () {
         //filterOption.set({curpage:0,proposalID:null,textval: null,textSearch:'proposalName',status:'active',orderBy:'created_date',order:'DESC'});
