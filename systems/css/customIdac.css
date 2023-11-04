@@ -2759,6 +2759,12 @@ small.comment-date.float-sm-right {
 #dasboradProposalHolder .container-fluid .row.clearfix .table thead#thead tr.headings th:nth-child(3) {
   width: 120px !important;
 }
+#dasboradProposalHolder .container-fluid .row.clearfix .table thead#thead tr.headings th{
+  text-align: center !important;
+}
+#dasboradProposalHolder .container-fluid .row.clearfix .table tbody#proposalList td {
+  text-align: center !important;
+}
 #dasboradProposalHolder .container-fluid .row.clearfix .table tbody#proposalList td:last-child .confirmproposal {
   margin: 1px 0px !important;
 }
