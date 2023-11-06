@@ -36,7 +36,7 @@ define([
       customerList: null,
     },
     urlRoot: function () {
-      return APIPATH + 'taxInvoice/'
+      return APIPATH + 'taxInvoiceMaster/'
     },
     parse: function (response) {
       return response.data[0];

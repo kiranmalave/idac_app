@@ -13,7 +13,7 @@ define([
         fromDate: null,
         toDate: null,
         status: 'Active',
-        orderBy: 'created_date',
+        orderBy: 't.created_date',
         order: 'ASC',
       }
     });

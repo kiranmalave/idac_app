@@ -37,10 +37,10 @@
       %>
 
     <!-- <span class="m-l-10 badge badge-success">  <%=taskDetails.attributes.status_slug%></span> -->
-    <% if(taskDetails.attributes.status_slug =='Complete' ) { %><span class="badge badge-success" data-toggle="tooltip"  data-placement="top" title="Status">Completed</span>
+     <% if(taskDetails.attributes.status_slug =='Complete' ) { %><span class="badge badge-success" data-toggle="tooltip"  data-placement="top" title="Status">Completed</span>
       <% }else if(taskDetails.attributes.status_slug=='In progress'){ %><span class="badge badge-info" data-toggle="tooltip"  data-placement="top" title="Status"> In progress</span>
       <%}else if(taskDetails.attributes.priority_slug=='To-do'){%><span class="badge badge-primary" data-toggle="tooltip"  data-placement="top" title="Status">To-do</span><%}
-      %>
+    %>
       <span class="badge badge-info" data-toggle="tooltip"  data-placement="top" title="Assignee"> <%=taskDetails.attributes.name%> </span>
       
     <small class="comment-date float-sm-right"><span><i class="material-icons">date_range</i></span><%=taskDetails.attributes.due_date%>   </small>

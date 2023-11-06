@@ -2511,6 +2511,7 @@ label.label-style {
 .projectFolder .projectFolderBottom h2 {
   font-size: 14px;
   color: #616161;
+  text-align: center;
 }
 .profile-header{
   position: relative;
@@ -2687,8 +2688,8 @@ i.material-icons.bigsize {
   width: 100px;
   top:53px !important;
   right: 50px !important;
-  color:#fff!important;
-  background: green !important;
+  color:#0c5460!important;
+  background:#d1ecf1 !important;
   text-align: center !important;
   padding: 10px 0 !important;
 
@@ -2696,10 +2697,21 @@ i.material-icons.bigsize {
 .saveAlert .close{
   top: -15px !important;
   right: -14px !important;
-  color: black !important;
+  color: #0c5460 !important;
 
 }
 .comment-action p span{
+  color: rgb(0, 0, 0);
+  max-width: 568px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-bottom: 0;
+  width: auto;
+  display: block;
+  margin-top: 10px;
+}
+.comment-action p{
   color: rgb(0, 0, 0);
   max-width: 568px;
   text-overflow: ellipsis;
@@ -2734,4 +2746,33 @@ small.comment-date.float-sm-right {
   margin-top: 0px;
   position: absolute;
   top: 31px;
+}
+
+#dasboradProposalHolder .container-fluid .row.clearfix .table thead#thead tr.headings th:first-child {
+  /* background: #f0f; */
+  width: 40px !important;
+}
+
+#dasboradProposalHolder .container-fluid .row.clearfix .table thead#thead tr.headings th:last-child {
+  width: 170px !important;
+}
+#dasboradProposalHolder .container-fluid .row.clearfix .table thead#thead tr.headings th:nth-child(3) {
+  width: 120px !important;
+}
+#dasboradProposalHolder .container-fluid .row.clearfix .table thead#thead tr.headings th{
+  text-align: center !important;
+}
+#dasboradProposalHolder .container-fluid .row.clearfix .table tbody#proposalList td {
+  text-align: center !important;
+}
+#dasboradProposalHolder .container-fluid .row.clearfix .table tbody#proposalList td:last-child .confirmproposal {
+  margin: 1px 0px !important;
+}
+
+#dasboradProposalHolder .container-fluid .row.clearfix .table tbody#proposalList td:nth-child(3){
+  max-width: 100px !important;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-bottom: 0;
 }

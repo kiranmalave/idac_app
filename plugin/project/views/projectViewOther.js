@@ -73,6 +73,8 @@ define([
       "click .showpage": "loadData",
       "change .changeBox": "changeBox",
       "click .sortColumns": "sortColumn",
+      "click .closeFilter": "closeFilter",
+      
     },
     updateOtherDetails: function (e) {
       e.stopPropagation();
@@ -180,13 +182,14 @@ define([
       $(".profile-loader").hide();
     },
     loadSubView: function (e) {
+      
       console.log("loadSubView");
       var selfobj = this;
       var show = $(e.currentTarget).attr("data-view");
       switch (show) {
-        case "singleprojectData": {
+        case "singleprojectview": {
           var project_id = $(e.currentTarget).attr("data-project_id");
-          var projectsingleView = new projectSingleView({ project_id: project_id, searchproject: this });
+          new projectSingleView({ project_id: project_id, searchproject: this });
           break;
         }
       }
@@ -293,6 +296,17 @@ define([
       this.setupFilter();
       rearrageOverlays("Filter", this.toClose, "small");
     },
+    closeFilter:function(e){
+      var isOpen = $(".ws_filterOptions").hasClass("open");
+        if (isOpen) {
+          $(".ws_filterOptions").removeClass("open");
+          $(e.currentTarget).removeClass("active");
+          return;
+        } else {
+          $(e.currentTarget).addClass("active");
+          // this function will handel other exiting open popus
+        }
+    },
     setValues: function (e) {
       setvalues = ["status", "type", "order"];
       var selfobj = this;
@@ -374,7 +388,6 @@ define([
       if (isClose && typeof isClose != 'object') {
         $('.' + this.toClose).remove();
         rearrageOverlays();
-        //alert("sdfsf 222");
       }
 
       searchproject.reset();

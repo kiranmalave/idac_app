@@ -94,6 +94,7 @@ define([
       }
     },
     settextSearch: function (e) {
+
       var usernametxt = $(e.currentTarget).val();
       filterOption.set({ textSearch: usernametxt });
     },
@@ -231,6 +232,7 @@ define([
         // $(".changeBox").selectpicker("refresh");
 
       $(".filterClear").val("");
+      $("#textSearch").val("select");
       $(".hidetextval").hide();
       $('#textSearch option[value=company ]').attr('selected', 'selected');
 

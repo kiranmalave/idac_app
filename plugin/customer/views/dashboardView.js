@@ -100,17 +100,6 @@ define([
             new customerSingleView({customer_id: customer_id,loadfrom:"dashboard"});
             break;
           }
-          case "singleprojectview":{
-            var project_id = $(e.currentTarget).attr("data-project_id");
-            new projectSingleView({project_id: project_id,loadfrom:"dashboard"});
-            break;
-          }
-
-          // case "singletaxinvoiceview":{
-          //   var invoiceID = $(e.currentTarget).attr("data-invoiceID");
-          //   new taxInvoiceSingleView({invoiceID: invoiceID,loadfrom:"dashboard"});
-          //   break;
-          // }
         }
       },
   
@@ -166,6 +155,7 @@ define([
         var element = document.querySelector(".addFlex");
         element.classList.add("hideFolder");
         var element = document.querySelector(".hideTable");
+        $('#dasboradProposalHolder').empty();
         element.classList.add("ShowTable"); 
         var element = document.querySelector(".hideheader");
         element.classList.add("headerHide"); 
@@ -174,11 +164,11 @@ define([
       },
       
       backBtn:function(){
-         var element = document.querySelector(".addFlex");
-            element.classList.remove("hideFolder");
-         var element = document.querySelector(".hideTable");
-            element.classList.remove("ShowTable");
-            var element = document.querySelector(".hideheader");
+        var element = document.querySelector(".addFlex");
+        element.classList.remove("hideFolder");
+        var element = document.querySelector(".hideTable");
+        element.classList.remove("ShowTable");
+        var element = document.querySelector(".hideheader");
         element.classList.remove("headerHide"); 
       },
 
