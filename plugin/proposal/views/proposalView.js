@@ -247,7 +247,7 @@ define([
           title: 'Are you sure you want to confirm the proposal?',
           showDenyButton: true,
           showCancelButton: false,
-          confirmButtonText: 'Confirmed',
+          confirmButtonText: 'Confirm',
           denyButtonText: `Cancel`,
         }).then((result) => {
           /* Read more about isConfirmed, isDenied below */
