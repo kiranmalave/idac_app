@@ -65,6 +65,11 @@ class TaxInvoice extends CI_Controller {
 			$wherec["i.customer_id"] = ' = "'.$cutomerID.'"';
 		}
 
+		if (isset($statuscode) && !empty($statuscode)) {
+			$statusStr = str_replace(",", '","', $statuscode);
+			$wherec["i.status"] = 'IN ("' . $statusStr . '")';
+		}
+
 		// get comapny access list
 		$adminID = $this->input->post('SadminID');
 		
@@ -153,7 +158,7 @@ class TaxInvoice extends CI_Controller {
 			if(trim($action) == "changeStatus"){
 				$ids = $this->input->post("list");
 				$statusCode = $this->input->post("status");	
-				$changestatus = $this->TaxInvoiceModel->changeTaxInvoiceStatus('invoiceHeader',$statusCode,$ids,'invoiceID');
+				$changestatus = $this->TaxInvoiceModel->changeTaxInvoiceStatus('invoice_header',$statusCode,$ids,'invoiceID');
 				
 			if($changestatus){
 
