@@ -2688,8 +2688,8 @@ i.material-icons.bigsize {
   width: 100px;
   top:53px !important;
   right: 50px !important;
-  color:#fff!important;
-  background: green !important;
+  color:#0c5460!important;
+  background:#d1ecf1 !important;
   text-align: center !important;
   padding: 10px 0 !important;
 
@@ -2697,7 +2697,7 @@ i.material-icons.bigsize {
 .saveAlert .close{
   top: -15px !important;
   right: -14px !important;
-  color: black !important;
+  color: #0c5460 !important;
 
 }
 .comment-action p span{

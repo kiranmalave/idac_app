@@ -100,17 +100,6 @@ define([
             new customerSingleView({customer_id: customer_id,loadfrom:"dashboard"});
             break;
           }
-          case "singleprojectview":{
-            var project_id = $(e.currentTarget).attr("data-project_id");
-            new projectSingleView({project_id: project_id,loadfrom:"dashboard"});
-            break;
-          }
-
-          // case "singletaxinvoiceview":{
-          //   var invoiceID = $(e.currentTarget).attr("data-invoiceID");
-          //   new taxInvoiceSingleView({invoiceID: invoiceID,loadfrom:"dashboard"});
-          //   break;
-          // }
         }
       },
   
