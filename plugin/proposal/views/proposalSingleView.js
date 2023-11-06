@@ -242,7 +242,9 @@ define([
     saveproposalDetails: function (e) {
       e.preventDefault();
       let selfobj = this;
+      console.log(this.model);
       var mid = this.model.get("proposal_id");
+      var proejctConfirm = this.model.get("confirmProposal");
       let isNew = $(e.currentTarget).attr("data-action");
       if (permission.edit != "yes") {
         alert("You dont have permission to edit");
@@ -252,6 +254,15 @@ define([
         var methodt = "PUT";
       } else {
         var methodt = "POST";
+      }
+
+      if (proejctConfirm == "yes") {
+        Swal.fire({
+          title: 'This Proposal is already confirmed, Cannot save this again!!',
+          showCancelButton: false,
+          confirmButtonText: 'OK',
+        })
+        return false;
       }
 
       if (mid != undefined) {
