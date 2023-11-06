@@ -9,6 +9,7 @@ define([
   'bootstrapSelect',
   'notify',
   'custom',
+  'Swal',
   'plugin/login/views/loginView',
   'plugin/login/views/resetPasswordRequestView',
   'plugin/dashboard/views/dashboardView',
@@ -45,7 +46,7 @@ define([
   'text!../templates/appFull_temp.html',
   'text!../templates/sideNav_temp.html',
   'text!../templates/topNav_temp.html',
-], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormSingleView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, customerdashboardView, branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
+], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, Swal, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormSingleView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, customerdashboardView, branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
 
   var AppRouter = Backbone.Router.extend({
     routes: {
@@ -170,6 +171,7 @@ define([
     }
     //below three classes added for menu highlight by sanjay
     function highlightMenu(mname) {
+      // alert("testoNE")
       try {
 
         $(".menu").find("li").removeClass("kdark");
@@ -433,41 +435,60 @@ define([
     });
 
     app_router.on('route:logoutlink', function () {
-      var r = confirm("Are you sure you want to Logout?");
-      if (r == false) {
-        return false;
+      // var r = confirm("Are you sure you want to Logout?");
+      // if (r == false) {
+      //   return false;
+      // }
+      Swal.fire({
+        title: 'Are you sure you want to Logout?',
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: 'Yes',
+        denyButtonText: `No`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire('Logout!', '', 'success')
+            $.ajax({
+              url: APIPATH + 'logout',
+              method: 'POST',
+              data: { adminID: $.cookie("authid"), key: $.cookie("_bb_key") },
+              datatype: 'JSON',
+              beforeSend: function (request) {
+                request.setRequestHeader("token", $.cookie('_bb_key'));
+                request.setRequestHeader("SmemberID", $.cookie('authid'));
+                request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+                request.setRequestHeader("Accept", 'application/json');
+              },
+              success: function (res) {
+                $.removeCookie('_bb_key', { path: COKI });
+                $.removeCookie('fname', { path: COKI });
+                $.removeCookie('lname', { path: COKI });
+                $.removeCookie('authid', { path: COKI });
+                $.removeCookie('avtar', { path: COKI });
+                $.removeCookie('bbauth', { path: COKI });
+                $.removeCookie('name', { path: COKI });
+                $.removeCookie('uname', { path: COKI });
+                delete $.cookie('authid');
+                delete $.cookie('_bb_key');
+                delete ADMINNAME;
+                localStorage.removeItem("roleDetails");
+                app_router.navigate("login", { trigger: true });
+              }
+            });
+       }else if (result.isDenied) {
+
+        // Swal.fire('Changes are not saved', '', 'info')
+
       }
-      $.ajax({
-        url: APIPATH + 'logout',
-        method: 'POST',
-        data: { adminID: $.cookie("authid"), key: $.cookie("_bb_key") },
-        datatype: 'JSON',
-        beforeSend: function (request) {
-          request.setRequestHeader("token", $.cookie('_bb_key'));
-          request.setRequestHeader("SmemberID", $.cookie('authid'));
-          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
-          request.setRequestHeader("Accept", 'application/json');
-        },
-        success: function (res) {
-          $.removeCookie('_bb_key', { path: COKI });
-          $.removeCookie('fname', { path: COKI });
-          $.removeCookie('lname', { path: COKI });
-          $.removeCookie('authid', { path: COKI });
-          $.removeCookie('avtar', { path: COKI });
-          $.removeCookie('bbauth', { path: COKI });
-          $.removeCookie('name', { path: COKI });
-          $.removeCookie('uname', { path: COKI });
-          delete $.cookie('authid');
-          delete $.cookie('_bb_key');
-          delete ADMINNAME;
-          localStorage.removeItem("roleDetails");
-          app_router.navigate("login", { trigger: true });
-        }
-      });
+    })
+
     });
     Backbone.history.start();
   };
+
+
   return {
     initialize: initialize
   };
+
 });
