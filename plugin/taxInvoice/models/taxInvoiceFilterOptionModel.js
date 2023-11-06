@@ -11,6 +11,7 @@ define([
       status: null,
       customer_id: null,
       orderBy: 'invoiceNumber',
+      status:'active',
       order: 'DESC',
     }
   });

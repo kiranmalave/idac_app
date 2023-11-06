@@ -129,7 +129,7 @@ define([
         },
         success: function (res) {
           if (res.flag == "F")
-            alert(res.msg);
+            // alert(res.msg);
 
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           if (res.flag == "S") {

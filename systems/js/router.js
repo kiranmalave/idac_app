@@ -478,6 +478,9 @@ define([
        }else if (result.isDenied) {
 
         // Swal.fire('Changes are not saved', '', 'info')
+        // if (r == false) {
+        //     return false;
+        //   }
 
       }
     })

@@ -198,12 +198,13 @@ $route['getHistory'] = 'taskMaster/getTaskHistory';
 $route['taxInvoiceList'] = 'TaxInvoice/index';
 $route['taxInvoice'] = 'TaxInvoice/getTaxInvoiceDetails';
 $route['taxInvoice/(:num)'] = 'TaxInvoice/getTaxInvoiceDetails/$1';
-$route['taxInvoice/status'] = 'TaxInvoice/taxInvoiceChangeStatus';
+$route['taxInvoiceMaster/status'] = 'TaxInvoice/taxInvoiceChangeStatus';
 $route['invoiceItemList'] = 'TaxInvoice/invoiceItemList';
 $route['getNarration/(:any)'] = 'TaxInvoice/getNarration/$1';
 $route['getNarration'] = 'TaxInvoice/getNarration';
 $route['cancelInvoice/(:num)'] = 'TaxInvoice/cancelInvoice/$1';
 $route['printBill/(:num)'] = 'TaxInvoice/printBill/$1';
+
 
 ######ourclients
 $route['ourClientsList'] = 'OurClients/getclientDetails';
