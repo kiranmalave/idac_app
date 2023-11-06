@@ -101,7 +101,6 @@ class Proposal extends CI_Controller {
 		}
 		
 		if($isAll=="Y"){
-			$join = array();
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,'','',$join,$other);	
 		}else{
 			$selectC = "t.*,c.company_name";
