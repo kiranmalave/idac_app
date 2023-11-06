@@ -59,7 +59,7 @@
           <div class="card activities">
               <div class="header">
                   <h2>Activities</h2>
-                  <ul class="header-dropdown m-r--5">
+                  <!-- <ul class="header-dropdown m-r-5">
                       <li class="dropdown"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <i class="zmdi zmdi-more-vert"></i> </a>
                           <ul class="dropdown-menu slideUp ">
                               <li><a href="javascript:void(0);" class=" waves-effect waves-block">Action</a></li>
@@ -67,7 +67,7 @@
                               <li><a href="javascript:void(0);" class=" waves-effect waves-block">Something else</a></li>
                           </ul>
                       </li>
-                  </ul>
+                  </ul> -->
               </div>
               <div class="body">
                 <% _.each(historyList, function(model1) { %>
@@ -75,7 +75,7 @@
                     <div class="sl-item">
                         <div class="sl-content">
                             <div class="text-muted-dk"><%=model1.attributes.timeString%></div>
-                            <p><%=model1.attributes.record_type%><a href="" class="text-info"> <%=model1.attributes.col%>  <%=model1.attributes.new_val%></a>.</p>
+                            <p><%=model1.attributes.record_type%><span class="text-info"> <%=model1.attributes.col%>  <%=model1.attributes.new_val%></span>.</p>
                         </div>
                     </div>                            
                   </div>
