@@ -148,8 +148,6 @@ define([
       },
   
       saveprojectDetails: function (e) {
-        // alert("here");
-
         e.preventDefault();
         let selfobj = this;
         var mid = this.model.get("project_id");
@@ -191,7 +189,6 @@ define([
                 selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                 selfobj.render();
               } else {
-                // alert("here");
                 handelClose(selfobj.toClose);
               }
             }
