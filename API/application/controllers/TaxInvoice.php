@@ -553,7 +553,7 @@ class TaxInvoice extends CI_Controller {
 		//this the the PDF filename that user will get to download
 	
 		$wherec = array("customer_id"=>$taxInvoiceData[0]->customer_id);
-	 	$customerDetails = $this->CommonModel->getMasterDetails("customer","first_name, address",$wherec);
+	 	$customerDetails = $this->CommonModel->getMasterDetails("customer","company_name, address",$wherec);
 		$data['companyDetails'] = $customerDetails;
 		
         $pdfFilePath = $this->load->view("invoicepdf",$data,true);
