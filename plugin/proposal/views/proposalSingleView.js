@@ -176,6 +176,7 @@ define([
       var menusingleview = new readFilesView({ loadFrom: "addpage", loadController: this });
     },
     getTemplate: function (e) {
+      e.stopPropagation();
       var selfobj = this;
       let tempID = $(e.currentTarget).val();
       var tempDetails = new proposalTempSingel();
