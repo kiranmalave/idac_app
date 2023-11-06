@@ -166,6 +166,7 @@ define([
         var element = document.querySelector(".addFlex");
         element.classList.add("hideFolder");
         var element = document.querySelector(".hideTable");
+        $('#dasboradProposalHolder').empty();
         element.classList.add("ShowTable"); 
         var element = document.querySelector(".hideheader");
         element.classList.add("headerHide"); 
@@ -174,11 +175,11 @@ define([
       },
       
       backBtn:function(){
-         var element = document.querySelector(".addFlex");
-            element.classList.remove("hideFolder");
-         var element = document.querySelector(".hideTable");
-            element.classList.remove("ShowTable");
-            var element = document.querySelector(".hideheader");
+        var element = document.querySelector(".addFlex");
+        element.classList.remove("hideFolder");
+        var element = document.querySelector(".hideTable");
+        element.classList.remove("ShowTable");
+        var element = document.querySelector(".hideheader");
         element.classList.remove("headerHide"); 
       },
 

@@ -71,6 +71,7 @@ define([
       "click .showpage": "loadData",
       "change .changeBox": "changeBox",
       "click .sortColumns": "sortColumn",
+      "click .closeFilter": "closeFilter",
     },
     updateOtherDetails: function (e) {
       e.stopPropagation();
@@ -212,6 +213,7 @@ define([
       $(e.currentTarget).attr("data-value", order);
       newsetval["order"] = order;
       newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+      console.log("newsetval",newsetval);
       filterOption.set(newsetval);
       selfobj.filterSearch();
     },
@@ -383,6 +385,7 @@ define([
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, add: true, remove: false, merge: false, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
       }).done(function (res) {
+        console.log("res",res);
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
 

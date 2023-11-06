@@ -125,6 +125,8 @@ define([
       "change .changeBox": "changeBox",
       "click .sortbydate": "sortByDate",
       "change .dropval": "singleFilterOptions",
+      "click .closeFilter": "closeFilter",
+      
     },
     updateOtherDetails: function (e) {
       e.stopPropagation();
@@ -331,8 +333,8 @@ define([
       this.collection.forEach(this.addOne, this);
     },
     filterRender: function (e) {
-      // var isexits = checkisoverlay(this.toClose);
-      // if (!isexits) {
+      var isexits = checkisoverlay(this.toClose);
+      if (!isexits) {
       var source = taskFilterTemp;
       var template = _.template(source);
 
@@ -359,22 +361,34 @@ define([
         */
         $(e.currentTarget).addClass("active");
 
-      // } else {
-      //   // check here we alreay open it or not. if open toggle that popup here
-      //   var isOpen = $(".ws_filterOptions").hasClass("open");
-      //   if (isOpen) {
-      //     $(".ws_filterOptions").removeClass("open");
-      //     $(e.currentTarget).removeClass("active");
-      //     return;
-      //   } else {
-      //     $(e.currentTarget).addClass("active");
-      //     // this function will handel other exiting open popus
-      //   }
-      // }
+      } else {
+        // check here we alreay open it or not. if open toggle that popup here
+        var isOpen = $(".ws_filterOptions").hasClass("open");
+        if (isOpen) {
+          $(".ws_filterOptions").removeClass("open");
+          $(e.currentTarget).removeClass("active");
+          return;
+        } else {
+          $(e.currentTarget).addClass("active");
+          // this function will handel other exiting open popus
+        }
+      }
       this.setValues();
       this.setupFilter();
       rearrageOverlays("Filter", this.toClose, "small");
     },
+    closeFilter:function(e){
+      var isOpen = $(".ws_filterOptions").hasClass("open");
+        if (isOpen) {
+          $(".ws_filterOptions").removeClass("open");
+          $(e.currentTarget).removeClass("active");
+          return;
+        } else {
+          $(e.currentTarget).addClass("active");
+          // this function will handel other exiting open popus
+        }
+    },
+
     setValues: function (e) {
       setvalues = ["status", "orderBy", "order"];
       var selfobj = this;

@@ -38,7 +38,7 @@ class Proposal extends CI_Controller {
 		$curPage = $this->input->post('curpage');
 		$ITIID = $this->input->post('proposal_id');
 		$textval = $this->input->post('textval');
-		$orderBy = $this->input->post('name');
+		$orderBy = $this->input->post('orderBy');
 		$order = $this->input->post('order');
 		$statuscode = $this->input->post('status');
 		$filterSName = $this->input->post('filterSName');
@@ -51,7 +51,7 @@ class Proposal extends CI_Controller {
 			$order ="ASC";
 		}
 		$other = array("orderBy"=>$orderBy,"order"=>$order);
-		
+
 		$config = $this->config->item('pagination');
 		$wherec = $join = array();
 		if(isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)){
