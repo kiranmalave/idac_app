@@ -148,6 +148,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         $data = array("status"=>$statusCode,"modified_date"=>date("Y/m/d H:i:s"),"modified_by"=>$modified_by);
         $this->db->where_in($primaryID,$idlist);
         $res = $this->db->update($tableadminID,$data);
+		// print $this->db->last_query();
         $sqlerror = $this->db->error();
         $this->errorlogs->checkDBError($sqlerror,dirname(__FILE__),__LINE__,__METHOD__);
         return $res;
