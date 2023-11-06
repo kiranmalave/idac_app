@@ -14,9 +14,10 @@
     
     
     <td>
-      <button type="button" class="ws-btn-default loadview"  data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-      <!-- <button type="button" class="ws-btn-default" data-toggle="tooltip" data-placement="top" title="Confirm Proposal">Confirm Proposal</button> -->
-      <button type="button" class="btn bg-indigo confirmproposal" style="margin-left:15px; margin-top:3px">Confirm Proposal</button>
+      <button type="button" class="ws-btn-default loadview" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+      <% if(proposalDetails.attributes.confirm_proposal == "no"){%>
+        <button type="button" class="btn bg-indigo confirmproposal" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-project_id="<%=proposalDetails.attributes.project_id%>" style="margin-left:15px; margin-top:3px">Confirmed</button>        
+      <%}%>
     </td>
   </tr>
   
