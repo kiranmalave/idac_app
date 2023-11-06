@@ -19,24 +19,26 @@ define([
     initialize: function (options) {
       this.loadFrom = options.loadFrom;
       this.toClose = "taxInvoiceFilterView";
+      var customerID = options.customerID
       var selfobj = this;
       $(".profile-loader").show();
+      filterOption = new taxInvoiceFilterOptionModel();
       if (this.loadFrom == null) {
         var mname = Backbone.history.getFragment();
         permission = ROLE[mname];
       } else {
         permission = ROLE["invoice"];
+        filterOption.set({customer_id: customerID})
       }
+      console.log(filterOption);
       readyState = true;
       this.render();
-      filterOption = new taxInvoiceFilterOptionModel();
       searchtaxInvoice = new taxInvoiceCollection();
       searchtaxInvoice.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, type: 'get'
+        }, error: selfobj.onErrorHandler, type: 'get',data: filterOption.attributes
       }).done(function (res) {
-
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
         setPagging(res.paginginfo, res.loadstate, res.msg);
