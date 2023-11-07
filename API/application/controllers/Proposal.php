@@ -165,7 +165,7 @@ class Proposal extends CI_Controller {
 
 					if($method=="PUT")
 					{
-						$lastProposalDetails = $this->CommonModel->getMasterDetails("doc_prefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"2"));
+						$lastProposalDetails = $this->CommonModel->getMasterDetails("doc_prefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"3"));
 						
 						if(!$lastProposalDetails){
 							$status['data'] = array();
@@ -174,11 +174,21 @@ class Proposal extends CI_Controller {
 							$status['flag'] = 'F';
 							$this->response->output($status,200);
 						}
-						
-						// $iticode=$proposalDetails['proposal_id'];
+							$wherePro=array('project_id'=>$proposalDetails['project_id']);
+							$projectNumber = $this->CommonModel->getMasterDetails('project','project_number',$wherePro);
+
+							$where=array('project_id'=>$proposalDetails['project_id'],'client_id'=>$proposalDetails['client_id']);
+							$oldProposalDetail = $this->CommonModel->getMasterDetails('proposal','proposal_id',$where);
+							if(isset($oldProposalDetail) && !empty($oldProposalDetail)){
+							$proposalCount = count($oldProposalDetail)+1;
+								$proposalDetails['proposal_number'] = $projectNumber[0]->project_number."/".$lastProposalDetails[0]->docPrefixCD.$proposalCount;
+							} else {
+								$proposalDetails['proposal_number'] = $projectNumber[0]->project_number."/".$lastProposalDetails[0]->docPrefixCD."1";
+							}
+
 						$proposalDetails['status'] = "active";
 						$proposalDetails['created_by'] = $this->input->post('SadminID');
-						$proposalDetails['proposal_number'] = $lastProposalDetails[0]->docPrefixCD.$lastProposalDetails[0]->docCurrNo."/".$lastProposalDetails[0]->docYearCD."/1";
+						//$proposalDetails['proposal_number'] = $lastProposalDetails[0]->docPrefixCD.$lastProposalDetails[0]->docCurrNo."/".$lastProposalDetails[0]->docYearCD."/1";
 						$proposalDetails['created_date'] = $updateDate;
 						// print_r("<pre>");
 						// print_r($proposalDetails);exit;
@@ -223,9 +233,11 @@ class Proposal extends CI_Controller {
 								$nextSuffix = '_' . ($currentSuffix + 1);
 								$proposalDetail['proposal_number'] = preg_replace('/_(\d+)$/', $nextSuffix, $currentProposalNumber);
 							} else {
-								$proposalDetail['proposal_number'] .= '_1';
+								$proposalDetail['proposal_number'] = '_1';
 							}
 							$proposalDetail['name'] = $this->validatedata->validate('name','Proposal Name',false,'',array());
+							$proposalDetail['description'] = $this->validatedata->validate('description','Description',false,'',array());
+
 							unset($proposalDetail['proposal_id']);
 							$iscreated = $this->CommonModel->saveMasterDetails('proposal',$proposalDetail);
 							if(!$iscreated){

@@ -46,7 +46,6 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
         selfobj.model.set("proposalList", res.data);
-        console.log("proposalList", JSON.stringify(res.data));
         selfobj.render();
       });
 
@@ -132,12 +131,8 @@ define([
       this.$el.on("blur", ".txtchange", this.updateOtherDetails.bind(this));
       this.$el.off("click", ".loadMedia", this.loadMedia);
       this.$el.on("click", ".loadMedia", this.loadMedia.bind(this));
-      this.$el.off("click", ".saveconfirmProposal", this.saveconfirmProposal);
-      this.$el.on("click", ".saveconfirmProposal", this.saveconfirmProposal.bind(this));
       this.$el.off("change", ".getTemplate", this.getTemplate);
       this.$el.on("change", ".getTemplate", this.getTemplate.bind(this));
-
-
     },
 
     onErrorHandler: function (collection, response, options) {
@@ -192,46 +187,6 @@ define([
         selfobj.render();
       });
       console.log(tempDetails);
-    },
-    saveconfirmProposal: function (e) {
-      e.stopPropagation();
-      // $('#confirmProposal').modal('toggle');
-      // this.elm = "profile_pic";
-      // var menusingleview = new readFilesView({ loadFrom: "addpage", loadController: this });
-      // Swal.fire({
-      //   title: 'Are you sure?',
-      //   text: "You won't be able to revert this!",
-      //   // icon: 'warning',
-      //   // showCancelButton: true,
-      //   confirmButtonColor: '#3085d6',
-      //   cancelButtonColor: '#d33',
-      //   confirmButtonText: 'Make an another copy',
-      //   cancelButtonColor: '#3085d6',
-      //   cancelButtonColor: '#f0f',
-      //   cancelButtonColor: ' Text as keep the same'
-      // }).then((result) => {
-      //   // if (result.isConfirmed) {
-      //   //   Swal.fire(
-      //   //     'Deleted!',
-      //   //     'Your file has been deleted.',
-      //   //     'success'
-      //   //   )
-      //   // }
-      // })
-      //   Swal.fire({
-      //     title: 'Do you want to save the changes?',
-      //     showDenyButton: true,
-      //     showCancelButton: false,
-      //     confirmButtonText: 'Make an another copy',
-      //     denyButtonText: `Text as keep the same`,
-      //   }).then((result) => {
-      //     /* Read more about isConfirmed, isDenied below */
-      //     // if (result.isConfirmed) {
-      //     //   Swal.fire('Saved!', '', 'success')
-      //     // } else if (result.isDenied) {
-      //     //   Swal.fire('Changes are not saved', '', 'info')
-      //     // }
-      //   })
     },
     setValues: function (e) {
       var selfobj = this;
@@ -296,7 +251,6 @@ define([
                     selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                     selfobj.render();
                   } else {
-                    // alert("here");
                     console.log("proposalList", JSON.stringify(res.data));
                     handelClose(selfobj.toClose);
                   }
@@ -329,7 +283,6 @@ define([
                     selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                     selfobj.render();
                   } else {
-                    // alert("here");
                     console.log("proposalList", JSON.stringify(res.data));
                     handelClose(selfobj.toClose);
                   }
@@ -467,9 +420,14 @@ define([
         },
         theme: 'snow'
       });
+      var editor2 = new Quill($("#costing").get(0), {
+        modules: {
+          toolbar: __toolbarOptions
+        },
+        theme: 'snow'
+      });
 
-      //const delta = editor.clipboard.convert();
-      //editor.setContents(delta, 'silent');
+
       editor.on('text-change', function (delta, oldDelta, source) {
         if (source == 'api') {
           console.log("An API call triggered this change.");
@@ -478,6 +436,17 @@ define([
           var text = editor.getText();
           var justHtml = editor.root.innerHTML;
           selfobj.model.set({ "description": justHtml });
+        }
+      });
+
+      editor2.on('text-change', function (delta, oldDelta, source) {
+        if (source == 'api') {
+          console.log("An API call triggered this change.");
+        } else if (source == 'user') {
+          var delta = editor2.getContents();
+          var text = editor2.getText();
+          var justHtml = editor2.root.innerHTML;
+          selfobj.model.set({ "costing": justHtml });
         }
       });
 
