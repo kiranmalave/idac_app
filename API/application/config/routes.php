@@ -171,6 +171,7 @@ $route['proposalMasterList'] = 'proposal/getproposalDetails';
 $route['proposalMaster'] = 'proposal/proposal';
 $route['proposalMaster/(:num)'] = 'proposal/proposal/$1';
 $route['proposalMaster/status'] = 'proposal/proposalchangeStatus';
+$route['proposalMaster/confirmProposal'] = 'proposal/confirmProposal';
 
 
 ######project

@@ -1021,7 +1021,7 @@ class TaskMaster extends CI_Controller
 		$task_id = $this->input->post('task_id');
 		$wherec = $join = array();
 		if (isset($task_id) && !empty($task_id)) {
-			$wherec["record_id"] = '= (' . $task_id . ')';
+			$wherec["parent_record_id"] = '= (' . $task_id . ')';
 		}
 		// print_r($wherec);exit;
 		$join[0]['type'] = "LEFT JOIN";
@@ -1040,11 +1040,11 @@ class TaskMaster extends CI_Controller
 			if($value->col == "Task Priority" || $value->col == "Task Type" || $value->col == "Task Status"){
 			$where["category_id"] =$value->old_val;
 			$catoldval = $this->CommonModel->GetMasterDetails('categories','categoryName',$where);
-			$historyDetails[$key]->old_val = $catoldval[0]->categoryName;
+			$historyDetails[$key]->old_val = !empty($catoldval) ? $catoldval[0]->categoryName : null;
 
 			$where["category_id"] =  $value->new_val;
 			$catoldval = $this->CommonModel->GetMasterDetails('categories','categoryName',$where);
-			$historyDetails[$key]->new_val = $catoldval[0]->categoryName;
+			$historyDetails[$key]->new_val = !empty($catoldval) ? $catoldval[0]->categoryName : null;
 			}
 			if ($value->col == "Assignee") {
 				$wherea["adminID"] = $value->old_val;

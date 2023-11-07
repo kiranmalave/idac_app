@@ -80,8 +80,12 @@
                             <div class="col-md-6">
                                 <div class="form-group input-group form-float">
                                     <div class="form-line">
-                                        <input id="start_date" type="text" class="form-control" name="start_date"
-                                            value="<%=model.start_date%>" readonly>
+                                        <% if(model.due_date != "0000-00-00"){%>
+                                            <input id="start_date" type="text" class="form-control" name="start_date" value="<%=model.start_date%>" readonly>
+                                        <%}else{%>
+                                            <input id="start_date" type="text" class="form-control" name="start_date" readonly>
+                                        <%}%>
+                                        
                                         <label for="start_date" class="form-label">Start Date</label>
                                     </div>
                                 </div>
@@ -89,8 +93,11 @@
                             <div class="col-md-6">
                                 <div class="form-group input-group form-float">
                                     <div class="form-line">
-                                        <input id="due_date" type="text" class="form-control" name="due_date"
-                                            value="<%=model.due_date%>" readonly>
+                                        <% if(model.due_date != "0000-00-00"){%>
+                                            <input id="due_date" type="text" class="form-control" name="due_date" value="<%=model.due_date%>" readonly>
+                                        <%}else{%>
+                                            <input id="due_date" type="text" class="form-control" name="due_date" readonly>
+                                        <%}%>
                                         <label for="due_date" class="form-label">Due Date</label>
                                     </div>
                                 </div>

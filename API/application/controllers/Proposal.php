@@ -49,6 +49,8 @@ class Proposal extends CI_Controller {
 		if(!isset($orderBy) || empty($orderBy)){
 			$orderBy = "name";
 			$order ="ASC";
+		}else{
+			$orderBy = "t.created_date";
 		}
 		$other = array("orderBy"=>$orderBy,"order"=>$order);
 
@@ -103,9 +105,10 @@ class Proposal extends CI_Controller {
 		if($isAll=="Y"){
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,'','',$join,$other);	
 		}else{
-			$selectC = "t.*,c.company_name";
+			$selectC = "t.*,c.company_name,p.confirm_proposal";
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,$config["per_page"],$page,$join,$other);
 		}
+
 		$status['data'] = $proposalDetails;
 		$status['paginginfo']["curPage"] = $curPage;
 		if($curPage <=1)
@@ -162,7 +165,7 @@ class Proposal extends CI_Controller {
 
 					if($method=="PUT")
 					{
-						$lastProposalDetails = $this->CommonModel->getMasterDetails("doc_prefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"2"));
+						$lastProposalDetails = $this->CommonModel->getMasterDetails("doc_prefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"3"));
 						
 						if(!$lastProposalDetails){
 							$status['data'] = array();
@@ -171,11 +174,21 @@ class Proposal extends CI_Controller {
 							$status['flag'] = 'F';
 							$this->response->output($status,200);
 						}
-						
-						// $iticode=$proposalDetails['proposal_id'];
+							$wherePro=array('project_id'=>$proposalDetails['project_id']);
+							$projectNumber = $this->CommonModel->getMasterDetails('project','project_number',$wherePro);
+
+							$where=array('project_id'=>$proposalDetails['project_id'],'client_id'=>$proposalDetails['client_id']);
+							$oldProposalDetail = $this->CommonModel->getMasterDetails('proposal','proposal_id',$where);
+							if(isset($oldProposalDetail) && !empty($oldProposalDetail)){
+							$proposalCount = count($oldProposalDetail)+1;
+								$proposalDetails['proposal_number'] = $projectNumber[0]->project_number."/".$lastProposalDetails[0]->docPrefixCD.$proposalCount;
+							} else {
+								$proposalDetails['proposal_number'] = $projectNumber[0]->project_number."/".$lastProposalDetails[0]->docPrefixCD."1";
+							}
+
 						$proposalDetails['status'] = "active";
 						$proposalDetails['created_by'] = $this->input->post('SadminID');
-						$proposalDetails['proposal_number'] = $lastProposalDetails[0]->docPrefixCD.$lastProposalDetails[0]->docCurrNo."/".$lastProposalDetails[0]->docYearCD."/1";
+						//$proposalDetails['proposal_number'] = $lastProposalDetails[0]->docPrefixCD.$lastProposalDetails[0]->docCurrNo."/".$lastProposalDetails[0]->docYearCD."/1";
 						$proposalDetails['created_date'] = $updateDate;
 						// print_r("<pre>");
 						// print_r($proposalDetails);exit;
@@ -220,9 +233,11 @@ class Proposal extends CI_Controller {
 								$nextSuffix = '_' . ($currentSuffix + 1);
 								$proposalDetail['proposal_number'] = preg_replace('/_(\d+)$/', $nextSuffix, $currentProposalNumber);
 							} else {
-								$proposalDetail['proposal_number'] .= '_1';
+								$proposalDetail['proposal_number'] = '_1';
 							}
 							$proposalDetail['name'] = $this->validatedata->validate('name','Proposal Name',false,'',array());
+							$proposalDetail['description'] = $this->validatedata->validate('description','Description',false,'',array());
+
 							unset($proposalDetail['proposal_id']);
 							$iscreated = $this->CommonModel->saveMasterDetails('proposal',$proposalDetail);
 							if(!$iscreated){
@@ -308,6 +323,14 @@ class Proposal extends CI_Controller {
 				$proposalDetails = $this->CommonModel->getMasterDetails('proposal','',$where);
 				if(isset($proposalDetails) && !empty($proposalDetails)){
 
+				$wherec["project_id"] = "".$proposalDetails[0]->project_id."";
+				$selectC = "confirm_proposal";
+				$confirmation = $this->CommonModel->getMasterDetails('project',$selectC, $wherec);
+				if(!empty($confirmation)){
+					$created = array_column($confirmation,'confirm_proposal');
+					$proposalDetails[0]->confirmProposal = $created;
+				}
+				
 				$status['data'] = $proposalDetails;
 				$status['statusCode'] = 200;
 				$status['flag'] = 'S';
@@ -344,6 +367,44 @@ class Proposal extends CI_Controller {
 				$status['msg'] = $this->systemmsg->getErrorCode(996);
 				$status['statusCode'] = 996;
 				$status['flag'] = 'F';
+				$this->response->output($status,200);
+			}
+		}
+	}
+
+	public function confirmProposal()
+	{
+		$this->access->checkTokenKey();
+		$this->response->decodeRequest(); 
+		$proposal_id = $this->input->post("proposal_id");
+		$project_id = $this->input->post("project_id");	
+		$statuscode = $this->input->post("status");
+		$updateDate = date("Y/m/d H:i:s");
+
+		if(trim($statuscode) == "yes"){
+			$where=array('proposal_id'=>$proposal_id);
+			$proposalDetails['confirm'] = "yes";
+			$proposalDetails['modified_by'] = $this->input->post('SadminID');
+			$proposalDetails['modified_date'] = $updateDate;
+			$confirmProposal = $this->CommonModel->updateMasterDetails('proposal',$proposalDetails,$where);
+
+			$wherec=array('project_id'=>$project_id);
+			$projectDetails['confirm_proposal'] = "yes";
+			$projectDetails['modified_by'] = $this->input->post('SadminID');
+			$projectDetails['modified_date'] = $updateDate;
+			$confirmProject = $this->CommonModel->updateMasterDetails('project',$projectDetails,$wherec);
+			
+			if(!$confirmProposal || !$confirmProject){
+				$status['msg'] = $this->systemmsg->getErrorCode(998);
+				$status['statusCode'] = 998;
+				$status['data'] = array();
+				$status['flag'] = 'F';
+				$this->response->output($status,200);
+			}else{
+				$status['msg'] = $this->systemmsg->getSucessCode(400);
+				$status['statusCode'] = 400;
+				$status['data'] =array();
+				$status['flag'] = 'S';
 				$this->response->output($status,200);
 			}
 		}

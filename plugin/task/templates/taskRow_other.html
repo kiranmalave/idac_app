@@ -10,18 +10,9 @@
     <div class="comment-actionHeading">
       <div class="comment-actionHeading_left">
         <h5 class="loadview textwrap c_name" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"><%=taskDetails.attributes.subject%></h5> 
-        
         <span>
-          <% if(taskDetails.attributes.projectNumb == null) {%>
-            -
-           <%}else{%>
-            <%=taskDetails.attributes.projectNumb%>
-              <!-- <div class="badge badge-secondary"> <%=taskDetails.attributes.projectName%> </div> -->
-              
-          <%}%>
+          <%=taskDetails.attributes.projectNumb%>
         </span>
-        
-          <!-- <h6>Project Name: <%=taskDetails.attributes.projectName%></h6> -->
       </div>
       <div class="comment-actionHeading_right">
       </div>
@@ -41,10 +32,12 @@
       <% }else if(taskDetails.attributes.status_slug=='In progress'){ %><span class="badge badge-info" data-toggle="tooltip"  data-placement="top" title="Status"> In progress</span>
       <%}else if(taskDetails.attributes.priority_slug=='To-do'){%><span class="badge badge-primary" data-toggle="tooltip"  data-placement="top" title="Status">To-do</span><%}
     %>
-      <span class="badge badge-info" data-toggle="tooltip"  data-placement="top" title="Assignee"> <%=taskDetails.attributes.name%> </span>
-      
-    <small class="comment-date float-sm-right"><span><i class="material-icons">date_range</i></span><%=taskDetails.attributes.due_date%>   </small>
-
+    <%if(taskDetails.attributes.name != null){%>
+      <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="Assignee"> <%=taskDetails.attributes.name%> </span>  
+    <%}%>
+      <%if(taskDetails.attributes.due_date != "0000-00-00"){%>
+        <small class="comment-date float-sm-right"><span><i class="material-icons">date_range</i></span><%=taskDetails.attributes.due_date%></small>  
+      <%}%>
     <button type="button" class="ws-btn-default loadview editButton" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"  data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
 
   </div>

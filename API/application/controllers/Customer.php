@@ -129,8 +129,6 @@
 			if ($method == "PUT" || $method == "POST") {
 				$customerDetails = array();
 				$updateDate = date("Y/m/d H:i:s");
-
-				$customerDetails['customer_id'] = $this->validatedata->validate('customer_id', 'customer ID', false, '', array());
 				$customerDetails['pan_number'] = $this->validatedata->validate('pan_number', 'Pan Number', false, '', array());
 				$customerDetails['company_name'] = $this->validatedata->validate('company_name', 'Company Name', true, '', array());
 				$customerDetails['person_name'] = $this->validatedata->validate('person_name', 'person name ', false, '', array());
@@ -145,6 +143,7 @@
 				$customerDetails['billing_address'] = $this->validatedata->validate('billing_address', 'Billing Address', false, '', array());
 				$customerDetails['branch_id'] = $this->validatedata->validate('branch_id', 'branch Id', false, '', array());
 				$customerDetails['country_code'] = $this->validatedata->validate('country_code', 'country code', false, '', array());
+				$customerDetails['status'] = $this->validatedata->validate('status', 'Status', true, '', array());
 
 			}
 			switch ($method) {

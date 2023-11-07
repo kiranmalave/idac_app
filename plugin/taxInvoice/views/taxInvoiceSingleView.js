@@ -278,7 +278,6 @@ define([
     saveTaxInvoiceDetails: function (e) {
       e.preventDefault();
       invoiceItemsDetails.reset();
-      // alert(this.model.get("stateGstPercent"));
       var selfobj = this;
       var tmpinvoiceID = this.model.get("invoiceID");
       var invoiceID = selfobj.model.get("invoiceID");
@@ -323,7 +322,6 @@ define([
       invoiceItemsDetails.add(InheaderInfo);
       $("tr.item-list-box").each(function (key, value) {
         var lastID = $(this).attr("id");
-        // alert(lastID);
         var row = $(this).find(".sno").html();
         var lasts = lastID.split("-");
         var lastDetails = lasts[1];
@@ -382,9 +380,10 @@ define([
           $(e.currentTarget).html("<span>Error</span>");
         } else {
           $(e.currentTarget).html("<span>Saved</span>");
+          handelClose(selfobj.toClose);
           scanDetails.filterSearch();
         }
-        
+
 
         setTimeout(function () {
           $(e.currentTarget).html("<span>Save</span>");

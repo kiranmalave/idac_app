@@ -42,7 +42,7 @@ define([
             }
             if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
             $(".popupLoader").hide();
-            selfobj.render();
+            // selfobj.render();
           });
         }
         this.historyList = new historyCollection();
@@ -54,7 +54,7 @@ define([
             if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
             $(".popupLoader").hide();
             selfobj.preparetime();
-            selfobj.render();
+            // selfobj.render();
           });
           console.log(this.historyList);
       },

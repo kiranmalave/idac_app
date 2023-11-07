@@ -55,50 +55,24 @@
               <%})%>
       </select>
     </div>
-    <!-- <div class="col-md-6">
-      <select id="customer_id" name="customer_id" class="form-control ws-select show-tick dropval"
-        title="Select Customer" multiple>
-        <% _.each(customerList, function(model1) { %>
-          <option value="<%=model1.attributes.customer_id%>">
-            <%=model1.attributes.first_name%>
-          </option>
-          <%}); %>
-      </select>
-    </div> -->
     <div class="col-md-6">
-      <!-- <select id="company" class="form-control dropval ws-select show-tick txtchange" name="textSearch" data-live-search="true">
-        <option>Company Name</option> -->
-        <select id="customer_id" name="customer_id" class="form-control ws-select show-tick dropval"
-        title="Select Client" multiple>
+        <select id="customer_id" name="customer_id" class="form-control ws-select show-tick dropval" data-live-search="true" title="Select Client" multiple>
         <% _.each(customerList, function(model1) { %>
-          <option value="<%=model1.attributes.customer_id%>">
-            <%=model1.attributes.company_name%>
-          </option>
-          <%}); %>
+          <option value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
+        <%}); %>
       </select>
     </div>
     
   </div>
   <div class="clearfix">&nbsp;</div>
   <div class="row">
-    
-      <!-- <select id="created_by" name="created_by" class="form-control ws-select dropval" title="Created By" multiple>
-        <% _.each(adminList, function(model1) { %>
-          <option value="<%=model1.attributes.adminID%>">
-            <%=model1.attributes.name%>
-          </option>
-          <%}); %>
-      </select> -->
       <div class="col-md-6">
-        <select id="created_by" name="created_by" class="form-control ws-select dropval" title="Created By" multiple>
+        <select id="created_by" name="created_by" class="form-control ws-select dropval" data-live-search="true" title="Created By" multiple>
           <% _.each(adminList, function(model1) { %>
-            <option value="<%=model1.attributes.adminID%>">
-              <%=model1.attributes.name%>
-            </option>
-            <%}); %>
+            <option value="<%=model1.attributes.adminID%>"><%=model1.attributes.name%></option>
+          <%}); %>
         </select>
       </div>
-   
   </div>
 
   <div class="clearfix">&nbsp;</div>

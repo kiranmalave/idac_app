@@ -1,10 +1,8 @@
 <div class="tab-pane in active">
     <form id="proposalDetails" name="proposalDetails" action="#">
         <div class="text-right actionBtns">
-            <!-- <button type="button" class="btn bg-indigo saveconfirmProposal" data-action="new">Confirm Proposal</button> -->
-            <!-- <button type="button" class="btn bg-indigo saveproposalDetails" data-action="close">Save</button> -->
-            <button type="button" class="btn bg-indigo saveproposalDetails" data-action="close">Save</button>
-            <button type="button" class="btn bg-indigo saveproposalDetails" data-action="new">Save & new</button>
+                <button type="button" class="btn bg-indigo saveproposalDetails" data-action="close">Save</button>
+                <button type="button" class="btn bg-indigo saveproposalDetails" data-action="new">Save & new</button>
         </div>
         
         <div class="row ws-appointment-main-container">
@@ -20,7 +18,7 @@
                             <div class="col-md-12">       
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <input id="proposal_number" class="form-control txtchange ws-disable-cursor"  type="text" value="<%=model.proposal_number%>" disabled placeholder="Proposal Number Auto Generated  ">
+                                        <input id="proposal_number" class="form-control txtchange ws-disable-cursor"  type="text" value="<%=model.proposal_number%>" disabled placeholder="Proposal Number Auto Generated">
                                     </div>
                                 </div>
                             </div>  
@@ -34,7 +32,7 @@
                     </div>
                     <div class="right-layout">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-group form-float">
                                     <div class="form-line">
                                         <label for="name" class="form-label pl-2">Name</label>
@@ -42,17 +40,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="list-row">
-                    <div class="icon-left">
-                        <div class="ws-icon">
-                        </div>
-                    </div>
-                    <div class="right-layout">
-                        <div class="row">
-                            <div class="col-md-12">
+
+                            <div class="col-md-6">
                                 <div class="form-group form-float">
                                     <div class="form-line">
                                         <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
@@ -66,7 +55,8 @@
                             </div>
                         </div>
                     </div>
-                </div> 
+                </div>
+ 
                 <div class="list-row">
                     <div class="icon-left">
                         <div class="ws-icon">
@@ -125,7 +115,22 @@
                             </div>
                         </div>
                     </div>
-                </div>      
+                </div>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <span class="material-symbols-outlined">currency_rupee</span>
+                        </div>
+                    </div>
+                    <div class="right-layout mb-5">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="costing">Costing</label>
+                                <div id="costing" class="form-control" style="height: auto;"><%=model.costing%></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>     
                 <div class="list-row">
                     <div class="icon-left">
                         <div class="ws-icon">
