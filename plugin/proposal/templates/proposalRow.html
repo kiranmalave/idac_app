@@ -15,10 +15,14 @@
     
     <td>
       <button type="button" class="ws-btn-default loadview" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-      <% if(proposalDetails.attributes.confirm_proposal == "no"){%>
-        <button type="button" class="btn bg-indigo confirmproposal" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-project_id="<%=proposalDetails.attributes.project_id%>" style="margin-left:15px; margin-top:3px">Confirm</button>        
+      <% if(proposalDetails.attributes.confirm_proposal == "yes"){%>
+        <% if(proposalDetails.attributes.confirm == "yes"){%>
+          <span class="badge badge-success" data-toggle="tooltip"  data-placement="top" title="Status" style="margin-left: 10px;">Confirmed</span>
+        <%} else {%>
+          <span class="badge badge-danger">Not Confirmed</span>
+        <%}%>
       <%}else{%>
-        <span class="badge badge-success" data-toggle="tooltip"  data-placement="top" title="Status" style="margin-left: 10px;">Confirmed</span>
+        <button type="button" class="btn bg-indigo confirmproposal" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-project_id="<%=proposalDetails.attributes.project_id%>" style="margin-left:15px; margin-top:3px">Confirm</button>
       <%}%>
     </td>
   </tr>

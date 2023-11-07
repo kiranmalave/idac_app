@@ -26,7 +26,7 @@ define([
   "../models/singleTaskModel",
   "../models/commentModel",
   "text!../templates/taskSingle_temp.html",
-], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, moment,Swal, repeatTaskCustomView, commentSingleView, historySingleView, customerSingleView, addAdminView, multiselectOptions, categorySingleView, dynamicFieldRender, customerCollection, projectCollection, slugCollection, adminCollection, taskCollection, commentCollection, readFilesView, singleTaskModel, commentModel, tasktemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, moment, Swal, repeatTaskCustomView, commentSingleView, historySingleView, customerSingleView, addAdminView, multiselectOptions, categorySingleView, dynamicFieldRender, customerCollection, projectCollection, slugCollection, adminCollection, taskCollection, commentCollection, readFilesView, singleTaskModel, commentModel, tasktemp) {
   var taskSingleView = Backbone.View.extend({
     model: singleTaskModel,
     enteredWatchersArray: [],
@@ -85,7 +85,7 @@ define([
       this.projectList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active", company: customer_id}
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active", company: customer_id }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
@@ -133,7 +133,7 @@ define([
           selfobj.render();
         });
       }
-      
+
     },
     events: {
       "click .saveTaskDetails": "saveTaskDetails",
@@ -188,22 +188,22 @@ define([
       this.$el.off('change', '.changeClient', this.selectClient);
       this.$el.on('change', '.changeClient', this.selectClient.bind(this));
     },
-    selectClient: function(e){
+    selectClient: function (e) {
       let selfobj = this;
       e.stopPropagation();
       var client_id = $(e.currentTarget).val();
-      if(client_id != null){
+      if (client_id != null) {
         this.projectList.fetch({
           headers: {
             'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-          }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active", company: client_id}
+          }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active", company: client_id }
         }).done(function (res) {
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".popupLoader").hide();
           selfobj.render();
         });
         console.log(this.projectList);
-      }      
+      }
     },
     showCommentBox: function (e) {
       let selfobj = this;
@@ -484,8 +484,8 @@ define([
       e.preventDefault();
       let selfobj = this;
       var task_id = this.model.get("task_id");
-      if(this.customer_id != null){
-        this.model.set({customer_id:this.customer_id});
+      if (this.customer_id != null) {
+        this.model.set({ customer_id: this.customer_id });
       }
       let isNew = $(e.currentTarget).attr("data-action");
       if (permission.edit != "yes") {
@@ -524,7 +524,7 @@ define([
         });
       }
 
-      
+
     },
     refreshCust: function (e) {
       let selfobj = this;
@@ -667,33 +667,6 @@ define([
         subject: {
           required: true,
         },
-        description: {
-          required: true
-        },
-        start_date: {
-          required: true,
-        },
-        due_date: {
-          required: true
-        },
-        task_priority: {
-          required: true
-        },
-        task_type: {
-          required: true
-        },
-        task_status: {
-          required: true
-        },
-        task_repeat: {
-          required: true
-        },
-        customer_id: {
-          required: true
-        },
-        assignee: {
-          required: true
-        }
       };
       var feildsrules = feilds;
       var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
@@ -704,14 +677,6 @@ define([
       }
       var messages = {
         subject: "Please enter Subject",
-        description: "Please enter Deccription",
-        start_date: " Please enter Start Date ",
-        due_date: " Please enter End Date",
-        task_priority: " Please Select Task Priority ",
-        task_type: " Please Select Task Type ",
-        task_status: " Please Select Task Status ",
-        customer_id: "Please Select Customer Status",
-        assignee: "Please Select Assignee "
       };
       $("#taskDetails").validate({
         rules: feildsrules,
@@ -764,7 +729,7 @@ define([
       var template = _.template(tasktemp);
       $("#" + this.toClose).remove();
       // console.log(this.model);
-      this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models,"projectList":this.projectList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID , "customerID":this.customer_id}))
+      this.$el.html(template({ "model": this.model.attributes, "userRoll": this.userRoll, "categoryList": this.categoryList.models, "customerList": this.customerList.models, "projectList": this.projectList.models, "adminList": this.adminList.models, "commentList": this.commentList.models, "loggedInID": this.loggedInID, "customerID": this.customer_id }))
       this.$el.addClass("tab-pane in active panel_overflow");
       this.$el.attr("id", this.toClose);
       this.$el.addClass(this.toClose);
