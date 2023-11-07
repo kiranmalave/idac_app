@@ -8,12 +8,14 @@ define([
   'Swal',
   '../views/customerSingleView',
   '../views/dashboardView',
+  '../../project/views/projectView',
+  '../../proposal/views/proposalView',
   '../collections/customerCollection',
   '../models/customerFilterOptionModel',
   'text!../templates/customerRow.html',
   'text!../templates/customer_temp.html',
   'text!../templates/customerFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, moment, Swal, customerSingleView, dashboardView, customerCollection, customerFilterOptionModel, customerRowTemp, customerTemp, customerFilterTemp) {
+], function ($, _, Backbone, datepickerBT, moment, Swal, customerSingleView, dashboardView, projectView, proposalView, customerCollection, customerFilterOptionModel, customerRowTemp, customerTemp, customerFilterTemp) {
 
   var customerView = Backbone.View.extend({
 
@@ -184,15 +186,27 @@ define([
     loadSubView: function (e) {
       var selfobj = this;
       var show = $(e.currentTarget).attr("data-view");
+      // $('.card').empty();
       switch (show) {
         case "singleCustomerData": {
           var customer_id = $(e.currentTarget).attr("data-customer_id");
-          var customersingleView = new customerSingleView({ customer_id: customer_id, searchCustomer: this });
+          new customerSingleView({ customer_id: customer_id, searchCustomer: this });
+          break;
+        }
+        case "singleProjectData": {
+          var customer_id = $(e.currentTarget).attr("data-customer_id");
+          new projectView({ customer_id: customer_id, searchCustomer: this });
+          break;
+        }
+        case "singleProposalData": {
+          var customer_id = $(e.currentTarget).attr("data-customer_id");
+          new proposalView({ customer_id: customer_id, searchCustomer: this });
           break;
         }
         case "dashboard":{
           var customer_id = $(e.currentTarget).attr("data-customer_id");
           new dashboardView({ customer_id: customer_id})
+          break;
         }
       }
     },

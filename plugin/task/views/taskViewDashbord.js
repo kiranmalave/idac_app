@@ -79,7 +79,6 @@ define([
         // selfobj.render();
       });
 
-
       searchtask.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
@@ -132,7 +131,7 @@ define([
         confirmButtonText: 'Mark As Completed',
         denyButtonText: `Cancel`,
       }).then((result) => {
-        if(result.isConfirmed){
+        if (result.isConfirmed) {
           $(e.currentTarget).prop('disabled', true);
           $.ajax({
             url: APIPATH + 'taskDashboard/status',
@@ -162,7 +161,7 @@ define([
               }
             }
           });
-        }else if (result.isDenied) {
+        } else if (result.isDenied) {
           $(e.currentTarget).prop('checked', false);
         }
       })
@@ -238,7 +237,7 @@ define([
         },
         success: function (res) {
           if (res.flag == "F")
-            // alert(res.msg);
+            alert(res.msg);
 
 
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
@@ -301,7 +300,6 @@ define([
           objectModel.attributes.date_status = dueDateMoment.format("MMMM Do, YYYY");
         }
       }
-      //alert(objectModel.attributes.name);
       $("#taskListOther").append(template({ taskDetails: objectModel }));
     },
     addAll: function () {
@@ -487,7 +485,7 @@ define([
 
     loadData: function (e) {
       var selfobj = this;
-      var $element = $('#loadMember');
+      var $element = $('#taskListOther');
       var cid = $(e.currentTarget).attr("data-dt-idx");
       var isdiabled = $(e.currentTarget).hasClass("disabled");
       if (isdiabled) {
