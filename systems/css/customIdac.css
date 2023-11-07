@@ -2798,3 +2798,32 @@ a.editHover {
 a.editHover:hover{
   background: var(--primary-text-hv-bg);
 }
+
+ .setHeight{
+  position: relative;
+}
+.setHeight .dropdown-menu.show{
+   /*  overflow: hidden;
+  min-height: 78px !important;
+    position: absolute !important;
+    will-change: transform !important;
+    top: 0 !important;
+    left: 0px !important;
+    transform: translate3d(0px, -180px, 0px); */
+    /* transform: unset !important; */
+    max-height: 84.5px;
+    overflow: scroll !important;
+    min-height: 168px !important;
+    /* position: absolute; */
+    transform: translate3d(0px, 31px, 0px);
+    top: 0px;
+    left: -31px !important;
+    will-change: transform;
+
+} 
+    
+/* .setHeight .inner.show{
+    max-height: max-content !important;
+    overflow-y: auto !important;
+    min-height: max-content !important;
+} */

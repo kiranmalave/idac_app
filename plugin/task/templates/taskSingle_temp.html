@@ -202,7 +202,7 @@
                             <div class="col-md-6">
                                 <div class="form-group form-float">
                                     <div class="from-line">
-                                        <select id="customer_id" name="customer_id"  <% if(customerID != null){%> disabled <%}%> class="form-control dropval ws-select show-tick changeClient mt-2" title="Select Client" data-live-search="true"data-live-search="true">
+                                        <select id="customer_id" name="customer_id"  <% if(customerID != null){%> disabled <%}%> class="form-control dropval ws-select show-tick changeClient mt-2 setHeight" title="Select Client" data-live-search="true"data-live-search="true">
                                             <% _.each(customerList, function(model1) { %>
                                                 <% if(customerID == null){%>
                                                     <option <% if(model1.attributes.customer_id == model.customer_id ) { %>selected
@@ -225,7 +225,7 @@
                                 <div class="form-group form-float">
                                     <div class="from-line">
                                         
-                                        <select id="project_id" name="project_id" class="form-control dropval ws-select show-tick mt-2" title="Select Project" data-live-search="true"data-live-search="true">
+                                        <select id="project_id" name="project_id" class="form-control dropval ws-select show-tick mt-2 setHeight" title="Select Project" data-live-search="true"data-live-search="true">
                                             <% _.each(projectList, function(model1) { %>
 
                                                     <option <% if(model1.attributes.project_id == model.project_id ) { %>selected
