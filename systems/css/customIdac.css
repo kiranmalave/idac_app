@@ -2776,3 +2776,54 @@ small.comment-date.float-sm-right {
   white-space: nowrap;
   margin-bottom: 0;
 }
+
+a.editHover {
+  /* background: #f0f; */
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  text-decoration: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  -webkit-transition: all 0.40s ease-in-out;
+	-moz-transition: all 0.40s ease-in-out;
+	-o-transition: all 0.40s ease-in-out;
+	transition: all 0.40s ease-in-out;
+}
+
+
+a.editHover:hover{
+  background: var(--primary-text-hv-bg);
+}
+
+ .setHeight{
+  position: relative;
+}
+.setHeight .dropdown-menu.show{
+   /*  overflow: hidden;
+  min-height: 78px !important;
+    position: absolute !important;
+    will-change: transform !important;
+    top: 0 !important;
+    left: 0px !important;
+    transform: translate3d(0px, -180px, 0px); */
+    /* transform: unset !important; */
+    max-height: 84.5px;
+    overflow: scroll !important;
+    min-height: 168px !important;
+    /* position: absolute; */
+    transform: translate3d(0px, 31px, 0px);
+    top: 0px;
+    left: -31px !important;
+    will-change: transform;
+
+} 
+    
+/* .setHeight .inner.show{
+    max-height: max-content !important;
+    overflow-y: auto !important;
+    min-height: max-content !important;
+} */

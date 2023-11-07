@@ -75,14 +75,14 @@
       <table class="table table-striped">
         <tbody class="items-holder">
           <tr id="item-header" class="text-center">
-            <th>SR No.</th>
+            <th style="width: 10%">SR No.</th>
             <th>Type</th>
             <th style="width: 39%">Description</th>
             <th style="width: 10%">Quantity.</th>
             <th>Unit</th>
             <th>Rate</th>
             <th>Amount</th>
-            <th style="width: 4%"><i class="material-icons" aria-hidden="true">delete_forever</i></th>
+            <!-- <th style="width: 4%"><i class="material-icons" aria-hidden="true">delete_forever</i></th> -->
           </tr>
           <% if(model.invoiceID != '' && model.invoiceID != null){
             _.each(model.invoiceLine, function(modelLine) { 
@@ -133,9 +133,10 @@
               <td><input type="text" name="itemUnit_1" id="itemUnit_1" class="form-control"></td>
               <td class="text-right"><input type="text" name="itemRate_1" id="itemRate_1" class="form-control amtChange"></td>
               <td class="text-right diginum" id="itemtotal_1"></td>
-              <td class="text-right">&nbsp;</td>
+              <td class="text-right">&nbsp;<i class="material-icons" aria-hidden="true">delete_forever</i></td>
             </tr>
           <% } %>
+          <!-- <td></td> -->
         </tbody>
       </table>
       <div class="col-xs-12 text-right">

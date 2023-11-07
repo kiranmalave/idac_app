@@ -12,7 +12,7 @@
   <td class=""><%= formatDate(taxInvoiceDetails.attributes.created_date,'no') %></td>
   <td>
     <button type="button" class="ws-btn-default loadview" data-toggle="tooltip"  data-placement="top" title="Edit"  data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>" data-view="singletaxInvoiceData"><i class="material-icons">mode_edit</i></button>
-    <a href="<%=APIPATH%>printBill/<%=taxInvoiceDetails.attributes.invoiceID%>" target="_blank" data-toggle="tooltip"  data-placement="top" title="Download" style="color: #5f6368;"><span class="material-symbols-outlined">download</span></a>
+    <a href="<%=APIPATH%>printBill/<%=taxInvoiceDetails.attributes.invoiceID%>" target="_blank" data-toggle="tooltip"  data-placement="top" title="Download" class="editHover" style="color: #5f6368;"><span class="material-symbols-outlined ">download</span></a>
   </td>
 </tr>
               
