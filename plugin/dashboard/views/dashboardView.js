@@ -9,8 +9,13 @@ define([
   '../../task/views/taskView',
   '../../customer/collections/customerCollection',
   '../../project/collections/projectCollection',
+  '../../project/views/projectSingleView',
+  '../../task/views/taskSingleView',
+  '../../customer/views/customerSingleView',
+  '../../proposal/views/proposalSingleView',
   'text!../templates/dashbord_temp.html'
-], function ($, _, Backbone, custom, dashboardModel, filterUser, addUserView,taskView,customerCollection, projectCollection,dashBord_temp) {
+  
+], function ($, _, Backbone, custom, dashboardModel, filterUser, addUserView,taskView,customerCollection, projectCollection,projectSingleView, taskSingleView, customerSingleView, proposalSingleView, dashBord_temp) {
 
   var dashboardView = Backbone.View.extend({
     model: dashboardModel,
@@ -53,20 +58,30 @@ define([
     loadSubView:function(e){
       var show = $(e.currentTarget).attr("data-view");
       switch(show){
-        case "singlecustomerview":{
-          var customer_id = $(e.currentTarget).attr("data-customer_id");
-          new customerSingleView({customer_id: customer_id,loadfrom:"dashboard"});
-        }
-
-        case "singleprojectview":{
+       case "singleprojectview":{
           var project_id = $(e.currentTarget).attr("data-project_id");
           new projectSingleView({project_id: project_id,loadfrom:"dashboard"});
+          break;
         }
 
-        case "singletaxinvoiceview":{
-          var invoiceID = $(e.currentTarget).attr("data-invoiceID");
-          new taxInvoiceSingleView({invoiceID: invoiceID,loadfrom:"dashboard"});
+        case "singletaskview":{
+          var task_id = $(e.currentTarget).attr("data-task_id");
+          new taskSingleView({task_id: task_id,loadfrom:"dashboard"});
+          break;
         }
+
+        case "singleClientview":{
+          var customer_id = $(e.currentTarget).attr("data-customer_id");
+          new customerSingleView({customer_id: customer_id,loadfrom:"dashboard"});
+          break;
+        }
+
+        case "proposalSingleView":{
+          var proposal_id = $(e.currentTarget).attr("data-proposal_id");
+          new proposalSingleView({proposal_id: proposal_id,loadfrom:"dashboard"});
+          break;
+        }
+
         
       }
     },
