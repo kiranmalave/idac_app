@@ -22,13 +22,22 @@ define([
     initialize: function (options) {
       this.toClose = "projectFilterView";
       var selfobj = this;
+      this.coustomerID = options.action;
       $(".profile-loader").show();
       var mname = Backbone.history.getFragment();
-      permission = ROLE[mname];
+      if (mname == "project"){
+        permission = ROLE[mname];
+      }else{
+        let mname = "project";
+        permission = ROLE[mname];
+      }
       //$("#"+mname).addClass("active");
       readyState = true;
       this.render();
       filterOption = new projectFilterOptionModel();
+      if (this.coustomerID != ""){
+        filterOption.set({ company: this.coustomerID });
+      }
       searchproject = new projectCollection();
       searchproject.fetch({
         headers: {
@@ -181,7 +190,6 @@ define([
       $(".profile-loader").hide();
     },
     loadSubView: function (e) {
-      console.log("loadSubView");
       var selfobj = this;
       var show = $(e.currentTarget).attr("data-view");
       switch (show) {

@@ -34,7 +34,10 @@ define([
       }
       readyState = true;
       this.render();
-
+      this.customerID = options.action;
+      if(this.customerID != ""){
+        filterOption.set({company:this.customerID});
+      }
       searchproposal = new proposalCollection();
       searchproposal.fetch({
         headers: {

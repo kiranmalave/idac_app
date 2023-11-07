@@ -181,9 +181,7 @@ define([
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
       $(".profile-loader").hide();
     },
-    loadSubView: function (e) {
-      
-      console.log("loadSubView");
+    loadSubView: function (e) {      
       var selfobj = this;
       var show = $(e.currentTarget).attr("data-view");
       switch (show) {

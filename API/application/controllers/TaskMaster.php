@@ -1021,7 +1021,7 @@ class TaskMaster extends CI_Controller
 		$task_id = $this->input->post('task_id');
 		$wherec = $join = array();
 		if (isset($task_id) && !empty($task_id)) {
-			$wherec["record_id"] = '= (' . $task_id . ')';
+			$wherec["parent_record_id"] = '= (' . $task_id . ')';
 		}
 		// print_r($wherec);exit;
 		$join[0]['type'] = "LEFT JOIN";
