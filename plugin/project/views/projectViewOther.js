@@ -10,12 +10,13 @@ define([
   '../collections/projectCollection',
   '../models/projectFilterOptionModel',
   "../../customer/collections/customerCollection",
+  '../../proposal/views/proposalView',
   'text!../templates/projectRow.html',
   'text!../templates/project_temp.html',
   'text!../templates/project_temp_other.html',
   'text!../templates/projectRow_other.html',
   'text!../templates/projectFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, moment, Swal, projectSingleView, projectCollection, projectFilterOptionModel, customerCollection, projectRowTemp, projectTemp, projectTempOther, projectRowTempOther, projectFilterTemp) {
+], function ($, _, Backbone, datepickerBT, moment, Swal, projectSingleView, projectCollection, projectFilterOptionModel, customerCollection, proposalView, projectRowTemp, projectTemp, projectTempOther, projectRowTempOther, projectFilterTemp) {
 
   var projectView = Backbone.View.extend({
 
@@ -23,6 +24,7 @@ define([
       this.toClose = "projectFilterView";
       var selfobj = this;
       $(".profile-loader").show();
+      this.customerID = options.customerID
       //var mname = Backbone.history.getFragment();
       mname = 'project';
       permission = ROLE[mname];
@@ -74,7 +76,8 @@ define([
       "change .changeBox": "changeBox",
       "click .sortColumns": "sortColumn",
       "click .closeFilter": "closeFilter",
-      
+      "click .openTable": "showTable",
+      "click .backbutton": "backBtn",
     },
     updateOtherDetails: function (e) {
       e.stopPropagation();
@@ -181,13 +184,37 @@ define([
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
       $(".profile-loader").hide();
     },
-    loadSubView: function (e) {      
+
+    showTable:function(e){
+      let selfobj = this;
+      let projectID = $(e.currentTarget).attr('data-project_id');
+      var element = document.querySelector(".addFlex");
+      element.classList.add("hideFolder");
+      var element = document.querySelector(".hideTable");
+      $('#dasboradProposalHolder').empty();
+      element.classList.add("ShowTable"); 
+      var element = document.querySelector(".hideheader");
+      element.classList.add("headerHide"); 
+
+      new proposalView({loadFrom:'dashboard', projectID: projectID, customerID: selfobj.customerID });
+    },
+    
+    backBtn:function(){
+      var element = document.querySelector(".addFlex");
+      element.classList.remove("hideFolder");
+      var element = document.querySelector(".hideTable");
+      element.classList.remove("ShowTable");
+      var element = document.querySelector(".hideheader");
+      element.classList.remove("headerHide"); 
+    },
+
+    loadSubView: function (e) {    
       var selfobj = this;
       var show = $(e.currentTarget).attr("data-view");
       switch (show) {
         case "singleprojectview": {
           var project_id = $(e.currentTarget).attr("data-project_id");
-          new projectSingleView({ project_id: project_id, searchproject: this });
+          new projectSingleView({ project_id: project_id, searchproject: this, customerID: selfobj.customerID });
           break;
         }
       }

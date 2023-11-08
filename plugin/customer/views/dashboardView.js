@@ -11,13 +11,12 @@ define([
     '../models/customerSingleModel',
     '../../task/collections/historyCollection',
     '../../project/views/projectSingleView',
-    '../../proposal/views/proposalView',
     '../../task/views/taskViewDashbord',
     '../../project/views/projectViewOther',
     '../../taxInvoice/views/taxInvoiceView',
     'text!../templates/dashboard_temp.html',
 
-  ], function ($, _, Backbone, custom, Swal,multiselectOptions, timeselectOptions, dashboardModel, customerSingleView, customerSingleModel, historyCollection, projectSingleView,proposalView, taskViewDashbord,projectViewOther, taxInvoiceView, dashBoard_temp ) {
+  ], function ($, _, Backbone, custom, Swal,multiselectOptions, timeselectOptions, dashboardModel, customerSingleView, customerSingleModel, historyCollection, projectSingleView, taskViewDashbord,projectViewOther, taxInvoiceView, dashBoard_temp ) {
   
     var dashboardView = Backbone.View.extend({
       model: dashboardModel,
@@ -65,8 +64,6 @@ define([
         "click .showOverlay": "showOverlay",
         "click .loadview" : "loadSubView",
         "click .tablinks": "tablinks",
-        "click .openTable": "showTable",
-        "click .backbutton": "backBtn",
         "click .multiSel": "setValues",
         
       },
@@ -149,28 +146,6 @@ define([
           new taxInvoiceView({action: "", customerID: selfobj.customerID, loadFrom: "custDashboardInvoice"}) 
         }
       }, 
-  
-      showTable:function(e){
-        let projectID = $(e.currentTarget).attr('data-project_id');
-        var element = document.querySelector(".addFlex");
-        element.classList.add("hideFolder");
-        var element = document.querySelector(".hideTable");
-        $('#dasboradProposalHolder').empty();
-        element.classList.add("ShowTable"); 
-        var element = document.querySelector(".hideheader");
-        element.classList.add("headerHide"); 
-
-        new proposalView({loadFrom:'dashboard', projectID: projectID});
-      },
-      
-      backBtn:function(){
-        var element = document.querySelector(".addFlex");
-        element.classList.remove("hideFolder");
-        var element = document.querySelector(".hideTable");
-        element.classList.remove("ShowTable");
-        var element = document.querySelector(".hideheader");
-        element.classList.remove("headerHide"); 
-      },
 
       setValues: function (e) {
         var selfobj = this;
