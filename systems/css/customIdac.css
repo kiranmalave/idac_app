@@ -2858,3 +2858,17 @@ a.editHover:hover{
 .sl-content.addtoolTip:hover .toolTip {
   visibility: visible;
 }
+.proposalTable thead#thead tr{
+  border-top: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+} 
+.proposalTable thead#thead tr th {
+  border: none;
+}
+.proposalTable #proposalList tr{
+  border-top: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+} 
+.proposalTable  #proposalList tr td{
+  border: none;
+}
