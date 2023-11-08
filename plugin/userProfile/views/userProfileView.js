@@ -50,6 +50,7 @@ define([
       "change .fileAdded": "updateImage",
       "click #address": "showlocation",
       "click .loadMedia": "loadMedia",
+      "click .launchOneDrivePicker":"launchDrive",
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
@@ -71,6 +72,11 @@ define([
       };
       // read the image file as a data URL.
       reader.readAsDataURL(e.currentTarget.files[0]);
+    },
+
+    launchDrive: function(e){
+      var odOptions = { /* ... specify the desired options ... */ };
+      OneDrive.open(odOptions);
     },
 
     chageIcon: function (e) {

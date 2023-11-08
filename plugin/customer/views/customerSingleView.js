@@ -131,8 +131,6 @@ define([
       let selfobj = this;
       var mid = this.model.get("customer_id");
       let isNew = $(e.currentTarget).attr("data-action");
-
-      
       if (permission.edit != "yes") {
         alert("You dont have permission to edit");
         return false;
@@ -159,7 +157,9 @@ define([
           }
           if (selfobj.loadFrom == "TaskSingleView") {
             scanDetails.refreshCust();
-          } else {
+          } else if(selfobj.loadFrom == "dashboard") {
+            handelClose(selfobj.toClose);
+          }else{
             scanDetails.filterSearch();
           }
           if (res.flag == "S") {
@@ -168,7 +168,6 @@ define([
               selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
               selfobj.render();
             } else {
-              // alert("here");
               handelClose(selfobj.toClose);
             }
           }
