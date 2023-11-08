@@ -4,6 +4,9 @@
             <div class="card">
                  <div class="header">
                    <h2>Proposals</h2>
+                   <% if(loadFrom == "dashboard"){%>
+                    <button type="button" class="ws-btn-default loadview editButton"  data-view="singleproposalData" data-item="proposalSingleView"  data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">add</i></button>
+                  <%}%>
                </div>
                  <div class="body">
                    <div class="actionList">

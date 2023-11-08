@@ -158,7 +158,7 @@ class Proposal extends CI_Controller {
 				$proposalDetails['proposal_id'] = $this->validatedata->validate('proposal_id','proposal_id',false,'',array());
 				$proposalDetails['name'] = $this->validatedata->validate('name','Proposal Name',false,'',array());
 				$proposalDetails['description'] = $this->validatedata->validate('description','Description',false,'',array());
-				$proposalDetails['client_id'] = $this->validatedata->validate('client_id','Client Name',false,'',array());
+				$proposalDetails['client_id'] = $this->validatedata->validate('company','Client Name',false,'',array());
 				$proposalDetails['project_id'] = $this->validatedata->validate('project_id','Project Name',false,'',array());
 				$proposalDetails['status'] = $this->validatedata->validate('status','Status',false,'',array());
 				$isCopy = $this->validatedata->validate('copy','copy',false,'',array());

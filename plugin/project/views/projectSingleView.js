@@ -13,8 +13,9 @@ define([
     "../../customer/collections/customerCollection",
     '../models/projectSingleModel',
     '../../readFiles/views/readFilesView',
+    '../../customer/views/customerSingleView',
     'text!../templates/projectSingle_temp.html',
-  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, multiselectOptions, dynamicFieldRender, projectCollection, customerCollection, projectSingleModel, readFilesView, projecttemp) {
+  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, multiselectOptions, dynamicFieldRender, projectCollection, customerCollection, projectSingleModel, readFilesView, customerSingleView, projecttemp) {
     var projectSingleView = Backbone.View.extend({
       model: projectSingleModel,
       initialize: function (options) {
@@ -113,6 +114,9 @@ define([
       },
       updateOtherDetails: function (e) {
         var valuetxt = $(e.currentTarget).val();
+        if (valuetxt == "addClient") {
+          new customerSingleView({ searchCustomer: this, loadfrom: "projectSingleView" });
+        }
         var toID = $(e.currentTarget).attr("id");
         var newdetails = [];
         newdetails["" + toID] = valuetxt;

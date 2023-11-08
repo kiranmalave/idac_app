@@ -234,7 +234,8 @@ define([
       $(".ws-select").val('default');
       $(".ws-select").selectpicker("refresh");
       $(".filterClear").val("");
-      $(".hidetextval").hide();
+      $("#textSearch").val("project_name");
+      // $(".hidetextval").hide();
       $('#textSearch option[value=project_id]').attr('selected', 'selected');
       this.filterSearch(false);
 

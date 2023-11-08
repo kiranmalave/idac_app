@@ -19,6 +19,10 @@ define([
   var proposalView = Backbone.View.extend({
     loadFrom: null,
     initialize: function (options) {
+      console.log(options);
+      this.loadFrom = options.loadFrom;
+      this.customer_ID = options.customerID;
+      this.projectID = options.projectID;
       $(".profile-loader").show();
       this.toClose = "proposalFilterView";
       filterOption = new proposalFilterOptionModel();
@@ -221,7 +225,7 @@ define([
       switch (show) {
         case "singleproposalData": {
           var proposal_id = $(e.currentTarget).attr("data-proposal_id");
-          var proposalsingleView = new proposalSingleView({ proposal_id: proposal_id, searchproposal: this });
+          new proposalSingleView({ proposal_id: proposal_id, projectID:selfobj.projectID, customerID:selfobj.customer_ID, searchproposal: this });
           break;
         }
       }
@@ -565,7 +569,7 @@ define([
     },
     render: function () {
       var template = _.template(proposalTemp);
-      this.$el.html(template({ closeItem: this.toClose }));
+      this.$el.html(template({ closeItem: this.toClose, "loadFrom":this.loadFrom}));
       if (this.loadFrom != null) {
         $("#dasboradProposalHolder").append(this.$el);
       } else {

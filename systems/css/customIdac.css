@@ -2872,3 +2872,8 @@ a.editHover:hover{
 .proposalTable  #proposalList tr td{
   border: none;
 }
+
+#proposaldescription {
+  height: auto;
+  min-height: 110px;
+}
