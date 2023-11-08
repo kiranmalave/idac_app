@@ -75,7 +75,7 @@
 				<table>
 					<tr>
 						<td>
-							<h2><strong>Invoice No:</strong></td><td><?php echo $this->config->item("imagesPATH"); ?></h3>
+							<h2><strong>Invoice No:</strong></td><td><?php echo $taxInvoiceData[0]->invoiceNumber; ?></h3>
 						</td>
 					</tr>
 				</table>
@@ -99,7 +99,7 @@
 						<td><strong>Client Details</strong></td>
 					</tr>
 					<tr>
-						<td><strong><?php echo $companyDetails[0]->first_name; ?></strong></td>
+						<td><strong><?php echo $companyDetails[0]->company_name; ?></strong></td>
 					</tr>
 					<tr >
 						<td><?php echo $companyDetails[0]->address; ?></td>

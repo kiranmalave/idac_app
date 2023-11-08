@@ -36,6 +36,9 @@ define([
     initialize: function (options) {
       this.dynamicData = null;
       this.toClose = "taskSingleView";
+      if (permission == undefined) {
+        permission = ROLE['task'];
+      }
       this.customer_id = options.customerID;
       let customer_id = this.customer_id
       this.tagID = null;
