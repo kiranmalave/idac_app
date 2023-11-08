@@ -244,14 +244,17 @@ define([
                 } else {
                   showResponse(e, res, "Save");
                 }
-                scanDetails.filterSearch();
+                if(selfobj.loadFrom == "dashboard"){
+                  handelClose(selfobj.toClose);
+                }else{
+                  scanDetails.filterSearch();
+                }
                 if (res.flag == "S") {
                   if (isNew == "new") {
                     selfobj.model.clear().set(selfobj.model.defaults);
                     selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                     selfobj.render();
                   } else {
-                    console.log("proposalList", JSON.stringify(res.data));
                     handelClose(selfobj.toClose);
                   }
                 }
@@ -308,7 +311,11 @@ define([
             } else {
               showResponse(e, res, "Save");
             }
-            scanDetails.filterSearch();
+            if(selfobj.loadFrom == "dashboard"){
+              handelClose(selfobj.toClose);
+            }else{
+              scanDetails.filterSearch();
+            }
             if (res.flag == "S") {
               if (isNew == "new") {
                 selfobj.model.clear().set(selfobj.model.defaults);
@@ -328,6 +335,9 @@ define([
         salutation: {
           required: true,
         },
+        project_id:{
+          required: true,
+        },
         name: {
           required: true,
         },
@@ -345,6 +355,7 @@ define([
       }
       var messages = {
         salutation: "select salutation",
+        project_id:"Project Required",
         name: "Please enter First Name",
       };
       $("#mobile_no").inputmask("Regex", { regex: "^[0-9](\\d{1,9})?$" });

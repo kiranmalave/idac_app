@@ -324,6 +324,8 @@ define([
         } else {
           objectModel.attributes.date_status = dueDateMoment.format("MMMM Do, YYYY");
         }
+      }else{
+        objectModel.attributes.due_date = "-"
       }
       $("#taskList").append(template({ taskDetails: objectModel }));
       // $("#taskList").append(template({ taskDetails: objectModel }));

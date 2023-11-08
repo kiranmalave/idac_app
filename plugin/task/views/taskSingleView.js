@@ -36,6 +36,10 @@ define([
     initialize: function (options) {
       this.dynamicData = null;
       this.toClose = "taskSingleView";
+      if (permission == undefined) {
+        permission = ROLE['task'];
+      }
+      this.loadFrom = options.loadfrom;
       this.customer_id = options.customerID;
       let customer_id = this.customer_id
       this.tagID = null;
@@ -511,7 +515,11 @@ define([
           } else {
             showResponse(e, res, "Save");
           }
-          scanDetails.filterSearch();
+          if(selfobj.loadFrom == "dashboard"){
+            handelClose(selfobj.toClose);
+          }else{
+            scanDetails.filterSearch();
+          }
           if (res.flag == "S") {
             if (isNew == "new") {
               selfobj.model.clear().set(selfobj.model.defaults);

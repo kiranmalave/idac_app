@@ -18,7 +18,7 @@ define([
     var projectSingleView = Backbone.View.extend({
       model: projectSingleModel,
       initialize: function (options) {
-        console.log(options);
+        this.customerID = options.customerID;
         this.dynamicData = null;
         this.toClose = "projectSingleView";
         this.pluginName = "projectList";
@@ -74,7 +74,6 @@ define([
             selfobj.render();
             selfobj.setOldValues();
           });
-          console.log("aniruddha test",this.model)
         }
       },
       events: {
@@ -146,7 +145,7 @@ define([
         var da = selfobj.multiselectOptions.setCheckedValue(e);
         selfobj.model.set(da);
       },
-  
+        
       saveprojectDetails: function (e) {
         e.preventDefault();
         let selfobj = this;
@@ -238,7 +237,7 @@ define([
         var template = _.template(source);
         $("#" + this.toClose).remove();
         console.log(this.customerList);
-        this.$el.html(template({ "model": this.model.attributes , "customerList": this.customerList.models}));
+        this.$el.html(template({ "model": this.model.attributes , "customerList": this.customerList.models, "customerID": this.customerID}));
         this.$el.addClass("tab-pane in active panel_overflow");
         this.$el.attr("id", this.toClose);
         this.$el.addClass(this.toClose);
