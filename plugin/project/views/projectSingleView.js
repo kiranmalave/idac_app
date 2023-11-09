@@ -159,7 +159,7 @@ define([
           alert("You dont have permission to edit");
           return false;
         }
-        if(this.customerID != ""){
+        if(this.customerID != null){
           this.model.set({'client_id':selfobj.customerID});
         }
         if (mid == "" || mid == null) {
@@ -186,6 +186,7 @@ define([
               scanDetails.refreshCust();
             } else if (selfobj.loadFrom == "dashboard") {
               handelClose(selfobj.toClose);
+              scanDetails.initialize();
             }else{
               scanDetails.filterSearch();
             }

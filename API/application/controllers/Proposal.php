@@ -34,7 +34,7 @@ class Proposal extends CI_Controller {
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$isAll = $this->input->post('getAll');
-		$textSearch = trim($this->input->post('textSearch'));
+		$textSearch = $this->input->post('textSearch');
 		$curPage = $this->input->post('curpage');
 		$ITIID = $this->input->post('proposal_id');
 		$textval = $this->input->post('textval');
@@ -57,6 +57,7 @@ class Proposal extends CI_Controller {
 		$config = $this->config->item('pagination');
 		$wherec = $join = array();
 		if(isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)){
+			$textSearch = trim($textSearch);
 			$wherec["$textSearch like  "] = "'".$textval."%'";
 		}
 
@@ -71,6 +72,13 @@ class Proposal extends CI_Controller {
 
 		if (isset($company) && !empty($company)) {
 			$wherec["t.client_id like"] = "'" . $company . "%'";
+		}
+
+		
+		$wherer["adminID = "] = $this->input->post('SadminID');
+		$roleID = $this->CommonModel->getMasterDetails('admin','roleID',$wherer);
+		if($roleID[0]->roleID != 1){
+			$wherec["t.confirm"] = 'IN("yes")';
 		}
 
 		$join = array();
@@ -108,7 +116,6 @@ class Proposal extends CI_Controller {
 			$selectC = "t.*,c.company_name,p.confirm_proposal";
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,$config["per_page"],$page,$join,$other);
 		}
-
 		$status['data'] = $proposalDetails;
 		$status['paginginfo']["curPage"] = $curPage;
 		if($curPage <=1)
