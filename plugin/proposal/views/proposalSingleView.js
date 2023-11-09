@@ -16,12 +16,16 @@ define([
   "../../proposalTemplate/models/proposalTemplateSingleModel",
   '../models/proposalSingleModel',
   '../../readFiles/views/readFilesView',
+  '../../customer/views/customerSingleView',
+  '../../project/views/projectSingleView',
   'text!../templates/proposalSingle_temp.html',
-], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, multiselectOptions, dynamicFieldRender, proposalCollection, customerCollection, projectCollection, proposalTemplateCollection, proposalTempSingel, proposalSingleModel, readFilesView, proposaltemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, multiselectOptions, dynamicFieldRender, proposalCollection, customerCollection, projectCollection, proposalTemplateCollection, proposalTempSingel, proposalSingleModel, readFilesView, customerSingleView, projectSingleView, proposaltemp) {
   var proposalSingleView = Backbone.View.extend({
     model: proposalSingleModel,
     initialize: function (options) {
       console.log(options);
+      this.customerID = options.customerID;
+      this.projectID = options.projectID;
       this.dynamicData = null;
       this.toClose = "proposalSingleView";
       this.pluginName = "proposalList";
@@ -143,6 +147,11 @@ define([
     },
     updateOtherDetails: function (e) {
       var valuetxt = $(e.currentTarget).val();
+      if (valuetxt == "addClient") {
+        new customerSingleView({ searchCustomer: this, loadfrom: "proposalSingleView" });
+      }else if(valuetxt == "addProject"){
+        new projectSingleView({ searchCustomer: this, loadfrom: "proposalSingleView" });
+      }
       var toID = $(e.currentTarget).attr("id");
       var newdetails = [];
       newdetails["" + toID] = valuetxt;
@@ -197,6 +206,10 @@ define([
     saveproposalDetails: function (e) {
       e.preventDefault();
       let selfobj = this;
+      if(this.customerID != "" && this.projectID != ""){
+        this.model.set({'project_id':selfobj.projectID});
+        this.model.set({'client_id':selfobj.customerID});
+      }
       console.log(this.model);
       var mid = this.model.get("proposal_id");
       var proejctConfirm = this.model.get("confirmProposal");
@@ -402,7 +415,7 @@ define([
       var source = proposaltemp;
       var template = _.template(source);
       $("#" + this.toClose).remove();
-      this.$el.html(template({ model: this.model.attributes, "customerList": this.customerList.models, "projectList": this.projectList.models, "proposalTemplateList": this.proposalTemplateList.models, }));
+      this.$el.html(template({ model: this.model.attributes, "customerList": this.customerList.models, "projectList": this.projectList.models, "proposalTemplateList": this.proposalTemplateList.models, "customerID":this.customerID, "projectID":this.projectID }));
       this.$el.addClass("tab-pane in active panel_overflow");
       this.$el.attr("id", this.toClose);
       this.$el.addClass(this.toClose);
@@ -425,7 +438,7 @@ define([
         ['link'],
         ['clean']                                         // remove formatting button
       ];
-      var editor = new Quill($("#description").get(0), {
+      var editor = new Quill($("#proposaldescription").get(0), {
         modules: {
           toolbar: __toolbarOptions
         },
