@@ -10,10 +10,12 @@
           <%=pagesMasterDetails.attributes.pageTitle%>
         </u></a>
     <% if(pagesMasterDetails.attributes.isHome=='yes' ) { %><span class="badge badge-info">Home Page</span>
-      <% } %>
+      <% }else if(pagesMasterDetails.attributes.status=='inactive'){ %><span class="badge badge-info bg-grey">Un Published</span>
+      <%}else if(pagesMasterDetails.attributes.status=='active'){%><span class="badge badge-info bg-light-green">Published</span><%}%>
   </td>
   <td class="">
     <%=pagesMasterDetails.attributes.pageLink%>
+    <%=pagesMasterDetails.attributes.pageID%>
   </td>
   <td class="">
     <%= formatDate(pagesMasterDetails.attributes.created_date,'no') %>
@@ -24,5 +26,6 @@
   <td>
     <button class="ws-btn-default loadview"  data-pageID="<%=pagesMasterDetails.attributes.pageID%>" data-view="singlepagesMasterData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
     <a class="ws-btn-default" target="_blank" href="#addnewpage/<%= pagesMasterDetails.attributes.pageID %>" data-toggle="tooltip" data-placement="top" title="Design"><i class="material-icons">brush</i></a>
+    <button class="ws-btn-default copyContent"  data-pageID="<%=pagesMasterDetails.attributes.pageID%>" data-toggle="tooltip" data-placement="top" title="Copy"><i class="material-icons">content_copy</i></button>
   </td>
 </tr>
