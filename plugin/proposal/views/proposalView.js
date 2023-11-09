@@ -30,6 +30,7 @@ define([
       if (options.loadFrom != undefined) {
         selfobj.loadFrom = options.loadFrom;
         filterOption.set({ project_id: options.projectID });
+        filterOption.set({ client_id: options.customerID });
         permission = ROLE['proposal'];
         console.log(filterOption);
       } else {

@@ -159,6 +159,9 @@ define([
           alert("You dont have permission to edit");
           return false;
         }
+        if(this.customerID != ""){
+          this.model.set({'client_id':selfobj.customerID});
+        }
         if (mid == "" || mid == null) {
           var methodt = "PUT";
         } else {

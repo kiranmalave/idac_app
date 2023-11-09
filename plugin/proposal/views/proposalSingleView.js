@@ -208,7 +208,7 @@ define([
       let selfobj = this;
       if(this.customerID != "" && this.projectID != ""){
         this.model.set({'project_id':selfobj.projectID});
-        this.model.set({'client_id':selfobj.projectID});
+        this.model.set({'client_id':selfobj.customerID});
       }
       console.log(this.model);
       var mid = this.model.get("proposal_id");
