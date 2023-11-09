@@ -4,9 +4,13 @@
     <div class="col-lg-12">
       <div class="card">
         <div class="header">
-          <h2>Task Navigator</h2>
-
           
+          <% if(loadFrom == "dashboard"){%>
+            <h2>Task</h2>
+          <%}else{%>
+            <h2>Task Navigator</h2>
+          <%}%>
+
           <div class="filterbuttons">
             <input type="button" id="yesterday" class="taskfilbtn sortbydate btn bg-indigo waves-effect"
               data-filter="yesterday" value="Yesterday"></button>
