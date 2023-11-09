@@ -2812,7 +2812,7 @@ a.editHover:hover{
     transform: translate3d(0px, -180px, 0px); */
     /* transform: unset !important; */
     max-height: 84.5px;
-    overflow: scroll !important;
+    /* overflow: scroll !important; */
     min-height: 168px !important;
     /* position: absolute; */
     transform: translate3d(0px, 31px, 0px);
