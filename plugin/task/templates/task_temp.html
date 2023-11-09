@@ -5,6 +5,8 @@
       <div class="card">
         <div class="header">
           <h2>Task Navigator</h2>
+
+          
           <div class="filterbuttons">
             <input type="button" id="yesterday" class="taskfilbtn sortbydate btn bg-indigo waves-effect"
               data-filter="yesterday" value="Yesterday"></button>
@@ -121,20 +123,23 @@
 </div>
 </div>
 </div>
-<div class="sidebar-right">
-  <ul class="nav side-menu">
-    <li id="filterOption" class="nav-item " data-item="<%=closeItem%>" data-toggle="tooltip" data-placement="top" title="Filter">
-      <span class="material-symbols-outlined">filter_alt</span>
-      <!-- <span class="badge bg-pink taskBadge"></span> -->
-    </li>
-  
-      <li class="loadview nav-item" data-view="singletaskData" data-item="taskSingleView" data-toggle="tooltip"
-        data-placement="top" title="Add">
-        <span class="material-icons">add</span>
+<% if(loadFrom != "dashboard"){%>
+  <div class="sidebar-right">
+    <ul class="nav side-menu">
+      <li id="filterOption" class="nav-item " data-item="<%=closeItem%>" data-toggle="tooltip" data-placement="top" title="Filter">
+        <span class="material-symbols-outlined">filter_alt</span>
+        <!-- <span class="badge bg-pink taskBadge"></span> -->
       </li>
-      
-  </ul>
-</div>
+    
+        <li class="loadview nav-item" data-view="singletaskData" data-item="taskSingleView" data-toggle="tooltip"
+          data-placement="top" title="Add">
+          <span class="material-icons">add</span>
+        </li>
+        
+    </ul>
+  </div>
+<%}%>
+
 <div class="ws_filterOptions"></div>
 
 

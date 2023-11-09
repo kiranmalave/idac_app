@@ -36,7 +36,7 @@ define([
         permission = ROLE[mname];
       }
       $(".profile-loader").show();
-
+      this.loadFrom = options.loadfrom;
       readyState = true;
       this.render();
       this.filterCount = null;
@@ -634,7 +634,7 @@ define([
     },
     render: function () {
       var template = _.template(taskTemp);
-      this.$el.html(template({ closeItem: this.toClose, }));
+      this.$el.html(template({ closeItem: this.toClose, loadFrom: this.loadFrom }));
       console.log("this.loadfrom", this.loadfrom);
       if (this.loadfrom != null) {
         $("body").find("#dasboradTaskHolder").append(this.$el);

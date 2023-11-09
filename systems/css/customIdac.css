@@ -2877,3 +2877,7 @@ a.editHover:hover{
   height: auto;
   min-height: 110px;
 }
+
+section.content.dashBordTotal {
+  width: 104% !important;
+}
