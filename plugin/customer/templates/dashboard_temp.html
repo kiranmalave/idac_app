@@ -73,9 +73,12 @@
                 <% _.each(historyList, function(model1) { %>
                   <div class="streamline b-l b-accent">
                     <div class="sl-item">
-                        <div class="sl-content">
+                        <div class="sl-content addtoolTip">
                             <div class="text-muted-dk"><%=model1.attributes.timeString%></div>
-                            <p><%=model1.attributes.record_type%><span class="text-info"> <%=model1.attributes.col%>  <%=model1.attributes.new_val%></span>.</p>
+                            <p class="addtool"><%=model1.attributes.record_type%>
+                              <span class="text-info"> <%=model1.attributes.col%>  <%=model1.attributes.new_val%></span>
+                              <div class="toolTip"><%=model1.attributes.col%>  <%=model1.attributes.new_val%></div>
+                            </p>
                         </div>
                     </div>                            
                   </div>
