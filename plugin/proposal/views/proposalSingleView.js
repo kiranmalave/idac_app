@@ -206,7 +206,7 @@ define([
     saveproposalDetails: function (e) {
       e.preventDefault();
       let selfobj = this;
-      if(this.customerID != "" && this.projectID != ""){
+      if(this.customerID != null && this.projectID != null){
         this.model.set({'project_id':selfobj.projectID});
         this.model.set({'client_id':selfobj.customerID});
       }
@@ -259,6 +259,7 @@ define([
                 }
                 if(selfobj.loadFrom == "dashboard"){
                   handelClose(selfobj.toClose);
+                  scanDetails.render();
                 }else{
                   scanDetails.filterSearch();
                 }

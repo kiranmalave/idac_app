@@ -515,9 +515,10 @@ define([
           } else {
             showResponse(e, res, "Save");
           }
-          if(selfobj.loadFrom == "dashboard"){
+          if (selfobj.loadFrom == "dashboard") {
             handelClose(selfobj.toClose);
-          }else{
+            scanDetails.initialize();
+          } else {
             scanDetails.filterSearch();
           }
           if (res.flag == "S") {
