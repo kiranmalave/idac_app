@@ -14,15 +14,14 @@ define([
   '../../customer/views/customerSingleView',
   '../../proposal/views/proposalSingleView',
   'text!../templates/dashbord_temp.html'
-  
-], function ($, _, Backbone, custom, dashboardModel, filterUser, addUserView,taskView,customerCollection, projectCollection,projectSingleView, taskSingleView, customerSingleView, proposalSingleView, dashBord_temp) {
+
+], function ($, _, Backbone, custom, dashboardModel, filterUser, addUserView, taskView, customerCollection, projectCollection, projectSingleView, taskSingleView, customerSingleView, proposalSingleView, dashBord_temp) {
 
   var dashboardView = Backbone.View.extend({
     model: dashboardModel,
     tagName: "div",
     initialize: function (options) {
       var selfobj = this;
-
       this.model = new dashboardModel();
       selfobj.render();
       this.model.fetch({
@@ -33,7 +32,7 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
         selfobj.render();
-        new taskView({loadfrom:"dashboard"});
+        new taskView({ loadfrom: "dashboard" });
       });
 
     },
@@ -42,11 +41,11 @@ define([
       "change .saveOtherDetail": "updateDetails",
       "click .getPaymentData": "getPaymentDetails",
       "click .showOverlay": "showOverlay",
-      "click .loadview" : "loadSubView",
+      "click .loadview": "loadSubView",
       "click .tablinks": "tablinks",
       "click .openTable": "showTable",
       "click .backbutton": "backBtn",
-      
+
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
@@ -55,34 +54,34 @@ define([
     addOne: function (objectModel) {
       console.log(this.model);
     },
-    loadSubView:function(e){
+    loadSubView: function (e) {
       var show = $(e.currentTarget).attr("data-view");
-      switch(show){
-       case "singleprojectview":{
+      switch (show) {
+        case "singleprojectview": {
           var project_id = $(e.currentTarget).attr("data-project_id");
-          new projectSingleView({project_id: project_id,loadfrom:"dashboard"});
+          new projectSingleView({ project_id: project_id, loadfrom: "dashboard", searchproject: this });
           break;
         }
 
-        case "singletaskview":{
+        case "singletaskview": {
           var task_id = $(e.currentTarget).attr("data-task_id");
-          new taskSingleView({task_id: task_id,loadfrom:"dashboard"});
+          new taskSingleView({ task_id: task_id, loadfrom: "dashboard", searchtask: this });
           break;
         }
 
-        case "singleClientview":{
+        case "singleClientview": {
           var customer_id = $(e.currentTarget).attr("data-customer_id");
-          new customerSingleView({customer_id: customer_id,loadfrom:"dashboard"});
+          new customerSingleView({ customer_id: customer_id, loadfrom: "dashboard", searchCustomer: this });
           break;
         }
 
-        case "proposalSingleView":{
+        case "proposalSingleView": {
           var proposal_id = $(e.currentTarget).attr("data-proposal_id");
-          new proposalSingleView({proposal_id: proposal_id,loadfrom:"dashboard"});
+          new proposalSingleView({ proposal_id: proposal_id, loadfrom: "dashboard" });
           break;
         }
 
-        
+
       }
     },
 
@@ -99,8 +98,8 @@ define([
         }
       }
     },
-  
-   
+
+
     getBannersDetails: function (e) {
       $.ajax({
         url: APIPATH + 'bannersCountDetails/',
@@ -125,13 +124,13 @@ define([
       });
     },
 
-    tablinks:function(e){
+    tablinks: function (e) {
       let ctab = $(e.currentTarget).attr("data-type");
       $(".tablinks").removeClass("active");
       $(".taskcard").hide();
       $(e.currentTarget).addClass("active");
-      $("#"+ctab).show();
-      
+      $("#" + ctab).show();
+
       // var i, tabcontent, tablinks;
       // tabcontent = document.getElementsByClassName("card");
       // for (i = 0; i < tabcontent.length; i++) {
@@ -143,37 +142,35 @@ define([
       // }
       // document.getElementById(cityName).style.display = "block";
       // evt.currentTarget.className += " active";
-    }, 
+    },
 
-    showTable:function(e){
+    showTable: function (e) {
       var element = document.querySelector(".addFlex");
-          element.classList.add("hideFolder");
+      element.classList.add("hideFolder");
 
 
-    var element = document.querySelector(".hideTable");
-          element.classList.add("ShowTable");     
+      var element = document.querySelector(".hideTable");
+      element.classList.add("ShowTable");
     },
 
     // backBtn:funtion(e){
-      
-    
 
-    backBtn:function(){
-       var element = document.querySelector(".addFlex");
-          element.classList.remove("hideFolder");
-       var element = document.querySelector(".hideTable");
-          element.classList.remove("ShowTable");
+
+
+    backBtn: function () {
+      var element = document.querySelector(".addFlex");
+      element.classList.remove("hideFolder");
+      var element = document.querySelector(".hideTable");
+      element.classList.remove("ShowTable");
     },
     render: function () {
       var selfobj = this;
       var template = _.template(dashBord_temp);
-      var res = template({"model":this.model});
+      var res = template({ "model": this.model });
       this.$el.html(res);
       $('.number').text(selfobj.recordCount);
       $('.numberProject').text(selfobj.projectCnt);
       $(".app_playground").append(this.$el);
-      // alert('count');
-      
       return this;
     },
 

@@ -157,9 +157,10 @@ define([
           }
           if (selfobj.loadFrom == "TaskSingleView") {
             scanDetails.refreshCust();
-          } else if(selfobj.loadFrom == "dashboard") {
+          } else if (selfobj.loadFrom == "dashboard") {
             handelClose(selfobj.toClose);
-          }else{
+            scanDetails.initialize();
+          } else {
             scanDetails.filterSearch();
           }
           if (res.flag == "S") {
@@ -219,7 +220,7 @@ define([
 
       if (!_.isEmpty(dynamicRules)) {
         var feildsrules = $.extend({}, feilds, dynamicRules);
-       
+
       }
       var messages = {
         company_name: "Please enter Company Name",
@@ -234,7 +235,7 @@ define([
         rules: feildsrules,
         messages: messages,
       });
-      
+
       var input = document.getElementById('address');
       var autocomplete = new google.maps.places.Autocomplete(input);
       autocomplete.addListener('place_changed', function () {
