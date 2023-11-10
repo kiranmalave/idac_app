@@ -187,6 +187,8 @@ define([
             } else if (selfobj.loadFrom == "dashboard") {
               handelClose(selfobj.toClose);
               scanDetails.initialize();
+            }else if(selfobj.loadFrom == "proposalSingleView") {
+              scanDetails.render();
             }else{
               scanDetails.filterSearch();
             }
