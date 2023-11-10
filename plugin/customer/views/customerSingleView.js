@@ -161,9 +161,9 @@ define([
             handelClose(selfobj.toClose);
             scanDetails.initialize();
           } else if (selfobj.loadFrom == "projectSingleView"){
-            scanDetails.render();
+            scanDetails.initialize(scanDetails);
           }else if (selfobj.loadFrom == "proposalSingleView"){
-            scanDetails.render();
+            scanDetails.initialize(scanDetails);
           }else{
             scanDetails.filterSearch();
           }
