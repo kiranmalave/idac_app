@@ -2886,3 +2886,7 @@ section.content.dashBordTotal {
 .delete{
   position: relative;
 }
+
+.taskfilbtn.active {
+  color: #000 !important;
+}
