@@ -111,9 +111,18 @@ class Proposal extends CI_Controller {
 		}
 		
 		if($isAll=="Y"){
-			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,'','',$join,$other);	
+			if($roleID[0]->roleID != 1){
+				$selectC = "proposal_id,proposal_number,name,t.project_id,t.client_id,t.description,confirm,t.created_by,t.created_date,t.modified_by,t.modified_date,t.status";
+			}else{
+				$selectC='*';
+			}
+			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC,'proposal',$wherec,'','',$join,$other);	
 		}else{
-			$selectC = "t.*,c.company_name,p.confirm_proposal";
+			if($roleID[0]->roleID != 1){
+				$selectC = "proposal_id,proposal_number,name,project_id,client_id,description,confirm,created_by,created_date,modified_by,modified_date,status,c.company_name,p.confirm_proposal";
+			}else{
+				$selectC = "t.*,c.company_name,p.confirm_proposal";
+			}
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,$config["per_page"],$page,$join,$other);
 		}
 		$status['data'] = $proposalDetails;
@@ -166,6 +175,7 @@ class Proposal extends CI_Controller {
 				$proposalDetails['name'] = $this->validatedata->validate('name','Proposal Name',false,'',array());
 				$proposalDetails['description'] = $this->validatedata->validate('description','Description',false,'',array());
 				$proposalDetails['client_id'] = $this->validatedata->validate('client_id','Client Name',false,'',array());
+				$proposalDetails['cost'] = $this->validatedata->validate('cost','Cost',false,'',array());
 				$proposalDetails['project_id'] = $this->validatedata->validate('project_id','Project Name',false,'',array());
 				$proposalDetails['status'] = $this->validatedata->validate('status','Status',false,'',array());
 				$isCopy = $this->validatedata->validate('copy','copy',false,'',array());
@@ -327,7 +337,14 @@ class Proposal extends CI_Controller {
 		{ 
 				
 				$where = array("proposal_id"=>$proposal_id);
-				$proposalDetails = $this->CommonModel->getMasterDetails('proposal','',$where);
+				$wherer["adminID = "] = $this->input->post('SadminID');
+				$roleID = $this->CommonModel->getMasterDetails('admin','roleID',$wherer);
+				if($roleID[0]->roleID != 1){
+					$selectC = "proposal_id,proposal_number,name,project_id,client_id,description,confirm,created_by,created_date,modified_by,modified_date,status";
+				}else{
+					$selectC = "*";
+				}
+				$proposalDetails = $this->CommonModel->getMasterDetails('proposal',$selectC,$where);
 				if(isset($proposalDetails) && !empty($proposalDetails)){
 
 				$wherec["project_id"] = "".$proposalDetails[0]->project_id."";
