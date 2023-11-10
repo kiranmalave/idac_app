@@ -908,9 +908,10 @@ input.error {
 }
 
 section.content {
-  margin: 0px 63px 15px 270px;
+  /* margin: 0px 30px 15px 244px; */
   padding-top: 54px;
 }
+
 
 .filter_btn {
   float: right;
@@ -2879,5 +2880,9 @@ a.editHover:hover{
 }
 
 section.content.dashBordTotal {
-  width: 104% !important;
+  /* width: 104% !important; */
+}
+
+.delete{
+  position: relative;
 }
