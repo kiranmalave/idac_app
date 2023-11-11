@@ -2890,3 +2890,7 @@ section.content.dashBordTotal {
 .taskfilbtn.active {
   color: #000 !important;
 }
+
+.projectSelect label#project_id-error {
+    top: 32px;
+}
