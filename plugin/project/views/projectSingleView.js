@@ -19,6 +19,7 @@ define([
     var projectSingleView = Backbone.View.extend({
       model: projectSingleModel,
       initialize: function (options) {
+        console.log(options);
         this.customerID = options.customerID;
         this.dynamicData = null;
         this.toClose = "projectSingleView";
@@ -33,7 +34,7 @@ define([
         this.multiselectOptions = new multiselectOptions();
         $(".modelbox").hide();
         scanDetails = options.searchproject;
-        console.log(options);
+        
         $(".popupLoader").show();
         var projectList = new projectCollection();
         projectList.fetch({
@@ -187,6 +188,8 @@ define([
             } else if (selfobj.loadFrom == "dashboard") {
               handelClose(selfobj.toClose);
               scanDetails.initialize();
+            }else if(selfobj.loadFrom == "proposalSingleView") {
+              scanDetails.initialize(scanDetails);
             }else{
               scanDetails.filterSearch();
             }

@@ -150,7 +150,7 @@ define([
       if (valuetxt == "addClient") {
         new customerSingleView({ searchCustomer: this, loadfrom: "proposalSingleView" });
       }else if(valuetxt == "addProject"){
-        new projectSingleView({ searchCustomer: this, loadfrom: "proposalSingleView" });
+        new projectSingleView({ searchproject: this, loadfrom: "proposalSingleView" });
       }
       var toID = $(e.currentTarget).attr("id");
       var newdetails = [];
@@ -259,7 +259,9 @@ define([
                 }
                 if(selfobj.loadFrom == "dashboard"){
                   handelClose(selfobj.toClose);
-                  scanDetails.render();
+                  // scanDetails.render();
+                  scanDetails.initialize();
+
                 }else{
                   scanDetails.filterSearch();
                 }

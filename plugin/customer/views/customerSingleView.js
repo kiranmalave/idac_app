@@ -160,7 +160,11 @@ define([
           } else if (selfobj.loadFrom == "dashboard") {
             handelClose(selfobj.toClose);
             scanDetails.initialize();
-          } else {
+          } else if (selfobj.loadFrom == "projectSingleView"){
+            scanDetails.initialize(scanDetails);
+          }else if (selfobj.loadFrom == "proposalSingleView"){
+            scanDetails.initialize(scanDetails);
+          }else{
             scanDetails.filterSearch();
           }
           if (res.flag == "S") {

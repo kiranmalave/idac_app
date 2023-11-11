@@ -908,9 +908,10 @@ input.error {
 }
 
 section.content {
-  margin: 0px 40px 15px 250px;
+  /* margin: 0px 30px 15px 244px; */
   padding-top: 54px;
 }
+
 
 .filter_btn {
   float: right;
@@ -2879,5 +2880,17 @@ a.editHover:hover{
 }
 
 section.content.dashBordTotal {
-  width: 104% !important;
+  /* width: 104% !important; */
+}
+
+.delete{
+  position: relative;
+}
+
+.taskfilbtn.active {
+  color: #000 !important;
+}
+
+.projectSelect label#project_id-error {
+    top: 32px;
 }
