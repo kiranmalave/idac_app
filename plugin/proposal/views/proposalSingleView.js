@@ -23,7 +23,6 @@ define([
   var proposalSingleView = Backbone.View.extend({
     model: proposalSingleModel,
     initialize: function (options) {
-      console.log(options);
       this.customerID = options.customerID;
       this.projectID = options.projectID;
       this.dynamicData = null;
@@ -473,7 +472,7 @@ define([
           var delta = editor2.getContents();
           var text = editor2.getText();
           var justHtml = editor2.root.innerHTML;
-          selfobj.model.set({ "costing": justHtml });
+          selfobj.model.set({ "cost": justHtml });
         }
       });
 

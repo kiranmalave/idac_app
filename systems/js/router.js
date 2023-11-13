@@ -94,6 +94,7 @@ define([
     var bbauth = $.cookie('bbauth');
     ADMINNAME = $.cookie('name');
     ADMINID = $.cookie('authid');
+    ROLEID = $.cookie('roleID');
     ISMENUSET = false;
     ROLE = '';
     function preTemp() {

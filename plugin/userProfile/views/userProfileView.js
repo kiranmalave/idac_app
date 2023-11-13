@@ -75,7 +75,18 @@ define([
     },
 
     launchDrive: function(e){
-      var odOptions = { /* ... specify the desired options ... */ };
+      var odOptions = {
+        clientId: "5c7b36e3-0b5a-42fc-bc4a-c28ea5f90a0f",
+        action: "query",
+        multiSelect: false,
+        advanced: {
+          queryParameters: "select=id,name,size,file,folder,photo,@microsoft.graph.downloadUrl",
+          filter: "folder,.png" /* display folder and files with extension '.png' only */
+        },
+        success: function(files) {},
+        cancel: function() { /* cancel handler */ },
+        error: function(error) { /* error handler */ }
+      }
       OneDrive.open(odOptions);
     },
 
