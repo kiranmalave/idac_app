@@ -19,7 +19,6 @@ define([
     var projectSingleView = Backbone.View.extend({
       model: projectSingleModel,
       initialize: function (options) {
-        console.log(options);
         this.customerID = options.customerID;
         this.dynamicData = null;
         this.toClose = "projectSingleView";
@@ -150,7 +149,17 @@ define([
         var da = selfobj.multiselectOptions.setCheckedValue(e);
         selfobj.model.set(da);
       },
-        
+      refreshCus: function (){
+        let selfobj = this;
+        this.customerList.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status:'active'}
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          selfobj.render();
+        });
+      },     
       saveprojectDetails: function (e) {
         e.preventDefault();
         let selfobj = this;
@@ -189,7 +198,7 @@ define([
               handelClose(selfobj.toClose);
               scanDetails.initialize();
             }else if(selfobj.loadFrom == "proposalSingleView") {
-              scanDetails.initialize(scanDetails);
+              scanDetails.refreshProj();
             }else{
               scanDetails.filterSearch();
             }

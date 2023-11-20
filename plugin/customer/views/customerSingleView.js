@@ -163,9 +163,11 @@ define([
             handelClose(selfobj.toClose);
             scanDetails.initialize({action:selfobj.model.get("customer_id")});
           } else if (selfobj.loadFrom == "projectSingleView"){
-            scanDetails.initialize({action:selfobj.model.get("customer_id")});
+            scanDetails.refreshCus();
+            // scanDetails.initialize({action:selfobj.model.get("customer_id")});
           }else if (selfobj.loadFrom == "proposalSingleView"){
-            scanDetails.initialize(scanDetails);
+            // scanDetails.initialize({action:selfobj.model.get("customer_id")});
+            scanDetails.refreshCus();
           }else{
             scanDetails.filterSearch();
           }
