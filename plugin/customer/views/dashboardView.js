@@ -22,8 +22,8 @@ define([
       model: dashboardModel,
       tagName: "div",
       initialize: function (options) {
-        var customerID = options.action;
-        this.customerID = customerID;
+        this.customerID =options.action;
+        // alert(this.customerID);
         this.multiselectOptions = new multiselectOptions();
         this.customerModel = new customerSingleModel();
         this.timeselectOptions = new timeselectOptions();
@@ -48,14 +48,13 @@ define([
           this.historyList.fetch({
             headers: {
               'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-            }, error: selfobj.onErrorHandler, type: 'post', data: { getAll: 'Y', status: "active", task_id:customerID}
+            }, error: selfobj.onErrorHandler, type: 'post', data: { getAll: 'Y', status: "active", task_id:selfobj.customerID}
           }).done(function (res) {
             if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
             $(".popupLoader").hide();
             selfobj.preparetime();
             // selfobj.render();
           });
-          console.log(this.historyList);
       },
       events:
       {
@@ -83,6 +82,7 @@ define([
           selfobj.timeselectOptions.displayRelativeTime(timestamp);
           model.set({ "timeString": selfobj.timeselectOptions.displayRelativeTime(timestamp) });
         }
+       
         this.render();
       },
       updateNote: function (e) {
@@ -94,7 +94,7 @@ define([
         switch(show){
           case "singlecustomerview":{
             var customer_id = $(e.currentTarget).attr("data-customer_id");
-            new customerSingleView({customer_id: customer_id,loadfrom:"dashboard"});
+            new customerSingleView({customer_id: customer_id,loadfrom:"dashboard", searchCustomer:this });
             break;
           }
         }

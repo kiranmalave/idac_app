@@ -115,10 +115,11 @@ define([
 
     },
     loadMedia: function (e) {
-      e.stopPropagation();
+     e.stopPropagation();
       $('#largeModal').modal('toggle');
       this.elm = "profile_pic";
       var menusingleview = new readFilesView({ loadFrom: "addpage", loadController: this });
+      
     },
     setValues: function (e) {
       var selfobj = this;
@@ -131,10 +132,10 @@ define([
       let selfobj = this;
       var mid = this.model.get("customer_id");
       let isNew = $(e.currentTarget).attr("data-action");
-      if (permission.edit != "yes") {
-        alert("You dont have permission to edit");
-        return false;
-      }
+      // if (permission.edit != "yes") {
+      //   alert("You dont have permission to edit");
+      //   return false;
+      // }
       if (mid == "" || mid == null) {
         var methodt = "PUT";
       } else {
@@ -155,15 +156,18 @@ define([
           } else {
             showResponse(e, res, "Save");
           }
+          console.log(scanDetails);
           if (selfobj.loadFrom == "TaskSingleView") {
             scanDetails.refreshCust();
           } else if (selfobj.loadFrom == "dashboard") {
             handelClose(selfobj.toClose);
-            scanDetails.initialize();
+            scanDetails.initialize({action:selfobj.model.get("customer_id")});
           } else if (selfobj.loadFrom == "projectSingleView"){
-            scanDetails.initialize(scanDetails);
+            scanDetails.refreshCus();
+            // scanDetails.initialize({action:selfobj.model.get("customer_id")});
           }else if (selfobj.loadFrom == "proposalSingleView"){
-            scanDetails.initialize(scanDetails);
+            // scanDetails.initialize({action:selfobj.model.get("customer_id")});
+            scanDetails.refreshCus();
           }else{
             scanDetails.filterSearch();
           }
