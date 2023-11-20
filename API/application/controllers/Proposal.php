@@ -244,17 +244,17 @@ class Proposal extends CI_Controller {
 							if(isset($proposalDetail)&&!empty($proposalDetail)){
 							$proposalDetail = json_decode(json_encode($proposalDetail[0]), true);
 							$currentProposalNumber = $proposalDetail['proposal_number'];
+							// print_r($currentProposalNumber);exit;
 							$matches = array();	
+							$currentProposalNumber = $proposalDetail['proposal_number'];
 							if (preg_match('/_(\d+)$/', $currentProposalNumber, $matches)) {
-								$currentSuffix = $matches[1];
-								$nextSuffix = '_' . ($currentSuffix + 1);
-								$proposalDetail['proposal_number'] = preg_replace('/_(\d+)$/', $nextSuffix, $currentProposalNumber);
+								$proposalDetail['proposal_number'] = preg_replace('/_(\d+)$/', '_' . ($matches[1] + 1), $currentProposalNumber);
 							} else {
-								$proposalDetail['proposal_number'] = '_1';
+								$proposalDetail['proposal_number'] .= '_1';
 							}
 							$proposalDetail['name'] = $this->validatedata->validate('name','Proposal Name',false,'',array());
 							$proposalDetail['description'] = $this->validatedata->validate('description','Description',false,'',array());
-
+							$proposalDetail['cost'] = $this->validatedata->validate('cost','cost',false,'',array());
 							unset($proposalDetail['proposal_id']);
 							$iscreated = $this->CommonModel->saveMasterDetails('proposal',$proposalDetail);
 							if(!$iscreated){
