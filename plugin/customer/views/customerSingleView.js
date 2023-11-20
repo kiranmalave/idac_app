@@ -155,13 +155,14 @@ define([
           } else {
             showResponse(e, res, "Save");
           }
+          console.log(scanDetails);
           if (selfobj.loadFrom == "TaskSingleView") {
             scanDetails.refreshCust();
           } else if (selfobj.loadFrom == "dashboard") {
             handelClose(selfobj.toClose);
-            scanDetails.initialize();
+            scanDetails.initialize({action:selfobj.model.get("customer_id")});
           } else if (selfobj.loadFrom == "projectSingleView"){
-            scanDetails.initialize(scanDetails);
+            scanDetails.initialize({action:selfobj.model.get("customer_id")});
           }else if (selfobj.loadFrom == "proposalSingleView"){
             scanDetails.initialize(scanDetails);
           }else{
