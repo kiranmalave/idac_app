@@ -115,10 +115,11 @@ define([
 
     },
     loadMedia: function (e) {
-      e.stopPropagation();
+     e.stopPropagation();
       $('#largeModal').modal('toggle');
       this.elm = "profile_pic";
       var menusingleview = new readFilesView({ loadFrom: "addpage", loadController: this });
+      
     },
     setValues: function (e) {
       var selfobj = this;
@@ -131,10 +132,10 @@ define([
       let selfobj = this;
       var mid = this.model.get("customer_id");
       let isNew = $(e.currentTarget).attr("data-action");
-      if (permission.edit != "yes") {
-        alert("You dont have permission to edit");
-        return false;
-      }
+      // if (permission.edit != "yes") {
+      //   alert("You dont have permission to edit");
+      //   return false;
+      // }
       if (mid == "" || mid == null) {
         var methodt = "PUT";
       } else {
