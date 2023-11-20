@@ -256,7 +256,7 @@ class SearchAdmin extends CI_Controller
 					} else {
 
 						$adminEextraDetails['adminID'] = $this->SearchAdminModel->getInsertedID();
-						$adminEextraDetails['address'] = $this->validatedata->validate('address', 'Address', true, '', array());
+						$adminEextraDetails['address'] = $this->validatedata->validate('address', 'Address', false, '', array());
 						$adminEextraDetails['contactNo'] = $this->validatedata->validate('contactNo', 'Contact No', true, '', array());
 						$adminEextraDetails['whatsappNo'] = $this->validatedata->validate('whatsappNo', 'Whatsapp No', false, '', array());
 						$adminEextraDetails['dateOfBirth'] = $this->validatedata->validate('dateOfBirth', 'Date Of Birth', false, '', array());

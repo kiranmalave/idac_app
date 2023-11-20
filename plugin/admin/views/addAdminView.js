@@ -43,7 +43,7 @@ define([
           }, error: selfobj.onErrorHandler
         }).done(function (res) {
           var dob = selfobj.model.get("dateOfBirth");
-          if (dob != "" && dob != "0000-00-00") {
+          if (dob != null && dob != "0000-00-00") {
             selfobj.model.set({ "dateOfBirth": moment(dob).format("DD-MM-YYYY") });
           }
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }

@@ -8,7 +8,7 @@
                   <select id="roleID" name="roleID" class="form-control dropval" style="float: left;width: 74%;margin-right: 14px;">
                     <option value="">Select Role</option>
                       <% _.each(accessDetails.roleList, function(model) { %>
-                        <option <% if(model.roleID==accessDetails.roleID){ %> selected <% } %> value="<%=model.roleID%>">
+                        <option <% if( model.roleID == accessDetails.roleID ){ %> selected <% } %> value="<%=model.roleID%>">
                           <%=model.roleName%>
                         </option>
                       <%}); %>
