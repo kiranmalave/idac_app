@@ -11,15 +11,12 @@ define([
 ], function($,_, Backbone,select2,moment,userRoleCollection,accessList,accessControl){
 
 var accessDetailsView = Backbone.View.extend({
-    //model:reportOptionModel,
     initialize: function(options){
       var selfobj = this;
       $('.modelbox').hide();
       $(".profile-loader").show();
       var roleList = new userRoleCollection();
-      this.collection = new accessList();
-     // this.model = new singleCompanyCommercialsModel();
-      
+      this.collection = new accessList();      
       roleList.fetch({headers: {
           'contentType':'application/x-www-form-urlencoded','SadminID':$.cookie('authid'),'token':$.cookie('_bb_key'),'Accept':'application/json'
         },error: selfobj.onErrorHandler,type:'POST',data:{getAll:'Y',status:"active"}}).done(function(res){
@@ -30,17 +27,14 @@ var accessDetailsView = Backbone.View.extend({
         });
       $(".profile-loader").hide();
       //below 8 lnes code added by sanjay to load role default
-      this.collection.roleID= 2;
+      this.collection.roleID = 0;
       this.collection.fetch({headers: {
         'contentType':'application/x-www-form-urlencoded','SadminID':$.cookie('authid'),'token':$.cookie('_bb_key'),'Accept':'application/json'
       },error: selfobj.onErrorHandler}).done(function(res){
         if(res.statusCode == 994){app_router.navigate("logout",{trigger:true});}
         $(".popupLoader").hide();
         selfobj.render();
-      });
-
-      //_.bindAll(this,"update");
-      //this.bind('change : cost', this.update);      
+      });   
     },
     events:
     {

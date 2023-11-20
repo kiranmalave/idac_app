@@ -7,6 +7,7 @@ define([
   'datepickerBT',
   'moment',
   'Swal',
+  'Quill',
   '../../core/views/multiselectOptions',
   '../../dynamicForm/views/dynamicFieldRender',
   '../collections/proposalCollection',
@@ -19,7 +20,7 @@ define([
   '../../customer/views/customerSingleView',
   '../../project/views/projectSingleView',
   'text!../templates/proposalSingle_temp.html',
-], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, multiselectOptions, dynamicFieldRender, proposalCollection, customerCollection, projectCollection, proposalTemplateCollection, proposalTempSingel, proposalSingleModel, readFilesView, customerSingleView, projectSingleView, proposaltemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal,Quill, multiselectOptions, dynamicFieldRender, proposalCollection, customerCollection, projectCollection, proposalTemplateCollection, proposalTempSingel, proposalSingleModel, readFilesView, customerSingleView, projectSingleView, proposaltemp) {
   var proposalSingleView = Backbone.View.extend({
     model: proposalSingleModel,
     initialize: function (options) {
@@ -511,6 +512,7 @@ define([
           var text = editor2.getText();
           var justHtml = editor2.root.innerHTML;
           selfobj.model.set({ "cost": justHtml });
+          console.log(selfobj.model);
         }
       });
 
