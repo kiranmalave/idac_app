@@ -27,15 +27,14 @@ define([
       this.toClose = "proposalFilterView";
       filterOption = new proposalFilterOptionModel();
       var selfobj = this;
-      if (options.loadFrom != undefined) {
+      var mname = Backbone.history.getFragment();
+      if (mname == "proposal") {
+        permission = ROLE[mname];
+      } else {
         selfobj.loadFrom = options.loadFrom;
         filterOption.set({ project_id: options.projectID });
         filterOption.set({ client_id: options.customerID });
         permission = ROLE['proposal'];
-        console.log(filterOption);
-      } else {
-        var mname = Backbone.history.getFragment();
-        permission = ROLE[mname];
       }
       readyState = true;
       this.render();

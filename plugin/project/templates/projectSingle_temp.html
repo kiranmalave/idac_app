@@ -50,7 +50,7 @@
                                         <%if(permission.add=="yes" ) { %>
                                             <option class="addNew" value="addClient">Add Client</option>
                                         <%}%>
-                                       
+                
                                         <% _.each(customerList, function(model1) { %>
                                             <%if(customerID == null){%>
                                                 <option <% if(model1.attributes.customer_id == model.customer_id ) { %>selected
