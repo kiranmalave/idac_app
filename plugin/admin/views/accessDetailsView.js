@@ -119,6 +119,7 @@ var accessDetailsView = Backbone.View.extend({
         return false;
       }
       this.collection.roleID= roleID;
+      console.log("testOne", roleID);
       this.collection.fetch({headers: {
         'contentType':'application/x-www-form-urlencoded','SadminID':$.cookie('authid'),'token':$.cookie('_bb_key'),'Accept':'application/json'
       },error: selfobj.onErrorHandler}).done(function(res){
@@ -130,7 +131,7 @@ var accessDetailsView = Backbone.View.extend({
     },
     render: function(){
         var template = _.template(accessControl);
-        this.$el.html(template({accessDetails:this.collection}));
+        this.$el.html(template({accessDetails:this.collection, roleID: this.roleID}));
         $(".main_container").append(this.$el);
         $('#companyID').select2({width:'100%'});
         return this;
