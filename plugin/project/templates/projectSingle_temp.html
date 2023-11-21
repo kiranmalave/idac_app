@@ -46,7 +46,7 @@
                             <div class="col-md-6">
                                 <div class="form-group form-float selectClientnoBorder">
                                   <div class="form-line">
-                                    <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
+                                    <select id="client_id" name="client_id" <% if(customerID != null){%> disabled <%}%>  class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
                                         <%if(permission.add=="yes" ) { %>
                                             <option class="addNew" value="addClient">Add Client</option>
                                         <%}%>
@@ -62,6 +62,8 @@
                                             <%}%>
                                         <%}); %>
                                     </select>
+
+                    
                                   </div>
                                 </div>
                             </div>
