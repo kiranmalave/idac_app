@@ -33,7 +33,7 @@ define([
         this.multiselectOptions = new multiselectOptions();
         $(".modelbox").hide();
         scanDetails = options.searchproject;
-        console.log(options);
+        
         $(".popupLoader").show();
         var projectList = new projectCollection();
         projectList.fetch({
@@ -149,7 +149,17 @@ define([
         var da = selfobj.multiselectOptions.setCheckedValue(e);
         selfobj.model.set(da);
       },
-        
+      refreshCus: function (){
+        let selfobj = this;
+        this.customerList.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status:'active'}
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          selfobj.render();
+        });
+      },     
       saveprojectDetails: function (e) {
         e.preventDefault();
         let selfobj = this;
@@ -187,6 +197,8 @@ define([
             } else if (selfobj.loadFrom == "dashboard") {
               handelClose(selfobj.toClose);
               scanDetails.initialize();
+            }else if(selfobj.loadFrom == "proposalSingleView") {
+              scanDetails.refreshProj();
             }else{
               scanDetails.filterSearch();
             }

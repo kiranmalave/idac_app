@@ -86,7 +86,7 @@ define([
       this.projectList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: { status: 'active' }
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status: 'active' }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
@@ -116,7 +116,7 @@ define([
       "click .loadMedia": "loadMedia",
       "click .saveconfirmProposal": "saveconfirmProposal",
       "change .getTemplate": "getTemplate",
-
+      "change .changeClient": "selectClient",
 
     },
     attachEvents: function () {
@@ -137,8 +137,26 @@ define([
       this.$el.on("click", ".loadMedia", this.loadMedia.bind(this));
       this.$el.off("change", ".getTemplate", this.getTemplate);
       this.$el.on("change", ".getTemplate", this.getTemplate.bind(this));
+      this.$el.off('change', '.changeClient', this.selectClient);
+      this.$el.on('change', '.changeClient', this.selectClient.bind(this));
     },
-
+    selectClient: function (e) {
+      let selfobj = this;
+      e.stopPropagation();
+      var client_id = $(e.currentTarget).val();
+      if (client_id != null) {
+        this.projectList.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active", company: client_id }
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".popupLoader").hide();
+          selfobj.render();
+        });
+        console.log(this.projectList);
+      }
+    },
     onErrorHandler: function (collection, response, options) {
       alert(
         "Something was wrong ! Try to refresh the page or contact administer. :("
@@ -150,7 +168,7 @@ define([
       if (valuetxt == "addClient") {
         new customerSingleView({ searchCustomer: this, loadfrom: "proposalSingleView" });
       }else if(valuetxt == "addProject"){
-        new projectSingleView({ searchCustomer: this, loadfrom: "proposalSingleView" });
+        new projectSingleView({ searchproject: this, loadfrom: "proposalSingleView" });
       }
       var toID = $(e.currentTarget).attr("id");
       var newdetails = [];
@@ -163,6 +181,28 @@ define([
       var selfobj = this;
       setvalues = ["status"];
       selfobj.multiselectOptions.setValues(setvalues, selfobj);
+    },
+    refreshCus: function (){
+      let selfobj = this;
+      this.customerList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status:'active'}
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        selfobj.render();
+      });
+    },
+    refreshProj: function(){
+      let selfobj = this;
+      this.projectList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status: 'active' }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        selfobj.render();
+      });
     },
     getSelectedFile: function (url) {
       $('.' + this.elm).val(url);
@@ -259,7 +299,7 @@ define([
                 }
                 if(selfobj.loadFrom == "dashboard"){
                   handelClose(selfobj.toClose);
-                  scanDetails.render();
+                  scanDetails.initialize();
                 }else{
                   scanDetails.filterSearch();
                 }

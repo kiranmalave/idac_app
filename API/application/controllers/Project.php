@@ -57,7 +57,7 @@ class Project extends CI_Controller {
 		$wherec = $join = array();
 		if(isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)){
 
-		$wherec["$textSearch like  "] = "'".$textval."%'";
+		$wherec["$textSearch like  "] = "'%".$textval."%'";
 		}
 
 		if (isset($company) && !empty($company)) {

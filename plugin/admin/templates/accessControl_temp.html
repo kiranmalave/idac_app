@@ -15,18 +15,18 @@
                   </select>
                   <button id="saveAccessDetails" type="button" class="btn bg-indigo waves-effect" style="float: left;">Save</button>
                 </div>
-             </div>
+                </div>
                <div class="body">
                   <div class="row">
-                    <%if(accessDetails.models.length> 0) { %>
+                    <!-- <%if(accessDetails.models.length> 0) { %>
                       <table id="moduleTable" class="table bulk_action tableList table-hover">
                         <thead id="thead">
                           <tr class="headings">
                             <th>Module</th>
-                            <th>View</th>
-                            <th>Add</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
+                            <th style="padding-left: 15px!important;">View</th>
+                            <th style="padding-left: 15px!important;">Add</th>
+                            <th style="padding-left: 15px!important;">Edit</th>
+                            <th style="padding-left: 15px!important;">Delete</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -74,10 +74,67 @@
                       <%}else{%>
                         <div class="dataTables_info text-center" style="width: 100%;"><span
                           class="page-info text-center">Please select user role</span></div>
-                      <% } %>
+                      <% } %> -->
+                      <%if(accessDetails.roleID.length> 0) { %>
+                        <table id="moduleTable" class="table bulk_action tableList table-hover">
+                          <thead id="thead">
+                            <tr class="headings">
+                              <th>Module</th>
+                              <th style="padding-left: 15px!important;">View</th>
+                              <th style="padding-left: 15px!important;">Add</th>
+                              <th style="padding-left: 15px!important;">Edit</th>
+                              <th style="padding-left: 15px!important;">Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% _.each(accessDetails.models, function(model) { %>
+                              <tr>
+                                <td>
+                                  <%=model.attributes.menuName%>
+                                </td>
+                                <td>
+                                  <div class="switch">
+                                    <label>
+                                      <input class="switchChange" type="checkbox" data-modelID="<%=model.attributes.menuID%>" data-inID="view" <% if(model.attributes.view=='yes' ) { %> checked <% } %> >
+                                      <span class="lever switch-col-indigo"></span>
+                                    </label>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="switch">
+                                    <label>
+                                      <input class="switchChange" type="checkbox" data-modelID="<%=model.attributes.menuID%>" data-inID="add" <% if(model.attributes.add=='yes' ) { %> checked <% } %> >
+                                      <span class="lever switch-col-indigo"></span>
+                                    </label>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="switch">
+                                    <label>
+                                      <input class="switchChange" type="checkbox" data-modelID="<%=model.attributes.menuID%>" data-inID="edit" <% if(model.attributes.edit=='yes' ) { %> checked <% } %> >
+                                      <span class="lever switch-col-indigo"></span>
+                                    </label>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div class="switch">
+                                    <label>
+                                      <input class="switchChange" type="checkbox" data-modelID="<%=model.attributes.menuID%>" data-inID="delete" <% if(model.attributes.delete=='yes' ) { %> checked <% } %> >
+                                      <span class="lever switch-col-indigo"></span>
+                                    </label>
+                                  </div>
+                                </td>
+                              </tr>
+                              <%});%>
+                          </tbody>
+                        </table>
+                        <%}else{%>
+                          <div class="dataTables_info text-center" style="width: 100%;"><span
+                            class="page-info text-center">Please select user role</span></div>
+                        <% } %>
                   </div>
-                 </div>
-                 <div id="loadMember" data-index="1" data-currPage="1"></div>
+               </div>
+              <div id="loadMember" data-index="1" data-currPage="1"></div>
                </div>
               </div>
           </div>

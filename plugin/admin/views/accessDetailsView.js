@@ -32,13 +32,14 @@ define([
       });
       $(".profile-loader").hide();
       //below 8 lnes code added by sanjay to load role default
-      this.collection.roleID = 2;
-      this.collection.fetch({
-        headers: {
-          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler
-      }).done(function (res) {
-        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+
+
+      this.collection.roleID= 0;
+      this.collection.fetch({headers: {
+        'contentType':'application/x-www-form-urlencoded','SadminID':$.cookie('authid'),'token':$.cookie('_bb_key'),'Accept':'application/json'
+      },error: selfobj.onErrorHandler}).done(function(res){
+        if(res.statusCode == 994){app_router.navigate("logout",{trigger:true});}
+
         $(".popupLoader").hide();
         selfobj.render();
       });
@@ -137,6 +138,7 @@ define([
         $("#moduleTable").remove();
         return false;
       }
+
       this.collection.roleID = roleID;
       this.collection.fetch({
         headers: {
@@ -144,17 +146,20 @@ define([
         }, error: selfobj.onErrorHandler
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+
         $(".popupLoader").hide();
         selfobj.render();
       });
 
     },
+
     render: function () {
       var template = _.template(accessControl);
       this.$el.html(template({ accessDetails: this.collection }));
       $(".main_container").append(this.$el);
       $('#companyID').select2({ width: '100%' });
       return this;
+
     }
   });
 

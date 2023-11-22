@@ -6,7 +6,7 @@ define([
     var proposalTemplateFilterOptionModel = Backbone.Model.extend({
       idAttribute: "proposalTemplate_id",
       defaults: {
-        textSearch: 'proposalTemplate_name',
+        textSearch: 'temp_name',
         textval: null,
         fromDate: null,
         toDate: null,

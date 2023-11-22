@@ -82,6 +82,7 @@
             <th>Unit</th>
             <th>Rate</th>
             <th>Amount</th>
+            <th>&nbsp;</th>
             <!-- <th style="width: 4%"><i class="material-icons" aria-hidden="true">delete_forever</i></th> -->
           </tr>
           <% if(model.invoiceID != '' && model.invoiceID != null){
@@ -108,7 +109,7 @@
                 <input <% if(modelLine.isEdit =='no'){ %> disabled <% } %> type="text" name="itemRate_<%=modelLine.srNo%>" id="itemRate_<%=modelLine.srNo%>" class="form-control amtChange digits" value="<%=modelLine.invoiceLineRate%>">
               </td>
               <td class="text-right diginum" id="itemtotal_<%=modelLine.srNo%>"><%=numberFormat(modelLine.invoiceLineAmount,2)%></td>
-              <td class="text-right">
+              <td class="text-right delete">
                 <% if(modelLine.isEdit !='no'){ %>
                  <button id="itemdel_<%=modelLine.srNo%>" class="del-row btn-small btn-default"><i class="material-icons" aria-hidden="true">delete_forever</i></button>
                 <% }else{ %>
@@ -133,7 +134,7 @@
               <td><input type="text" name="itemUnit_1" id="itemUnit_1" class="form-control"></td>
               <td class="text-right"><input type="text" name="itemRate_1" id="itemRate_1" class="form-control amtChange"></td>
               <td class="text-right diginum" id="itemtotal_1"></td>
-              <td class="text-right">&nbsp;<i class="material-icons" aria-hidden="true">delete_forever</i></td>
+              <!-- <td class="text-right"><i class="material-icons" aria-hidden="true">delete_forever</i></td> -->
             </tr>
           <% } %>
           <!-- <td></td> -->
@@ -145,46 +146,47 @@
         <hr>
       </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-xs-6">
           &nbsp;
         </div>
       <div class="clearfix">&nbsp;</div>
       <div class="clearfix">&nbsp;</div>
       <div class="clearfix">&nbsp;</div>
-      <div class="col-xs-6">
-        <div class="table-responsive">
-          <table class="table">
-            <tbody>
-              <tr>
-                <th style="width:50%">Subtotal:</th>
-                <td align="right" class="subTotal diginum"><%=numberFormat(model.invoiceTotal,2)%></td>
-              </tr>
-              <tr>
-                <th>SGST (<%=model.stateGstPercent%>%) <input type="checkbox" name="issgst" id="issgst" class="updateAmt" <%if(model.stateGstAmount != 0 && model.stateGstAmount != null){%> checked="checked" <% } %>></th>
-                <td align="right" class="sgst diginum"><%=numberFormat(model.stateGstAmount,2)%></td>
-              </tr>
-              <tr>
-                <th>CGST (<%=model.centralGstPercent%>%) <input type="checkbox" name="iscgst" id="iscgst" class="updateAmt" <%if(model.centralGstAmount != 0 && model.centralGstAmount != null ){%> checked="checked" <% } %>></th>
-                <td align="right" class="cgst diginum"><%=numberFormat(model.centralGstAmount,2)%></td>
-              </tr>
-              <tr>
-                <th>IGST (<%=model.interGstPercent%>%) <input type="checkbox" name="isigst" id="isigst" class="updateAmt" <%if(model.interGstAmount != 0 && model.interGstAmount != null){%> checked="checked" <% } %>></th>
-                <td align="right" class="igst diginum"><%=numberFormat(model.interGstAmount,2)%></td>
-              </tr>
-              <tr>
-                <th>Round Off:</th>
-                <td align="right" class="roundOff diginum"><%=numberFormat(model.roundOff,2)%></td>
-              </tr>
-              <tr>
-                <th>Gross Total:</th>
-                <td align="right" class="grossTotal diginum"><%=numberFormat(model.grossAmount,2)%></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      
+    </div>  -->
+    <div class="col-lg-6 float-right">
+      <div class="table-responsive">
+        <table class="table">
+          <tbody>
+            <tr>
+              <th style="width:50%">Subtotal:</th>
+              <td align="right" class="subTotal diginum"><%=numberFormat(model.invoiceTotal,2)%></td>
+            </tr>
+            <tr>
+              <th>SGST (<%=model.stateGstPercent%>%) <input type="checkbox" name="issgst" id="issgst" class="updateAmt" <%if(model.stateGstAmount != 0 && model.stateGstAmount != null){%> checked="checked" <% } %>></th>
+              <td align="right" class="sgst diginum"><%=numberFormat(model.stateGstAmount,2)%></td>
+            </tr>
+            <tr>
+              <th>CGST (<%=model.centralGstPercent%>%) <input type="checkbox" name="iscgst" id="iscgst" class="updateAmt" <%if(model.centralGstAmount != 0 && model.centralGstAmount != null ){%> checked="checked" <% } %>></th>
+              <td align="right" class="cgst diginum"><%=numberFormat(model.centralGstAmount,2)%></td>
+            </tr>
+            <tr>
+              <th>IGST (<%=model.interGstPercent%>%) <input type="checkbox" name="isigst" id="isigst" class="updateAmt" <%if(model.interGstAmount != 0 && model.interGstAmount != null){%> checked="checked" <% } %>></th>
+              <td align="right" class="igst diginum"><%=numberFormat(model.interGstAmount,2)%></td>
+            </tr>
+            <tr>
+              <th>Round Off:</th>
+              <td align="right" class="roundOff diginum"><%=numberFormat(model.roundOff,2)%></td>
+            </tr>
+            <tr>
+              <th>Gross Total:</th>
+              <td align="right" class="grossTotal diginum"><%=numberFormat(model.grossAmount,2)%></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </div> 
+    </div>
 </form>
 </div>
   

@@ -908,9 +908,10 @@ input.error {
 }
 
 section.content {
-  margin: 0px 40px 15px 250px;
+  /* margin: 0px 30px 15px 244px; */
   padding-top: 54px;
 }
+
 
 .filter_btn {
   float: right;
@@ -1120,7 +1121,7 @@ table td,
 
 #thead {
   position: sticky;
-  top: 52px;
+  top: 51px;
   background: #fff;
   padding: 10px 10px;
   z-index: 9;
@@ -2812,7 +2813,7 @@ a.editHover:hover{
     transform: translate3d(0px, -180px, 0px); */
     /* transform: unset !important; */
     max-height: 84.5px;
-    overflow: scroll !important;
+    /* overflow: scroll !important; */
     min-height: 168px !important;
     /* position: absolute; */
     transform: translate3d(0px, 31px, 0px);
@@ -2830,16 +2831,17 @@ a.editHover:hover{
 
 .addtoolTip .toolTip {
   position: absolute;
-  background: #0b0b0b;
-  font-size: 10px;
-  top: -8px;
-  padding: 2px 6px;
-  border-radius: 2px;
-  color: #fff;
-  visibility: hidden;
-  width: max-content;
-  right: -50px;
-  z-index: 1;
+    background: #0b0b0b;
+    font-size: 10px;
+    top: -8px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: #fff;
+    visibility: hidden;
+    width: max-content;
+    /* right: 30px; */
+    left: 39px;
+    z-index: 1;
 }
 .addtoolTip .toolTip::after {
   content: "";
@@ -2879,5 +2881,23 @@ a.editHover:hover{
 }
 
 section.content.dashBordTotal {
-  width: 104% !important;
+  /* width: 104% !important; */
+}
+
+.delete{
+  position: relative;
+}
+
+.taskfilbtn.active {
+  color: #000 !important;
+}
+
+.projectSelect label#project_id-error {
+    top: 32px;
+}
+
+.activities {
+  height: 300px;
+  overflow: scroll;
+  overflow-x: hidden;
 }

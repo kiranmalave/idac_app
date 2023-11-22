@@ -6,7 +6,7 @@ define([
     var projectFilterOptionModel = Backbone.Model.extend({
       idAttribute: "project_id",
       defaults: {
-        textSearch: 'project_number',
+        textSearch: 'project_name',
         textval: null,
         client_id: null,
         company: null,
