@@ -30,7 +30,7 @@ var accessDetailsView = Backbone.View.extend({
         });
       $(".profile-loader").hide();
       //below 8 lnes code added by sanjay to load role default
-      this.collection.roleID= 2;
+      this.collection.roleID= 0;
       this.collection.fetch({headers: {
         'contentType':'application/x-www-form-urlencoded','SadminID':$.cookie('authid'),'token':$.cookie('_bb_key'),'Accept':'application/json'
       },error: selfobj.onErrorHandler}).done(function(res){

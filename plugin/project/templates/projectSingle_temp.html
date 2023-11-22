@@ -61,7 +61,7 @@
                                         <%}); %>
                                     </select> -->
 
-                                    <select id="client_id" name="client_id" <% if(customerID != null){%> disabled <%}%>  class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
+                                    <!-- <select id="client_id" name="client_id" <% if(model.customerID != null){%> disabled <%}%>  class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
                                         <%if(permission.add=="yes" ) { %>
                                             <option class="addNew" value="addClient">Add Client</option>
                                         <%}%>
@@ -76,9 +76,24 @@
                                                     <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
                                             <%}%>
                                         <%}); %>
-                                    </select>
+                                    </select> -->
+                                    <select id="client_id" name="client_id" <% if(customerID != null){%> disabled <%}%>  class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
+                                        <%if(permission.add=="yes" ) { %>
+                                            <option class="addNew" value="addClient">Add Client</option>
+                                        <%}%>
 
-                    
+                                        <% _.each(customerList, function(model1) { %>
+                                            <%if(customerID == null){%>
+                                                <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected
+                                                    <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
+
+                                            <%}else{%>
+                                                <option <% if(model1.attributes.customer_id == customerID ) { %>selected
+                                                    <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
+                                            <%}%>
+                                        <%}); %>
+                                    </select>
+                                                    
                                   </div>
                                 </div>
                             </div>
