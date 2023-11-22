@@ -106,16 +106,14 @@ class CategoryMaster extends CI_Controller
 			$curPage = 0;
 			$page = 0;
 		}
-		//$selectC = "t.*, c.categoryName AS parentCategoryName";
+	
 		if ($isAll == "Y") {
 			$join = array();
 			$categoryDetails = $this->CommonModel->GetMasterListDetails($selectC = '*', 'categories', $wherec, '', '', $join, $other);
 		} else {
 			$categoryDetails = $this->CommonModel->GetMasterListDetails($selectC = '*', 'categories', $wherec, $config["per_page"], $page, $join, $other);
 		}
-		//print_r($companyDetails);exit;
-		// get sub category
-		// $sub ="N";
+	
 		if ($sub == "Y") {
 			foreach ($categoryDetails as $key => $value) {
 				$wherec = array();
@@ -129,7 +127,6 @@ class CategoryMaster extends CI_Controller
 				if (isset($value->parent_id) && !empty($value->parent_id)) {
 					$wherec = array();
 					$wherec["t.category_id"] = ' = "' . $value->parent_id . '"';
-					//$wherec["t.status"] = ' = "active"';
 					$SubcategoryDetails = $this->CommonModel->GetMasterListDetails($selectC = 'categoryName', 'categories', $wherec, '', '', $join, $other);
 					if (isset($SubcategoryDetails) && !empty($SubcategoryDetails)) {
 						$categoryDetails[$key]->parentCatName = $SubcategoryDetails[0]->categoryName;

@@ -94,21 +94,19 @@ define([
               showResponse(e,res,"Sign In");
               return false;
             } else {
-
-              // console.log(res.data);
-              // return;
               var expDate = new Date();
               expDate.setTime(expDate.getTime() + (120 * 60 * 12000)); // add 15 minutes
-              //alert(expDate);
               $.cookie('bbauth', 'valid', { path: COKI, expires: expDate });
               $.cookie('_bb_key', res.loginkey, { path: COKI, expires: expDate });
               $.cookie('name', res.data.name, { path: COKI, expires: expDate });
               $.cookie('uname', res.data.userName, { path: COKI, expires: expDate });
               $.cookie('authid', res.data.adminID, { path: COKI, expires: expDate });
               $.cookie('roleOfUser', res.data.roleOfUser, { path: COKI, expires: expDate });
+              $.cookie('roleID', res.data.roleID, { path: COKI, expires: expDate });
               var bbauth = $.cookie('bbauth');
               ADMINNAME = $.cookie('name');
               ADMINID = $.cookie('authid');
+              ROLEID = $.cookie('roleID');
               getLocalData();
               $(e.currentTarget).html("<span>Sign In</span>");
               app_router.navigate("dashboard", { trigger: true });
