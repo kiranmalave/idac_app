@@ -762,14 +762,29 @@ define([
         [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
         [{ 'align': [] }],
         ['link'],
-        ['clean']                                         // remove formatting button
+        ['clean'] 
+        ['image']                                        // remove formatting button
       ];
       var editor = new Quill($("#task_description").get(0), {
         modules: {
-          toolbar: __toolbarOptions
+          imageResize: {
+            displaySize: true
+          },
+          toolbar:{ container:__toolbarOptions,
+            handlers: {
+              image: imageHandler
+          }
+          },
         },
         theme: 'snow'
       });
+      function imageHandler() {
+        var range = this.quill.getSelection();
+        var value = prompt('please copy paste the image url here.');
+        if(value){
+            this.quill.insertEmbed(range.index, 'image', value, Quill.sources.USER);
+        }
+      }
       //const delta = editor.clipboard.convert();
       //editor.setContents(delta, 'silent');
       editor.on('text-change', function (delta, oldDelta, source) {

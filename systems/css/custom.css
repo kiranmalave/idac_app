@@ -1163,6 +1163,21 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+.backg-red {
+  background-color: #ffe2e2 !important;
+  color: #393939 !important;
+}
+
+.backg-green {
+  background: #ebffe2 !important;
+  color: #393939;
+}
+
+.backg-orange {
+  background: #fff8e2 !important;
+  color: #393939;
+}
+
 .bg-inactive {
   background: #E9DFC033;
 }

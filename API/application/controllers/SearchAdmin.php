@@ -347,7 +347,7 @@ class SearchAdmin extends CI_Controller
 						$this->response->output($status, 200);
 					} else {
 						$adminEextraDetails = array();
-						$adminEextraDetails['address'] = $this->validatedata->validate('address', 'Address', true, '', array());
+						$adminEextraDetails['address'] = $this->validatedata->validate('address', 'Address', false, '', array());
 						// print_r($adminEextraDetails['address']);exit();
 
 						$adminEextraDetails['contactNo'] = $this->validatedata->validate('contactNo', 'Contact No', true, '', array());

@@ -50,8 +50,10 @@
                                         <%}%>
                 
                                         <% _.each(customerList, function(model1) { %>
+
                                             <%if(model.client_id == null){%>
                                                 <option <% if(model1.attributes.customer_id == model.customer_id ) { %>selected
+
                                                     <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
                                                 
                                             <%}else{%>
