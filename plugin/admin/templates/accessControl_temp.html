@@ -8,7 +8,7 @@
                   <select id="roleID" name="roleID" class="form-control dropval" style="float: left;width: 74%;margin-right: 14px;">
                     <option value="">Select Role</option>
                       <% _.each(accessDetails.roleList, function(model) { %>
-                        <option <% if( model.roleID == accessDetails.roleID ){ %> selected <% } %> value="<%=model.roleID%>">
+                        <option <% if(model.roleID==accessDetails.roleID){ %> selected <% } %> value="<%=model.roleID%>">
                           <%=model.roleName%>
                         </option>
                       <%}); %>
@@ -38,7 +38,7 @@
                               <td>
                                 <div class="switch">
                                   <label>
-                                    <input class="switchChange" type="checkbox" data-modelID="<%=model.attributes.menuID%>" data-inID="view" <% if(model.attributes.view=='yes' ) { %> checked <% } %> >
+                                    <input class="switchChange checkChange" type="checkbox" data-modelID="<%=model.attributes.menuID%>" data-inID="view" <% if(model.attributes.view=='yes' ) { %> checked <% } %> >
                                     <span class="lever switch-col-indigo"></span>
                                   </label>
                                 </div>
@@ -46,7 +46,7 @@
                               <td>
                                 <div class="switch">
                                   <label>
-                                    <input class="switchChange" type="checkbox" data-modelID="<%=model.attributes.menuID%>" data-inID="add" <% if(model.attributes.add=='yes' ) { %> checked <% } %> >
+                                    <input class="switchChange addCheckbox" type="checkbox" data-modelID="<%=model.attributes.menuID%>" data-inID="add" <% if(model.attributes.view=='no' ) { %> disabled <% } %> <% if(model.attributes.add=='yes' ) { %> checked <% } %> >
                                     <span class="lever switch-col-indigo"></span>
                                   </label>
                                 </div>
@@ -54,7 +54,7 @@
                               <td>
                                 <div class="switch">
                                   <label>
-                                    <input class="switchChange" type="checkbox" data-modelID="<%=model.attributes.menuID%>" data-inID="edit" <% if(model.attributes.edit=='yes' ) { %> checked <% } %> >
+                                    <input class="switchChange editCheckbox" type="checkbox" data-modelID="<%=model.attributes.menuID%>" data-inID="edit" <% if(model.attributes.view=='no' ) { %> disabled <% } %> <% if(model.attributes.edit=='yes' ) { %> checked <% } %> >
                                     <span class="lever switch-col-indigo"></span>
                                   </label>
                                 </div>
@@ -62,7 +62,7 @@
                               <td>
                                 <div class="switch">
                                   <label>
-                                    <input class="switchChange" type="checkbox" data-modelID="<%=model.attributes.menuID%>" data-inID="delete" <% if(model.attributes.delete=='yes' ) { %> checked <% } %> >
+                                    <input class="switchChange deleteCheckbox" type="checkbox" data-modelID="<%=model.attributes.menuID%>" data-inID="delete" <% if(model.attributes.view=='no' ) { %> disabled <% } %> <% if(model.attributes.delete=='yes' ) { %> checked <% } %> >
                                     <span class="lever switch-col-indigo"></span>
                                   </label>
                                 </div>
