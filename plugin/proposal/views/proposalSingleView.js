@@ -182,8 +182,9 @@ define([
       setvalues = ["status"];
       selfobj.multiselectOptions.setValues(setvalues, selfobj);
     },
-    refreshCus: function (){
+    refreshCus: function (customer_id){
       let selfobj = this;
+      this.model.set({"client_id":customer_id});
       this.customerList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
@@ -302,6 +303,7 @@ define([
                   scanDetails.initialize();
                 }else{
                   scanDetails.filterSearch();
+                  
                 }
                 if (res.flag == "S") {
                   if (isNew == "new") {
@@ -369,7 +371,9 @@ define([
               handelClose(selfobj.toClose);
             }else{
               scanDetails.filterSearch();
+             
             }
+            
             if (res.flag == "S") {
               if (isNew == "new") {
                 selfobj.model.clear().set(selfobj.model.defaults);
