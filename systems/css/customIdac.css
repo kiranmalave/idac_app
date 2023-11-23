@@ -2903,3 +2903,7 @@ section.content.dashBordTotal {
   overflow: scroll;
   overflow-x: hidden;
 }
+
+.dropval .dropdown-menu.show {
+  top: 40px !important;
+}
