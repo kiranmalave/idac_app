@@ -7,6 +7,7 @@ define([
     'datepickerBT',
     'moment',
     'Swal',
+    'Quill',
     '../../core/views/multiselectOptions',
     '../../dynamicForm/views/dynamicFieldRender',
     '../collections/proposalTemplateCollection',
@@ -14,7 +15,7 @@ define([
     '../models/proposalTemplateSingleModel',
     '../../readFiles/views/readFilesView',
     'text!../templates/proposalTemplateSingle_temp.html',
-  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, multiselectOptions, dynamicFieldRender, proposalTemplateCollection, ourClientsCollection, proposalTemplateSingleModel, readFilesView, projecttemp) {
+  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, Quill, multiselectOptions, dynamicFieldRender, proposalTemplateCollection, ourClientsCollection, proposalTemplateSingleModel, readFilesView, projecttemp) {
     var projectSingleView = Backbone.View.extend({
       model: proposalTemplateSingleModel,
       initialize: function (options) {
