@@ -2904,6 +2904,6 @@ section.content.dashBordTotal {
   overflow-x: hidden;
 }
 
-.dropval .dropdown-menu.show {
-  top: 40px !important;
+.projectDrop .dropdown-menu.show {
+  top: 35px !important;
 }
