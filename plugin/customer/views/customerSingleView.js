@@ -163,11 +163,12 @@ define([
             handelClose(selfobj.toClose);
             scanDetails.initialize({action:selfobj.model.get("customer_id")});
           } else if (selfobj.loadFrom == "projectSingleView"){
-            scanDetails.refreshCus();
+            scanDetails.refreshCus({action:selfobj.model.get("customer_id")});
             // scanDetails.initialize({action:selfobj.model.get("customer_id")});
+            scanDetails.refreshCus(res.data.customer_id);
           }else if (selfobj.loadFrom == "proposalSingleView"){
             // scanDetails.initialize({action:selfobj.model.get("customer_id")});
-            scanDetails.refreshCus();
+            scanDetails.refreshCus(res.data.customer_id);
           }else{
             scanDetails.filterSearch();
           }
