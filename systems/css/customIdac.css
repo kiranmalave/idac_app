@@ -2877,9 +2877,11 @@ a.editHover:hover{
 
 #proposaldescription {
   height: auto;
-  min-height: 110px;
+  /* min-height: 110px; */
 }
-
+#proposaldescription .ql-editor.ql-blank {
+  min-height: 120px;
+}
 section.content.dashBordTotal {
   /* width: 104% !important; */
 }
