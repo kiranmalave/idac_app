@@ -368,7 +368,7 @@ define([
             if(selfobj.loadFrom == "dashboard"){
               handelClose(selfobj.toClose);
             }else{
-              scanDetails.filterSearch();
+              // scanDetails.filterSearch();
             }
             if (res.flag == "S") {
               if (isNew == "new") {
