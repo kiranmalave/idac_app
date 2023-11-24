@@ -214,6 +214,11 @@ $route['ourClient'] = 'OurClients/OurClients';
 $route['ourClient/(:num)'] = 'OurClients/OurClients/$1';
 $route['ourClient/status'] = 'OurClients/OurClientsChangeStatus';
 
+######contactUs
+$route['contactUsList'] = 'ContactUs/getcontactUsDetails';
+$route['contactUs'] = 'ContactUs/ContactUs';
+$route['contactUs/status'] = 'ContactUs/ContactUsChangeStatus';
+
 ######ourteams
 $route['ourTeamList'] = 'OurTeam/getteamDetails';
 $route['ourTeam'] = 'OurTeam/OurTeam';
