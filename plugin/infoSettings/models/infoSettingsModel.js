@@ -22,6 +22,7 @@ define([
         ourTarget:null,
         termsConditions:null,
         contractLetter:null,
+        client_logo:null,
         created_by:null,
         modified_by:null,
         created_date:null,

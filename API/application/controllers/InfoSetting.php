@@ -55,10 +55,14 @@ class InfoSetting extends CI_Controller {
 			$infoDetails['whatsapp'] = $this->validatedata->validate('whatsapp');
 			$infoDetails['ourTarget'] = $this->validatedata->validate('ourTarget');
 			$infoDetails['termsConditions'] = $this->validatedata->validate('termsConditions');
+			$infoDetails['invoice_logo'] = $this->validatedata->validate('client_logo');
 			$infoDetails['created_by'] = $this->validatedata->validate('SadminID');
 			$infoDetails['created_date'] = $updateDate;	
 			
 			$wherec  = array('infoID' =>$id);
+
+			// $fieldData = $this->datatables->mapDynamicFeilds("info_settings",$this->input->post());
+			// $infoDetails = array_merge($fieldData, $infoDetails);
 
 			$infoData = $this->CommonModel->getMasterDetails('info_settings','',$wherec);
 

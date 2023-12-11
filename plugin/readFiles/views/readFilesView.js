@@ -222,7 +222,7 @@ define([
         uploadButton: true,
         notification: true,
         autoUpload: true,
-        extension: ['png', 'jpg', 'jpeg', 'gif', 'pdf', 'mp4', 'avi', 'mkv', 'mp3', 'ogg', 'wav', 'docx', 'doc', 'xls', 'xlsx'],
+        extension: ['png', 'svg','jpg', 'jpeg', 'gif', 'pdf', 'mp4', 'avi', 'mkv', 'mp3', 'ogg', 'wav', 'docx', 'doc', 'xls', 'xlsx'],
         thumbnails: true,
         action: APIPATH + 'mediaUpload/' + selfobj.filterOption.get("folderID"),
         element: 'fileupload',
