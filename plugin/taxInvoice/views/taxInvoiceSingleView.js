@@ -23,6 +23,7 @@ define([
     initialize: function (options) {
       this.dynamicData = null;
       this.toClose = "taxinvoiceSingleView";
+      this.customerID = options.customerID;
       var selfobj = this;
       $('#taxInvoiceData').remove();
       scanDetails = options.searchtaxInvoice;
@@ -413,12 +414,10 @@ define([
 
     },
     render: function () {
-      console.log("sssss");
-      console.log(this.model);
       var source = taxInvoice_temp;
       var template = _.template(source);
       $("#" + this.toClose).remove();
-      this.$el.html(template({ model: this.model.attributes }));
+      this.$el.html(template({ model: this.model.attributes, customerID: this.customerID }));
       this.$el.addClass("tab-pane in active panel_overflow");
       this.$el.attr('id', this.toClose);
       this.$el.addClass(this.toClose);
