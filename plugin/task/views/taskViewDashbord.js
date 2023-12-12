@@ -21,8 +21,8 @@ define([
 ], function ($, _, Backbone, datepickerBT, moment, Swal, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, projectCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
 
   var taskView = Backbone.View.extend({
+    taskCount:'',
     initialize: function (options) {
-      console.log("task initialize");
       var customer_id = options.customerID
       this.customerID = customer_id;
       this.toClose = "taskFilterView";
@@ -85,10 +85,13 @@ define([
         }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        selfobj.taskCount = selfobj.collection.length;
+        selfobj.render();
         $(".preloader").hide();
         setPagging(res.paginginfo, res.loadstate, res.msg);
+        
       });
-
+      
       this.collection = searchtask;
       this.collection.on('add', this.addOne, this);
       this.collection.on('reset', this.addAll, this);
@@ -609,7 +612,7 @@ define([
     },
     render: function () {
       var template = _.template(taskTemp);
-      this.$el.html(template({ closeItem: this.toClose }));
+      this.$el.html(template({ closeItem: this.toClose , taskCount: this.taskCount}));
       $("#tasks").empty().append(this.$el);
       this.attachEvents();
       return this;
