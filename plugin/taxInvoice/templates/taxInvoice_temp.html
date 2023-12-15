@@ -4,6 +4,11 @@
       <div class="card">
         <div class="header">
           <h2>Tax Invoice</h2>
+          <% if(loadFrom=="custDashboardInvoice" ){%>
+            <button type="button" class="ws-btn-default loadview editButton" data-view="singletaxInvoiceData"
+              data-item="proposalSingleView" data-toggle="tooltip" data-placement="top" title="Edit"><i
+                class="material-icons">add</i></button>
+            <%}%>
         </div>
         <div class="body">
           <div class="actionList">
