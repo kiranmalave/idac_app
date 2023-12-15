@@ -8,8 +8,7 @@ define([
   '../models/contactUsFilterOptionModel',
   'text!../templates/contactUsRow.html',
   'text!../templates/contactUs_temp.html',
-  'text!../templates/contactUsFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, contactUsCollection, contactUsFilterOptionModel, contactUsRowTemp, contactUsTemp, contactUsFilterTemp) {
+], function ($, _, Backbone, datepickerBT, contactUsCollection, contactUsFilterOptionModel, contactUsRowTemp, contactUsTemp) {
 
   var contactUsView = Backbone.View.extend({
 
@@ -45,7 +44,6 @@ define([
       "change #textSearch": "settextSearch",
       "click .multiOptionSel": "multioption",
       "click #filterSearch": "filterSearch",
-      "click #filterOption": "filterRender",
       "click .resetval": "resetSearch",
       "click .loadview": "loadSubView",
       "change .txtchange": "updateOtherDetails",
@@ -75,12 +73,12 @@ define([
         }
       });
       $(".action-icons-div").hide();
-      $(".memberlistcheck").click(function() {
-          if($(this).is(":checked")) {
-              $(".action-icons-div").show(300);
-          } else {
-              $(".action-icons-div").hide(200);
-          }
+      $(".memberlistcheck").click(function () {
+        if ($(this).is(":checked")) {
+          $(".action-icons-div").show(300);
+        } else {
+          $(".action-icons-div").hide(200);
+        }
       });
       var idsToRemove = removeIds.toString();
       if (idsToRemove == '') {
@@ -105,9 +103,11 @@ define([
 
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           if (res.flag == "S") {
-            selfobj.collection.fetch({ headers: {
+            selfobj.collection.fetch({
+              headers: {
                 'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-              }, error: selfobj.onErrorHandler }).done(function (res) {
+              }, error: selfobj.onErrorHandler
+            }).done(function (res) {
               if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
               $(".profile-loader").hide();
               selfobj.filterSearch();
@@ -143,94 +143,49 @@ define([
       $("#contactUsList").empty();
       this.collection.forEach(this.addOne, this);
     },
-    filterRender:function(e){
-      var isexits = checkisoverlay(this.toClose);
-      
-      if(!isexits){
-        
-        var source = contactUsFilterTemp;
-        var template = _.template(source);
-       
-        var cont = $("<div>");
-        cont.html(template());
-        cont.attr('id',this.toClose);
-        /*  
-          INFO
-          this line use to hide if any other overlay is open first close it.
-        */
-        $(".overlay-main-container").removeClass("open");
-        // append filter html here
-        $(".ws_filterOptions").append(cont);
-        /*  
-          INFO
-          open filter popup by adding class open here
-        */
-        $(".ws_filterOptions").addClass("open");
-        /* 
-          INFO
-          make current task active
-        */
-        $(e.currentTarget).addClass("active");
-       
-      }else{
-        // check here we alreay open it or not. if open toggle that popup here
-        var isOpen = $(".ws_filterOptions").hasClass("open");
-        if(isOpen){
-          $(".ws_filterOptions").removeClass("open");
-          $(e.currentTarget).removeClass("active");
-          return;
-        }else{
-          $(e.currentTarget).addClass("active");
-           // this function will handel other exiting open popus
-        }
-      }
-      this.setValues();
-      rearrageOverlays("Filter",this.toClose,"small");
-    },
-    setValues:function(e){
-      setvalues = ["status","orderBy","order"];
+    setValues: function (e) {
+      setvalues = ["status", "orderBy", "order"];
       var selfobj = this;
-      $.each(setvalues,function(key,value){
+      $.each(setvalues, function (key, value) {
         var modval = filterOption.get(value);
-        if(modval != null){
+        if (modval != null) {
           var modeVal = modval.split(",");
-        }else{ var modeVal = {};}
+        } else { var modeVal = {}; }
 
-        $(".item-container li."+value).each(function(){
+        $(".item-container li." + value).each(function () {
           var currentval = $(this).attr("data-value");
           var selecterobj = $(this);
-          $.each(modeVal,function(key,dbvalue){
-            if(dbvalue.trim().toLowerCase() == currentval.toLowerCase()){
+          $.each(modeVal, function (key, dbvalue) {
+            if (dbvalue.trim().toLowerCase() == currentval.toLowerCase()) {
               $(selecterobj).addClass("active");
             }
           });
         });
-        
-      });
-      setTimeout(function(){
-      if(e != undefined && e.type == "click")
-      {
-        var newsetval = [];
-        var objectDetails = [];
-        var classname = $(e.currentTarget).attr("class").split(" ");
-        $(".item-container li."+classname[0]).each(function(){
-          var isclass = $(this).hasClass("active");
-          if(isclass){
-            var vv = $(this).attr("data-value");
-            newsetval.push(vv);
-          }
-        });
-        if (0 < newsetval.length) {
-          var newsetvalue = newsetval.toString();
-        }
-        else{var newsetvalue = "";}
 
-        objectDetails[""+classname[0]] = newsetvalue;
-        $("#valset__"+classname[0]).html(newsetvalue);
-        filterOption.model.set(objectDetails);
-      }
-    }, 3000);
-  },
+      });
+      setTimeout(function () {
+        if (e != undefined && e.type == "click") {
+          var newsetval = [];
+          var objectDetails = [];
+          var classname = $(e.currentTarget).attr("class").split(" ");
+          $(".item-container li." + classname[0]).each(function () {
+            var isclass = $(this).hasClass("active");
+            if (isclass) {
+              var vv = $(this).attr("data-value");
+              newsetval.push(vv);
+            }
+          });
+          if (0 < newsetval.length) {
+            var newsetvalue = newsetval.toString();
+          }
+          else { var newsetvalue = ""; }
+
+          objectDetails["" + classname[0]] = newsetvalue;
+          $("#valset__" + classname[0]).html(newsetvalue);
+          filterOption.model.set(objectDetails);
+        }
+      }, 3000);
+    },
     multioption: function (e) {
       var selfobj = this;
       var issinglecheck = $(e.currentTarget).attr("data-single");
@@ -317,9 +272,11 @@ define([
         var requestData = filterOption.attributes;
 
         $(".profile-loader").show();
-        searchcontactUs.fetch({headers: {
+        searchcontactUs.fetch({
+          headers: {
             'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-          }, add: true, remove: false, merge: false, type: 'post', error: selfobj.onErrorHandler, data: requestData}).done(function (res) {
+          }, add: true, remove: false, merge: false, type: 'post', error: selfobj.onErrorHandler, data: requestData
+        }).done(function (res) {
 
           $(".profile-loader").hide();
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
@@ -332,7 +289,7 @@ define([
     },
     render: function () {
       var template = _.template(contactUsTemp);
-      this.$el.html(template({closeItem:this.toClose}));
+      this.$el.html(template({ closeItem: this.toClose }));
       $(".main_container").append(this.$el);
       return this;
     }
