@@ -33,8 +33,9 @@ define([
       invoiceItemsDetails = new invoiceItems();
       this.getnarration();
       this.model = new singleTaxInvoiceModel();
-      console.log("this.model");
-      console.log(this.model);
+      if (this.customerID != "") {
+        this.model.set({ "customer_id": this.customerID });
+      }
       this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
       this.multiselectOptions = new multiselectOptions();
       customerList = new customerCollection();
