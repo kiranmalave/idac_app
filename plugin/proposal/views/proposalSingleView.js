@@ -367,6 +367,8 @@ define([
             }
             if(selfobj.loadFrom == "dashboard"){
               handelClose(selfobj.toClose);
+            }else if(selfobj.loadFrom == undefined){
+              handelClose(selfobj.toClose); 
             }else{
               scanDetails.filterSearch();
             }

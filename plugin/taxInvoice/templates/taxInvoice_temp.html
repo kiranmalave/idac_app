@@ -28,12 +28,83 @@
                     <label for="cAll">&nbsp;</label>
                   </div>
                 </th>
-                <th class="column-title">Invoice No..</th>
-                <th class="column-title">Customer Name</th>
-                <th class="column-title">Total Amount</th>
-                <th class="column-title">Gross Amount</th>
-                <th class="column-title">Bill Generated Date</th>
-                <th class="column-title">Action</th>
+                <% if(loadFrom=="custDashboardInvoice"){%>
+                  <th class="column-title sortColumns" data-value="" data-field="invoiceNumber">Invoice No..
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <th class="column-title sortColumns" data-value="" data-field="created_date">Created Date
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <th class="column-title sortColumns" data-value="" data-field="invoiceTotal">Total Amount
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <th class="column-title sortColumns" data-value="" data-field="invoiceDate">Invoice Date
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <th class="column-title sortColumns" >Action</th>
+                <%}else{%>
+                  <th class="column-title sortColumns" data-value="" data-field="invoiceNumber">Invoice No.
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <th class="column-title sortColumns" data-value="" data-field="customerName">Customer Name
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <th class="column-title sortColumns" data-value="" data-field="invoiceTotal">Total Amount
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <th class="column-title sortColumns" data-value="" data-field="grossAmount">Gross Amount
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <th class="column-title sortColumns" data-value="" data-field="created_date">Bill Generated Date
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <th class="column-title">Action</th>
+                <%}%>
               </tr>
             </thead>
             <tbody id="taxInvoiceList">
