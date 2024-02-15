@@ -1,18 +1,36 @@
-<tr class="even pointer bg-<%=taxInvoiceDetails.attributes.status%>">
-  <td class="a-center">
-    <div class="listCheckbox">
-        <input id="cAll_<%= taxInvoiceDetails.attributes.invoiceID %>" class="memberlistcheck chk-col-amber" data-invoiceID="<%= taxInvoiceDetails.attributes.invoiceID %>" type="checkbox">
-        <label for="cAll_<%= taxInvoiceDetails.attributes.invoiceID %>">&nbsp;</label>
-    </div>
-  </td>
-  <td class="loadview" data-toggle="modal" data-target="#myModal" data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>"data-show="singleTaxInvoiceData" ><a href="javascript:;"><u><%=taxInvoiceDetails.attributes.invoiceNumber%></u></a></td></td>
-  <td class=""><%=taxInvoiceDetails.attributes.customerName%></td>
-  <td class=""><%=taxInvoiceDetails.attributes.invoiceTotal%></td>
-  <td class=""><%=taxInvoiceDetails.attributes.grossAmount%></td>
-  <td class=""><%= formatDate(taxInvoiceDetails.attributes.created_date,'no') %></td>
-  <td>
-    <button type="button" class="ws-btn-default loadview" data-toggle="tooltip"  data-placement="top" title="Edit"  data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>" data-view="singletaxInvoiceData"><i class="material-icons">mode_edit</i></button>
-    <a href="<%=APIPATH%>printBill/<%=taxInvoiceDetails.attributes.invoiceID%>" target="_blank" data-toggle="tooltip"  data-placement="top" title="Download" class="editHover" style="color: #5f6368;"><span class="material-symbols-outlined ">download</span></a>
-  </td>
-</tr>
-              
+<%if(loadFrom=="custDashboardInvoice"){%>
+  <tr class="even pointer bg-<%=taxInvoiceDetails.attributes.status%>">
+    <td class="a-center">
+      <div class="listCheckbox">
+          <input id="cAll_<%= taxInvoiceDetails.attributes.invoiceID %>" class="memberlistcheck chk-col-amber" data-invoiceID="<%= taxInvoiceDetails.attributes.invoiceID %>" type="checkbox">
+          <label for="cAll_<%= taxInvoiceDetails.attributes.invoiceID %>">&nbsp;</label>
+      </div>
+    </td>
+    <td class="loadview" data-toggle="modal" data-target="#myModal" data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>"data-show="singleTaxInvoiceData" ><a href="javascript:;"><u><%=taxInvoiceDetails.attributes.invoiceNumber%></u></a></td></td>
+    <td class=""><%= formatDate(taxInvoiceDetails.attributes.created_date,'no') %></td>
+    <td class=""><%=taxInvoiceDetails.attributes.invoiceTotal%></td>
+    <td class=""><%= formatDate(taxInvoiceDetails.attributes.invoiceDate,'no') %></td>
+    <td>
+      <button type="button" class="ws-btn-default loadview" data-toggle="tooltip"  data-placement="top" title="Edit"  data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>" data-view="singletaxInvoiceData"><i class="material-icons">mode_edit</i></button>
+      <a href="<%=APIPATH%>printBill/<%=taxInvoiceDetails.attributes.invoiceID%>" target="_blank" data-toggle="tooltip"  data-placement="top" title="Download" class="editHover" style="color: #5f6368;"><span class="material-symbols-outlined ">download</span></a>
+    </td>
+  </tr>
+<%}else{%>
+  <tr class="even pointer bg-<%=taxInvoiceDetails.attributes.status%>">
+    <td class="a-center">
+      <div class="listCheckbox">
+          <input id="cAll_<%= taxInvoiceDetails.attributes.invoiceID %>" class="memberlistcheck chk-col-amber" data-invoiceID="<%= taxInvoiceDetails.attributes.invoiceID %>" type="checkbox">
+          <label for="cAll_<%= taxInvoiceDetails.attributes.invoiceID %>">&nbsp;</label>
+      </div>
+    </td>
+    <td class="loadview" data-toggle="modal" data-target="#myModal" data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>"data-show="singleTaxInvoiceData" ><a href="javascript:;"><u><%=taxInvoiceDetails.attributes.invoiceNumber%></u></a></td></td>
+    <td class=""><%=taxInvoiceDetails.attributes.customerName%></td>
+    <td class=""><%=taxInvoiceDetails.attributes.invoiceTotal%></td>
+    <td class=""><%=taxInvoiceDetails.attributes.grossAmount%></td>
+    <td class=""><%= formatDate(taxInvoiceDetails.attributes.created_date,'no') %></td>
+    <td>
+      <button type="button" class="ws-btn-default loadview" data-toggle="tooltip"  data-placement="top" title="Edit"  data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>" data-view="singletaxInvoiceData"><i class="material-icons">mode_edit</i></button>
+      <a href="<%=APIPATH%>printBill/<%=taxInvoiceDetails.attributes.invoiceID%>" target="_blank" data-toggle="tooltip"  data-placement="top" title="Download" class="editHover" style="color: #5f6368;"><span class="material-symbols-outlined ">download</span></a>
+    </td>
+  </tr>
+<%}%>

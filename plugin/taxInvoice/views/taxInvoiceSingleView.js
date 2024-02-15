@@ -395,6 +395,35 @@ define([
 
     initializeValidate: function () {
       var selfobj = this;
+      var feilds = {
+          
+        project_name: {
+          required: true,
+        },
+
+        client_id:{
+          required: true,
+        }
+        
+      };
+      var feildsrules = feilds;
+      var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+
+      if (!_.isEmpty(dynamicRules)) {
+        var feildsrules = $.extend({}, feilds, dynamicRules);
+        // var feildsrules = {
+        //   ...feilds,
+        //   ...dynamicRules
+        //   };
+      }
+      var messages = {
+        project_name: "Please enter Project Name",
+        client_id: "Please select Client",
+      };
+      $("#projectDetails").validate({
+        rules: feildsrules,
+        messages: messages,
+      });
       $('#invoiceDate').datepickerBT({
         format: "dd-mm-yyyy",
         todayBtn: "linked",

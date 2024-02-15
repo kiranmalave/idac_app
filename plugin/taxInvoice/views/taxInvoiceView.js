@@ -63,7 +63,7 @@ define([
       "click .showpage": "loadData",
       "click .cancelInvoice": "cancelInvoice",
       "click .changeStatus": "changeStatusListElement",
-
+      "click .sortColumns": "sortColumn",
     },
     updateOtherDetails: function (e) {
 
@@ -76,6 +76,31 @@ define([
     settextSearch: function (e) {
       var usernametxt = $(e.currentTarget).val();
       filterOption.set({ textSearch: usernametxt });
+    },
+
+    sortColumn: function (e) {
+      var order = $(e.currentTarget).attr("data-value");
+      var selfobj = this;
+      var newsetval = [];
+      $("#clist").find(".up").removeClass("active");
+      $("#clist").find(".down").removeClass("active");
+      newsetval["order"] = $(e.currentTarget).attr("data-value");
+      newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+      if (order == "" || order == "DESC") {
+        order = "ASC";
+        $(e.currentTarget).find(".down").removeClass("active");
+        $(e.currentTarget).find(".up").addClass("active");
+      } else {
+        order = "DESC";
+        $(e.currentTarget).find(".down").addClass("active");
+        $(e.currentTarget).find(".up").removeClass("active");
+      }
+      $(e.currentTarget).attr("data-value", order);
+      newsetval["order"] = order;
+      newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+      console.log("newsetval", newsetval);
+      filterOption.set(newsetval);
+      selfobj.filterSearch();
     },
 
     changeStatusListElement: function (e) {
@@ -183,7 +208,7 @@ define([
     },
     addOne: function (objectModel) {
       var template = _.template(taxInvoiceRowTemp);
-      $("#taxInvoiceList").append(template({ taxInvoiceDetails: objectModel }));
+      $("#taxInvoiceList").append(template({ taxInvoiceDetails: objectModel, loadFrom: this.loadFrom }));
     },
     addAll: function () {
       $("#taxInvoiceList").empty();

@@ -43,7 +43,6 @@ define([
         $(".profile-loader").hide();
         setPagging(res.paginginfo, res.loadstate, res.msg);
       });
-
       this.customerList = new customerCollection();
       this.customerList.fetch({
         headers: {
