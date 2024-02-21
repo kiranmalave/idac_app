@@ -270,7 +270,7 @@ class Masters extends CI_Controller {
 	{
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
-		$textSearch = trim($this->input->post('textSearch'));
+		$textSearch = $this->input->post('textSearch');
 		$isAll = $this->input->post('getAll');
 		$curPage = $this->input->post('curpage');
 		$textval = $this->input->post('textval');

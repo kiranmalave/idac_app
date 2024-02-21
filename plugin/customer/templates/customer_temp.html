@@ -1,129 +1,285 @@
 <div class="container-fluid">
+
   <div class="row clearfix">
-      <div class="col-lg-12">
-          <div class="card">
-               <div class="header">
-                 <h2>Company Details</h2>
-             </div>
-               <div class="body">
-                 <div class="actionList">
-                   <!-- <div class="action-icons-div ml-1"> -->
-                    <%if(permission.delete=="yes" ) { %>
-                      <span type="button" style="display:none;" class="changeStatus deleteAll" data-action="delete" data-toggle="tooltip" data-placement="top" title="Delete"><i
-                          class="material-icons" data-toggle="tooltip" data-placement="top" title="Delete"
-                          style="background-color: #F5BF00; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px;">delete</i></span>
-                      <% } %>
-                 </div>
-                  <table id="clist" class="table bulk_action tableList table-hover">
-                   <thead id="thead">
-                     <tr class="headings">
-                       <th>
-                         <div class="listCheckbox">
-                             <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
-                             <label for="cAll">&nbsp;</label>
-                         </div>
-                       </th>
-                       <th class="order sortColumns column-title" data-value="" data-field="company_name">Name
-                        <span class="material-symbols-outlined sortarrow up">
-                          north
-                        </span>
-                        <span class="material-symbols-outlined sortarrow down">
-                          south
-                        </span>
-                      </th>
-                      <th class="order sortColumns column-title" data-value="" data-field="person_name">Person Name
-                        <span class="material-symbols-outlined sortarrow up">
-                          north
-                        </span>
-                        <span class="material-symbols-outlined sortarrow down">
-                          south
-                        </span>
-                      </th>
-                      <th class="order sortColumns column-title" data-value="" data-field="email">Email Id
-                        <span class="material-symbols-outlined sortarrow up">
-                          north
-                        </span>
-                        <span class="material-symbols-outlined sortarrow down">
-                          south
-                        </span>
-                      </th>
-                      <th class="order sortColumns column-title" data-value="" data-field="mobile_no">Mobile Number
-                        <span class="material-symbols-outlined sortarrow up">
-                          north
-                        </span>
-                        <span class="material-symbols-outlined sortarrow down">
-                          south
-                        </span>
-                      </th>
-                       <th class="column-title">Actions</th>
-                     </tr>
-                   </thead>
-                   <tbody id="customerList">
-                   </tbody>
-                 </table>
-                 <div class="profile-loader-msg text-center"></div>
-                 <div class="profile-loader text-center">
-                     <div class="preloader">
-                       <div class="spinner-layer pl-amber">
-                           <div class="circle-clipper left">
-                               <div class="circle"></div>
-                           </div>
-                           <div class="circle-clipper right">
-                               <div class="circle"></div>
-                           </div>
-                       </div>
-                   </div>
-                 </div>
-                 <div id="loadMember" data-index="1" data-currPage="1"></div>
-               </div>
-               <!-- paggination -->
-               <div class="footer row">
-                 <div class="col-sm-5">
-                   <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
-                       class="page-info"></span></div>
-                 </div>
-                 <div class="col-sm-7">
-                   <div class="showPageDetails dataTables_paginate paging_simple_numbers">
-                     <ul class="pagination">
-                     </ul>
-                   </div>
-                 </div>
-               </div>
-               <!-- paggination -->
+    <div class="col-lg-12">
+      <div class="card customerTable">
+        <div class="noCustRec" <% if(totalRec == 0){%><%}else{%>style="display: none;"<%}%> >
+          <div class="noCustRecDetails">
+            <div class="noCustRecPic">
+              <img src="images/noRecrds.png" alt="">
+            </div>
+            <div class="noCustRecText">
+              <h1>You haven’t added any <span>
+                  Customers
+                </span> here</h1>
+              <p>Click on add button to add the <span>
+                  Customers
+                </span></p>
+              <div class="buttonAdd">
+                <button type="button" class="btn btn-link waves-effect loadview nav-item addCust" data-view="singleCustomerData" data-item="customerSingleView">
+                  <!-- <span class="material-icons">add</span> -->
+                  Add
+                </button>
               </div>
+            </div>
           </div>
+
+        </div>
+        <div class="body table" id="leadlistview" style="display: none;">
+          <div class="header moduleSec lead">
+            <div>
+              <h2>
+                Customers
+              </h2>
+              <div class="moduleDesc">
+                <%=moduleDesc%>
+              </div>
+            </div>
+            <div class="leadRight text-right actionBtns topBtnDetails">
+              <%if(menuName=="leads" ){%>
+                <div class="btn-group btn-group-block gridmode float-right btnDetails" style="right:0">
+                  <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span class="material-icons" style="margin-top: 2px;">view_list</span></button>
+                  <button class="btn ws-btn-default ws-btn-grid grid_mode" value="grid"><span class="material-icons" style="margin-top: 2px;">grid_on</span></button>
+                </div>
+              <%}%>
+            </div>
+          </div>
+
+          <div class="actionList">
+            <%if(permission.delete=="yes" ) { %>
+              <span type="button" style="display:none;" class="changeStatus deleteAll" data-action="delete" data-toggle="tooltip" data-placement="top" title="Delete"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Delete" style="background-color: #494b94; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px; color:#fff;">delete</i></span>
+              <% } %>
+          </div>
+          <div class="profile-loader text-center table" style="position: absolute; top: 50%; left:0; right:0; margin:0 auto;">
+            <div class="preloader table">
+              <div class="loderGif table">
+                <img src="images/webloader.gif" alt="User" />
+              </div>
+            </div>
+          </div>
+          <div class="customerListTable customTableClass">
+            <table id="clist" class="table bulk_action tableList table-hover" style="width: <%=100+(arrangedColumnList.length * 20)%>%">
+              <thead id="thead">
+                <tr class="headings">
+                  <th class="check-gap">
+                    <div class="listCheckbox">
+                      <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
+                      <label for="cAll">&nbsp;</label>
+                    </div>
+                  </th>
+                  <!-- <th class="column-title">Customer ID</th> -->
+                  <th class="order sortColumns column-title" data-value="" data-field="Name">
+                    Name
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <th class="order sortColumns column-title" data-value="" data-field="email">
+                    Email
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <th class="order sortColumns column-title" data-value="" data-field="mobile_no">Mobile Number
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <th class="order sortColumns column-title" data-value="" data-field="record_type">Record Type
+                    <span class="material-symbols-outlined sortarrow up">
+                      north
+                    </span>
+                    <span class="material-symbols-outlined sortarrow down">
+                      south
+                    </span>
+                  </th>
+                  <%if(menuName=="leads" ){%>
+                    <th class="order sortColumns column-title" data-value="" data-field="stages">Lead Stage
+                      <span class="material-symbols-outlined sortarrow up">
+                        north
+                      </span>
+                      <span class="material-symbols-outlined sortarrow down">
+                        south
+                      </span>
+                    </th>
+                    <%}%>
+                      <!-- <% _.each(arrangedColumnList, function(column) { %>             
+                    <th class="order sortColumns column-title" data-value="" data-field="whatappnumber" ><%= column.fieldLabel %>
+                      <span class="material-symbols-outlined sortarrow up">
+                        north
+                      </span>
+                      <span class="material-symbols-outlined sortarrow down">
+                        south
+                      </span>
+                    </th>   
+                    <% }); %> -->
+                      <% _.each(arrangedColumnList, function(column) { %>
+                        <th class="column-title sortColumns" data-field="<%= column.column_name %>">
+                          <%= column.fieldLabel %>
+                            <span class="material-symbols-outlined sortarrow up">north</span>
+                            <span class="material-symbols-outlined sortarrow down">south</span>
+                        </th>
+                        <% }); %>
+                          <th class="column-title">Action</th>
+                </tr>
+              </thead>
+              <tbody id="customerList"></tbody>
+            </table>
+
+          </div>
+          <div class="footer row">
+            <div class="col-sm-4" style="padding: 0;">
+              <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span class="page-info f_txt"></span></div>
+            </div>
+            <div class="col-sm-4">
+              <div class="profile-loader-msg text-center"></div>
+            </div>
+            <div class="col-sm-4" style="padding: 0;">
+              <div class="showPageDetails dataTables_paginate paging_simple_numbers">
+                <ul class="pagination"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="body greed" id="leadgridview" style="display: none;">
+          <div class="header moduleSec lead">
+            <div>
+              <h2>
+                <%=pluralLable%>
+              </h2>
+              <div class="moduleDesc">
+                <%=moduleDesc%>
+              </div>
+            </div>
+            <div class="leadRight">
+              <div class="btn-group btn-group-block gridmode float-right btnDetails">
+                <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span class="material-icons" style="margin-top: 2px;">view_list</span></button>
+                <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span class="material-icons" style="margin-top: 2px;">grid_on</span></button>
+              </div>
+            </div>
+          </div>
+          <div class="greedLeadTotalBody lead-assignment">
+            <div class="row kanban-view">
+              <%if(menuName=="leads" ){%>
+                <% _.each(categoryList, function(parentCat) { %>
+                  <% _.each(parentCat.attributes.sublist, function(category) { %>
+                    <div class="greedLeadTotal leadIndex" data-lead-id="<%=category.category_id%>">
+                      <div class="listgrid leadDrop" id="<%=category.category_id%>">
+                        <div class="totalCount">
+                          <h2>
+                            <%=category.categoryName%>
+                          </h2>
+                        </div>
+                      </div>
+                    </div>
+                    <%})%>
+                      <%})%>
+                        <%}%>
+                          <div class="greedLeadTotal" data-lead-id="otherStage">
+                            <div class="listgrid" id="otherStage">
+                              <div class="totalCount">
+                                <h2>Other Stage</h2>
+                              </div>
+                            </div>
+                          </div>
+            </div>
+            <!-- Slider -->
+            <div class="kanban-scroll-view">
+              <div class="kanban-scroll">
+                <div id="sc" class="kanban-scroll-active" style="margin-left: 1.43483px;"></div>
+              </div>
+              <div id="" class="kanban-columns-thumbs">
+              </div>
+            </div>
+            <!-- Slider -->
+          </div>
+        </div>
       </div>
+    </div>
   </div>
-</div>   
-<div class="sidebar-right">
-  <ul class="nav side-menu">
-    <li id="filterOption" class="nav-item" data-item="<%=closeItem%>" data-toggle="tooltip" data-placement="top" title="Filter">
-      <!-- <span class="material-icons">filter</span> -->
-      <span class="material-symbols-outlined">
-        filter_alt
+  <div id="loadMember" data-index="1" data-currTask="1"></div>
+  <div class="sidebar-right">
+    <ul class="nav side-menu">
+      <li id="filterOption" class="nav-item" data-item="<%=closeItem%>" data-toggle="tooltip" data-placement="top" title="Filter">
+        <span class="material-symbols-outlined">
+          filter_alt
         </span>
-      <!-- <button type="button" class="btn btn-info loadview" data-target="#myModal" data-customerID="" data-show="singlecustomerData"data-toggle="modal">Add customer Details</button>  -->
-    </li>
-  <%if(permission.add=="yes" ) { %>
-  <li class="loadview nav-item" data-view="singleCustomerData" data-item="customerSingleView" data-toggle="tooltip" data-placement="top" title="Add">
-    <span class="material-icons">add</span>
-    <!-- <button type="button" class="btn btn-info loadview" data-target="#myModal" data-customerID="" data-show="singlecustomerData"data-toggle="modal">Add customer Details</button> -->
-  </li>
-  <% } %>
-
-  </ul>
-</div>
-<div class="ws_filterOptions">
-
-</div>
-<!-- Large Size -->
-<div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-xl" role="document">
-      <div class="modal-content">
-          <div id="mediaLoad" class="modal-body"></div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
-          </div>
-      </div>
+      </li>
+      <%if(permission.add=="yes" ) { %>
+        <li class="loadview nav-item" data-view="singleCustomerData" data-item="customerSingleView" data-toggle="tooltip" data-placement="top" title="Add">
+          <span class="material-icons">add</span>
+        </li>
+        <% } %>
+    </ul>
   </div>
-</div>
+
+
+
+  <div class="ws_filterOptions"></div>
+  <!-- Large Size -->
+  <div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div id="mediaLoad" class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="NoteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg forNote" role="document">
+      <div class="modal-content">
+        <div id="noteMedia" class="modal-body noteSave">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="activityModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md forActivty" role="document">
+      <div class="modal-content">
+        <div id="activityMedia" class="modal-body activitySave">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="customColumnModal" tabindex="-1" role="dialog"></div>
+
+  <div id="customMail" class="customMail" style="display: none;"></div>
+
+  <div class="customMailMinimize" style="display: none;">
+    <div class="titleSec">
+      <span>New Message</span>
+    </div>
+    <div class="iconSec">
+      <button type="button" class="btn  minimize showMax">
+        <i class="material-icons">
+          maximize
+        </i>
+      </button>
+
+      <button type="button" class="btn  openFull">
+        <img src="images/open_blank.svg" alt="" />
+      </button>
+
+      <button type="button" class="btn  close">
+        <i class="material-icons">
+          clear
+        </i>
+      </button>
+
+    </div>
+  </div>
+
+  <div class="opercityBg" style="display: none;"></div>

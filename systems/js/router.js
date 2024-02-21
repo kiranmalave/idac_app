@@ -68,6 +68,7 @@ define([
       'addnewpage/:pageID': "addpage",
       'addnewblog/:blogID': "addblog",
       'customer': 'customerView',
+      'leads': 'customerView',
       'customerDashboard/:customer_id': 'customerdashboardView',
       'branch': 'branchView',
       'proposal': 'proposalView',

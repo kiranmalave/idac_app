@@ -120,6 +120,8 @@ define([
     attachEvents: function () {
       this.$el.off('click', '#removeFlyOut', this.removeFlyOut);
       this.$el.on('click', '#removeFlyOut', this.removeFlyOut.bind(this));
+      this.$el.off('click', '.loadview', this.loadSubView);
+      this.$el.on('click', '.loadview', this.loadSubView.bind(this));
       //this.$el.off('click', '.filterSearch', this.filterSearch);
       //this.$el.on('click', '.filterSearch', this.filterSearch.bind(this));
     },
@@ -269,6 +271,7 @@ define([
     loadSubView: function (e) {
       var selfobj = this;
       var show = $(e.currentTarget).attr("data-view");
+      alert("here");
       switch (show) {
         case "singletaskData": {
           var task_id = $(e.currentTarget).attr("data-task_id");

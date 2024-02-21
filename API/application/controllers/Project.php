@@ -34,7 +34,7 @@ class Project extends CI_Controller {
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$isAll = $this->input->post('getAll');
-		$textSearch = trim($this->input->post('textSearch'));
+		$textSearch = $this->input->post('textSearch');
 		$curPage = $this->input->post('curpage');
 		$ITIID = $this->input->post('project_id');
 		$textval = $this->input->post('textval');
@@ -56,8 +56,7 @@ class Project extends CI_Controller {
 		$config = $this->config->item('pagination');
 		$wherec = $join = array();
 		if(isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)){
-
-		$wherec["$textSearch like  "] = "'%".$textval."%'";
+			$wherec["$textSearch like  "] = "'%".$textval."%'";
 		}
 
 		if (isset($company) && !empty($company)) {
