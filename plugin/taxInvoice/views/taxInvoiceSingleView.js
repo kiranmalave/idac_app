@@ -54,7 +54,7 @@ define([
         selfobj.model.set("customerList", res.data);
         selfobj.render();
       });
-      console.log(this.model);
+
       // companyList.fetch({headers: {
       //     'contentType':'application/x-www-form-urlencoded','SadminID':$.cookie('authid'),'token':$.cookie('_bb_key'),'Accept':'application/json'
       //   },error: selfobj.onErrorHandler,type:'POST',data:{getAll:'Y'}}).done(function(res){
@@ -78,7 +78,6 @@ define([
           selfobj.setValues();
         });
       } else {
-        console.log("called");
         selfobj.getinfoSetting();
         selfobj.render();
         $(".popupLoader").hide();
@@ -182,7 +181,6 @@ define([
             selfobj.model.set({ "stateGstPercent": res.data[0].stateGst });
             selfobj.model.set({ "centralGstPercent": res.data[0].centralGst });
             selfobj.model.set({ "interGstPercent": res.data[0].interGst });
-            console.log(selfobj.model.attributes);
             selfobj.render();
           }
         }
@@ -258,14 +256,11 @@ define([
       });
     },
     updateOtherDetails: function (e) {
-
       var valuetxt = $(e.currentTarget).val();
       var toID = $(e.currentTarget).attr("id");
       var newdetails = [];
       newdetails["" + toID] = valuetxt;
       this.model.set(newdetails);
-
-      console.log(this.model);
     },
     setOldValues: function () {
       var selfobj = this;
@@ -281,7 +276,8 @@ define([
       e.preventDefault();
       invoiceItemsDetails.reset();
       var selfobj = this;
-      var tmpinvoiceID = this.model.get("invoiceID");
+      if($("#taxInvoiceDetails").valid()) {
+        var tmpinvoiceID = this.model.get("invoiceID");
       var invoiceID = selfobj.model.get("invoiceID");
       var customerID = selfobj.model.get("customer_id");
       var invoiceDate = $("#invoiceDate").val();
@@ -369,39 +365,38 @@ define([
       } else {
         method = "create";
       }
-      console.log(invoiceItemsDetails);
-      invoiceItemsDetails.sync(method, invoiceItemsDetails, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler
-      }).done(function (res) {
+     
+        invoiceItemsDetails.sync(method, invoiceItemsDetails, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler
+        }).done(function (res) {
 
-        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        if (res.flag == "F") {
-          // alert(res.msg);
-          $(e.currentTarget).html("<span>Error</span>");
-        } else {
-          $(e.currentTarget).html("<span>Saved</span>");
-          handelClose(selfobj.toClose);
-          scanDetails.filterSearch();
-        }
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          if (res.flag == "F") {
+            $(e.currentTarget).html("<span>Error</span>");
+          } else {
+            $(e.currentTarget).html("<span>Saved</span>");
+            handelClose(selfobj.toClose);
+            scanDetails.filterSearch();
+          }
+          setTimeout(function () {
+            $(e.currentTarget).html("<span>Save</span>");
+          }, 3000);
+        });
 
-
-        setTimeout(function () {
-          $(e.currentTarget).html("<span>Save</span>");
-        }, 3000);
-      });
+      }
     },
 
     initializeValidate: function () {
       var selfobj = this;
       var feilds = {
           
-        project_name: {
+        customer_id: {
           required: true,
         },
 
-        client_id:{
+        invoiceDate:{
           required: true,
         }
         
@@ -417,10 +412,10 @@ define([
         //   };
       }
       var messages = {
-        project_name: "Please enter Project Name",
-        client_id: "Please select Client",
+        customer_id: "Please select Customer",
+        invoiceDate: "Please select Date",
       };
-      $("#projectDetails").validate({
+      $("#taxInvoiceDetails").validate({
         rules: feildsrules,
         messages: messages,
       });
@@ -438,10 +433,6 @@ define([
         var valuetxt = $("#invoiceDate").val();
         selfobj.model.set({ invoiceDate: valuetxt });
       });
-
-      $('.digits').inputmask('Regex', { regex: "^[0-9]{1,15}(\\.\\d{1,2})?$" });
-      $('.percentage').inputmask('Regex', { regex: "^[0-9]{1,2}(\\.\\d{1,2})?$" });
-
     },
     render: function () {
       var source = taxInvoice_temp;

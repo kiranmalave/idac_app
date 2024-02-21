@@ -30,7 +30,6 @@ define([
         permission = ROLE["invoice"];
         filterOption.set({ customer_id: this.customerID })
       }
-      console.log(filterOption);
       readyState = true;
       this.render();
       searchtaxInvoice = new taxInvoiceCollection();
