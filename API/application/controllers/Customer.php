@@ -24,7 +24,6 @@
 			parent::__construct();
 			$this->load->database();
 			$this->load->model('CommonModel');
-			// $this->load->model('TraineeModel');
 			$this->load->library("pagination");
 			$this->load->library("response");
 			$this->load->library("ValidateData");
@@ -142,7 +141,6 @@
 				$customerDetails['billing_name'] = $this->validatedata->validate('billing_name', 'Billing Name', false, '', array());
 				$customerDetails['billing_address'] = $this->validatedata->validate('billing_address', 'Billing Address', false, '', array());
 				$customerDetails['branch_id'] = $this->validatedata->validate('branch_id', 'branch Id', false, '', array());
-				$customerDetails['country_code'] = $this->validatedata->validate('country_code', 'country code', false, '', array());
 				$customerDetails['status'] = $this->validatedata->validate('status', 'Status', true, '', array());
 
 			}

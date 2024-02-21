@@ -521,7 +521,7 @@ setPagging = function (paginginfo, loadstate, msg) {
   var className = "";
   var pageSet = 6;
   if (showlink) {
-    var lik = '<li class="paginate_button page-item previous showpage" id="datatable-checkbox_previous" data-dt-idx="' + paginginfo.prevPage + '"><a class="page-link" href="javascript:;">&#8592; Previous</a></li>';
+    var lik = '<li class="paginate_button page-item previous showpage" id="datatable-checkbox_previous" data-dt-idx="' + paginginfo.prevPage + '"><a class="page-link" href="javascript:;"><i class="material-icons"> chevron_left</i></a></li>';
     $(".showPageDetails .pagination").append(lik);
     var totpage = Math.ceil(paginginfo.totalRecords / paginginfo.pageLimit);
     if (totpage == 1) {
@@ -529,7 +529,10 @@ setPagging = function (paginginfo, loadstate, msg) {
     }
 
     var cpa = (paginginfo.curPage);
-
+    let loadedFrom ="";
+    if(paginginfo.loadFrom != undefined){
+      loadedFrom = paginginfo.loadFrom;
+    }
     if (paginginfo.prevPage != 0) {
       var startto = (cpa - (pageSet / 2));
       if (startto < 0) {
@@ -545,18 +548,17 @@ setPagging = function (paginginfo, loadstate, msg) {
         } else {
           className = "";
         }
-        var lik = '<li class="paginate_button page-item showpage ' + className + '" data-dt-idx="' + (i) + '"><a href="javascript:;" class="page-link" aria-controls="datatable-checkbox">' + (i + 1) + '</a></li>';
+        var lik = '<li data-loadFrom="'+loadedFrom+'" class="paginate_button page-item showpage ' + className + '" data-dt-idx="' + (i) + '"><a href="javascript:;" class="page-link" aria-controls="datatable-checkbox">' + (i + 1) + '</a></li>';
         $(".showPageDetails .pagination").append(lik);
       }
     }
-    var lik = '<li class="paginate_button page-item next showpage" id="datatable-checkbox_next" data-dt-idx="' + (paginginfo.nextpage) + '"><a href="javascript:;" class="page-link" aria-controls="datatable-checkbox" tabindex="0">Next &#8594;</a></li>';
+    var lik = '<li data-loadFrom="'+loadedFrom+'" class="paginate_button page-item next showpage" id="datatable-checkbox_next" data-dt-idx="' + (paginginfo.nextpage) + '"><a href="javascript:;" class="page-link" aria-controls="datatable-checkbox" tabindex="0"><i class="material-icons">chevron_right</i></a></li>';
     $(".showPageDetails .pagination").append(lik);
 
   }
   if (cpa == 0) {
     $(".showPageDetails .pagination .previous").addClass("disabled");
   }
-
   if (loadstate === false) {
     $(".showPageDetails .pagination .next").addClass("disabled");
     $(".profile-loader-msg").html(msg);
@@ -566,7 +568,6 @@ setPagging = function (paginginfo, loadstate, msg) {
     //$(".showPageDetails .pagination .next").show(); 
 
   }
-
 
 }
 numberFormat = function (num, tonm) {

@@ -1,0 +1,36 @@
+<tr class="even pointer bg-<%=emailMasterDetails.attributes.status%>" >
+  <td class="a-center">
+    <div class="listCheckbox 123">
+        <input id="cAll_<%= emailMasterDetails.attributes.tempID %>" class="memberlistcheck chk-col-amber" data-tempID="<%= emailMasterDetails.attributes.tempID %>" type="checkbox">
+        <label for="cAll_<%= emailMasterDetails.attributes.tempID %>">&nbsp;</label>
+    </div>
+  </td>
+  <!-- 
+  <td class=""><%=emailMasterDetails.attributes.tempID%></td> -->
+  <td>
+    <div class="nametooltip">
+      <p class="mailtruncate">
+        <%=emailMasterDetails.attributes.tempName%>
+      </p>
+      <span class="tooltiptxt">
+        <%=emailMasterDetails.attributes.tempName%>
+      </span>
+  </div>
+    <!-- <%=emailMasterDetails.attributes.tempName%> -->
+  </td>
+  <td class="" ><%=emailMasterDetails.attributes.subjectOfEmail%></td>
+  <td class=""><%= formatDate(emailMasterDetails.attributes.created_date,'no') %></td>
+  <% _.each(arrangedColumnList, function(column) { %>
+    <td class="">
+        <% if (column.linkedWith != "" && column.linkedWith != null && column.linkedWith != "undefined") { %>
+            <%= emailMasterDetails.attributes["" + column.linkedWith + "_" + column.column_name] %>
+        <% } else { %>
+            <%= emailMasterDetails.attributes["" + column.column_name] %>
+        <% } %>
+    </td>
+<% }); %>
+  <td>
+    <!--<button type="button" class="btn btn-info btn-xs loadview" data-toggle="modal" data-target="#myModal" data-tempID="<%=emailMasterDetails.attributes.tempID%>" data-show="singleemailMasterData">Edit</button>-->
+    <button type="button" class="ws-btn-default loadview"  data-tempID="<%=emailMasterDetails.attributes.tempID%>" data-view="singleemailMasterData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+  </td>
+</tr>

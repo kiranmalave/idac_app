@@ -6,12 +6,12 @@ define([
   var customerFilterOptionModel = Backbone.Model.extend({
     idAttribute: "customer_id",
     defaults: {
-      textSearch: 'company_name',
+      status:'active',
+      textSearch: '',
       textval: null,
-      company:null,
-      status: 'Active',
-      orderBy: 'created_date',
-      order: 'ASC',
+      orderBy: 't.created_date',
+      order: "DESC",
+      stages: null,
     }
   });
   return customerFilterOptionModel;
