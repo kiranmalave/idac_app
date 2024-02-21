@@ -398,14 +398,18 @@ define([
           }
           if (selfobj.loadFrom == "TaskSingleView") {
             scanDetails.refreshCust();
-          }else if(selfobj.loadFrom == "TaxInvoice") {
-            scanDetails.refreshCust();
-          }else  if(selfobj.loadFrom == "AppointmentView") {
-            scanDetails.render();
-          }else  if(selfobj.loadFrom == "ReceiptSingleView") {
-            scanDetails.refreshCust();
-          }else {
-            scanDetails.filterSearch(false, stage);
+          } else if (selfobj.loadFrom == "dashboard") {
+            handelClose(selfobj.toClose);
+            scanDetails.initialize({action:selfobj.model.get("customer_id")});
+          } else if (selfobj.loadFrom == "projectSingleView"){
+            scanDetails.refreshCus({action:selfobj.model.get("customer_id")});
+            // scanDetails.initialize({action:selfobj.model.get("customer_id")});
+            scanDetails.refreshCus(res.data.customer_id);
+          }else if (selfobj.loadFrom == "proposalSingleView"){
+            // scanDetails.initialize({action:selfobj.model.get("customer_id")});
+            scanDetails.refreshCus(res.data.customer_id);
+          }else{
+            scanDetails.filterSearch();
           }
           if (res.flag == "S") {
             if (isNew == "new") {

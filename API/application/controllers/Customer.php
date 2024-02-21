@@ -160,7 +160,7 @@
 						} else {
 							$status['msg'] = $this->systemmsg->getSucessCode(400);
 							$status['statusCode'] = 400;
-							$status['data'] = array();
+							$status['data'] = array("customer_id"=>$this->db->insert_id());
 							$status['flag'] = 'S';
 							$this->response->output($status, 200);
 						}
