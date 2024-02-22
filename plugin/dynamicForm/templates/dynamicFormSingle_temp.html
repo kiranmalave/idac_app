@@ -1,21 +1,24 @@
+
+<div class="text-right actionBtns">
+    <button type="button" class="btn bg-indigo" id="savedynamicFormDetails" data-action="close">Save</button>
+    <button type="button" class="btn bg-indigo" id="savedynamicFormDetails" data-action="new">Save &amp; new</button>
+</div>
 <div class="container-fluid" id="dynamicFormSingleView">
     <form id="dynamicFormDetails" name="dynamicFormDetails" action="#">
         <div class="row clearfix">
             <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="card">
-                    <div class="header">
-                        <h2> Dynamic Form </h2>
-                    </div>
+                    
                     <div class="body">
                         <div class="row clearfix">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <div class="form-line">
                                         <label for="fieldType">Field Type</label><span class="error"> *</span>
                                         <select id="fieldType" name="fieldType"
                                             class="form-control dropval drop-fieldType">
                                             <option value="">Select Field Type</option>
-                                            <option value="Textbox" <% if(model.fieldType=="Textbox" ){%> selected <% }
+                                            <option value="Text" <% if(model.fieldType=="Text" ){%> selected <% }
                                                     %>>Text Box</option>
                                             <option value="Textarea" <% if(model.fieldType=="Textarea" ){%> selected <%
                                                     } %>>Text Area</option>
@@ -38,32 +41,38 @@
                                                 <% } %>>Time Picker
                                             </option>
                                             <option value="Range" <% if(model.fieldType=="Range" ){%> selected <% } %>
-                                                    >Range</option>
+                                                >Range</option>
+                                            <option value="Email" <% if(model.fieldType=="Email" ){%> selected <% } %>
+                                                    >Email</option>
+                                            <option value="Website" <% if(model.fieldType=="Website" ){%> selected <% } %>
+                                                >Website</option>
+                                            <option value="Mobileno" <% if(model.fieldType=="Mobileno" ){%> selected <% } %>
+                                                >Mobile No</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <div class="form-line">
                                         <label for="fieldLabel">Field Label</label><span class="error"> *</span>
-                                        <input type="hidden" class="form-control" placeholder="Field Label"
-                                            id="fieldLabelold" roleName="fieldLabelold" value="<%=model.fieldLabel%>">
                                         <input type="text" class="form-control txtchange" placeholder="Field Label"
-                                            id="fieldLabel" roleName="fieldLabel" value="<%=model.fieldLabel%>">
+                                            id="fieldLabel" name="fieldLabel" value="<%=model.fieldLabel%>">
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="placeholder">Placeholder</label>
-                                    <div class="form-line">
-                                        <input type="text" class="form-control txtchange" placeholder="Placeholder"
-                                            id="placeholder" roleName="placeholder" value="<%=model.placeholder%>">
+                            <% if((model.fieldType != "Checkbox") && (model.fieldType != "Radiobutton") && (model.fieldType != "Dropdown")){%>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="placeholder">Placeholder</label>
+                                        <div class="form-line">
+                                            <input type="text" class="form-control txtchange" placeholder="Placeholder"
+                                                id="placeholder" roleName="placeholder" value="<%=model.placeholder%>">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
+                            <% } %>
+                            <!-- <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="tooltip">Tooltip</label>
                                     <div class="form-line">
@@ -71,24 +80,24 @@
                                             id="tooltip" roleName="tooltip" value="<%=model.tooltip%>">
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="row clearfix">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="isRequired">Is Required<span class="error"></span></label>
                                 <ul class="item-container" data-valid="isRequired">
                                     <li class="isRequired multiSel" data-single="Y" data-value="no">No</li>
                                     <li class="isRequired multiSel" data-single="Y" data-value="yes">Yes</li>
                                 </ul>
                             </div>
-                            <div class="col-md-3">
+                            <!-- <div class="col-md-4">
                                 <label for="status">Status<span class="error"></span></label>
                                 <ul class="item-container" data-valid="status">
                                     <li class="status multiSel" data-single="Y" data-value="active">Active</li>
                                     <li class="status multiSel" data-single="Y" data-value="inactive">Inactive</li>
                                 </ul>
-                            </div>
-                            <div class="col-md-3 other-fields fields-type-Checkbox fields-type-Dropdown">
+                            </div> -->
+                            <!-- <div class="col-md-4 other-fields fields-type-Checkbox fields-type-Dropdown">
                                 <div class="form-group">
                                     <div class="form-line">
                                         <label for="defaultValue">Default Value</label>
@@ -96,8 +105,17 @@
                                             id="defaultValue" roleName="defaultValue" value="<%=model.defaultValue%>">
                                     </div>
                                 </div>
+                            </div> -->
+                            
+                            <div class="col-md-4 other-fields fields-type-Checkbox fields-type-Radiobutton">
+                                <label for="itemAlign">Display Options<span class="error"></span></label>
+                                <ul class="item-container" data-valid="itemAlign">
+                                    <li class="itemAlign multiSel" data-single="Y" data-value="horizontal">Horizontal</li>
+                                    <li class="itemAlign multiSel" data-single="Y" data-value="vertical">Vertical</li>
+                                </ul>
                             </div>
-                            <div class="col-md-3">
+
+                            <!-- <div class="col-md-4">
                                 <div class="form-group">
                                     <div class="form-line">
                                         <label for="fieldIndex">Field Index<span class="error"></span></label>
@@ -105,10 +123,10 @@
                                             id="fieldIndex" roleName="fieldIndex" value="<%=model.fieldIndex%>">
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
-                        <div class="row clearfix other-fields fields-type-Textbox fields-type-Numeric">
-                            <div class="col-md-3">
+                        <div class="row clearfix other-fields fields-type-text fields-type-Numeric fields-type-Mobileno">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="minLength">Min Length</label>
                                     <div class="form-line">
@@ -117,7 +135,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="maxLength">Max Length</label>
                                     <div class="form-line">
@@ -127,26 +145,28 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row clearfix other-fields fields-type-Textarea">
+                            <div class="col-md-6">
+                                <label for="textareaType">Display Textarea<span class="error"></span></label>
+                                <ul class="item-container" data-valid="textareaType">
+                                    <li class="textareaType multiSel" data-single="Y" data-value="simpleTextarea">Simple textarea</li>
+                                    <li class="textareaType multiSel" data-single="Y" data-value="richTextarea">Rich textarea</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="clearfix">&nbsp;</div>
                         <div class="row clearfix other-fields fields-type-Datepicker">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="startDate">Start Date</label>
-                                    <div class="form-line">
-                                        <input type="text" class="form-control txtchange" placeholder="Start Date"
-                                            id="startDate" roleName="startDate" value="<%=model.startDate%>">
-                                    </div>
-                                </div>
+                            <div class="col-md-8">
+                                <label for="date_selection_criteria">Date Selection Criteria<span class="error"></span></label>
+                                <ul class="item-container" data-valid="date_selection_criteria">
+                                    <li class="date_selection_criteria multiSel" data-single="Y" data-value="past">Past Date</li>
+                                    <li class="date_selection_criteria multiSel" data-single="Y" data-value="future">Future Date</li>
+                                    <li class="date_selection_criteria multiSel" data-single="Y" data-value="both">Both</li>
+                                </ul>
+                               
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="endDate">End Date</label>
-                                    <div class="form-line">
-                                        <input type="text" class="form-control txtchange" placeholder="End Date"
-                                            id="endDate" roleName="endDate" value="<%=model.endDate%>">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
+                           
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="dateFormat">Date Format</label>
                                     <div class="form-line">
@@ -154,15 +174,17 @@
                                             class="form-control dropval drop-dateFormat">
                                             <option value="">Select Field Type</option>
                                             <option value="DD:MM:YYYY" <% if(model.dateFormat=="DD:MM:YYYY" ){%>
-                                                selected <% } %>>DD:MM:YYYY</option>
+                                                selected <% } %>> DD:MM:YYYY</option>
                                             <option value="YYYY:MM:DD" <% if(model.dateFormat=="YYYY:MM:DD" ){%>
-                                                selected <% } %>>YYYY:MM:DD</option>
+                                                selected <% } %>> YYYY:MM:DD</option>
                                             <option value="YY:MM:DD" <% if(model.dateFormat=="YY:MM:DD" ){%> selected <%
-                                                    } %>>YY:MM:DD</option>
-                                            <option value="23rd April 2023" <% if(model.dateFormat=="23rd April 2023"
-                                                ){%> selected <% } %>>23rd April 2023</option>
+                                                    } %>> YY:MM:DD</option>
+                                            <option value="Do MMMM YYYY" <% if(model.dateFormat=="Do MMMM YYYY"
+                                                ){%> selected <% } %>> 8th April 2020</option>
+                                            <option value="MMMM Do YYYY" <% if(model.dateFormat=="MMMM Do YYYY"
+                                                ){%> selected <% } %>> April 8th 2020</option>
                                             <option value="DD:MM:YY" <% if(model.dateFormat=="DD:MM:YY" ){%> selected <%
-                                                    } %>>DD:MM:YY</option>
+                                                    } %>> DD:MM:YY</option>
                                         </select>
                                     </div>
                                 </div>
@@ -192,7 +214,7 @@
                             </div>
                         </div>
                         <div class="row clearfix other-fields fields-type-Timepicker">
-                            <div class="col-md-3">
+                            <!-- <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="startTime">Start Time</label>
                                     <div class="form-line">
@@ -201,8 +223,8 @@
                                             value="<%=model.startTime%>">
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
+                            </div> -->
+                            <!-- <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="endTime">End Time</label>
                                     <div class="form-line">
@@ -211,8 +233,8 @@
                                             value="<%=model.endTime%>">
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3">
+                            </div> -->
+                            <!-- <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="displayFormat">Display Format</label>
                                     <div class="form-line">
@@ -221,10 +243,25 @@
                                             value="<%=model.displayFormat%>">
                                     </div>
                                 </div>
+                            </div> -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="displayFormat">Time Format</label>
+                                    <div class="form-line">
+                                        <select id="displayFormat" name="displayFormat"
+                                            class="form-control dropval drop-timeFormat">
+                                            <option value="">Select Time Format</option>
+                                            <option value="12-hours" <% if(model.displayFormat=="12-hours" ){%>
+                                                selected <% } %>>12 hrs</option>
+                                            <option value="24-hours" <% if(model.displayFormat=="24-hours" ){%>
+                                                selected <% } %>>24 hrs</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row clearfix other-fields fields-type-Password">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="validationRules">Validation Rules</label>
                                     <div class="form-line">
@@ -237,33 +274,72 @@
                         </div>
                         <div
                             class="row clearfix other-fields fields-type-Checkbox fields-type-Dropdown fields-type-Radiobutton">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <div class="form-line">
-                                        <label for="linkedWith">Linked With</label><span class="error"> *</span>
+                                        <label for="linkedWith">Linked With</label>
                                         <select id="linkedWith" name="linkedWith" class="form-control dropval">
+                                            <option value="">Select Link</option>
                                             <% _.each(formList, function(menuData) { %>
-                                                <option value="<%=menuData.attributes.menuID%>">
-                                                    <%=menuData.attributes.menuName%>
-                                                </option>
-                                                <%}); %>
+                                                <option value="<%= menuData.attributes.menuID %>" <% if (model.linkedWith == menuData.attributes.menuID) { %>selected<% } %>>
+                                                    <%= menuData.attributes.menuName %></option>
+                                            <% }); %>
                                         </select>
                                     </div>
-                                    <small>( Linked to any master)</small>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <div class="form-line">
-                                        <label for="fieldOptions">Field Options<span class="error"></span></label>
-                                        <input type="text" class="form-control txtchange" placeholder="Field Options"
-                                            id="fieldOptions" name="fieldOptions" value="<%=model.fieldOptions%>">
-                                    </div>
-                                    <small>( Custom values separated by comma )</small>
+                                    <small>(Linked to any master)</small>
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <% if (model.linkedWith && model.linkedWith != null && model.linkedWith != "") { %>
+                                <% if(linkedMenuName != 'Category'){ %>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <label for="fieldOptions">Field Options</label><span class="error">*</span>
+                                                <select id="fieldOptions" name="fieldOptions" class="form-control multiSelect">
+                                                    <option value="">Select field</option>
+                                                    <% _.each(fieldList, function(fieldLabel) { %>
+                                                        <option value="<%= fieldLabel %>" <% if (model.fieldOptions === fieldLabel) { %>selected<% } %>>
+                                                            <%= fieldLabel %>
+                                                        </option>
+                                                    <% }); %>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                                <% if (parentCategory) { %>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <label for="parentCategory">Select the category you would like to display</label><span class="error">*</span>
+                                                <select id="parentCategory" name="parentCategory" class="form-control dropval">
+                                                    <option value="">Select Category</option>
+                                                    <% _.each(categoryList, function(category) { %>
+                                                        <option value="<%= category.attributes.category_id %>" <% if (model.parentCategory === category.attributes.category_id) { %>selected<% } %>>
+                                                            <%= category.attributes.categoryName %>
+                                                        </option>
+                                                    <% }); %>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% }else{ %>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <label for="fieldOptions">Field Options<span class="error">*</span></label>
+                                            <input type="text" class="form-control txtchange" placeholder="Field Options"
+                                                id="fieldOptions" name="fieldOptions" value="<%=model.fieldOptions%>">
+                                        </div>
+                                        <small>( Custom values separated by comma )</small>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div class="row clearfix other-fields fields-type-Checkbox fields-type-Dropdown">
+                            <div class="col-md-4">
                                 <label for="allowMultiSelect">Allow Multi Select<span class="error"></span></label>
                                 <ul class="item-container" data-valid="allowMultiSelect">
                                     <li class="allowMultiSelect multiSel" data-single="Y" data-value="no">No</li>
@@ -272,7 +348,7 @@
                             </div>
                         </div>
                         <div class="row clearfix other-fields fields-type-Range">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="Min Value">Min Value</label>
                                     <div class="form-line">
@@ -282,7 +358,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="Max Value">Max Value</label>
                                     <div class="form-line">
@@ -292,7 +368,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="stepSize">Step Size</label>
                                     <div class="form-line">
@@ -302,204 +378,131 @@
                                 </div>
                             </div>
                         </div>
-                        <label>
-                            <h6> Database Configuration </h6>
-                        </label>
+                        <div class="row clearfix">
+                            <label>
+                                <h6> Database Configuration </h6>
+                            </label>
+                        </div>
                         <div class="row clearfix">
 
-                            <div class="col-md-3 other-fields fields-type-Numeric">
+                            <div class="col-md-4 other-fields fields-type-Numeric">
                                 <label for="Min Value">Type</label>
-                                <div class="form-line">
-                                    <select class="form-control dropval drop-fieldType" name="numType" id="numType">
-                                        <option data-length-restricted="0"
-                                            title="A 1-byte integer, signed range is -128 to 127, unsigned range is 0 to 255">
-                                            TINYINT</option>
-                                        <option data-length-restricted="0"
-                                            title="A 2-byte integer, signed range is -32,768 to 32,767, unsigned range is 0 to 65,535">
-                                            SMALLINT</option>
-                                        <option data-length-restricted="0"
-                                            title="A 3-byte integer, signed range is -8,388,608 to 8,388,607, unsigned range is 0 to 16,777,215">
-                                            MEDIUMINT
-                                        </option>
-                                        <option data-length-restricted="0"
-                                            title="A 4-byte integer, signed range is -2,147,483,648 to 2,147,483,647, unsigned range is 0 to 4,294,967,295">
-                                            INT
-                                        </option>
-                                        <option data-length-restricted="0"
-                                            title="An 8-byte integer, signed range is -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807, unsigned range is 0 to 18,446,744,073,709,551,615">
-                                            BIGINT</option>
-                                        <option disabled="disabled">-</option>
-                                        <option data-length-restricted="0"
-                                            title="A fixed-point number (M, D) - the maximum number of digits (M) is 65 (default 10), the maximum number of decimals (D) is 30 (default 0)">
-                                            DECIMAL</option>
-                                        <option data-length-restricted="0"
-                                            title="A small floating-point number, allowable values are -3.402823466E+38 to -1.175494351E-38, 0, and 1.175494351E-38 to 3.402823466E+38">
-                                            FLOAT</option>
-                                        <option data-length-restricted="0"
-                                            title="A double-precision floating-point number, allowable values are -1.7976931348623157E+308 to -2.2250738585072014E-308, 0, and 2.2250738585072014E-308 to 1.7976931348623157E+308">
-                                            DOUBLE</option>
-                                        <option data-length-restricted="0"
-                                            title="Synonym for DOUBLE (exception: in REAL_AS_FLOAT SQL mode it is a synonym for FLOAT)">
-                                            REAL</option>
-                                        <option disabled="disabled">-</option>
-                                        <option data-length-restricted="0"
-                                            title="A bit-field type (M), storing M of bits per value (default is 1, maximum is 64)">
-                                            BIT</option>
-                                        <option data-length-restricted="0"
-                                            title="A synonym for TINYINT(1), a value of zero is considered false, nonzero values are considered true">
-                                            BOOLEAN
-                                        </option>
-                                        <option data-length-restricted="0"
-                                            title="An alias for BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE">
-                                            SERIAL
-                                        </option>
-                                    </select>
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <select class="form-control dropval drop-fieldType" name="numType" id="numType">
+                                            <option data-length-restricted="0" title="A 1-byte integer, signed range is -128 to 127, unsigned range is 0 to 255" 
+                                                value="TINYINT" <% if(model.numType == "TINYINT" ){%> selected <% }%>>TINYINT</option>
+                                           
+                                            <option data-length-restricted="0"
+                                                title="A 2-byte integer, signed range is -32,768 to 32,767, unsigned range is 0 to 65,535" 
+                                                value="SMALLINT" <% if(model.numType == "SMALLINT" ){%> selected <% }%>>SMALLINT</option>
+                            
+                                            <option data-length-restricted="0"
+                                                title="A 3-byte integer, signed range is -8,388,608 to 8,388,607, unsigned range is 0 to 16,777,215"
+                                                value="MEDIUMINT" <% if(model.numType == "MEDIUMINT" ){%> selected <% }%>>MEDIUMINT</option>
+                                                
+                                            <option data-length-restricted="0"
+                                                title="A 4-byte integer, signed range is -2,147,483,648 to 2,147,483,647, unsigned range is 0 to 4,294,967,295"
+                                                value="INT" <% if(model.numType == "INT" ){%> selected <% }%>>INT</option>
+                                                
+                                            <option data-length-restricted="0"
+                                                title="An 8-byte integer, signed range is -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807, unsigned range is 0 to 18,446,744,073,709,551,615"
+                                                value="BIGINT" <% if(model.numType == "BIGINT" ){%> selected <% }%>>BIGINT</option>
+
+                                            <option disabled="disabled">-</option>
+
+                                            <option data-length-restricted="0"
+                                                title="A fixed-point number (M, D) - the maximum number of digits (M) is 65 (default 10), the maximum number of decimals (D) is 30 (default 0)"
+                                                value="DECIMAL" <% if(model.numType == "DECIMAL" ){%> selected <% }%>>DECIMAL</option>
+
+                                            <option data-length-restricted="0"
+                                                title="A small floating-point number, allowable values are -3.402823466E+38 to -1.175494351E-38, 0, and 1.175494351E-38 to 3.402823466E+38"
+                                                value="FLOAT" <% if(model.numType == "FLOAT" ){%> selected <% }%>>FLOAT</option>
+                                                
+                                            <option data-length-restricted="0"
+                                                title="A double-precision floating-point number, allowable values are -1.7976931348623157E+308 to -2.2250738585072014E-308, 0, and 2.2250738585072014E-308 to 1.7976931348623157E+308"
+                                                value="DOUBLE" <% if(model.numType == "DOUBLE" ){%> selected <% }%>>DOUBLE</option>
+                                                
+                                            <option data-length-restricted="0"
+                                                title="Synonym for DOUBLE (exception: in REAL_AS_FLOAT SQL mode it is a synonym for FLOAT)"
+                                                value="REAL" <% if(model.numType == "REAL" ){%> selected <% }%>>REAL</option>
+                                                
+                                            <option disabled="disabled">-</option>
+
+                                            <option data-length-restricted="0"
+                                                title="A bit-field type (M), storing M of bits per value (default is 1, maximum is 64)"
+                                                value="BIT" <% if(model.numType == "BIT" ){%> selected <% }%>>BIT</option>
+                                                
+                                            <option data-length-restricted="0"
+                                                title="A synonym for TINYINT(1), a value of zero is considered false, nonzero values are considered true"
+                                                value="BOOLEAN" <% if(model.numType == "BOOLEAN" ){%> selected <% }%>>BOOLEAN</option>
+                                                
+                                            <option data-length-restricted="0"
+                                                title="An alias for BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE"
+                                                value="SERIAL" <% if(model.numType == "SERIAL" ){%> selected <% }%>>SERIAL</option>
+                                                
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="isNull">Is Null</label>
                                 <div class="form-line">
                                     <ul class="item-container" data-valid="isNull">
-                                        <li class="isNull multiSel active" data-single="Y" data-value="TRUE">No</li>
+                                        <li class="isNull multiSel" data-single="Y" data-value="TRUE">No</li>
                                         <li class="isNull multiSel" data-single="Y" data-value="FALSE">Yes</li>
                                     </ul>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <label for="stepSize">Defualt</label>
-                                <div class="form-line">
-                                    <select name="valDefault" id="valDefault"
-                                        class="default_type form-control dropval drop-fieldTypeDef">
-                                        <option value="NONE">
-                                            None </option>
-                                        <option value="USER_DEFINED">
-                                            As defined: </option>
-                                        <option value="NULL">
-                                            NULL
-                                        </option>
-                                        <option value="CURRENT_TIMESTAMP">
-                                            CURRENT_TIMESTAMP
-                                        </option>
-                                    </select>
+
+                            <div class="col-md-4">
+                                <label for="valDefault">Default</label>
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                      <select id="valDefault" class="default_type form-control dropval drop-fieldTypeDef" name="valDefault">
+                                        <option value="NONE" <% if(model.valDefault == "NONE" ){%> selected <% }%>>None</option>
+                                        <option value="USER_DEFINED" <% if(model.valDefault == "USER_DEFINED" ){%> selected <% }%>>As defined:</option>
+                                        <option value="NULL" <% if(model.valDefault == "NULL" ){%> selected <% }%>>NULL</option>
+                                        <option value="CURRENT_TIMESTAMP" <% if(model.valDefault == "CURRENT_TIMESTAMP" ){%> selected <% }%>>CURRENT_TIMESTAMP</option>
+                                      </select>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-3 fields-type-Def hidden">
+                            <!-- <div class="col-md-4 fields-type-Def hidden">
                                 <label for="userDef">Enter Default Value</label>
-                                <div class="form-line">
-                                    <input type="text" class="form-control txtchange" placeholder="User Defined"
-                                        id="userDef" roleName="userDef" value="<%=model.valDefault%>">
+                                <div class="form-group form-float">
+                                    <div class="form-line">
+                                        <input type="text" class="form-control txtchange" placeholder="User Defined"
+                                            id="userDef" roleName="userDef" value="">
+                                    </div>
+                                </div>
+                            </div> -->
+
+                            <div class="col-md-4 fields-type-Def hidden">
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        <label for="defaultValue">Enter Default Value</label>
+                                        <input type="text" class="form-control txtchange" placeholder="Default Value"
+                                            id="defaultValue" roleName="defaultValue" value="<%=model.defaultValue%>">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row clearfix">
+                        <!-- <div class="row clearfix">
                             <div class="col-md-3">
                                 <button id="savedynamicFormDetails" type="button"
                                     class="btn btn-raised btn-primary m-t-15 waves-effect">Save</button>
                                 <button id="canceldynamicFormDetails" type="button"
                                     class="btn btn-raised btn-secondary m-t-15 waves-effect">Cancel</button>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
         </div>
     </form>
 </div>
-<div class="container-fluid">
-    <div class="row clearfix">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="header">
-                    <h2>Form Fields</h2>
-                </div>
-                <div class="body">
-                    <div class="actionList">
-                        <span type="button" style="display: none;" class="changeStatus deleteAll"
-                            data-action="delete"><i class="material-icons"
-                                style="background-color: #F5BF00; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px;">delete</i></span>
-                    </div>
-                    <table id="cfieldlist"
-                        class="table bulk_action tableList table table-hover m-b-0 footable footable-1 footable-paging footable-paging-center breakpoint-lg">
-                        <thead id="thead">
-                            <tr class="footable-header">
-                                <th>
-                                    <div class="listCheckbox">
-                                        <input id="cAll" class="checkall chk-col-amber" data-tocheck="cfieldlist"
-                                            type="checkbox">
-                                        <label for="cAll">&nbsp;</label>
-                                    </div>
-                                </th>
-                                <!-- <th class="column-title">User Role ID</th> -->
-                                <th class="column-title">Field Name</th>
-                                <th class="column-title">Field Type</th>
-                                <th class="column-title">Placeholder</th>
-                                <th class="column-title">Status</th>
-                                <th class="column-title">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dynamicFormListData">
-                            <% _.each(dynamicFormList, function(model1) { %>
-                                <tr>
-                                    <td class="a-center">
-                                        <div class="listCheckbox">
-                                            <input id="cAll_<%= model1.attributes.fieldID %>"
-                                                class="listcheckbox chk-col-amber"
-                                                data-fieldID="<%= model1.attributes.fieldID %>" type="checkbox">
-                                            <label for="cAll_<%= model1.attributes.fieldID %>">&nbsp;</label>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <%=model1.attributes.fieldLabel%>
-                                    </td>
-                                    <td>
-                                        <%=model1.attributes.fieldType%>
-                                    </td>
-                                    <td>
-                                        <%=model1.attributes.placeholder%>
-                                    </td>
-                                    <td>
-                                        <%=model1.attributes.status%>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="ws-btn-default getFieldDetails"
-                                            data-fieldID="<%=model1.attributes.fieldID%>"><i
-                                                class="material-icons">mode_edit</i></button>
-                                    </td>
-                                </tr>
-                                <%}); %>
-                        </tbody>
-                    </table>
-                    <div class="profile-loader-msg text-center"></div>
-                    <div class="profile-loader text-center">
-                        <div class="preloader">
-                            <div class="spinner-layer pl-amber">
-                                <div class="circle-clipper left">
-                                    <div class="circle"></div>
-                                </div>
-                                <div class="circle-clipper right">
-                                    <div class="circle"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="loadMember" data-index="1" data-currPage="1"></div>
-                </div>
-                <!-- paggination -->
-                <div class="row">
-                    <div class="col-sm-5">
-                        <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
-                                class="page-info"></span></div>
-                    </div>
-                    <div class="col-sm-7">
-                        <div class="showPageDetails dataTables_paginate paging_simple_numbers">
-                            <ul class="pagination">
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- paggination -->
-            </div>
-        </div>
-    </div>
-</div>
-</div>
+
+
+
+
