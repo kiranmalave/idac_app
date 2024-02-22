@@ -9802,3 +9802,7 @@ label.form-label.taskDate.tasktop.fortask {
   width: 9%;
 
 }
+
+.proposalActoinCol{
+  display: flex;
+}
