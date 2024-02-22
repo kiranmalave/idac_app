@@ -7,12 +7,18 @@
     </td>
     <!-- <td><%=proposalDetails.attributes.proposal_id%></td> -->
     <td ><%=proposalDetails.attributes.proposal_number%></td>
-    <td style="width: 242px;display: inline-block;padding-top: 9px !important;"><%=proposalDetails.attributes.name%></td>
-
-    <td><%=proposalDetails.attributes.company_name%></td>
-    <td><%=proposalDetails.attributes.project_name%></td>
-    
-    
+    <td style="width: 242px;display: inline-block;padding-top: 9px !important;">
+      <div class="nametooltip">
+        <p class="mailtruncate">
+          <%=proposalDetails.attributes.name%>
+        </p>
+        <span class="tooltiptxt">
+          <%=proposalDetails.attributes.name%>
+        </span>
+      </div>
+    </td>
+    <td><%=proposalDetails.attributes.custName%></td>
+    <td> <%=proposalDetails.attributes.project_name%></td>
     <td>
       <div class="proposalActoinCol">
         <button type="button" class="ws-btn-default loadview" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
