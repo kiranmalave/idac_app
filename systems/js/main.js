@@ -114,6 +114,9 @@ require.config({
     'Swal': {
       deps: ['jquery', 'bootstrap']
     },
+    'owlcarousal': {
+      deps: ['jquery', 'bootstrap']
+    },
   },
   paths: {
     bootstrap: '../../assets/bootstrap/js/bootstrap.bundle.min',
@@ -157,6 +160,7 @@ require.config({
     fullcalendar: '../../assets/theme-setup/plugins/fullcalendar/fullcalendar.min',
     calender: '../../assets/bootstrap-calendar/calender/main',
     Swal: '../../assets/theme-setup/plugins/sweetalert/sweetalert2.min',
+    owlcarousal: '../../assets/owlcarousal/owl.carousel',
   }
 });
 

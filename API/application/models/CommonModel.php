@@ -452,13 +452,78 @@ class CommonModel extends CI_Model
 		return $res;
 	}
 
-	//Function added by Sanjay
+	// //Function added by Sanjay
+	// public function createThumbnail($imgUrl)
+	// {
+	// 	$arrayimg = array('jpg', 'jpeg', 'png', 'gif');
+	// 	$arrayVideo = array('mp4', 'mov', 'avi', '3gp');
+	// 	$arraytxt = array('docx', 'doc', 'ppt', 'txt', 'pdf');
+
+	// 	//resize original image 
+	// 	// $img = new Image($file);
+	// 	// $size = $img->getSize();
+	// 	// Image::resize() takes care to maintain the proper aspect ratio, so this is easy
+	// 	// (default quality is 100% for JPEG so we get the cleanest resized images here)
+	// 	// $img->resize($this->options['maxImageDimension']['width'], $this->options['maxImageDimension']['height'])->save();
+	// 	// unset($img);
+
+	// 	// source image has changed: nuke the cached metadata and then refetch the metadata = forced refetch
+	// 	//$meta = $this->getFileInfo($file, $legal_url, true); 
+
+	// 	// Original image file path
+	// 	$originalImagePath = "";
+	// 	$originalImagePatht = $imgUrl; //'path/to/original/image.jpg';
+	// 	$t = explode('/', $originalImagePatht);
+
+	// 	if ($t[0] == 2)
+	// 		$originalImagePath = $this->config->item("coursemediaPATH") . $t[1];
+	// 	else
+	// 		$originalImagePath = $imgUrl;
+	// 	// echo $originalImagePath;
+	// 	// exit;
+	// 	$tnsize1 = 150;
+	// 	$image = new Imagick($originalImagePath);
+	// 	$imagick_type_format = $image->getFormat();
+	// 	//echo $type=$image->getImageMimeType();
+	// 	if ($image->getImageHeight() <= $image->getImageWidth()) {
+	// 		// Resize image using the lanczos resampling algorithm based on width
+	// 		$image->resizeImage($tnsize1, 0, Imagick::FILTER_LANCZOS, 1);
+	// 	} else {
+	// 		// Resize image using the lanczos resampling algorithm based on height
+	// 		$image->resizeImage(0, $tnsize1, Imagick::FILTER_LANCZOS, 1);
+	// 	}
+	// 	// Set to use jpeg compression
+	// 	$image->setImageCompression(Imagick::COMPRESSION_JPEG);
+	// 	// Set compression level (1 lowest quality, 100 highest quality)
+	// 	$image->setImageCompressionQuality(75);
+	// 	// Strip out unneeded meta data
+	// 	$image->stripImage();
+	// 	$imagefilename = pathinfo($image->getImageFilename());
+	// 	//print_r($imagefilename); exit;
+	// 	// echo "DEBUUUG Filename" . $imagefilename['filename'] ."";
+	// 	// echo "DEBUUUG Basename " . $imagefilename['basename'] ."";
+	// 	// echo "DEBUUUG Extension " . $imagefilename['extension'] ."";
+	// 	if (in_array($imagefilename['extension'], $arrayimg)) {
+	// 		$image->writeImage($imagefilename['dirname'] . "/" . $imagefilename['filename'] . "_tn." . $imagefilename['extension']);
+	// 		$image->destroy();
+	// 	}
+	// 	if (in_array($imagefilename['extension'], $arrayVideo)) {
+	// 		// Imagemagicks Convert can do video tumbnails.
+	// 		//echo $exec = "convert -quiet ".$image->getImageFilename()."[10] ".$imagefilename['filename']."_tn.gif";
+	// 		$exec = 'ffmpeg -ss 1.0 -t 2.5 -i ' . $image->getImageFilename() . ' -filter_complex "[0:v] fps=12,scale=w=320:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1" ' . $imagefilename['dirname'] . "/" . $imagefilename['filename'] . '_tn.gif';
+	// 		echo exec($exec);
+	// 		// convert -quiet moviefile.mov[10] movieframe.gif
+	// 	}
+	// 	//ffmpeg -i 1692702012.7795.mp4 -ss 00:00:00.000 -pix_fmt rgb24 -r 10 -s 320x240 -t 00:00:10.000 output.gif
+	// 	//perfect ffmpeg -ss 1.0 -t 2.5 -i 1692702012.7795.mp4 -filter_complex "[0:v] fps=12,scale=w=320:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1" StickAroundPerFrame.gif
+	// 	//convert -quiet C:\xampp\htdocs\LMS\website\uploads\1692702012.7795.mp4[10] 1692702012.7795_tn.gif
+	// }
 	public function createThumbnail($imgUrl)
 	{
-		$arrayimg = array('jpg', 'jpeg', 'png', 'gif');
-		$arrayVideo = array('mp4', 'mov', 'avi', '3gp');
-		$arraytxt = array('docx', 'doc', 'ppt', 'txt', 'pdf');
-
+		// $arrayimg = array('jpg', 'jpeg', 'png', 'gif');
+		// $arrayVideo = array('mp4', 'mov', 'avi', '3gp');
+		// $arraytxt = array('docx', 'doc', 'ppt', 'txt', 'pdf');
+		$this->compress_image($imgUrl, $imgUrl, 90);
 		//resize original image 
 		// $img = new Image($file);
 		// $size = $img->getSize();
@@ -467,56 +532,37 @@ class CommonModel extends CI_Model
 		// $img->resize($this->options['maxImageDimension']['width'], $this->options['maxImageDimension']['height'])->save();
 		// unset($img);
 
-		// source image has changed: nuke the cached metadata and then refetch the metadata = forced refetch
-		//$meta = $this->getFileInfo($file, $legal_url, true); 
-
-		// Original image file path
-		$originalImagePath = "";
-		$originalImagePatht = $imgUrl; //'path/to/original/image.jpg';
-		$t = explode('/', $originalImagePatht);
-
-		if ($t[0] == 2)
-			$originalImagePath = $this->config->item("coursemediaPATH") . $t[1];
-		else
-			$originalImagePath = $imgUrl;
-		// echo $originalImagePath;
-		// exit;
-		$tnsize1 = 150;
-		$image = new Imagick($originalImagePath);
-		$imagick_type_format = $image->getFormat();
-		//echo $type=$image->getImageMimeType();
-		if ($image->getImageHeight() <= $image->getImageWidth()) {
-			// Resize image using the lanczos resampling algorithm based on width
-			$image->resizeImage($tnsize1, 0, Imagick::FILTER_LANCZOS, 1);
-		} else {
-			// Resize image using the lanczos resampling algorithm based on height
-			$image->resizeImage(0, $tnsize1, Imagick::FILTER_LANCZOS, 1);
-		}
-		// Set to use jpeg compression
-		$image->setImageCompression(Imagick::COMPRESSION_JPEG);
-		// Set compression level (1 lowest quality, 100 highest quality)
-		$image->setImageCompressionQuality(75);
-		// Strip out unneeded meta data
-		$image->stripImage();
-		$imagefilename = pathinfo($image->getImageFilename());
-		//print_r($imagefilename); exit;
-		// echo "DEBUUUG Filename" . $imagefilename['filename'] ."";
-		// echo "DEBUUUG Basename " . $imagefilename['basename'] ."";
-		// echo "DEBUUUG Extension " . $imagefilename['extension'] ."";
-		if (in_array($imagefilename['extension'], $arrayimg)) {
-			$image->writeImage($imagefilename['dirname'] . "/" . $imagefilename['filename'] . "_tn." . $imagefilename['extension']);
-			$image->destroy();
-		}
-		if (in_array($imagefilename['extension'], $arrayVideo)) {
-			// Imagemagicks Convert can do video tumbnails.
-			//echo $exec = "convert -quiet ".$image->getImageFilename()."[10] ".$imagefilename['filename']."_tn.gif";
-			$exec = 'ffmpeg -ss 1.0 -t 2.5 -i ' . $image->getImageFilename() . ' -filter_complex "[0:v] fps=12,scale=w=320:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1" ' . $imagefilename['dirname'] . "/" . $imagefilename['filename'] . '_tn.gif';
-			echo exec($exec);
-			// convert -quiet moviefile.mov[10] movieframe.gif
-		}
 		//ffmpeg -i 1692702012.7795.mp4 -ss 00:00:00.000 -pix_fmt rgb24 -r 10 -s 320x240 -t 00:00:10.000 output.gif
 		//perfect ffmpeg -ss 1.0 -t 2.5 -i 1692702012.7795.mp4 -filter_complex "[0:v] fps=12,scale=w=320:h=-1,split [a][b];[a] palettegen=stats_mode=single [p];[b][p] paletteuse=new=1" StickAroundPerFrame.gif
 		//convert -quiet C:\xampp\htdocs\LMS\website\uploads\1692702012.7795.mp4[10] 1692702012.7795_tn.gif
+	}
+
+	function compress_image($src, $dest , $quality) 
+	{
+		$info = getimagesize($src);
+	
+		if ($info['mime'] == 'image/jpeg') 
+		{
+			$image = imagecreatefromjpeg($src);
+		}
+		elseif ($info['mime'] == 'image/gif') 
+		{
+			$image = imagecreatefromgif($src);
+		}
+		elseif ($info['mime'] == 'image/png') 
+		{
+			$image = imagecreatefrompng($src);
+		}
+		else
+		{
+			die('Unknown image file format');
+		}
+	
+		//compress and save file to jpg
+		imagejpeg($image, $dest, $quality);
+	
+		//return destination file
+		return $dest;
 	}
 
 	public function getMonth($key = '', $type = 'string')

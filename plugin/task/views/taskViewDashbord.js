@@ -103,7 +103,7 @@ define([
       "change #textSearch": "settextSearch",
       "click .multiOptionSel": "multioption",
       "click .filterSearch": "filterSearch",
-      "click #filterOption": "filterRender",
+      "click #taskFilterOption": "filterRender",
       "click #removeFlyOut": "removeFlyOut",
       "click .resetval": "resetSearch",
       "click .loadview": "loadSubView",
@@ -122,6 +122,8 @@ define([
       this.$el.on('click', '#removeFlyOut', this.removeFlyOut.bind(this));
       this.$el.off('click', '.loadview', this.loadSubView);
       this.$el.on('click', '.loadview', this.loadSubView.bind(this));
+      this.$el.off('click', '#taskFilterOption', this.filterRender);
+      this.$el.on('click', '#taskFilterOption', this.filterRender.bind(this));
       //this.$el.off('click', '.filterSearch', this.filterSearch);
       //this.$el.on('click', '.filterSearch', this.filterSearch.bind(this));
     },
@@ -271,7 +273,6 @@ define([
     loadSubView: function (e) {
       var selfobj = this;
       var show = $(e.currentTarget).attr("data-view");
-      alert("here");
       switch (show) {
         case "singletaskData": {
           var task_id = $(e.currentTarget).attr("data-task_id");
@@ -282,7 +283,6 @@ define([
           }
           new taskSingleView({ task_id: task_id, searchtask: selfobj, customerID: selfobj.customerID });
           break;
-
         }
       }
     },
@@ -433,7 +433,7 @@ define([
       this.setValues();
       this.setupFilter();
       rearrageOverlays("Filter", this.toClose, "small");
-      this.attachEvents();
+      // this.attachEvents();
     },
 
     removeFlyOut: function () {

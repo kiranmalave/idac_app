@@ -66,7 +66,7 @@ define([
       "change #textSearch": "settextSearch",
       "click .multiOptionSel": "multioption",
       "click .filterSearch": "filterSearch",
-      "click #filterOption": "filterRender",
+      "click #projectFilterOption": "filterRender",
       "click .resetval": "resetSearch",
       "click .loadview": "loadSubView",
       "change .txtchange": "updateOtherDetails",

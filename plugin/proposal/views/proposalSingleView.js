@@ -32,10 +32,10 @@ define([
       this.loadFrom = options.loadfrom;
       this.model = new proposalSingleModel();
       var selfobj = this;
-      this.dynamicFieldRenderobj = new dynamicFieldRender({
-        ViewObj: selfobj,
-        formJson: {},
-      });
+      // this.dynamicFieldRenderobj = new dynamicFieldRender({
+      //   ViewObj: selfobj,
+      //   formJson: {},
+      // });
       this.multiselectOptions = new multiselectOptions();
       $(".modelbox").hide();
       scanDetails = options.searchproposal;
@@ -308,12 +308,11 @@ define([
                   scanDetails.initialize();
                 }else{
                   scanDetails.filterSearch();
-                  
                 }
                 if (res.flag == "S") {
                   if (isNew == "new") {
                     selfobj.model.clear().set(selfobj.model.defaults);
-                    selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                    // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                     selfobj.render();
                   } else {
                     handelClose(selfobj.toClose);
@@ -344,7 +343,7 @@ define([
                 if (res.flag == "S") {
                   if (isNew == "new") {
                     selfobj.model.clear().set(selfobj.model.defaults);
-                    selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                    // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                     selfobj.render();
                   } else {
                     console.log("proposalList", JSON.stringify(res.data));
@@ -384,7 +383,7 @@ define([
             if (res.flag == "S") {
               if (isNew == "new") {
                 selfobj.model.clear().set(selfobj.model.defaults);
-                selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                 selfobj.render();
               } else {
                 handelClose(selfobj.toClose);
@@ -409,15 +408,15 @@ define([
 
       };
       var feildsrules = feilds;
-      var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+      // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
 
-      if (!_.isEmpty(dynamicRules)) {
-        var feildsrules = $.extend({}, feilds, dynamicRules);
-        // var feildsrules = {
-        //   ...feilds,
-        //   ...dynamicRules
-        //   };
-      }
+      // if (!_.isEmpty(dynamicRules)) {
+      //   var feildsrules = $.extend({}, feilds, dynamicRules);
+      //   // var feildsrules = {
+      //   //   ...feilds,
+      //   //   ...dynamicRules
+      //   //   };
+      // }
       var messages = {
         salutation: "select salutation",
         project_id:"Project Required",
@@ -503,7 +502,7 @@ define([
       this.$el.data("current", "yes");
       $(".tab-content").append(this.$el);
       $("#" + this.toClose).show();
-      $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
+      // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
       this.initializeValidate();
       this.setOldValues();
       $(".ws-select").selectpicker();

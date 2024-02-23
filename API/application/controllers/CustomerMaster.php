@@ -276,7 +276,17 @@ class CustomerMaster extends CI_Controller
 			$where = array("customer_id" => $customer_id);
 			$menuHistory = $this->CommonModel->getMasterDetails('customer', '', $where);
 			if (isset($menuHistory) && !empty($menuHistory)) {
+				$whereAttachment = array(
+					"customer_id" => $customer_id
+				);
 
+				$custAttachments = $this->CommonModel->getMasterDetails('customer_attachment','',$whereAttachment);
+				if(!empty($custAttachments)){
+					$attachment = array_column($custAttachments,'attachment_file');
+					$attachmentID = array_column($custAttachments,'attachment_id');
+					$menuHistory[0]->attachment_file = $attachment;
+					$menuHistory[0]->attachment_id = $attachmentID;
+				}
 				$status['data'] = $menuHistory;
 				$status['statusCode'] = 200;
 				$status['flag'] = 'S';

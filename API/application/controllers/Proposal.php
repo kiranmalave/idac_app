@@ -47,7 +47,7 @@ class Proposal extends CI_Controller {
 		
 		$config = array();
 		if(!isset($orderBy) || empty($orderBy)){
-			$orderBy = "name";
+			$orderBy = "t.name";
 			$order ="ASC";
 		}else{
 			$orderBy = "t.created_date";
@@ -119,11 +119,11 @@ class Proposal extends CI_Controller {
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC,'proposal',$wherec,'','',$join,$other);	
 		}else{
 			if($roleID[0]->roleID != 1){
-				$selectC = "proposal_id,proposal_number,name,project_id,client_id,description,confirm,created_by,created_date,modified_by,modified_date,status,c.company_name,p.confirm_proposal";
+				$selectC = "proposal_id, proposal_number, name, project_id, client_id, description, confirm, created_by, created_date, modified_by, modified_date, status, c.name AS custName , p.confirm_proposal, p.project_name";
 			}else{
-				$selectC = "t.*,c.company_name,p.confirm_proposal";
+				$selectC = "t.*, c.name AS custName ,p.confirm_proposal, p.project_name";
 			}
-			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,$config["per_page"],$page,$join,$other);
+			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC,'proposal',$wherec,$config["per_page"],$page,$join,$other);
 		}
 		$status['data'] = $proposalDetails;
 		$status['paginginfo']["curPage"] = $curPage;
@@ -440,7 +440,7 @@ class Proposal extends CI_Controller {
 		// $where = array("proposal_id"=>$proposal_id);
 		$where["proposal_id = "] = $proposal_id;
 		// $selectC = "*";
-		$selectC = "proposal_id,proposal_number,name,p.project_name,c.company_name,t.description,confirm,cost";
+		$selectC = "proposal_id,proposal_number,name,p.project_name,c.name,t.description,confirm,cost";
 		$join = array();
 		$join[0]['type'] ="LEFT JOIN";
 		$join[0]['table']="project";

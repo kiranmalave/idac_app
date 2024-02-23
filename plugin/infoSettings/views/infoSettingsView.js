@@ -27,7 +27,6 @@ define([
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, error: selfobj.onErrorHandler
       }).done(function (res) {
-        console.log("sdsdsd");
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
         selfobj.render();
@@ -78,10 +77,7 @@ define([
       $.each(setvalues, function (key, value) {
         var modval = selfobj.model.get(value);
         if (modval != null) {
-          console.log(setvalues);
-
           var modeVal = modval.split(",");
-
         } else { var modeVal = {}; }
 
         $(".item-container li." + value).each(function () {

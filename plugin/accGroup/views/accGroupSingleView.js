@@ -35,7 +35,6 @@ var accGroupSingleView = Backbone.View.extend({
           this.model.fetch({headers: {
             'contentType':'application/x-www-form-urlencoded','SadminID':$.cookie('authid'),'token':$.cookie('_bb_key'),'Accept':'application/json'
           },error: selfobj.onErrorHandler}).done(function(res){
-            console.log("sdsdsd");
             if(res.statusCode == 994){app_router.navigate("logout",{trigger:true});}
             $(".popupLoader").hide();
             selfobj.render();

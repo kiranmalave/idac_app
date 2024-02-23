@@ -36,7 +36,7 @@ define([
       if (this.customerID != "") {
         this.model.set({ "customer_id": this.customerID });
       }
-      this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
+      // this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
       this.multiselectOptions = new multiselectOptions();
       customerList = new customerCollection();
       scanDetails = options.searchtaxInvoice;
@@ -402,15 +402,15 @@ define([
         
       };
       var feildsrules = feilds;
-      var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+      // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
 
-      if (!_.isEmpty(dynamicRules)) {
-        var feildsrules = $.extend({}, feilds, dynamicRules);
-        // var feildsrules = {
-        //   ...feilds,
-        //   ...dynamicRules
-        //   };
-      }
+      // if (!_.isEmpty(dynamicRules)) {
+      //   var feildsrules = $.extend({}, feilds, dynamicRules);
+      //   // var feildsrules = {
+      //   //   ...feilds,
+      //   //   ...dynamicRules
+      //   //   };
+      // }
       var messages = {
         customer_id: "Please select Customer",
         invoiceDate: "Please select Date",
@@ -447,7 +447,7 @@ define([
       $(".ws-tab").append(this.$el);
       $('#' + this.toClose).show();
       // this is used to append the dynamic form in the single view html
-      $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
+      // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
       // Do call this function from dynamic module it self.
       this.initializeValidate();
       this.setOldValues();

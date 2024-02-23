@@ -7,6 +7,7 @@ define([
     'datepickerBT',
     'moment',
     'Swal',
+    'RealTimeUpload',
     '../../core/views/multiselectOptions',
     '../../dynamicForm/views/dynamicFieldRender',
     '../collections/projectCollection',
@@ -15,9 +16,10 @@ define([
     '../../readFiles/views/readFilesView',
     '../../customer/views/customerSingleView',
     'text!../templates/projectSingle_temp.html',
-  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, multiselectOptions, dynamicFieldRender, projectCollection, customerCollection, projectSingleModel, readFilesView, customerSingleView, projecttemp) {
+  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, RealTimeUpload, multiselectOptions, dynamicFieldRender, projectCollection, customerCollection, projectSingleModel, readFilesView, customerSingleView, projecttemp) {
     var projectSingleView = Backbone.View.extend({
       model: projectSingleModel,
+      projID:'',
       initialize: function (options) {
         this.customerID = options.customerID;
         this.dynamicData = null;
@@ -26,10 +28,10 @@ define([
         this.loadFrom = options.loadfrom;
         this.model = new projectSingleModel();
         var selfobj = this;
-        this.dynamicFieldRenderobj = new dynamicFieldRender({
-          ViewObj: selfobj,
-          formJson: {},
-        });
+        // this.dynamicFieldRenderobj = new dynamicFieldRender({
+        //   ViewObj: selfobj,
+        //   formJson: {},
+        // });
         this.multiselectOptions = new multiselectOptions();
         $(".modelbox").hide();
         scanDetails = options.searchproject;
@@ -86,7 +88,8 @@ define([
         "change .dropval": "updateOtherDetails",
         "change .logoAdded": "updateImageLogo",
         "click .loadMedia": "loadMedia",
-  
+        "click .loadFile" : "loadFile",
+        "click .hideUpload" : "hideUpload",
       },
       attachEvents: function () {
         // Detach previous event bindings
@@ -104,6 +107,10 @@ define([
         this.$el.on("blur", ".txtchange", this.updateOtherDetails.bind(this));
         this.$el.off("click", ".loadMedia", this.loadMedia);
         this.$el.on("click", ".loadMedia", this.loadMedia.bind(this));
+        this.$el.off('click', '.loadFile', this.loadFile);
+        this.$el.on('click', '.loadFile', this.loadFile.bind(this));
+        this.$el.off('click', '.hideUpload', this.hideUpload);
+        this.$el.on('click', '.hideUpload', this.hideUpload.bind(this));
       },
   
       onErrorHandler: function (collection, response, options) {
@@ -121,8 +128,14 @@ define([
         var newdetails = [];
         newdetails["" + toID] = valuetxt;
         this.model.set(newdetails);
-        console.log(this.model);
-  
+      },
+      loadFile: function(e){
+        $('.upload').show();
+        $('.dotborder').hide();
+      },
+      hideUpload: function (e) {
+        $(".upload").hide();
+        $('.dotborder').show();
       },
       setOldValues: function () {
         var selfobj = this;
@@ -185,6 +198,9 @@ define([
               'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
             }, error: selfobj.onErrorHandler, type: methodt
           }).done(function (res) {
+            if (res.lastID != undefined) {
+              selfobj.projID = res.lastID;
+            }
             if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
   
             if (isNew == "new") {
@@ -205,9 +221,15 @@ define([
             if (res.flag == "S") {
               if (isNew == "new") {
                 selfobj.model.clear().set(selfobj.model.defaults);
-                selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                let url = APIPATH + 'projUpload/' + selfobj.projID;
+                selfobj.uploadFileEl.elements.parameters.action = url;
+                selfobj.uploadFileEl.prepareUploads(selfobj.uploadFileEl.elements);
                 selfobj.render();
               } else {
+                let url = APIPATH + 'projUpload/' + selfobj.projID;
+                selfobj.uploadFileEl.elements.parameters.action = url;
+                selfobj.uploadFileEl.prepareUploads(selfobj.uploadFileEl.elements);
                 handelClose(selfobj.toClose);
               }
             }
@@ -228,15 +250,15 @@ define([
           
         };
         var feildsrules = feilds;
-        var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+        // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
   
-        if (!_.isEmpty(dynamicRules)) {
-          var feildsrules = $.extend({}, feilds, dynamicRules);
-          // var feildsrules = {
-          //   ...feilds,
-          //   ...dynamicRules
-          //   };
-        }
+        // if (!_.isEmpty(dynamicRules)) {
+        //   var feildsrules = $.extend({}, feilds, dynamicRules);
+        //   // var feildsrules = {
+        //   //   ...feilds,
+        //   //   ...dynamicRules
+        //   //   };
+        // }
         var messages = {
           project_name: "Please enter Project Name",
           client_id: "Please select Client",
@@ -265,12 +287,52 @@ define([
         this.$el.data("current", "yes");
         $(".tab-content").append(this.$el);
         $("#" + this.toClose).show();
-        $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
+        // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
         this.initializeValidate();
         this.setOldValues();
         $(".ws-select").selectpicker();
         this.attachEvents();
         rearrageOverlays("Projects", this.toClose);
+
+        this.uploadFileEl = $("#projUpload").RealTimeUpload({
+          text: 'Drag and Drop or Select a File to Upload.',
+          maxFiles: 0,
+          maxFileSize: 4194304,
+          uploadButton: false,
+          notification: true,
+          autoUpload: false,
+          extension: ['png', 'jpg', 'jpeg', 'gif', 'pdf','docx', 'doc', 'xls', 'xlsx'],
+          thumbnails: true,
+          action: APIPATH + 'projUpload/',
+          element: 'projUpload',
+          onSucess: function () {
+            selfobj.model.attributes.mediaArr.push(this.elements.uploadList[0].name);
+            $('.modal-backdrop').hide();
+          }
+        });
+
+        let docUrl = "";
+        const attachment_file = this.model.get("attachment_file");
+        const file_id = this.model.get("attachment_id");
+        if (Array.isArray(attachment_file) && Array.isArray(file_id) && attachment_file.length === file_id.length) {
+          for (let i = 0; i < attachment_file.length; i++) {
+            const fName = attachment_file[i];
+            const ftext = fName.split(".");
+            let modifiedFName = fName;
+            const file_ids = file_id[i];
+            if (ftext[1] === "xls" || ftext[1] === "xlsx") {
+              modifiedFName = "excel.png";
+              docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + '/' + modifiedFName + "' alt=''><div class='buttonShow visableAttach'><span class='attachView'><a href='" + UPLOADS + "/project/" + selfobj.projID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class='deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
+            } else if (ftext[1] === "pdf") {
+              modifiedFName = "pdf.png";
+              docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + '/' + modifiedFName + "' alt=''/><div class='buttonShow visableAttach'> <span class='attachView'><a href='" + UPLOADS + "/project/" + selfobj.projID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class=' deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
+            } else {
+              docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + "/project/" + selfobj.projID + '/' + modifiedFName + "' alt=''/><div class='buttonShow visableAttach'> <span class='attachView'><a href='" + UPLOADS + "/project/" + selfobj.projID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class=' deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
+            }
+          }
+          document.getElementById("attachedDoc").innerHTML += docUrl;
+        }
+
         var __toolbarOptions = [
             ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
             [{ 'header': 1 }, { 'header': 2 }],               // custom button values

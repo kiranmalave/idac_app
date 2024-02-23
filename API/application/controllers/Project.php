@@ -208,6 +208,8 @@ class Project extends CI_Controller {
 								$status['flag'] = 'F';
 								$this->response->output($status,200);
 							}else{
+								$custID = $this->db->insert_id();
+								$status['lastID'] = $custID;
 								$status['msg'] = $this->systemmsg->getSucessCode(400);
 								$status['statusCode'] = 400;
 								$status['data'] =array();
@@ -279,19 +281,32 @@ class Project extends CI_Controller {
 				
 				$where = array("project_id"=>$project_id);
 				$projectDetails = $this->CommonModel->getMasterDetails('project','',$where);
+				
 				if(isset($projectDetails) && !empty($projectDetails)){
 
-				$status['data'] = $projectDetails;
-				$status['statusCode'] = 200;
-				$status['flag'] = 'S';
-				$this->response->output($status,200);
+					$whereAttachment = array(
+						"project_id" => $project_id
+					);
+	
+					$projAttachments = $this->CommonModel->getMasterDetails('project_attachment','',$whereAttachment);
+					if(!empty($projAttachments)){
+						$attachment = array_column($projAttachments,'attachment_file');
+						$attachmentID = array_column($projAttachments,'attachment_id');
+						$projectDetails[0]->attachment_file = $attachment;
+						$projectDetails[0]->attachment_id = $attachmentID;
+					}
+
+					$status['data'] = $projectDetails;
+					$status['statusCode'] = 200;
+					$status['flag'] = 'S';
+					$this->response->output($status,200);
 				}else{
 
-				$status['msg'] = $this->systemmsg->getErrorCode(227);
-				$status['statusCode'] = 227;
-				$status['data'] =array();
-				$status['flag'] = 'F';
-				$this->response->output($status,200);
+					$status['msg'] = $this->systemmsg->getErrorCode(227);
+					$status['statusCode'] = 227;
+					$status['data'] =array();
+					$status['flag'] = 'F';
+					$this->response->output($status,200);
 				}
 		}
 	}
@@ -320,5 +335,59 @@ class Project extends CI_Controller {
 				$this->response->output($status,200);
 			}
 		}
+	}
+
+	public function projUpload($project_id = '')
+	{
+		$this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$this->load->library('realtimeupload');
+		$extraData = array();
+		if(isset($project_id) && !empty($project_id)){
+			$mediapatharr = $this->config->item("mediaPATH") ."project/".$project_id ;
+			if (!is_dir($mediapatharr)) {
+				mkdir($mediapatharr, 0777);
+				chmod($mediapatharr, 0777);
+			} else {
+				if (!is_writable($mediapatharr)) {
+					chmod($mediapatharr, 0777);
+				}
+			}
+		}
+		if (empty($project_id) || $project_id == 0){
+			$mediapatharr = $this->config->item("mediaPATH") ."project/temp-";
+			if (!is_dir($mediapatharr)) {
+				if (mkdir($mediapatharr, 0777, true)) {
+				} else {
+					$status['msg'] = "Failed to create directory: " . $mediapatharr . "</br>" . $this->systemmsg->getErrorCode(273);
+					$status['statusCode'] = 227;
+					$status['flag'] = 'F';
+					$this->response->output($status, 200);
+				}
+			}
+		}
+		
+		
+		$extraData["project_id"] = $project_id;
+		
+		$settings = array(
+			'uploadFolder' => $mediapatharr,
+			'extension' => ['png', 'pdf', 'jpg', 'jpeg', 'gif','docx', 'doc', 'xls', 'xlsx'],
+			'maxFolderFiles' => 0,
+			'maxFolderSize' => 0,
+			'rename'=>true,
+			'returnLocation' => false,
+			'uniqueFilename' => false,
+			'dbTable' => 'project_attachment',
+			'fileTypeColumn' => 'attachment_file',
+			'fileColumn' => 'attachment_file',
+			'forignKey' => '',
+			'forignValue' => '',
+			'docType' => "",
+			'docTypeValue' => '',
+			'isSaveToDB' => "Y",
+			'extraData' => $extraData,
+		);
+		$this->realtimeupload->init($settings);
 	}
  }

@@ -25,7 +25,7 @@ define([
       var selfobj = this;
       selfobj.pluginId = options.menuID;
       // this function is called to render the dynamic view
-      this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
+      // this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
       this.multiselectOptions = new multiselectOptions();
       scanDetails = options.searchmenu;
       this.iconList = new iconData();
@@ -151,7 +151,7 @@ define([
           if (res.flag == "S") {
             if (isNew == "new") {
               selfobj.model.clear().set(selfobj.model.defaults);
-              selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+              // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
               selfobj.render();
             } else {
               handelClose(selfobj.toClose);
@@ -179,16 +179,16 @@ define([
         }
       };
       var feildsrules = feilds;
-      var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+      // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
 
-      if (!_.isEmpty(dynamicRules)) {
+      // if (!_.isEmpty(dynamicRules)) {
 
-        var feildsrules = $.extend({}, feilds, dynamicRules);
-        // var feildsrules = {
-        // ...feilds,
-        // ...dynamicRules
-        // };
-      }
+      //   var feildsrules = $.extend({}, feilds, dynamicRules);
+      //   // var feildsrules = {
+      //   // ...feilds,
+      //   // ...dynamicRules
+      //   // };
+      // }
       var messages = {
         menuName: "Please enter Menu Name",
         menuLink: "Please enter Menu link",
