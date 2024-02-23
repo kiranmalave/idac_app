@@ -4,13 +4,13 @@
 // All Global Path for images and API call
 APPNAME = "Webtrix Solutions LMS";
 COKI = "/";
-APPPATH = "http://localhost/projects/idac_app/";
-APIPATH = "http://localhost/projects/idac_app/API/";
-APPPFRONTATH = "http://localhost/projects/idac_app/website/";
+// APPPATH = "http://localhost/projects/idac_app/";
+// APIPATH = "http://localhost/projects/idac_app/API/";
+// APPPFRONTATH = "http://localhost/projects/idac_app/website/";
 
-// APPPATH = "http://app.idacindia.co.in/";
-// APIPATH = "http://app.idacindia.co.in/API/";
-// APPPFRONTATH = "http:/www.idacindia.co.in/";
+APPPATH = "http://app.idacindia.co.in/";
+APIPATH = "http://app.idacindia.co.in/API/";
+APPPFRONTATH = "http://app.idacindia.co.in/";
 
 
 IMAGES = APPPATH + "images";
