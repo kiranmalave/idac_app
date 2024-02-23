@@ -22,7 +22,7 @@ var userRoleSingleView = Backbone.View.extend({
         $(".modelbox").hide();
         scanDetails = options.searchuserRole;
         // this function is called to render the dynamic view
-        this.dynamicFieldRenderobj = new dynamicFieldRender({ViewObj:selfobj,formJson:{}});  
+        // this.dynamicFieldRenderobj = new dynamicFieldRender({ViewObj:selfobj,formJson:{}});  
         this.multiselectOptions = new multiselectOptions();
         $(".popupLoader").show();
       
@@ -117,7 +117,7 @@ var userRoleSingleView = Backbone.View.extend({
           if(res.flag == "S"){
             if(isNew == "new"){
               selfobj.model.clear().set(selfobj.model.defaults);
-              selfobj.dynamicFieldRenderobj.initialize({ViewObj:selfobj,formJson:{}});
+              // selfobj.dynamicFieldRenderobj.initialize({ViewObj:selfobj,formJson:{}});
               selfobj.render();
             }else{
               handelClose(selfobj.toClose);
@@ -155,7 +155,7 @@ var userRoleSingleView = Backbone.View.extend({
       $(".ws-tab").append(this.$el);
       $('#'+this.toClose).show();
       // this is used to append the dynamic form in the single view html
-      $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
+      // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
       // Do call this function from dynamic module it self.
       this.initializeValidate();
       this.setOldValues();

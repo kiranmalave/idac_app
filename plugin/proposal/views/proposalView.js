@@ -315,7 +315,7 @@ define([
       $(".hidetextval").hide();
       $(".ws-select").val('default');
       $(".ws-select").selectpicker("refresh");
-      $('#textSearch option[value=proposal_id]').attr('selected', 'selected');
+      $('#textSearch').prop('selectedIndex',0);
       this.filterSearch(false);
     },
     loaduser: function () {

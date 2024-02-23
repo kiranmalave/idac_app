@@ -18,5 +18,7 @@
 @import url('../../assets/datepicker/dist/css/bootstrap-datepicker3.standalone.css');
 @import url('../../assets/bootstrap-calendar/calender/style.css');
 @import url('../../assets/slim/slim.min.css');
+@import url('../../assets/owlcarousal/owl.carousel.min.css');
+@import url('../../assets/owlcarousal/owl.theme.default.min.css');
 @import url('custom.css');
 @import url('customIdac.css');

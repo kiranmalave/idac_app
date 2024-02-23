@@ -414,49 +414,6 @@
             </div>
 
             <div class="col-md-8">
-                <div class="list-row mb-3">
-                    <div class="icon-left">
-                        <div class="ws-icon "><span class="input-group-addon lg" >
-                                <i class="material-icons">attach_file</i>
-                            </span></div>
-                    </div>
-                    <div class="right-layout">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <p class="mt-2 taskAttachTitle dragdrop-image">Attachments</p>
-                            </div>
-                        </div>
-                        <div class="row attachupdate taskAttach" style="margin-top:8px;">
-                            <button type="button" class="loadFile ws-taskModalbtn dotborder" data-change="ws-bg-image"><span class="material-icons">add</span></button>
-                            <div id="attachedDoc" class="row taskAttachDoc"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-8">
-                <div class="list-row upload" style="display: none;">
-                    <div class="icon-left">
-                        <div class="ws-icon">
-                            <span class="material-symbols-outlined"></span>
-                        </div>
-                    </div>
-                    <div class="right-layout ws-quill">
-                        <div class="row ">
-                            <div class="col-md-12 ws-dragbox taskAttachDragBox">
-                                <div class="ws-assignee-column">
-                                    <input type="file" multiple class="btn btn-default btn__action" id="custUpload"/>
-                                </div>
-                            </div>
-                            <div class="col-md-12 text-right ">
-                                <button type="button" class="btn bg-indigo hideUpload clacel">Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-8">
                 <div class="list-row">
                     <div class="icon-left">
                         <div class="ws-icon">
@@ -521,9 +478,46 @@
                         <img id="profile_pic_view" style="max-width: 100%;" src="<%=model.customer_image%>">
                     </div>
                 </div>
-            </div>
-                    
+            </div>      
         </div>
-
     </form>
+
+    <div class="col-md-8">
+        <div class="list-row mb-3">
+            <div class="right-layout">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p class="mt-2 taskAttachTitle dragdrop-image"><i class="material-icons">attach_file</i>  Attachments</p>
+                    </div>
+                </div>
+                <div class="row attachupdate taskAttach" style="margin-top:8px;">
+                    <button type="button" class="loadFile ws-taskModalbtn dotborder" data-change="ws-bg-image"><span class="material-icons">add</span></button>
+                    <div id="attachedDoc" class="row taskAttachDoc"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="list-row upload" style="display: none;">
+            <div class="icon-left">
+                <div class="ws-icon">
+                    <span class="material-symbols-outlined"></span>
+                </div>
+            </div>
+            <div class="right-layout ws-quill">
+                <div class="row ">
+                    <div class="col-md-12 ws-dragbox taskAttachDragBox">
+                        <div class="ws-assignee-column">
+                            <input type="file" multiple class="btn btn-default btn__action" id="custUpload1"/>
+                        </div>
+                    </div>
+                    <div class="col-md-12 text-right ">
+                        <button type="button" class="btn bg-indigo hideUpload clacel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

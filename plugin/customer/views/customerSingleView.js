@@ -67,10 +67,10 @@ define([
         // $(".profile-loader").hide();
       });
       
-      selfobj.dynamicFieldRenderobj = new dynamicFieldRender({
-        ViewObj: selfobj,
-        formJson: {},
-      });
+      // selfobj.dynamicFieldRenderobj = new dynamicFieldRender({
+      //   ViewObj: selfobj,
+      //   formJson: {},
+      // });
       
       if (options.customer_id != "" && options.customer_id != undefined) {
         this.model.set({ customer_id: options.customer_id });
@@ -411,20 +411,24 @@ define([
           }else{
             scanDetails.filterSearch();
           }
+          
           if (res.flag == "S") {
             if (isNew == "new") {
               selfobj.model.clear().set(selfobj.model.defaults);
               selfobj.model.set({ menuId: selfobj.menuId });
               selfobj.makeRender = false;
-              selfobj.dynamicFieldRenderobj.prepareForm();
+              // selfobj.dynamicFieldRenderobj.prepareForm();
+              // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+              
               let url = APIPATH + 'custUpload/' + selfobj.custID;
               selfobj.uploadFileEl.elements.parameters.action = url;
               selfobj.uploadFileEl.prepareUploads(selfobj.uploadFileEl.elements);
-              // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
               selfobj.makeRender = true;
               selfobj.render();
               selfobj.attachEvents();
             } else {
+              console.log(selfobj.custID);
+              console.log(selfobj.uploadFileEl);
               let url = APIPATH + 'custUpload/' + selfobj.custID;
               selfobj.uploadFileEl.elements.parameters.action = url;
               selfobj.uploadFileEl.prepareUploads(selfobj.uploadFileEl.elements);
@@ -474,12 +478,12 @@ define([
 
       };
       var feildsrules = feilds;
-      var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+      // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
 
-      if (!_.isEmpty(dynamicRules)) {
-        var feildsrules = $.extend({}, feilds, dynamicRules);
+      // if (!_.isEmpty(dynamicRules)) {
+      //   var feildsrules = $.extend({}, feilds, dynamicRules);
 
-      }
+      // }
 
       var messages = {
         name: "Please enter Name",
@@ -546,7 +550,7 @@ define([
       this.$el.data("current", "yes");
       $(".tab-content").append(this.$el);
       $("#" + this.toClose).show();
-      $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
+      // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
       this.initializeValidate();
       this.setOldValues();
       this.attachEvents();
@@ -562,22 +566,7 @@ define([
       }
       rearrageOverlays(selfobj.form_label, this.toClose);
 
-      this.uploadFileEl = $("#custUpload").RealTimeUpload({
-        text: 'Drag and Drop or Select a File to Upload.',
-        maxFiles: 0,
-        maxFileSize: 4194304,
-        uploadButton: false,
-        notification: true,
-        autoUpload: false,
-        extension: ['png', 'jpg', 'jpeg', 'gif', 'pdf','docx', 'doc', 'xls', 'xlsx'],
-        thumbnails: true,
-        action: APIPATH + 'custUpload/',
-        element: 'custUpload',
-        onSucess: function () {
-          selfobj.model.attributes.mediaArr.push(this.elements.uploadList[0].name);
-          $('.modal-backdrop').hide();
-        }
-      });
+      
 
       let docUrl = "";
       const attachment_file = this.model.get("attachment_file");
@@ -590,18 +579,34 @@ define([
           const file_ids = file_id[i];
           if (ftext[1] === "xls" || ftext[1] === "xlsx") {
             modifiedFName = "excel.png";
-            docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + '/' + modifiedFName + "' alt=''><div class='buttonShow visableAttach'><span class='attachView'><a href='" + UPLOADS + "/task/" + selfobj.taskID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class='deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
+            docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + '/' + modifiedFName + "' alt=''><div class='buttonShow visableAttach'><span class='attachView'><a href='" + UPLOADS + "/customer/" + selfobj.custID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class='deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
           } else if (ftext[1] === "pdf") {
             modifiedFName = "pdf.png";
-            docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + '/' + modifiedFName + "' alt=''/><div class='buttonShow visableAttach'> <span class='attachView'><a href='" + UPLOADS + "/task/" + selfobj.taskID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class=' deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
+            docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + '/' + modifiedFName + "' alt=''/><div class='buttonShow visableAttach'> <span class='attachView'><a href='" + UPLOADS + "/customer/" + selfobj.custID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class=' deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
           } else {
-            docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + "/task/" + selfobj.taskID + '/' + modifiedFName + "' alt=''/><div class='buttonShow visableAttach'> <span class='attachView'><a href='" + UPLOADS + "/task/" + selfobj.taskID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class=' deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
+            docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + "/customer/" + selfobj.custID + '/' + modifiedFName + "' alt=''/><div class='buttonShow visableAttach'> <span class='attachView'><a href='" + UPLOADS + "/customer/" + selfobj.custID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class=' deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
           }
         }
         document.getElementById("attachedDoc").innerHTML += docUrl;
 
       }
-
+      selfobj.uploadFileEl = $("#custUpload1").RealTimeUpload({
+        text: 'Drag and Drop or Select a File to Upload.',
+        maxFiles: 0,
+        maxFileSize: 4194304,
+        uploadButton: false,
+        notification: true,
+        autoUpload: false,
+        extension: ['png', 'jpg', 'jpeg', 'gif', 'pdf','docx', 'doc', 'xls', 'xlsx'],
+        thumbnails: true,
+        action: APIPATH + 'custUpload/',
+        element: 'custUpload1',
+        onSucess: function () {
+          selfobj.model.attributes.mediaArr.push(this.elements.uploadList[0].name);
+          $('.modal-backdrop').hide();
+        }
+      });
+      console.log(selfobj.uploadFileEl);
       return this;
     },
     onDelete: function () {

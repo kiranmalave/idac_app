@@ -52,7 +52,7 @@ define([
 
       this.model1 = new commentModel();
       // use this valiable for dynamic fields to featch the data from server
-      this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {}, });
+      // this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {}, });
       this.multiselectOptions = new multiselectOptions();
       scanDetails = options.searchtask;
       if (options.task_id != "") {
@@ -329,7 +329,7 @@ define([
       }).done(function (res) {
         if (res.flag == "S") {
           selfobj.model1.clear().set(selfobj.model1.defaults);
-          selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {}, });
+          // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {}, });
           selfobj.getCommentList();
         }
       });
@@ -524,7 +524,7 @@ define([
           if (res.flag == "S") {
             if (isNew == "new") {
               selfobj.model.clear().set(selfobj.model.defaults);
-              selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {}, });
+              // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {}, });
               selfobj.render();
             } else {
               handelClose(selfobj.toClose);
@@ -678,12 +678,12 @@ define([
         },
       };
       var feildsrules = feilds;
-      var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+      // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
 
-      if (!_.isEmpty(dynamicRules)) {
-        var feildsrules = $.extend({}, feilds, dynamicRules);
-        //var feildsrules = {...feilds,...dynamicRules};
-      }
+      // if (!_.isEmpty(dynamicRules)) {
+      //   var feildsrules = $.extend({}, feilds, dynamicRules);
+      //   //var feildsrules = {...feilds,...dynamicRules};
+      // }
       var messages = {
         subject: "Please enter Subject",
       };
@@ -747,7 +747,7 @@ define([
       $(".ws-tab").append(this.$el);
       $("#" + this.toClose).show();
       // this is used to append the dynamic form in the single view html
-      $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
+      // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
       // Do call this function from dynamic module it self.
       $(".ws-select").selectpicker();
       this.initializeValidate();

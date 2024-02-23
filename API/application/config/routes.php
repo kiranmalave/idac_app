@@ -201,6 +201,8 @@ $route['projectList'] = 'project/getprojectDetails';
 $route['project'] = 'project/project';
 $route['project/(:num)'] = 'project/project/$1';
 $route['project/status'] = 'project/projectchangeStatus';
+$route['projUpload'] = 'project/projUpload';
+$route['projUpload/(:num)'] = 'project/projUpload/$1';
 
 
 ######task

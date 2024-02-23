@@ -44,54 +44,15 @@
                             <div class="col-md-6">
                                 <div class="form-group form-float selectClientnoBorder">
                                   <div class="form-line">
-                                    <!-- <select id="client_id" name="client_id" <% if(model.client_id != null){%> disabled <%}%>  class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
-                                        <%if(permission.add=="yes" ) { %>
-                                            <option class="addNew" value="addClient">Add Client</option>
-                                        <%}%>
-                
-                                        <% _.each(customerList, function(model1) { %>
-
-                                            <%if(model.client_id == null){%>
-                                                <option <% if(model1.attributes.customer_id == model.customer_id ) { %>selected
-
-                                                    <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
-                                                
-                                            <%}else{%>
-                                                <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected
-                                                    <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
-                                            <%}%>
-                                        <%}); %>
-                                    </select> -->
-
-                                    <!-- <select id="client_id" name="client_id" <% if(model.customerID != null){%> disabled <%}%>  class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
-                                        <%if(permission.add=="yes" ) { %>
-                                            <option class="addNew" value="addClient">Add Client</option>
-                                        <%}%>
-                
-                                        <% _.each(customerList, function(model1) { %>
-                                            <%if(model.client_id == null){%>
-                                                <option <% if(model1.attributes.customer_id == model.customer_id ) { %>selected
-                                                    <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
-                                                
-                                            <%}else{%>
-                                                <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected
-                                                    <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
-                                            <%}%>
-                                        <%}); %>
-                                    </select> -->
                                     <select id="client_id" name="client_id" <% if(customerID != null){%> disabled <%}%>  class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
                                         <%if(permission.add=="yes" ) { %>
                                             <option class="addNew" value="addClient">Add Client</option>
                                         <%}%>
-
                                         <% _.each(customerList, function(model1) { %>
                                             <%if(customerID == null){%>
-                                                <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected
-                                                    <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
-
+                                                <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%></option>
                                             <%}else{%>
-                                                <option <% if(model1.attributes.customer_id == customerID ) { %>selected
-                                                    <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
+                                                <option <% if(model1.attributes.customer_id == customerID ) { %>selected <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%></option>
                                             <%}%>
                                         <%}); %>
                                     </select>
@@ -103,49 +64,7 @@
                         </div>
                     </div>
                 </div>
-                
-                
-                <!-- <div class="list-row">
-                    <div class="icon-left">
-                        <div class="ws-icon">
-                            <div class="input-group ws-input-group"> <span class="input-group-addon ">
-                                    <i class="material-icons"></i> </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="right-layout">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group form-float">
-                                  <div class="form-line">
-                                    <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick mt-2" title="Select Client" data-live-search="true"data-live-search="true">
-                                        <% _.each(customerList, function(model1) { %>
-                                                <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected
-                                                    <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
-                                         <%}); %>
-                                    </select>
-                                  </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                <div class="list-row">
-                    <div class="icon-left">
-                        <div class="ws-icon "><span class="input-group-addon lg" style="margin-top:4px;">
-                                <i class="material-icons">attach_file</i>
-                            </span></div>
-                    </div>
-                    <div class="right-layout form-group">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <p class="mt-2">Attach Document</p>
-                            </div>
-                            <button type="button" class="loadMedia ws-taskModalbtn" data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal"><span class="material-icons">add</span></button>
-                        </div>
-                            <img id="profile_pic_view" style="max-width:10%;" src="<%=model.attachment%>">
-                    </div>
-                </div>
+
                 <div class="list-row">
                     <div class="icon-left">
                         <div class="ws-icon">
@@ -183,6 +102,43 @@
             </div>       
         </div> 
     </form>
+    <div class="col-md-8">
+        <div class="list-row mb-3">
+            <div class="right-layout">
+                <div class="row">
+                    <div class="col-md-4">
+                        <p class="mt-2 taskAttachTitle dragdrop-image"><i class="material-icons">attach_file</i>  Attachments</p>
+                    </div>
+                </div>
+                <div class="row attachupdate taskAttach" style="margin-top:8px;">
+                    <button type="button" class="loadFile ws-taskModalbtn dotborder" data-change="ws-bg-image"><span class="material-icons">add</span></button>
+                    <div id="attachedDoc" class="row taskAttachDoc"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="list-row upload" style="display: none;">
+            <div class="icon-left">
+                <div class="ws-icon">
+                    <span class="material-symbols-outlined"></span>
+                </div>
+            </div>
+            <div class="right-layout ws-quill">
+                <div class="row ">
+                    <div class="col-md-12 ws-dragbox taskAttachDragBox">
+                        <div class="ws-assignee-column">
+                            <input type="file" multiple class="btn btn-default btn__action" id="projUpload"/>
+                        </div>
+                    </div>
+                    <div class="col-md-12 text-right ">
+                        <button type="button" class="btn bg-indigo hideUpload clacel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 

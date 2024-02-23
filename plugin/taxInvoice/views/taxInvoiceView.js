@@ -55,7 +55,7 @@ define([
       "click .multiOptionSel": "multioption",
       "change #filterCName": "updateOtherDetails",
       "click #filterSearch": "filterSearch",
-      "click #filterOption": "filterRender",
+      "click #invoiceFilterOption": "filterRender",
       "click .resetval": "resetSearch",
       "click .loadview": "loadSubView",
       "change .txtchange": "updateOtherDetails",
@@ -214,6 +214,7 @@ define([
       this.collection.forEach(this.addOne, this);
     },
     filterRender: function (e) {
+      alert("taxFilter");
       var isexits = checkisoverlay(this.toClose);
 
       if (!isexits) {
