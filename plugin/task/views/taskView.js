@@ -315,6 +315,7 @@ define([
       $('.taskfilbtn').removeClass('active');
       $("#clist").find(".up").removeClass("active");
       $("#clist").find(".down").removeClass("active");
+      $('#textSearch').prop('selectedIndex',0);
       // Find the <li> element with the id "filterOption"
       if ($("#filterOption").length) {
         $("#filterOption").find('span.taskBadge').remove();

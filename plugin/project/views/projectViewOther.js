@@ -184,30 +184,30 @@ define([
       $(".profile-loader").hide();
     },
 
-    showTable:function(e){
+    showTable: function (e) {
       let selfobj = this;
       let projectID = $(e.currentTarget).attr('data-project_id');
       var element = document.querySelector(".addFlex");
       element.classList.add("hideFolder");
       var element = document.querySelector(".hideTable");
       $('#dasboradProposalHolder').empty();
-      element.classList.add("ShowTable"); 
+      element.classList.add("ShowTable");
       var element = document.querySelector(".hideheader");
-      element.classList.add("headerHide"); 
+      element.classList.add("headerHide");
 
-      new proposalView({loadFrom:'dashboard', projectID: projectID, customerID: selfobj.customerID });
+      new proposalView({ loadFrom: 'dashboard', projectID: projectID, customerID: selfobj.customerID });
     },
-    
-    backBtn:function(){
+
+    backBtn: function () {
       var element = document.querySelector(".addFlex");
       element.classList.remove("hideFolder");
       var element = document.querySelector(".hideTable");
       element.classList.remove("ShowTable");
       var element = document.querySelector(".hideheader");
-      element.classList.remove("headerHide"); 
+      element.classList.remove("headerHide");
     },
 
-    loadSubView: function (e) {    
+    loadSubView: function (e) {
       var selfobj = this;
       var show = $(e.currentTarget).attr("data-view");
       switch (show) {
@@ -247,13 +247,19 @@ define([
       // filterOption.reset();
       filterOption.clear().set(filterOption.defaults);
       $(".multiOptionSel").removeClass("active");
-      $("#textval").val("");
+      // $("#textval").val("");
       $(".ws-select").val('default');
+      $("#textval").val("select");
+      $("#textval").val($("#textval").val().trim());
+      $(".filterClear").val($(".filterClear").val().trim());
       $(".ws-select").selectpicker("refresh");
-      $(".filterClear").val("");
+      // $(".filterClear").val("");
       $(".hidetextval").hide();
+      //$('#textSearch option[value=project_name]').prop('selected', true);
       $('#textSearch option[value=project_id]').attr('selected', 'selected');
+      //$('#textSearch').prop('selectedIndex',0);
       this.filterSearch(false);
+
 
     },
     loaduser: function () {
@@ -279,30 +285,30 @@ define([
 
       // if (!isexits) {
 
-        var source = projectFilterTemp;
-        var template = _.template(source);
+      var source = projectFilterTemp;
+      var template = _.template(source);
 
-        var cont = $("<div>");
-        cont.html(template({ "customerList": this.customerList.models }));
-        cont.attr('id', this.toClose);
-        /*  
-          INFO
-          this line use to hide if any other overlay is open first close it.
-        */
-        $(".overlay-main-container").removeClass("open");
-        // append filter html here
-        $(".ws_filterOptions").html(cont);
-        /*  
-          INFO
-          open filter popup by adding class open here
-        */
-        $(".ws_filterOptions").addClass("open");
-        $(".ws-select").selectpicker();
-        /* 
-          INFO
-          make current project active
-        */
-        $(e.currentTarget).addClass("active");
+      var cont = $("<div>");
+      cont.html(template({ "customerList": this.customerList.models }));
+      cont.attr('id', this.toClose);
+      /*  
+        INFO
+        this line use to hide if any other overlay is open first close it.
+      */
+      $(".overlay-main-container").removeClass("open");
+      // append filter html here
+      $(".ws_filterOptions").html(cont);
+      /*  
+        INFO
+        open filter popup by adding class open here
+      */
+      $(".ws_filterOptions").addClass("open");
+      $(".ws-select").selectpicker();
+      /* 
+        INFO
+        make current project active
+      */
+      $(e.currentTarget).addClass("active");
 
       // } else {
       //   // check here we alreay open it or not. if open toggle that popup here
@@ -320,16 +326,16 @@ define([
       this.setupFilter();
       rearrageOverlays("Filter", this.toClose, "small");
     },
-    closeFilter:function(e){
+    closeFilter: function (e) {
       var isOpen = $(".ws_filterOptions").hasClass("open");
-        if (isOpen) {
-          $(".ws_filterOptions").removeClass("open");
-          $(e.currentTarget).removeClass("active");
-          return;
-        } else {
-          $(e.currentTarget).addClass("active");
-          // this function will handel other exiting open popus
-        }
+      if (isOpen) {
+        $(".ws_filterOptions").removeClass("open");
+        $(e.currentTarget).removeClass("active");
+        return;
+      } else {
+        $(e.currentTarget).addClass("active");
+        // this function will handel other exiting open popus
+      }
     },
     setValues: function (e) {
       setvalues = ["status", "type", "order"];
@@ -532,7 +538,7 @@ define([
       $("#project").append(this.$el);
       //$("#projects").show();
       // setToolTip();
-      
+
       return this;
     }
   });
