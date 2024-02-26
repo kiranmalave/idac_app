@@ -149,10 +149,25 @@ $route['categoryMaster/(:num)'] = 'categoryMaster/categoryMaster/$1';
 $route['categoryMaster/status'] = 'categoryMaster/CategoryChangeStatus';
 
 ######customer
-$route['customerMasterList'] = 'Customer/getcustomerList';
-$route['customerMaster'] = 'Customer/customer';
-$route['customerMaster/(:num)'] = 'Customer/customer/$1';
-$route['customerMaster/status'] = 'Customer/customerChangeStatus';
+$route['customerMasterList'] = 'customerMaster/getcustomerDetails';
+$route['customerMasterList/Notes'] = 'customerMaster/getcustomerNotesDetails';
+$route['customerMaster'] = 'customerMaster/customerMaster';
+$route['customerMaster/(:num)'] = 'customerMaster/customerMaster/$1';
+$route['customerMaster/status'] = 'customerMaster/customerChangeStatus';
+$route['customerMaster/Note'] = 'customerMaster/customerNote';
+$route['customerMaster/Note/(:num)'] = 'customerMaster/customerNote/$1';
+$route['customerNote/delete'] = 'customerMaster/noteDelete';
+$route['customerMaster/typeStatus'] = 'customerMaster/customerChangeType';
+$route['customerMasterList/Activity'] = 'customerMaster/getcustomerActivityDetails';
+$route['getCustomerEmailList'] = 'customerMaster/getCustomerEmailList';
+$route['getCountryList'] = 'systems/Application/getCountryList';
+$route['getStateList'] = 'systems/Application/getStateList';
+$route['getCityList'] = 'systems/Application/getCityList';
+$route['customerMaster/leadUpdate'] = 'customerMaster/leadUpdate';
+$route['leadColumnUpdatePositions'] = 'customerMaster/updatePositions';
+$route['custUpload'] = 'customerMaster/custUpload';
+$route['custUpload/(:num)'] = 'customerMaster/custUpload/$1';
+
 
 ######branch
 $route['branchList'] = 'Branch/getbranchList';
@@ -166,12 +181,19 @@ $route['proposalTemplateSingle'] = 'ProposalTemplateMaster/proposalTemplateMaste
 $route['proposalTemplateSingle/(:num)'] = 'ProposalTemplateMaster/proposalTemplateMasterData/$1';
 $route['proposalTemplate/status'] = 'ProposalTemplateMaster/proposalTemplateDataChangeStatus';
 
+######emailMaster
+$route['emailMasterList'] = 'EmailMaster/getEmailDetailsList';
+$route['emailMaster'] = 'EmailMaster/emailMasterData';
+$route['emailMaster/(:num)'] = 'EmailMaster/emailMasterData/$1';
+$route['emailMaster/status'] = 'EmailMaster/emailMasterDataChangeStatus';
+
 ######proposal
 $route['proposalMasterList'] = 'proposal/getproposalDetails';
 $route['proposalMaster'] = 'proposal/proposal';
 $route['proposalMaster/(:num)'] = 'proposal/proposal/$1';
 $route['proposalMaster/status'] = 'proposal/proposalchangeStatus';
 $route['proposalMaster/confirmProposal'] = 'proposal/confirmProposal';
+$route['printProposal/(:num)'] = 'proposal/printProposal/$1';
 
 
 ######project
@@ -179,6 +201,8 @@ $route['projectList'] = 'project/getprojectDetails';
 $route['project'] = 'project/project';
 $route['project/(:num)'] = 'project/project/$1';
 $route['project/status'] = 'project/projectchangeStatus';
+$route['projUpload'] = 'project/projUpload';
+$route['projUpload/(:num)'] = 'project/projUpload/$1';
 
 
 ######task
@@ -212,6 +236,11 @@ $route['ourClientsList'] = 'OurClients/getclientDetails';
 $route['ourClient'] = 'OurClients/OurClients';
 $route['ourClient/(:num)'] = 'OurClients/OurClients/$1';
 $route['ourClient/status'] = 'OurClients/OurClientsChangeStatus';
+
+######contactUs
+$route['contactUsList'] = 'ContactUs/getcontactUsDetails';
+$route['contactUs'] = 'ContactUs/ContactUs';
+$route['contactUs/status'] = 'ContactUs/ContactUsChangeStatus';
 
 ######ourteams
 $route['ourTeamList'] = 'OurTeam/getteamDetails';

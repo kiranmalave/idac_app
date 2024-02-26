@@ -47,7 +47,7 @@ class Proposal extends CI_Controller {
 		
 		$config = array();
 		if(!isset($orderBy) || empty($orderBy)){
-			$orderBy = "name";
+			$orderBy = "t.name";
 			$order ="ASC";
 		}else{
 			$orderBy = "t.created_date";
@@ -119,11 +119,11 @@ class Proposal extends CI_Controller {
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC,'proposal',$wherec,'','',$join,$other);	
 		}else{
 			if($roleID[0]->roleID != 1){
-				$selectC = "proposal_id,proposal_number,name,project_id,client_id,description,confirm,created_by,created_date,modified_by,modified_date,status,c.company_name,p.confirm_proposal";
+				$selectC = "proposal_id, proposal_number, name, project_id, client_id, description, confirm, created_by, created_date, modified_by, modified_date, status, c.name AS custName , p.confirm_proposal, p.project_name";
 			}else{
-				$selectC = "t.*,c.company_name,p.confirm_proposal";
+				$selectC = "t.*, c.name AS custName ,p.confirm_proposal, p.project_name";
 			}
-			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC='*','proposal',$wherec,$config["per_page"],$page,$join,$other);
+			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC,'proposal',$wherec,$config["per_page"],$page,$join,$other);
 		}
 		$status['data'] = $proposalDetails;
 		$status['paginginfo']["curPage"] = $curPage;
@@ -304,70 +304,70 @@ class Proposal extends CI_Controller {
 							}
 						}
 						
-		}elseif($method=="dele")
-		{
-			$proposalDetails = array();
-			$where=array('sID'=>$proposal_id);
-				if(!isset($sID) || empty($sID)){
-					$status['msg'] = $this->systemmsg->getErrorCode(996);
-					$status['statusCode'] = 996;
-					$status['data'] = array();
-					$status['flag'] = 'F';
-					$this->response->output($status,200);
-				}
+					}elseif($method=="dele")
+					{
+						$proposalDetails = array();
+						$where=array('sID'=>$proposal_id);
+							if(!isset($sID) || empty($sID)){
+								$status['msg'] = $this->systemmsg->getErrorCode(996);
+								$status['statusCode'] = 996;
+								$status['data'] = array();
+								$status['flag'] = 'F';
+								$this->response->output($status,200);
+							}
 
-				$iscreated = $this->CommonModel->deleteMasterDetails('proposal',$where);
-				if(!$iscreated){
-					$status['msg'] = $this->systemmsg->getErrorCode(996);
-					$status['statusCode'] = 996;
-					$status['data'] = array();
-					$status['flag'] = 'F';
-					$this->response->output($status,200);
+							$iscreated = $this->CommonModel->deleteMasterDetails('proposal',$where);
+							if(!$iscreated){
+								$status['msg'] = $this->systemmsg->getErrorCode(996);
+								$status['statusCode'] = 996;
+								$status['data'] = array();
+								$status['flag'] = 'F';
+								$this->response->output($status,200);
 
-				}else{
-					$status['msg'] = $this->systemmsg->getSucessCode(400);
-					$status['statusCode'] = 400;
-					$status['data'] =array();
-					$status['flag'] = 'S';
-					$this->response->output($status,200);
-				}
-			}
-	
-		}else
-		{ 
+							}else{
+								$status['msg'] = $this->systemmsg->getSucessCode(400);
+								$status['statusCode'] = 400;
+								$status['data'] =array();
+								$status['flag'] = 'S';
+								$this->response->output($status,200);
+							}
+						}
 				
-				$where = array("proposal_id"=>$proposal_id);
-				$wherer["adminID = "] = $this->input->post('SadminID');
-				$roleID = $this->CommonModel->getMasterDetails('admin','roleID',$wherer);
-				if($roleID[0]->roleID != 1){
-					$selectC = "proposal_id,proposal_number,name,project_id,client_id,description,confirm,created_by,created_date,modified_by,modified_date,status";
-				}else{
-					$selectC = "*";
-				}
-				$proposalDetails = $this->CommonModel->getMasterDetails('proposal',$selectC,$where);
-				if(isset($proposalDetails) && !empty($proposalDetails)){
+					}else
+					{ 
+							
+							$where = array("proposal_id"=>$proposal_id);
+							$wherer["adminID = "] = $this->input->post('SadminID');
+							$roleID = $this->CommonModel->getMasterDetails('admin','roleID',$wherer);
+							if($roleID[0]->roleID != 1){
+								$selectC = "proposal_id,proposal_number,name,project_id,client_id,description,confirm,created_by,created_date,modified_by,modified_date,status";
+							}else{
+								$selectC = "*";
+							}
+							$proposalDetails = $this->CommonModel->getMasterDetails('proposal',$selectC,$where);
+							if(isset($proposalDetails) && !empty($proposalDetails)){
 
-				$wherec["project_id"] = "".$proposalDetails[0]->project_id."";
-				$selectC = "confirm_proposal";
-				$confirmation = $this->CommonModel->getMasterDetails('project',$selectC, $wherec);
-				if(!empty($confirmation)){
-					$created = array_column($confirmation,'confirm_proposal');
-					$proposalDetails[0]->confirmProposal = $created;
-				}
-				
-				$status['data'] = $proposalDetails;
-				$status['statusCode'] = 200;
-				$status['flag'] = 'S';
-				$this->response->output($status,200);
-				}else{
+							$wherec["project_id"] = "".$proposalDetails[0]->project_id."";
+							$selectC = "confirm_proposal";
+							$confirmation = $this->CommonModel->getMasterDetails('project',$selectC, $wherec);
+							if(!empty($confirmation)){
+								$created = array_column($confirmation,'confirm_proposal');
+								$proposalDetails[0]->confirmProposal = $created;
+							}
+							
+							$status['data'] = $proposalDetails;
+							$status['statusCode'] = 200;
+							$status['flag'] = 'S';
+							$this->response->output($status,200);
+							}else{
 
-				$status['msg'] = $this->systemmsg->getErrorCode(227);
-				$status['statusCode'] = 227;
-				$status['data'] =array();
-				$status['flag'] = 'F';
-				$this->response->output($status,200);
-				}
-		}
+							$status['msg'] = $this->systemmsg->getErrorCode(227);
+							$status['statusCode'] = 227;
+							$status['data'] =array();
+							$status['flag'] = 'F';
+							$this->response->output($status,200);
+							}
+					}
 	}
 
     public function proposalchangeStatus()
@@ -432,5 +432,40 @@ class Proposal extends CI_Controller {
 				$this->response->output($status,200);
 			}
 		}
+	}
+
+	public function printProposal($proposal_id)
+	{
+
+		// $where = array("proposal_id"=>$proposal_id);
+		$where["proposal_id = "] = $proposal_id;
+		// $selectC = "*";
+		$selectC = "proposal_id,proposal_number,name,p.project_name,c.name,t.description,confirm,cost";
+		$join = array();
+		$join[0]['type'] ="LEFT JOIN";
+		$join[0]['table']="project";
+		$join[0]['alias'] ="p";
+		$join[0]['key1'] ="project_id";
+		$join[0]['key2'] ="project_id";
+
+		$join[1]['type'] ="LEFT JOIN";
+		$join[1]['table']="customer";
+		$join[1]['alias'] ="c";
+		$join[1]['key1'] ="client_id";
+		$join[1]['key2'] ="customer_id";
+
+		$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC,'proposal',$where,'','',$join,'');
+		
+		$data= array();
+	 	$data['proposalData']= $proposalDetails;
+		// print_r("<pre>");
+		// print_r($proposalDetails);exit;
+        $pdfFilePath = $this->load->view("proposalpdf",$data,true);
+
+        //load mPDF library
+        $this->load->library('MPDFCI');
+        $this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+ 	    $this->mpdfci->WriteHTML($pdfFilePath);
+       	$this->mpdfci->Output();  
 	}
  }

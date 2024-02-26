@@ -34,7 +34,7 @@ class OurClients extends CI_Controller {
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$isAll = $this->input->post('getAll');
-		$textSearch = trim($this->input->post('textSearch'));
+		$textSearch = $this->input->post('textSearch');
 		$curPage = $this->input->post('curpage');
 		$ITIID = $this->input->post('clients_id');
 		$textval = $this->input->post('textval');

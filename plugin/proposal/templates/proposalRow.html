@@ -7,23 +7,32 @@
     </td>
     <!-- <td><%=proposalDetails.attributes.proposal_id%></td> -->
     <td ><%=proposalDetails.attributes.proposal_number%></td>
-    <td style="width: 242px;display: inline-block;padding-top: 9px !important;"><%=proposalDetails.attributes.name%></td>
-
-    <td><%=proposalDetails.attributes.company_name%></td>
-    <td><%=proposalDetails.attributes.project_name%></td>
-    
-    
+    <td style="width: 242px;display: inline-block;padding-top: 9px !important;">
+      <div class="nametooltip">
+        <p class="mailtruncate">
+          <%=proposalDetails.attributes.name%>
+        </p>
+        <span class="tooltiptxt">
+          <%=proposalDetails.attributes.name%>
+        </span>
+      </div>
+    </td>
+    <td><%=proposalDetails.attributes.custName%></td>
+    <td> <%=proposalDetails.attributes.project_name%></td>
     <td>
-      <button type="button" class="ws-btn-default loadview" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-      <% if(proposalDetails.attributes.confirm_proposal == "yes"){%>
-        <% if(proposalDetails.attributes.confirm == "yes"){%>
-          <span class="badge badge-success" data-toggle="tooltip"  data-placement="top" title="Status" style="margin-left: 10px; margin-top:7px">Confirmed</span>
-        <%} else {%>
-          -
+      <div class="proposalActoinCol">
+        <button type="button" class="ws-btn-default loadview" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+        <% if(proposalDetails.attributes.confirm_proposal == "yes"){%>
+          <% if(proposalDetails.attributes.confirm == "yes"){%>
+            <span class="badge badge-success" data-toggle="tooltip"  data-placement="top" title="Status" style="margin-left: 10px;margin-top: 5px;margin-bottom: 0;line-height: 2; padding: 4px 8px; height: 30px;">Confirmed</span>
+            <a href="<%=APIPATH%>printProposal/<%=proposalDetails.attributes.proposal_id%>" target="_blank" data-toggle="tooltip"  data-placement="top" title="Download" class="editHover" style="color: #5f6368;"><span class="material-symbols-outlined ">download</span></a>
+          <%} else {%>
+            -
+          <%}%>
+        <%}else{%>
+          <button type="button" class="btn bg-indigo confirmproposal" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-project_id="<%=proposalDetails.attributes.project_id%>" style="margin-left:15px; margin-top:3px">Confirm</button>
         <%}%>
-      <%}else{%>
-        <button type="button" class="btn bg-indigo confirmproposal" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-project_id="<%=proposalDetails.attributes.project_id%>" style="margin-left:15px; margin-top:3px">Confirm</button>
-      <%}%>
+      </div>
     </td>
   </tr>
   

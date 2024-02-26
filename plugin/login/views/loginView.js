@@ -2,11 +2,11 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'owlcarousal',
   '../models/loginModel',
   '../views/resetPasswordRequestView',
   'text!../templates/login_temp.html',
-
-], function ($, _, Backbone, loginModel, resetPasswordRequestView, temploginTemplate) {
+], function ($, _, Backbone, owlcarousal, loginModel, resetPasswordRequestView, temploginTemplate) {
 
   var loginView = Backbone.View.extend({
     model: loginModel,
@@ -28,6 +28,16 @@ define([
       var template = _.template(logintemp);
       this.$el.html(template());
       $(".main_container").empty().append(this.$el);
+      $('#owl-carousel').owlCarousel({
+        loop: true,
+        margin: 30,
+        dots: true,
+        nav: false,
+        items: 1,
+        autoplay:true,
+        autoplayTimeout:2500,
+        autoplayHoverPause:true
+    })
       return this;
     },
     showHidePassword: function (e) {

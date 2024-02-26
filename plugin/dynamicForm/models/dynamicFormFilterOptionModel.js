@@ -6,11 +6,16 @@ define([
   var userRoleFilterOptionModel = Backbone.Model.extend({
   	idAttribute: "fieldID",
   	 defaults:{
-        textSearch:'fieldLabel',
+        // textSearch:'fieldLabel',
+        // textval: null,
+        // status:'subactivescribe',
+        // orderBy:'fieldLabel',
+        // order:'DESC',
+        status:'active',
+        textSearch: '',
         textval: null,
-        status:'subactivescribe',
-        orderBy:'fieldLabel',
-        order:'DESC',
+        orderBy:null ,
+        order:null ,
     }
   });
   return userRoleFilterOptionModel;

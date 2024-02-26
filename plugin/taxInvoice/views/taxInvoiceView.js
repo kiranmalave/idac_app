@@ -19,8 +19,8 @@ define([
     initialize: function (options) {
       this.loadFrom = options.loadFrom;
       this.toClose = "taxInvoiceFilterView";
-      var customerID = options.customerID
       var selfobj = this;
+      this.customerID = options.customerID;
       $(".profile-loader").show();
       filterOption = new taxInvoiceFilterOptionModel();
       if (this.loadFrom == null) {
@@ -28,16 +28,15 @@ define([
         permission = ROLE[mname];
       } else {
         permission = ROLE["invoice"];
-        filterOption.set({customer_id: customerID})
+        filterOption.set({ customer_id: this.customerID })
       }
-      console.log(filterOption);
       readyState = true;
       this.render();
       searchtaxInvoice = new taxInvoiceCollection();
       searchtaxInvoice.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, type: 'get',data: filterOption.attributes
+        }, error: selfobj.onErrorHandler, type: 'get', data: filterOption.attributes
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
@@ -56,14 +55,14 @@ define([
       "click .multiOptionSel": "multioption",
       "change #filterCName": "updateOtherDetails",
       "click #filterSearch": "filterSearch",
-      "click #filterOption": "filterRender",
+      "click #invoiceFilterOption": "filterRender",
       "click .resetval": "resetSearch",
       "click .loadview": "loadSubView",
       "change .txtchange": "updateOtherDetails",
       "click .showpage": "loadData",
       "click .cancelInvoice": "cancelInvoice",
       "click .changeStatus": "changeStatusListElement",
-
+      "click .sortColumns": "sortColumn",
     },
     updateOtherDetails: function (e) {
 
@@ -78,6 +77,31 @@ define([
       filterOption.set({ textSearch: usernametxt });
     },
 
+    sortColumn: function (e) {
+      var order = $(e.currentTarget).attr("data-value");
+      var selfobj = this;
+      var newsetval = [];
+      $("#clist").find(".up").removeClass("active");
+      $("#clist").find(".down").removeClass("active");
+      newsetval["order"] = $(e.currentTarget).attr("data-value");
+      newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+      if (order == "" || order == "DESC") {
+        order = "ASC";
+        $(e.currentTarget).find(".down").removeClass("active");
+        $(e.currentTarget).find(".up").addClass("active");
+      } else {
+        order = "DESC";
+        $(e.currentTarget).find(".down").addClass("active");
+        $(e.currentTarget).find(".up").removeClass("active");
+      }
+      $(e.currentTarget).attr("data-value", order);
+      newsetval["order"] = order;
+      newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+      console.log("newsetval", newsetval);
+      filterOption.set(newsetval);
+      selfobj.filterSearch();
+    },
+
     changeStatusListElement: function (e) {
       Swal.fire({
         title: 'Do you want to delete ?',
@@ -87,74 +111,74 @@ define([
         denyButtonText: `No`,
       }).then((result) => {
         /* Read more about isConfirmed, isDenied below */
-         if (result.isConfirmed) {
-         Swal.fire('Deleted!', '', 'success')
-      var selfobj = this;
-      var removeIds = [];
-      var status = $(e.currentTarget).attr("data-action");
-      var action = "changeStatus";
-      $('#taxInvoiceList input:checkbox').each(function () {
-        if ($(this).is(":checked")) {
-          removeIds.push($(this).attr("data-invoiceID"));
-        }
-      });
+        if (result.isConfirmed) {
+          Swal.fire('Deleted!', '', 'success')
+          var selfobj = this;
+          var removeIds = [];
+          var status = $(e.currentTarget).attr("data-action");
+          var action = "changeStatus";
+          $('#taxInvoiceList input:checkbox').each(function () {
+            if ($(this).is(":checked")) {
+              removeIds.push($(this).attr("data-invoiceID"));
+            }
+          });
 
-      $(".deleteAll").hide();
+          $(".deleteAll").hide();
 
-      $(".action-icons-div").hide();
-      $(".memberlistcheck").click(function () {
-        if ($(this).is(":checked")) {
-          $(".action-icons-div").show(300);
-        } else {
-          $(".action-icons-div").hide(200);
-        }
-      });
+          $(".action-icons-div").hide();
+          $(".memberlistcheck").click(function () {
+            if ($(this).is(":checked")) {
+              $(".action-icons-div").show(300);
+            } else {
+              $(".action-icons-div").hide(200);
+            }
+          });
 
-      var idsToRemove = removeIds.toString();
-      if (idsToRemove == '') {
-        alert("Please select at least one record.");
-        return false;
-      }
-      $.ajax({
-        url: APIPATH + 'taxInvoiceMaster/status',
-        method: 'POST',
-        data: { list: idsToRemove, action: action, status: status },
-        datatype: 'JSON',
-        beforeSend: function (request) {
-          //$(e.currentTarget).html("<span>Updating..</span>");
-          request.setRequestHeader("token", $.cookie('_bb_key'));
-          request.setRequestHeader("SadminID", $.cookie('authid'));
-          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
-          request.setRequestHeader("Accept", 'application/json');
-        },
-        success: function (res) {
-          if (res.flag == "F")
-            // alert(res.msg);
-
-          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          if (res.flag == "S") {
-            selfobj.filterSearch();
+          var idsToRemove = removeIds.toString();
+          if (idsToRemove == '') {
+            alert("Please select at least one record.");
+            return false;
           }
-          setTimeout(function () {
-            $(e.currentTarget).html(status);
-          }, 3000);
+          $.ajax({
+            url: APIPATH + 'taxInvoiceMaster/status',
+            method: 'POST',
+            data: { list: idsToRemove, action: action, status: status },
+            datatype: 'JSON',
+            beforeSend: function (request) {
+              //$(e.currentTarget).html("<span>Updating..</span>");
+              request.setRequestHeader("token", $.cookie('_bb_key'));
+              request.setRequestHeader("SadminID", $.cookie('authid'));
+              request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+              request.setRequestHeader("Accept", 'application/json');
+            },
+            success: function (res) {
+              if (res.flag == "F")
+                // alert(res.msg);
 
+                if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+              if (res.flag == "S") {
+                selfobj.filterSearch();
+              }
+              setTimeout(function () {
+                $(e.currentTarget).html(status);
+              }, 3000);
+
+            }
+          });
+
+        } else if (result.isDenied) {
+          Swal.fire('Changes are not saved', '', 'info')
+          $('#taxInvoiceList input:checkbox').each(function () {
+            if ($(this).is(":checked")) {
+              $(this).prop('checked', false);
+            }
+          });
+          $(".listCheckbox").find('.checkall').prop('checked', false);
+          $(".deleteAll").hide();
         }
-      });
+      })
 
-     } else if (result.isDenied) {
-      Swal.fire('Changes are not saved', '', 'info')
-      $('#taxInvoiceList input:checkbox').each(function () {
-        if ($(this).is(":checked")) {
-          $(this).prop('checked', false);
-        }
-      });
-      $(".listCheckbox").find('.checkall').prop('checked', false);
-      $(".deleteAll").hide();
-    }
-    })
 
-      
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
@@ -166,7 +190,7 @@ define([
       switch (show) {
         case "singletaxInvoiceData": {
           var invoiceID = $(e.currentTarget).attr("data-invoiceID");
-          var taxInvoicesingleview = new taxInvoiceSingleView({ invoiceID: invoiceID, searchtaxInvoice: this });
+          new taxInvoiceSingleView({ customerID: selfobj.customerID, invoiceID: invoiceID, searchtaxInvoice: this });
           break;
         }
       }
@@ -183,13 +207,14 @@ define([
     },
     addOne: function (objectModel) {
       var template = _.template(taxInvoiceRowTemp);
-      $("#taxInvoiceList").append(template({ taxInvoiceDetails: objectModel }));
+      $("#taxInvoiceList").append(template({ taxInvoiceDetails: objectModel, loadFrom: this.loadFrom }));
     },
     addAll: function () {
       $("#taxInvoiceList").empty();
       this.collection.forEach(this.addOne, this);
     },
     filterRender: function (e) {
+      alert("taxFilter");
       var isexits = checkisoverlay(this.toClose);
 
       if (!isexits) {
@@ -407,10 +432,10 @@ define([
     render: function () {
       var template = _.template(taxInvoice_temp);
       if (this.loadFrom != undefined) {
-        this.$el.html(template({ closeItem: this.toClose }));
+        this.$el.html(template({ closeItem: this.toClose, "loadFrom": this.loadFrom }));
         $("#invoice").append(this.$el);
       } else {
-        this.$el.html(template({ closeItem: this.toClose }));
+        this.$el.html(template({ closeItem: this.toClose, "loadFrom": this.loadFrom }));
         $(".ws-select").selectpicker();
         $(".main_container").append(this.$el);
       }

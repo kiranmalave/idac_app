@@ -41,12 +41,13 @@ define([
   'plugin/ourteam/views/ourTeamView',
   'plugin/testimonials/views/testimonialsView',
   'plugin/faq/views/faqView',
+  'plugin/contactUs/views/contactUsView',
   'plugin/dynamicForms/views/dynamicFormsView',
   'text!../templates/appMain_temp.html',
   'text!../templates/appFull_temp.html',
   'text!../templates/sideNav_temp.html',
   'text!../templates/topNav_temp.html',
-], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, Swal, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormSingleView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, customerdashboardView, branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
+], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, Swal, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormSingleView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, customerdashboardView, branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView,contactUsView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
 
   var AppRouter = Backbone.Router.extend({
     routes: {
@@ -67,6 +68,7 @@ define([
       'addnewpage/:pageID': "addpage",
       'addnewblog/:blogID': "addblog",
       'customer': 'customerView',
+      'leads': 'customerView',
       'customerDashboard/:customer_id': 'customerdashboardView',
       'branch': 'branchView',
       'proposal': 'proposalView',
@@ -81,6 +83,7 @@ define([
       'ourteam': 'ourTeamView',
       'testimonials': 'testimonialsView',
       'faqs': 'faqView',
+      'contactUs':'contactUsView',
       'dynamicForms': 'dynamicFormsView',
       'formMaster': 'formMasterView',
       'formQuestions/:formID': 'formQuestionsView',
@@ -424,6 +427,14 @@ define([
       }
     });
 
+    app_router.on('route:contactUsView', function (action) {
+      console.log(action);
+      var validate = preTemp();
+      if (validate) {
+        new contactUsView({ action: action });
+      }
+    });
+
     app_router.on('route:dynamicFormsView', function (action) {
       var validate = preTemp();
       if (validate) {
@@ -477,12 +488,7 @@ define([
               }
             });
        }else if (result.isDenied) {
-
-        // Swal.fire('Changes are not saved', '', 'info')
-        // if (r == false) {
-        //     return false;
-        //   }
-
+        app_router.navigate("login", { trigger: false });
       }
     })
 

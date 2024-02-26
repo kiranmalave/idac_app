@@ -133,6 +133,7 @@
 	min-height: 60px;
 	min-width: 320px;
 	display: inline-block;
+	margin-left: -15px;
 }
 
 .RTU-uploadContainer .RTU-uploadItemsList {

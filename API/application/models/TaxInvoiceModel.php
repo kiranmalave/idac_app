@@ -65,12 +65,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			$orderBy = "ORDER BY created_date DESC";
 		}
 
-		$sql = "SELECT i.*,company_name as customerName  FROM ".$this->db->dbprefix."invoice_header as i LEFT JOIN ".$this->db->dbprefix."customer as cm ON i.customer_id  = cm.customer_id".$whereStr." ".$orderBy." ".$limitstr;
+		$sql = "SELECT i.*, cm.name as customerName  FROM ".$this->db->dbprefix."invoice_header as i LEFT JOIN ".$this->db->dbprefix."customer as cm ON i.customer_id  = cm.customer_id".$whereStr." ".$orderBy." ".$limitstr;
 		//$sql = "SELECT * FROM ".$this->db->dbprefix."invoice_header ".$whereStr." ".$orderBy." ".$limitstr;
 		
 		$query = $this->db->query($sql);
 
 		$result = $query->result();
+		// print $this->db->last_query();
 		return $result;
 	}
 
@@ -125,7 +126,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		$res = $this->db->insert("invoice_header",$data);
 		$sqlerror = $this->db->error();
 		$this->errorlogs->checkDBError($sqlerror,dirname(__FILE__),__LINE__,__METHOD__);
-		//print $this->db->last_query();
+		// print $this->db->last_query();
 		return $this->db->insert_id();
 	}
 	

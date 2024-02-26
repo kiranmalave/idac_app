@@ -1,0 +1,11 @@
+<tr class="even pointer bg-<%=contactUsListDetails.attributes.status%>" >
+  <td class="a-center">
+    <div class="listCheckbox">
+        <input id="cAll_<%= contactUsListDetails.attributes.contactUsID %>" class="memberlistcheck chk-col-amber" data-contactUsID="<%= contactUsListDetails.attributes.contactUsID %>" type="checkbox">
+        <label for="cAll_<%= contactUsListDetails.attributes.contactUsID %>">&nbsp;</label>
+    </div>
+  </td>
+  <td class=""><%= contactUsListDetails.attributes.fullName%></td>
+  <td class=""><%= contactUsListDetails.attributes.email %></td>
+  <td class=""><%= contactUsListDetails.attributes.details %></td>
+</tr>

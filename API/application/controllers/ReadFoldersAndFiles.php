@@ -343,7 +343,7 @@ class ReadFoldersAndFiles extends CI_Controller
 		//print $pathTOSave; exit;
 		$settings = array(
 			'uploadFolder' => $pathTOSave,
-			'extension' => ['png', 'pdf', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'mkv', 'mp3', 'ogg', 'wav', 'docx', 'doc', 'xls', 'xlsx'],
+			'extension' => ['png', 'svg','pdf', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'mkv', 'mp3', 'ogg', 'wav', 'docx', 'doc', 'xls', 'xlsx'],
 			'maxFolderFiles' => 0,
 			'maxFolderSize' => 0,
 			'returnLocation' => false,

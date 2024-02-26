@@ -5,25 +5,20 @@
     <div class="row">
       <div class="col-md-6">
         <select id="textSearch" class="form-control changeBox" name="textSearch">
-          <option value="name">Proposal Name</option>
-          <option value="proposal_id">Proposal Id</option>
-          <!-- <option value="client_id">Client Name</option> -->
-          <!-- <option value="company_name">Client Name</option> -->
-          <!-- <option value="project_name">Project Name</option> -->
-          <!-- <option value="template_name">Proposal Template Name</option> -->
+          <option>Select</option>
+          <option value="t.name">Proposal Name</option>
+          <option value="proposal_number">Proposal Number</option>
         </select>
       </div>
       <div class="col-md-6">
-        <div class="textvalBox contacttxt"><!-- hidetextval style="display: none;"-->
-          <input id="textval" class="form-control txtchange filterClear" minlength="10" maxlength="10" name="textval"
-            type="text">
+        <div class="textvalBox contacttxt">
+          <input id="textval" class="form-control txtchange filterClear" name="textval" type="text">
         </div>
       </div>
-      <div class="col-md-6 contacttxt hidetextval" style="display: none;"><!-- -->
+      <div class="col-md-6 contacttxt hidetextval" style="display: none;">
         <div class="form-group form-float">
           <div class="form-line">
-            <input id="textval" class="form-control txtchange filterClear" minlength="10" maxlength="10" name="textval"
-              type="text">
+            <input id="textval" class="form-control txtchange filterClear" name="textval" type="text">
           </div>
         </div>
       </div>
@@ -77,8 +72,8 @@
     </div>
     <div class="col-xs-12 text-right">
       <hr>
-      <input type="button" id="filterSearch" class="filterSearch btn btn-raised bg-green waves-effect"
-        value="Search"></button>
+      <input type="button" id="filterSearch" class="filterSearch btn btn-raised bg-green waves-effect" value="Search"></button>
       <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval" value="Reset"></button>
+      <input id="filterOption" type="button" class="btn btn-raised bg-blue-grey colseFil closeFilter" value="Close"></button>
     </div>
   </form>

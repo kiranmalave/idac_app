@@ -1,0 +1,14 @@
+<label for="field_<%= elementDetails.fieldID %>" class="form-label"><%= elementDetails.fieldLabel %><span class="error"><%= elementDetails.isRqr %></span></label>
+<!-- <input id="field_<%= elementDetails.fieldID %>" class="dynamicData fileupload"
+    name="field_<%= elementDetails.fieldLabel %>" type="file" value="" placeholder="<%= elementDetails.placeholder %>" <%= elementDetails.requiredHtml %>> -->
+
+    <input data-id="<%= elementDetails.id %>" id="<%= elementDetails.column_name %>" class="dynamicData fileupload btn loadMedia" type="button" value="Select files"
+    name="<%= elementDetails.column_name %>" data-toggle="modal"
+    data-target="#largeModal">
+   
+    <!-- <img id="profile_pic_view" style="max-width: 100%;" src=""> -->
+    <p id="image_path_display"></p>
+
+
+
+    

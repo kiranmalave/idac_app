@@ -21,8 +21,8 @@ define([
 ], function ($, _, Backbone, datepickerBT, moment, Swal, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, projectCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
 
   var taskView = Backbone.View.extend({
+    taskCount:'',
     initialize: function (options) {
-      console.log("task initialize");
       var customer_id = options.customerID
       this.customerID = customer_id;
       this.toClose = "taskFilterView";
@@ -85,10 +85,13 @@ define([
         }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        selfobj.taskCount = selfobj.collection.length;
+        selfobj.render();
         $(".preloader").hide();
         setPagging(res.paginginfo, res.loadstate, res.msg);
+        
       });
-
+      
       this.collection = searchtask;
       this.collection.on('add', this.addOne, this);
       this.collection.on('reset', this.addAll, this);
@@ -100,7 +103,7 @@ define([
       "change #textSearch": "settextSearch",
       "click .multiOptionSel": "multioption",
       "click .filterSearch": "filterSearch",
-      "click #filterOption": "filterRender",
+      "click #taskFilterOption": "filterRender",
       "click #removeFlyOut": "removeFlyOut",
       "click .resetval": "resetSearch",
       "click .loadview": "loadSubView",
@@ -117,6 +120,10 @@ define([
     attachEvents: function () {
       this.$el.off('click', '#removeFlyOut', this.removeFlyOut);
       this.$el.on('click', '#removeFlyOut', this.removeFlyOut.bind(this));
+      this.$el.off('click', '.loadview', this.loadSubView);
+      this.$el.on('click', '.loadview', this.loadSubView.bind(this));
+      this.$el.off('click', '#taskFilterOption', this.filterRender);
+      this.$el.on('click', '#taskFilterOption', this.filterRender.bind(this));
       //this.$el.off('click', '.filterSearch', this.filterSearch);
       //this.$el.on('click', '.filterSearch', this.filterSearch.bind(this));
     },
@@ -276,7 +283,6 @@ define([
           }
           new taskSingleView({ task_id: task_id, searchtask: selfobj, customerID: selfobj.customerID });
           break;
-
         }
       }
     },
@@ -427,7 +433,7 @@ define([
       this.setValues();
       this.setupFilter();
       rearrageOverlays("Filter", this.toClose, "small");
-      this.attachEvents();
+      // this.attachEvents();
     },
 
     removeFlyOut: function () {
@@ -609,7 +615,7 @@ define([
     },
     render: function () {
       var template = _.template(taskTemp);
-      this.$el.html(template({ closeItem: this.toClose }));
+      this.$el.html(template({ closeItem: this.toClose , taskCount: this.taskCount}));
       $("#tasks").empty().append(this.$el);
       this.attachEvents();
       return this;

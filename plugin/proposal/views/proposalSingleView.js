@@ -32,10 +32,10 @@ define([
       this.loadFrom = options.loadfrom;
       this.model = new proposalSingleModel();
       var selfobj = this;
-      this.dynamicFieldRenderobj = new dynamicFieldRender({
-        ViewObj: selfobj,
-        formJson: {},
-      });
+      // this.dynamicFieldRenderobj = new dynamicFieldRender({
+      //   ViewObj: selfobj,
+      //   formJson: {},
+      // });
       this.multiselectOptions = new multiselectOptions();
       $(".modelbox").hide();
       scanDetails = options.searchproposal;
@@ -247,6 +247,11 @@ define([
     saveproposalDetails: function (e) {
       e.preventDefault();
       let selfobj = this;
+      var proposalContent = tinymce.get("proposaldescription").getContent();
+      var costingContent = tinymce.get("costing").getContent();
+      this.model.set({ 'description':proposalContent});
+      this.model.set({ 'cost': costingContent});
+
       if(this.customerID != null && this.projectID != null){
         this.model.set({'project_id':selfobj.projectID});
         this.model.set({'client_id':selfobj.customerID});
@@ -303,12 +308,11 @@ define([
                   scanDetails.initialize();
                 }else{
                   scanDetails.filterSearch();
-                  
                 }
                 if (res.flag == "S") {
                   if (isNew == "new") {
                     selfobj.model.clear().set(selfobj.model.defaults);
-                    selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                    // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                     selfobj.render();
                   } else {
                     handelClose(selfobj.toClose);
@@ -339,7 +343,7 @@ define([
                 if (res.flag == "S") {
                   if (isNew == "new") {
                     selfobj.model.clear().set(selfobj.model.defaults);
-                    selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                    // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                     selfobj.render();
                   } else {
                     console.log("proposalList", JSON.stringify(res.data));
@@ -369,6 +373,8 @@ define([
             }
             if(selfobj.loadFrom == "dashboard"){
               handelClose(selfobj.toClose);
+            }else if(selfobj.loadFrom == undefined){
+              handelClose(selfobj.toClose); 
             }else{
               scanDetails.filterSearch();
              
@@ -377,7 +383,7 @@ define([
             if (res.flag == "S") {
               if (isNew == "new") {
                 selfobj.model.clear().set(selfobj.model.defaults);
-                selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                 selfobj.render();
               } else {
                 handelClose(selfobj.toClose);
@@ -402,15 +408,15 @@ define([
 
       };
       var feildsrules = feilds;
-      var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+      // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
 
-      if (!_.isEmpty(dynamicRules)) {
-        var feildsrules = $.extend({}, feilds, dynamicRules);
-        // var feildsrules = {
-        //   ...feilds,
-        //   ...dynamicRules
-        //   };
-      }
+      // if (!_.isEmpty(dynamicRules)) {
+      //   var feildsrules = $.extend({}, feilds, dynamicRules);
+      //   // var feildsrules = {
+      //   //   ...feilds,
+      //   //   ...dynamicRules
+      //   //   };
+      // }
       var messages = {
         salutation: "select salutation",
         project_id:"Project Required",
@@ -453,6 +459,34 @@ define([
       });
     },
 
+    fromEditors: function () {
+      if (tinyMCE.activeEditor != undefined) {
+        tinyMCE.activeEditor.remove("proposaldescription");
+        tinyMCE.activeEditor.remove("costing");
+      }
+      tinyMCE.init({
+        selector: "#proposaldescription, #costing",
+        deprecation_warnings: false,
+        removed_menuitems: 'newdocument | wordcount | sourcecode | image | media ',
+        height: 300,
+        plugins: ["advlist autolink link image lists charmap print preview hr anchor pagebreak save",
+          "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+          " table contextmenu directionality emoticons template paste textcolor"],
+        toolbar: "insertfile undo redo  | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link  | print preview  fullpage | forecolor backcolor emoticons ",
+
+        style_formats: [{ title: "Bold text", inline: "b" },
+        { title: "Red text", inline: "span", styles: { color: "#ff0000" } },
+        { title: "Red header", block: "h1", styles: { color: "#ff0000" } },
+        { title: "Example 1", inline: "span", classes: "example1" },
+        { title: "Example 2", inline: "span", classes: "example2" },
+        { title: "Table styles" },
+        { title: "Table row 1", selector: "tr", classes: "tablerow1" }],
+
+      })
+      tinyMCE.init({});
+      
+    },
+
     render: function () {
       //var isexits = checkisoverlay(this.toClose);
       //if(!isexits){
@@ -468,57 +502,58 @@ define([
       this.$el.data("current", "yes");
       $(".tab-content").append(this.$el);
       $("#" + this.toClose).show();
-      $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
+      // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
       this.initializeValidate();
       this.setOldValues();
       $(".ws-select").selectpicker();
       this.attachEvents();
       rearrageOverlays("Proposals", this.toClose);
-      var __toolbarOptions = [
-        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-        [{ 'direction': 'rtl' }],                         // text direction
-        [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-        [{ 'align': [] }],
-        ['link'],
-        ['clean']                                         // remove formatting button
-      ];
-      var editor = new Quill($("#proposaldescription").get(0), {
-        modules: {
-          toolbar: __toolbarOptions
-        },
-        theme: 'snow'
-      });
-      var editor2 = new Quill($("#costing").get(0), {
-        modules: {
-          toolbar: __toolbarOptions
-        },
-        theme: 'snow'
-      });
+      this.fromEditors();
+      // var __toolbarOptions = [
+      //   ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+      //   [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+      //   [{ 'direction': 'rtl' }],                         // text direction
+      //   [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+      //   [{ 'align': [] }],
+      //   ['link'],
+      //   ['clean']                                         // remove formatting button
+      // ];
+      // var editor = new Quill($("#proposaldescription").get(0), {
+      //   modules: {
+      //     toolbar: __toolbarOptions
+      //   },
+      //   theme: 'snow'
+      // });
+      // var editor2 = new Quill($("#costing").get(0), {
+      //   modules: {
+      //     toolbar: __toolbarOptions
+      //   },
+      //   theme: 'snow'
+      // });
 
 
-      editor.on('text-change', function (delta, oldDelta, source) {
-        if (source == 'api') {
-          console.log("An API call triggered this change.");
-        } else if (source == 'user') {
-          var delta = editor.getContents();
-          var text = editor.getText();
-          var justHtml = editor.root.innerHTML;
-          selfobj.model.set({ "description": justHtml });
-        }
-      });
+      // editor.on('text-change', function (delta, oldDelta, source) {
+      //   if (source == 'api') {
+      //     console.log("An API call triggered this change.");
+      //   } else if (source == 'user') {
+      //     var delta = editor.getContents();
+      //     var text = editor.getText();
+      //     var justHtml = editor.root.innerHTML;
+      //     selfobj.model.set({ "description": justHtml });
+      //   }
+      // });
 
-      editor2.on('text-change', function (delta, oldDelta, source) {
-        if (source == 'api') {
-          console.log("An API call triggered this change.");
-        } else if (source == 'user') {
-          var delta = editor2.getContents();
-          var text = editor2.getText();
-          var justHtml = editor2.root.innerHTML;
-          selfobj.model.set({ "cost": justHtml });
-          console.log(selfobj.model);
-        }
-      });
+      // editor2.on('text-change', function (delta, oldDelta, source) {
+      //   if (source == 'api') {
+      //     console.log("An API call triggered this change.");
+      //   } else if (source == 'user') {
+      //     var delta = editor2.getContents();
+      //     var text = editor2.getText();
+      //     var justHtml = editor2.root.innerHTML;
+      //     selfobj.model.set({ "cost": justHtml });
+      //     console.log(selfobj.model);
+      //   }
+      // });
 
 
       return this;

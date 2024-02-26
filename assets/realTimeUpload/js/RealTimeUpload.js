@@ -867,6 +867,8 @@
           element.uploadList[position].xhr.setRequestHeader("X-REMOVE", true);
           chunk = element.uploadList[position].file[method](0, 1);
         }
+        // added this to override the action url for each element- kiran
+        element.uploadList[position].xhr.open(element.parameters.method, element.parameters.action, true);
         element.uploadList[position].xhr.setRequestHeader("SadminID", $.cookie('authid'));
         element.uploadList[position].xhr.setRequestHeader("token", $.cookie('_bb_key'));
         element.uploadList[position].xhr.setRequestHeader("X-FILENAME", element.uploadList[position].name);
@@ -1182,7 +1184,7 @@
     };
     var uploader = document.getElementById('fileupload');
     var obj = new init();
-    //obj.initialize();
+    return obj;
   }
 
 })(jQuery);

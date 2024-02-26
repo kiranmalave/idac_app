@@ -7,6 +7,7 @@ define([
     'datepickerBT',
     'moment',
     'Swal',
+    'Quill',
     '../../core/views/multiselectOptions',
     '../../dynamicForm/views/dynamicFieldRender',
     '../collections/proposalTemplateCollection',
@@ -14,7 +15,7 @@ define([
     '../models/proposalTemplateSingleModel',
     '../../readFiles/views/readFilesView',
     'text!../templates/proposalTemplateSingle_temp.html',
-  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, multiselectOptions, dynamicFieldRender, proposalTemplateCollection, ourClientsCollection, proposalTemplateSingleModel, readFilesView, projecttemp) {
+  ], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, Swal, Quill, multiselectOptions, dynamicFieldRender, proposalTemplateCollection, ourClientsCollection, proposalTemplateSingleModel, readFilesView, projecttemp) {
     var projectSingleView = Backbone.View.extend({
       model: proposalTemplateSingleModel,
       initialize: function (options) {
@@ -25,10 +26,10 @@ define([
         this.loadFrom = options.loadfrom;
         this.model = new proposalTemplateSingleModel();
         var selfobj = this;
-        this.dynamicFieldRenderobj = new dynamicFieldRender({
-          ViewObj: selfobj,
-          formJson: {},
-        });
+        // this.dynamicFieldRenderobj = new dynamicFieldRender({
+        //   ViewObj: selfobj,
+        //   formJson: {},
+        // });
         this.multiselectOptions = new multiselectOptions();
         $(".modelbox").hide();
         scanDetails = options.searchproject;
@@ -183,10 +184,9 @@ define([
             if (res.flag == "S") {
               if (isNew == "new") {
                 selfobj.model.clear().set(selfobj.model.defaults);
-                selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                 selfobj.render();
               } else {
-                // alert("here");
                 handelClose(selfobj.toClose);
               }
             }
@@ -210,15 +210,15 @@ define([
           
         };
         var feildsrules = feilds;
-        var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+        // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
   
-        if (!_.isEmpty(dynamicRules)) {
-          var feildsrules = $.extend({}, feilds, dynamicRules);
-          // var feildsrules = {
-          //   ...feilds,
-          //   ...dynamicRules
-          //   };
-        }
+        // if (!_.isEmpty(dynamicRules)) {
+        //   var feildsrules = $.extend({}, feilds, dynamicRules);
+        //   // var feildsrules = {
+        //   //   ...feilds,
+        //   //   ...dynamicRules
+        //   //   };
+        // }
         var messages = {
           project_name: "Please enter First Name",
         };
@@ -275,7 +275,7 @@ define([
         this.$el.data("current", "yes");
         $(".tab-content").append(this.$el);
         $("#" + this.toClose).show();
-        $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
+        // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
         this.initializeValidate();
         this.setOldValues();
         $(".ws-select").selectpicker();
