@@ -21,7 +21,7 @@ define([
 ], function ($, _, Backbone, datepickerBT, moment, Swal, taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection, projectCollection, slugCollection, taskRowTemp, taskTemp, taskFilterTemp) {
 
   var taskView = Backbone.View.extend({
-    taskCount:'',
+    taskCount:0,
     initialize: function (options) {
       var customer_id = options.customerID
       this.customerID = customer_id;
@@ -85,8 +85,6 @@ define([
         }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        selfobj.taskCount = selfobj.collection.length;
-        selfobj.render();
         $(".preloader").hide();
         setPagging(res.paginginfo, res.loadstate, res.msg);
         
@@ -114,7 +112,7 @@ define([
       "change .changeBox": "changeBox",
       "click .sortbydate": "sortByDate",
       "click .showpoup": "showpoup",
-
+      "click .closeTaskFilter": "closeFilter",
     },
 
     attachEvents: function () {
@@ -124,8 +122,8 @@ define([
       this.$el.on('click', '.loadview', this.loadSubView.bind(this));
       this.$el.off('click', '#taskFilterOption', this.filterRender);
       this.$el.on('click', '#taskFilterOption', this.filterRender.bind(this));
-      //this.$el.off('click', '.filterSearch', this.filterSearch);
-      //this.$el.on('click', '.filterSearch', this.filterSearch.bind(this));
+      this.$el.off('click', '.closeTaskFilter', this.closeFilter);
+      this.$el.on('click', '.closeTaskFilter', this.closeFilter.bind(this));
     },
 
     showpoup: function (e) {
@@ -183,6 +181,19 @@ define([
       filterOption.set(newdetails);
       console.log(filterOption);
     },
+
+    closeFilter:function(e){
+      var isOpen = $(".ws_filterOptions").hasClass("open");
+        if (isOpen) {
+          $(".ws_filterOptions").removeClass("open");
+          $(e.currentTarget).removeClass("active");
+          return;
+        } else {
+          $(e.currentTarget).addClass("active");
+          // this function will handel other exiting open popus
+        }
+    },
+
     changeBox: function (e) {
       var selVal = $(e.currentTarget).val();
       $(".hidetextval").hide();
@@ -311,6 +322,7 @@ define([
     addAll: function () {
       $("#taskListOther").empty();
       this.collection.forEach(this.addOne, this);
+      this.render();
     },
 
     setValues: function (e) {
@@ -391,8 +403,9 @@ define([
       }
     },
     filterRender: function (e) {
-      var isexits = checkisoverlay(this.toClose);
-      if (!isexits) {
+      // var isexits = checkisoverlay(this.toClose);
+      // alert(isexits);
+      // if (!isexits) {
         var source = taskFilterTemp;
         var template = _.template(source);
         var cont = $("<div>");
@@ -404,7 +417,7 @@ define([
         */
         $(".overlay-main-container").removeClass("open");
         // append filter html here
-        $(".ws_filterOptions").append(cont);
+        $(".ws_filterOptions").html(cont);
         // $(".ws-select").selectpicker();
         /*  
           INFO
@@ -418,18 +431,18 @@ define([
         */
         $(e.currentTarget).addClass("active");
 
-      } else {
-        // check here we alreay open it or not. if open toggle that popup here
-        var isOpen = $(".ws_filterOptions").hasClass("open");
-        if (isOpen) {
-          $(".ws_filterOptions").removeClass("open");
-          $(e.currentTarget).removeClass("active");
-          return;
-        } else {
-          $(e.currentTarget).addClass("active");
-          // this function will handel other exiting open popus
-        }
-      }
+      // } else {
+      //   // check here we alreay open it or not. if open toggle that popup here
+      //   var isOpen = $(".ws_filterOptions").hasClass("open");
+      //   if (isOpen) {
+      //     $(".ws_filterOptions").removeClass("open");
+      //     $(e.currentTarget).removeClass("active");
+      //     return;
+      //   } else {
+      //     $(e.currentTarget).addClass("active");
+      //     // this function will handel other exiting open popus
+      //   }
+      // }
       this.setValues();
       this.setupFilter();
       rearrageOverlays("Filter", this.toClose, "small");
@@ -442,6 +455,7 @@ define([
 
     resetSearch: function () {
       filterOption.clear().set(filterOption.defaults);
+      filterOption.set({ customer_id: this.customerID });
       $(".multiOptionSel").removeClass("active");
       $("#textval").val("");
       $(".hidetextval").hide();
@@ -607,10 +621,6 @@ define([
         if (temp2 > temp) {
           $("#fromDate2").val("");
         }
-        //selfobj.model.set({trainingStartDate:valuetxt});
-        //startDate.datepicker("option","minDate",$.datepicker.parseDate("dd/mm/yy",ev.value));
-        // startDate.datepicker("setEndDate", moment(valuetxt).format('l'));
-
       });
     },
     render: function () {

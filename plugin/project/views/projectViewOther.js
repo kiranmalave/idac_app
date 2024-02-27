@@ -78,6 +78,39 @@ define([
       "click .openTable": "showTable",
       "click .backbutton": "backBtn",
     },
+
+    attachEvents: function () {
+      this.$el.off("change", "#textSearch", this.settextSearch);
+      this.$el.on("change", "#textSearch", this.settextSearch.bind(this));
+      this.$el.off("click", ".multiOptionSel", this.multioption);
+      this.$el.on("click", ".multiOptionSel", this.multioption.bind(this));
+      this.$el.off("click", ".filterSearch", this.filterSearch);
+      this.$el.on("click", ".filterSearch", this.filterSearch.bind(this));
+      this.$el.off("click", "#projectFilterOption", this.filterRender);
+      this.$el.on("click", "#projectFilterOption", this.filterRender.bind(this));
+      this.$el.off('click', '.resetval', this.resetSearch);
+      this.$el.on('click', '.resetval', this.resetSearch.bind(this));
+      this.$el.off('click', '.loadview', this.loadSubView);
+      this.$el.on('click', '.loadview', this.loadSubView.bind(this));
+      this.$el.off("change", ".txtchange", this.updateOtherDetails);
+      this.$el.on("change", ".txtchange", this.updateOtherDetails.bind(this));
+      this.$el.off("click", ".changeStatus", this.changeStatusListElement);
+      this.$el.on("click", ".changeStatus", this.changeStatusListElement.bind(this));
+      this.$el.off('click', '.showpage', this.loadData);
+      this.$el.on('click', '.showpage', this.loadData.bind(this));
+      this.$el.off('click', '.changeBox', this.changeBox);
+      this.$el.on('click', '.changeBox', this.changeBox.bind(this));
+      this.$el.off('click', '.sortColumns', this.sortColumn);
+      this.$el.on('click', '.sortColumns', this.sortColumn.bind(this));
+      this.$el.off('click', '.closeProjectFilter', this.closeFilter);
+      this.$el.on('click', '.closeProjectFilter', this.closeFilter.bind(this));
+      this.$el.off('click', '.openTable', this.showTable);
+      this.$el.on('click', '.openTable', this.showTable.bind(this));
+      this.$el.off('click', '.backbutton', this.backBtn);
+      this.$el.on('click', '.backbutton', this.backBtn.bind(this));
+    },
+
+
     updateOtherDetails: function (e) {
       e.stopPropagation();
       var valuetxt = $(e.currentTarget).val();
@@ -103,8 +136,6 @@ define([
       filterOption.set({ textSearch: usernametxt });
     },
     changeStatusListElement: function (e) {
-      // alert("aniruddha");
-
       Swal.fire({
         title: 'Do you want to delete ?',
         showDenyButton: true,
@@ -213,11 +244,24 @@ define([
       switch (show) {
         case "singleprojectview": {
           var project_id = $(e.currentTarget).attr("data-project_id");
-          new projectSingleView({ project_id: project_id, searchproject: this, customerID: selfobj.customerID });
+          new projectSingleView({ project_id: project_id, searchproject: this, customerID: selfobj.customerID, loadFrom:"projectViewOther" });
           break;
         }
       }
     },
+
+    refreshProj: function(){  
+      let selfobj = this;
+      searchproject.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status: 'active',company: selfobj.customerID }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+      });
+      this.render();
+    },
+
     sortColumn: function (e) {
       var order = $(e.currentTarget).attr("data-value");
       var selfobj = this;
@@ -243,9 +287,8 @@ define([
       selfobj.filterSearch();
     },
     resetSearch: function () {
-      // filterOption.set({curpage:0,project_id:null,textval: null,company_name:null,textSearch:'project_name',status:'active',orderBy:'created_date',order:'ASC'});
-      // filterOption.reset();
       filterOption.clear().set(filterOption.defaults);
+      filterOption.set({ company: this.customerID });
       $(".multiOptionSel").removeClass("active");
       // $("#textval").val("");
       $(".ws-select").val('default');
@@ -266,12 +309,6 @@ define([
       var memberDetails = new singlememberDataModel();
     },
     addOne: function (objectModel) {
-
-      // if(this.loadFrom != null){
-      //   var template = _.template(projectRowTempOther);
-      // }else{
-      //   var template = _.template(projectRowTemp);
-      // }
       var template = _.template(projectRowTempOther);
       $("#projectListOther").append(template({ projectDetails: objectModel }));
     },
@@ -280,13 +317,8 @@ define([
       this.collection.forEach(this.addOne, this);
     },
     filterRender: function (e) {
-      // alert("TESTONE");
-      // var isexits = checkisoverlay(this.toClose);
-
-      // if (!isexits) {
-
-      var source = projectFilterTemp;
-      var template = _.template(source);
+        var source = projectFilterTemp;
+        var template = _.template(source);
 
       var cont = $("<div>");
       cont.html(template({ "customerList": this.customerList.models }));
@@ -437,7 +469,7 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
         setPagging(res.paginginfo, res.loadstate, res.msg);
-        $element.attr("data-currPage", z);
+        $element.attr("data-currPage", res.paginginfo.curPage);
         $element.attr("data-index", res.paginginfo.nextpage);
 
         //$(".page-info").html(recset);
@@ -536,6 +568,7 @@ define([
       var template = _.template(projectTempOther);
       this.$el.html(template({ closeItem: this.toClose }));
       $("#project").append(this.$el);
+      this.attachEvents();
       //$("#projects").show();
       // setToolTip();
 

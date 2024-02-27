@@ -306,11 +306,8 @@ define([
 
 
     resetSearch: function () {
-      //filterOption.set({curpage:0,proposalID:null,textval: null,textSearch:'proposalName',status:'active',orderBy:'created_date',order:'DESC'});
-      //filterOption.reset();
       filterOption.clear().set(filterOption.defaults);
       $(".multiOptionSel").removeClass("active");
-      // $("#textval").val("");
       $(".filterClear").val("");
       $(".hidetextval").hide();
       $(".ws-select").val('default');
@@ -324,6 +321,19 @@ define([
     addOne: function (objectModel) {
       var template = _.template(proposalRowTemp);
       $("#proposalList").append(template({ proposalDetails: objectModel }));
+
+      var mailTruncateElements = document.querySelectorAll('.mailtruncate');
+      mailTruncateElements.forEach(function (element) {
+        var textWidth = element.offsetWidth;
+        var parentEle = element.parentElement;
+
+        if (textWidth >= 100) {
+          parentEle.querySelector('.tooltiptxt').style.display = 'block';
+        }
+        else {
+          parentEle.querySelector('.tooltiptxt').style.display = 'none';
+        }
+      });
     },
     addAll: function () {
       $("#proposalList").empty();
