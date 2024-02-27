@@ -55,6 +55,21 @@ class Project extends CI_Controller {
 		
 		$config = $this->config->item('pagination');
 		$wherec = $join = array();
+
+		$join = array();
+		$join[0]['type'] ="LEFT JOIN";
+		$join[0]['table']="customer";
+		$join[0]['alias'] ="c";
+		$join[0]['key1'] ="client_id";
+		$join[0]['key2'] ="customer_id";
+
+		$selectC = "t.*, c.company_name as client_id";
+
+		if(isset($statuscode) && !empty($statuscode)){
+			$statusStr = str_replace(",",'","',$statuscode);
+			$wherec["c.status"] = 'IN ("'.$statusStr.'")';
+		}
+
 		if(isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)){
 			$wherec["$textSearch like  "] = "'%".$textval."%'";
 		}
@@ -63,59 +78,30 @@ class Project extends CI_Controller {
 			$wherec["client_id like"] = "'" . $company . "%'";
 		}
 		if(isset($statuscode) && !empty($statuscode)){
-		$statusStr = str_replace(",",'","',$statuscode);
-		$wherec["t.status"] = 'IN ("'.$statusStr.'")';
+			$statusStr = str_replace(",",'","',$statuscode);
+			$wherec["t.status"] = 'IN ("'.$statusStr.'")';
 		}
 		
 		$adminID = $this->input->post('SadminID');
 	
 		$config["base_url"] = base_url() . "projectDetails";
-	    $config["total_rows"] = $this->CommonModel->getCountByParameter('project_id','project',$wherec,$other);
+		
+	    $config["total_rows"] = $this->CommonModel->getCountByParameter('project_id','project',$wherec,$other,$join);
 	    $config["uri_segment"] = 2;
 	    $this->pagination->initialize($config);
 	    if(isset($curPage) && !empty($curPage)){
-		$curPage = $curPage;
-		$page = $curPage * $config["per_page"];
-		}
-		else{
-		$curPage = 0;
-		$page = 0;
+			$curPage = $curPage;
+			$page = $curPage * $config["per_page"];
+		}else{
+			$curPage = 0;
+			$page = 0;
 		}
 		if($isAll=="Y"){
-			$join = array();
-			$join[0]['type'] ="LEFT JOIN";
-			$join[0]['table']="customer";
-			$join[0]['alias'] ="c";
-			$join[0]['key1'] ="client_id";
-			$join[0]['key2'] ="customer_id";
-
-			$selectC = "t.*, c.company_name as client_id";
-
-			if(isset($statuscode) && !empty($statuscode)){
-				$statusStr = str_replace(",",'","',$statuscode);
-				$wherec["c.status"] = 'IN ("'.$statusStr.'")';
-				}
 			$projectDetails = $this->CommonModel->GetMasterListDetails($selectC='*','project',$wherec,'','',$join,$other);	
 		}else{
-			
-			$join = array();
-			$join[0]['type'] ="LEFT JOIN";
-			$join[0]['table']="customer";
-			$join[0]['alias'] ="c";
-			$join[0]['key1'] ="client_id";
-			$join[0]['key2'] ="customer_id";
-
-			$selectC = "t.*, c.company_name as client_id";
-
-			if(isset($statuscode) && !empty($statuscode)){
-				$statusStr = str_replace(",",'","',$statuscode);
-				$wherec["c.status"] = 'IN ("'.$statusStr.'")';
-				}
-				
+			$selectC= "t.*, c.name as client_id";
 			$projectDetails = $this->CommonModel->GetMasterListDetails($selectC,'project',$wherec,$config["per_page"],$page,$join,$other);
-
 		}
-		//print_r($companyDetails);exit;
 		$status['data'] = $projectDetails;
 		$status['paginginfo']["curPage"] = $curPage;
 		if($curPage <=1)
@@ -153,24 +139,16 @@ class Project extends CI_Controller {
 
 	public function project($project_id="")
 	{
-		
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$method = $this->input->method(TRUE);
-		// echo $method;
-		// print_r($method);exit;
 		if($method=="POST"||$method=="PUT")
 		{
 				$projectDetails = array();
 				$updateDate = date("Y/m/d H:i:s");
-				// $projectDetails['regiNoYSF'] = $this->validatedata->validate('regiNoYSF','regiNoYSF',true,'',array());
-
-			//	$projectDetails['project_id'] = $this->validatedata->validate('project_id','project_id',false,'',array());
 				$projectDetails['project_name'] = $this->validatedata->validate('project_name','project Name',false,'',array());
 				$projectDetails['client_id'] = $this->validatedata->validate('client_id','client ID',false,'',array());
                 $projectDetails['description'] = $this->validatedata->validate('description','Description',false,'',array());
-				//$lastProjectDetails = $this->CommonModel->getMasterDetails("docPrefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"2"));
-					  
 					if($method=="PUT")
 					{
 						$lastProjectDetails = $this->CommonModel->getMasterDetails("doc_prefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"2"));

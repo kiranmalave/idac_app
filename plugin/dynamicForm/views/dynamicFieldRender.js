@@ -527,8 +527,7 @@ define([
           newdetails["" + toID] = valuetxt;
           selfobj.parentView.model.set(newdetails);
       });
-
- `      // $("body").find('.timepicker').timepicker({
+      // $("body").find('.timepicker').timepicker({
       //   timeFormat: 'h:mm p',
       //   interval: 15,
       //   startTime: '00:00',
