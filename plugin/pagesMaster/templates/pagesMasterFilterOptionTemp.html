@@ -1,14 +1,15 @@
-
 <form id="demo-form" action="#">
-  <h6>Filter Search</h6><hr>
+  <h6>Filter Search</h6>
+  <hr>
   <div class="clearfix">&nbsp;</div>
   <div class="row">
     <div class="col-md-6">
       <select id="textSearch" class="form-control " name="textSearch">
-          <option value="pageTitle">Pages Title</option>
-          <option value="created_date">Created Date</option>
-          <option value="a.name">Created By</option>
-        </select>
+        <option value="select">Select</option>
+        <option value="pageTitle">Pages Title</option>
+        <option value="created_date">Created Date</option>
+        <option value="a.name">Created By</option>
+      </select>
     </div>
     <div class="col-md-6">
       <input id="textval" class="form-control txtchange" name="textval" type="text">
@@ -17,27 +18,29 @@
   <div class="row pt-2">
     <div class="col-md-12">
       <label>Order By:</label>
-        <ul class="item-container" data-valid="orderBy">
-          <li class="orderBy multiOptionSel" data-single="Y" data-value="pageTitle">Pages Name</li>
-          <li class="orderBy multiOptionSel" data-single="Y" data-value="created_date">Created Date</li>
-        </ul>
+      <ul class="item-container" data-valid="orderBy">
+        <li class="orderBy multiOptionSel" data-single="Y" data-value="pageTitle">Pages Name</li>
+        <li class="orderBy multiOptionSel" data-single="Y" data-value="created_date">Created Date</li>
+      </ul>
     </div>
 
     <div class="col-md-12">
-    <label>Order:</label>
-    <ul class="item-container" data-valid="order">
+      <label>Order:</label>
+      <ul class="item-container" data-valid="order">
         <li class="order multiOptionSel" data-single="Y" data-value="ASC">Ascending</li>
         <li class="order multiOptionSel" data-single="Y" data-value="DESC">Descending</li>
-    </ul>
+      </ul>
     </div>
   </div>
   <div class="col-xs-12 text-right">
     <hr>
-    <input type="button" id="filterSearch" class="filterSearch btn btn-raised bg-green waves-effect" value="Search"></button>
+    <input type="button" id="filterSearch" class="filterSearch btn btn-raised bg-green waves-effect"
+      value="Search"></button>
     <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval" value="Reset"></button>
-    <input id="filterOption" type="button" class="btn btn-raised bg-blue-grey colseFil closeFilter" value="Close"></button>
+    <input id="filterOption" type="button" class="btn btn-raised bg-blue-grey colseFil closeFilter"
+      value="Close"></button>
   </div>
-  
+
 </form>
 
 

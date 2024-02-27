@@ -177,6 +177,7 @@ define([
       filterOption.set({ curpage: 0, pageID: null, textval: null, textSearch: 'pageTitle', status: 'active,inactive', orderBy: 'pageTitle', order: 'ASC' });
       $(".multiOptionSel").removeClass("active");
       $("#textval").val("");
+      $('#textSearch').prop('selectedIndex', 0);
       $('#textSearch option[value=status]').attr('selected', 'selected');
       this.filterSearch();
     },

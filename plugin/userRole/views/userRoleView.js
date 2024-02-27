@@ -184,6 +184,7 @@ define([
       filterOption.set({ curpage: 0, roleID: null, textval: null, textSearch: 'roleName', status: 'active', orderBy: 'roleName', order: 'ASC' });
       $(".multiOptionSel").removeClass("active");
       $("#textval").val("");
+      $('#textSearch').prop('selectedIndex', 0);
       $('#textSearch option[value=roleID]').attr('selected', 'selected');
       this.filterSearch();
     },

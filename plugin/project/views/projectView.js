@@ -245,6 +245,7 @@ define([
       $(".filterClear").val("");
       $("#textSearch").val("project_name");
       // $(".hidetextval").hide();
+      $('#textSearch').prop('selectedIndex',0);
       $('#textSearch option[value=project_id]').attr('selected', 'selected');
       this.filterSearch(false);
 
