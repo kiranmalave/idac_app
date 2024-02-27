@@ -2978,3 +2978,7 @@ section.content.dashBordTotal {
 .nametooltip a i {
   font-size: 17px;
 }
+
+.block-header {
+  padding: 10px !important;
+}

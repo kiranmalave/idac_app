@@ -63,6 +63,7 @@ define([
       "click .cancelInvoice": "cancelInvoice",
       "click .changeStatus": "changeStatusListElement",
       "click .sortColumns": "sortColumn",
+      "click .closeFilter": "closeFilter",
     },
     updateOtherDetails: function (e) {
 
@@ -215,7 +216,7 @@ define([
       this.collection.forEach(this.addOne, this);
     },
     filterRender: function (e) {
-      alert("taxFilter");
+      //alert("taxFilter");
       var isexits = checkisoverlay(this.toClose);
 
       if (!isexits) {
@@ -256,6 +257,17 @@ define([
       }
       this.setValues();
       rearrageOverlays("Filter", this.toClose, "small");
+    },
+    closeFilter: function (e) {
+      var isOpen = $(".ws_filterOptions").hasClass("open");
+      if (isOpen) {
+        $(".ws_filterOptions").removeClass("open");
+        $(e.currentTarget).removeClass("active");
+        return;
+      } else {
+        $(e.currentTarget).addClass("active");
+        // this function will handel other exiting open popus
+      }
     },
     setValues: function (e) {
       setvalues = ["status", "orderBy", "order"];
