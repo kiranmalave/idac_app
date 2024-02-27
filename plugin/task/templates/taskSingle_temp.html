@@ -1,5 +1,5 @@
 <div class="tab-pane in active">
-    <div class="popuploader" style="display: none;">
+    <div class="popuploader cloader" style="display: none;">
         <div class="profile-loader text-center circleloader">
             <div class="preloader">
                 <div class="spinner-layer pl-amber">
@@ -13,24 +13,36 @@
             </div>
         </div>
     </div>
-    <form id="taskDetails" name="taskDetails" action="#">
-        <div class="actionBtns taskAction">
-            <%if(model.task_id !=null){%>
-                <div>
-                    <span class="input-group-addon lg mr-2 scroll" data-scroll="comment">
-                        <i class="material-icons">chat</i>
-                    </span>
-                    <span class="input-group-addon lg scroll" data-scroll="history">
-                        <i class="material-icons">history</i>
-                    </span>
-                </div>
-                <%}%>
-                    <button type="button" class="btn bg-indigo saveTaskDetails" data-action="close">Save</button>
-                    <button type="button" class="btn bg-indigo saveTaskDetails" data-action="new">Save & new</button>
+    <div class="actionBtns taskAction">
+        <!-- <div> -->
+
+        <span class="input-group-addon lg scroll taskWatch" <%if ( model.task_id==null ) {%> style="color:#ccc" <%}%>
+                data-scroll="comment">
+
+                <i class="material-icons" <%if ( model.task_id==null ) {%> style="color:#ccc" <%}%> >chat</i>
+        </span>
+        <span class="input-group-addon lg scroll taskWatch" <%if ( model.task_id==null ) {%> style="color:#ccc" <%}%>
+                data-scroll="history">
+                <i class="material-icons" <%if ( model.task_id==null ) {%> style="color:#ccc" <%}%> >history</i>
+        </span>
+        <!-- </div> -->
+
+        <!-- <span class="material-symbols-outlined mr-2 watchers" style="color: #5f6368;">
+                    eyeglasses
+                </span> -->
+        <div class="watchers taskWatch visableTask" id="watcherEye">
+            <i class="material-icons">visibility</i>
+
         </div>
-        <div class="row ws-task-main-container">
-            <div class="col-md-8 ws-task-container">
+
+        <button type="button" class="btn bg-indigo saveTaskDetails" data-action="close">Save</button>
+        <button type="button" class="btn bg-indigo saveTaskDetails" data-action="new">Save & new</button>
+    </div>
+    <div class="row ws-task-main-container">
+        <div class="col-md-8 ws-task-container">
+            <form id="taskDetails" name="taskDetails" action="#">
                 <div class="clearfix">&nbsp;</div>
+
                 <div class="list-row">
                     <div class="icon-left">
                         <div class="ws-icon">
@@ -41,15 +53,16 @@
                         <div class="row">
                             <div class="col">
                                 <div class="form-group form-float">
-                                    <div class="form-line">
-                                        <input id="subject" type="text" class="form-control txtchange" name="subject" value="<%=model.subject%>">
-                                        <label for="subject" class="form-label">Subject</label>
+                                    <div class="form-line taskSubject">
+                                        <input id="subject" type="text" class="form-control txtchange" autocomplete="off" name="subject" autocomplete="off" value="<%=model.subject%>">
+                                        <label for="subject" class="form-label taskSubjectTitle">Subject</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="list-row">
                     <div class="icon-left">
                         <div class="ws-icon">
@@ -59,239 +72,339 @@
                     <div class="right-layout ws-quill">
                         <div class="row ">
                             <div class="col-md-12">
-                                <label for="description">Description</label>
-                                <div id="task_description" class="form-control">
+                                <label for="description" class="taskDescription">Description</label>
+                                <div id="task_description" class="form-control mb-3">
                                     <%=model.description%>
                                 </div>
-                                <!-- <textarea id="tiny">&lt;p&gt;Encoded HTML content&lt;/p&gt;</textarea> -->
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="list-row">
-                    <div class="icon-left">
-                        <div class="ws-icon">
-                            <span class="input-group-addon lg" style="margin-top:10px;"><i
-                                    class="material-icons">schedule</i></span>
-                        </div>
-                    </div>
-                    <div class="right-layout">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group input-group form-float">
-                                    <div class="form-line">
-                                        <% if(model.due_date != "0000-00-00"){%>
-                                            <input id="start_date" type="text" class="form-control" name="start_date" value="<%=model.start_date%>" readonly>
-                                        <%}else{%>
-                                            <input id="start_date" type="text" class="form-control" name="start_date" readonly>
-                                        <%}%>
-                                        
-                                        <label for="start_date" class="form-label">Start Date</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group input-group form-float">
-                                    <div class="form-line">
-                                        <% if(model.due_date != "0000-00-00"){%>
-                                            <input id="due_date" type="text" class="form-control" name="due_date" value="<%=model.due_date%>" readonly>
-                                        <%}else{%>
-                                            <input id="due_date" type="text" class="form-control" name="due_date" readonly>
-                                        <%}%>
-                                        <label for="due_date" class="form-label">Due Date</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="list-row">
-                    <div class="icon-left">
-                        <div class="ws-icon">
-                            <span class="input-group-addon lg">
-                                <i class="material-icons">
-                                    <span class="material-symbols-outlined">
-                                        <span class="input-group-addon lg">
-                                            <i class="material-icons">
-                                                <span class="material-symbols-outlined"
-                                                    style="margin-top:8px;">priority</span>
-                                            </i>
-                                        </span>
-                                    </span>
-                                </i>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="right-layout">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group form-float">
-                                    <div class="form-line">
-                                        <select for="task_priority" id="task_priority" name="task_priority"
-                                            title="Task priority"
-                                            class="form-control dropval ws-select show-tick repeatChange">
-                                            <%if(permission.add=="yes" ) { %>
-                                                <option class="addNew" value="addPriority">Add Priority</option>
-                                                <%}%>
-                                                    <% _.each(categoryList, function(modelcat) { %>
-                                                        <% if(modelcat.attributes.slug=="task_priority" )
-                                                            _.each(modelcat.attributes.sublist, function(model1) { %>
-                                                            <option <% if(model1.category_id==model.task_priority ){ %>
-                                                                selected
-                                                                <% } %>value="<%=model1.category_id%>">
-                                                                        <%=model1.categoryName%>
-                                                            </option>
-                                                            <%})%>
-                                                                <%})%>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-float">
-                                    <div class="form-line">
-                                        <select id="task_type" name="task_type" class="form-control dropval ws-select"
-                                            title="Task Type">
-                                            <%if(permission.add=="yes" ) { %>
-                                                <option class="addNew" value="addType">Add Type</option>
-                                                <%}%>
-                                                    <% _.each(categoryList, function(modelcat) { %>
-                                                        <% if(modelcat.attributes.slug=="task_type" )
-                                                            _.each(modelcat.attributes.sublist, function(model1) { %>
-                                                            <option <% if(model1.category_id==model.task_type ){ %>
-                                                                selected
-                                                                <% } %>
-                                                                    value="<%=model1.category_id%>">
-                                                                        <%=model1.categoryName%>
-                                                            </option>
-                                                            <%})%>
-                                                                <%})%>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-float">
-                                    <div class="form-line">
-                                        <select id="task_status" name="task_status"
-                                            class="form-control dropval ws-select" title="Task Status">
-                                            <%if(permission.add=="yes" ) { %>
-                                                <option class="addNew" value="addStatus">Add Status</option>
-                                                <%}%>
-                                                    <% _.each(categoryList, function(modelcat) { %>
-                                                        <% if(modelcat.attributes.slug=="task_status" )
-                                                            _.each(modelcat.attributes.sublist, function(model1) { %>
-                                                            <option <% if(model1.category_id==model.task_status ){ %>
-                                                                selected
-                                                                <% } %>
-                                                                    value="<%=model1.category_id%>">
-                                                                        <%=model1.categoryName %>
-                                                            </option>
-                                                            <%})%>
-                                                                <%})%>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="list-row">
-                    <div class="icon-left">
-                        <div class="ws-icon">
-                            <span class="input-group-addon lg" style="margin-top:8px;">
-                                <i class="material-icons">account_balance</i>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="right-layout">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group form-float">
-                                    <div class="from-line">
-                                        <select id="customer_id" name="customer_id"  <% if(customerID != null){%> disabled <%}%> class="form-control dropval ws-select show-tick changeClient mt-2 setHeight" title="Select Client" data-live-search="true"data-live-search="true">
-                                            <% _.each(customerList, function(model1) { %>
-                                                <% if(customerID == null){%>
-                                                    <option <% if(model1.attributes.customer_id == model.customer_id ) { %>selected
-                                                        <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%></option>
-                                                    <%}else{%>
-                                                        <option <% if(model1.attributes.customer_id == customerID ) { %>selected
-                                                             <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%></option>
-                                                    <%}%>
 
-                                             <%}); %>
-                                        </select>
-                                        
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="ws-icon">
-                                    <span class="input-group-addon lg"></span>
-                                </div>
-                                <div class="form-group form-float">
-                                    <div class="from-line">
-                                        
-                                        <select id="project_id" name="project_id" class="form-control dropval ws-select show-tick mt-2 setHeight" title="Select Project" data-live-search="true"data-live-search="true">
-                                            <% _.each(projectList, function(model1) { %>
-
-                                                    <option <% if(model1.attributes.project_id == model.project_id ) { %>selected
-                                                        <%}%>value="<%=model1.attributes.project_id%>"><%=model1.attributes.project_name%></option>
-                                             <%}); %>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="list-row">
-                    <div class="icon-left">
-                        <div class="ws-icon">
-                            <span class="input-group-addon lg" style="margin-top:8px;">
-                                <i class="material-icons">group</i>
-                            </span>
+                <div class="clearfix">&nbsp;</div>
+                <div id="dynamicFormFields" class=""></div>
+            </form>
+
+            <div class="list-row mb-3">
+                <div class="icon-left">
+                    <div class="ws-icon"><span class="input-group-addon lg" style="margin-top:8px; ">
+                            <i class="material-icons">attach_file</i>
+                        </span></div>
+                </div>
+                <div class="right-layout">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p class="mt-2 taskAttachTitle dragdrop-image">Attachments</p>
                         </div>
                     </div>
-                    <div class="right-layout">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group form-float d-flex">
-                                    <div class="rept-time">
-                                        <div>
-                                            <select for="assignee" id="assignee" name="assignee" class="form-control dropval ws-select show-tick" title="Select Assignee">
-                                                <%if(permission.add=="yes" ) { %>
-                                                    <option class="addNew" value="addAssignee">Add Assignee</option>
-                                                <%}%>
-                                                <% _.each(adminList, function(model1) { %>
-                                                    <option <% if(model1.attributes.adminID==model.assignee ){%>selected<%}%> value="<%=model1.attributes.adminID%>"><%=model1.attributes.name%></option>
-                                                <%}); %>               
-                                            </select>
+                    <div class="row attachupdate taskAttach">
+                        <button type="button" class="loadMedia ws-taskModalbtn dotborder" data-change="ws-bg-image"
+                            data-toggle="modal" data-target="#largeModal"><span
+                                class="material-icons">add</span></button>
+                        <div id="attachedDoc" class="row taskAttachDoc"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-row upload" style="display: none;">
+                <div class="icon-left">
+                    <div class="ws-icon">
+                        <span class="material-symbols-outlined"></span>
+                    </div>
+                </div>
+                <div class="right-layout ws-quill">
+                    <div class="row ">
+                        <div class="col-md-12 ws-dragbox taskAttachDragBox">
+                            <div class="ws-assignee-column">
+                                <input type="file" multiple class="btn btn-default btn__action"  id="taskUpload"/>
+                            </div>
+                        </div>
+                        <div class="col-md-12 text-right ">
+                            <button type="button" class="btn bg-indigo hideUpload clacel">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%if(model.task_id !=null){%>
+                <ul id="taskCom" class="nav nav-tabs task-nav-tab taskComment">
+                    <li class="nav-item" style="margin-left:40px;"><a id="navScrollComment"
+                            class="nav-link comment loadview" data-view="singleCommentData"
+                            data-task_id="<%=model.task_id%>" data-toggle="tab" href=""
+                            style="padding-left:0;padding-right:0;">Comments</a></li>
+                    <li class="nav-item" style="margin-left:20px;"><a id="navScrollHistory"
+                            class="nav-link comment loadview" data-view="singleHistoryData"
+                            data-task_id="<%=model.task_id%>" data-toggle="tab" href=""
+                            style="padding-left:0;padding-right:0;">History</a></li>
+                </ul>
+                <div class="showHistory"></div>
+                <div class="showComment">
+                    <div class="list-row mt-2">
+                        <div class="icon-left">
+                            <div class="ws-icon">
+                                <span class="input-group-addon lg">
+                                    <i class="material-icons">rate_review</i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="right-layout ws-quill">
+                            <div class="row">
+                                <div class="col-md-12 mb-2">
+                                    <div class="outerCommentdiv">
+                                        <div class="form-control comment-box">Enter Comment</div>
+                                    </div>
+                                    <div class="commentEditor">
+                                        <div id="comment" class="form-control comment-editor" style="display: none;">
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-12 text-right buttonHide">
+                                    <button name="post" id="post" type="button" class="btn bg-indigo savetaskComment"
+                                        data-action="cput">Save</button>
+                                    <button type="button" class="btn bg-indigo cancelPost cancel">Cancel</button>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-float d-flex">
-                                    <div class="rept-time">
-                                        <div>
-                                            <select id="does_repeat" name="does_repeat"
-                                                class="form-control dropval ws-select show-tick repeatChange">
-                                                <option <% if(model.does_repeat=="does_not_repeat" ){%> selected
-                                                    <%}%>
-                                                        value="does_not_repeat">Does not Repeat
-                                                </option>
-                                                <option <% if(model.does_repeat=="daily" ){%>selected<%}%>
-                                                        value="daily">Daily</option>
-                                                <option <% if(model.does_repeat=="mon_to_fir" ){%>selected<%}%>
-                                                        value="mon_to_fir">Mon-Fri</option>
-                                                <option <% if(model.does_repeat=="weekend" ){%>selected<%}%>
-                                                        value="weekend">Weekend (Sat-Sun)</option>
-                                                <option <% if(model.does_repeat=="custom" ){%>selected<%}%>
-                                                        value="custom">Custom</option>
-                                            </select>
-                                        </div>
+                        </div>
+                    </div>
+                    <div class="list-row mt-2">
+                        <div class="right-layout">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="taskComments" class="showPages"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+        </div>
+        <div class="col-md-4">
+            <div class="row" style="margin-top:21px;">
+                <div class="col-md-12">
+                    <div class="form-group input-group form-float" style="margin-bottom:30px;">
+                        <div class="form-line taskDate">
+                            <input id="start_date" type="text" class="form-control taskDate" name="start_date"
+                                autocomplete="off" value="<%=model.start_date%>">
+                            <label for="start_date" class="form-label taskDate">Start Date</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group input-group form-float taskDropDown" style="margin-bottom: 30px;">
+                        <div class="form-line taskDate">
+                            <input id="due_date" type="text" class="form-control taskDate" name="due_date"
+                                autocomplete="off" value="<%=model.due_date%>" readonly>
+                            <label for="due_date" class="form-label taskDate">Due Date</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%if(menuName=="task" ){%>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-float taskDropDown" style="margin-bottom: 30px;">
+                            <div class="form-line taskDate removeBorder">
+                                <select for="task_priority" autocomplete="off" id="task_priority"
+                                    placeholder="Task Priority" name="task_priority" title=""
+                                    class="form-control dropval ws-select show-tick repeatChange backgroundHide hideOption">
+                                    <option class="addNew" value=""></option>
+                                    <%if(permission.add=="yes" ) { %>
+                                        <option class="addNew" value="addPriority">Add Priority</option>
+                                    <%}%>
+                                    <% _.each(categoryList, function(modelcat) { %>
+                                        <% if(modelcat.attributes.slug=="task_priority" )
+                                            _.each(modelcat.attributes.sublist, function(model1) { %>
+                                            <option <% if(model1.category_id==model.task_priority ){ %> selected <% } %>value="<%=model1.category_id%>"> <%=model1.categoryName%></option>
+                                        <%}) %>
+                                    <%})%>
+                                 </select>
+                                <label for="task_priority" class="form-label taskDate tasktop fortask">Task Priority</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-float taskDropDown" style="margin-bottom: 30px;">
+                            <div class="form-line taskDate removeBorder">
+                                <select id="task_type" autocomplete="off" name="task_type"
+                                    class="form-control dropval ws-select backgroundHide hideOption" title="">
+                                    <option class="addNew" value=""></option>
+                                    <%if(permission.add=="yes" ) { %>
+                                        <option class="addNew" value="addType">Add Type</option>
+                                    <%}%>
+                                    <% _.each(categoryList, function(modelcat) { %>
+                                        <% if(modelcat.attributes.slug=="task_type" )
+                                            _.each(modelcat.attributes.sublist, function(model1) { %>
+                                            <option <% if(model1.category_id==model.task_type ){ %> selected <%}%> value="<%=model1.category_id%>"><%=model1.categoryName%> </option>
+                                        <%})%>
+                                    <%})%>
+                                </select>
+                                <label for="task_type" class="form-label taskDate tasktop fortask">Task Type</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group form-float" style="margin-bottom: 30px;">
+                            <div class="form-line taskDate removeBorder">
+                                <select id="task_status" autocomplete="off" name="task_status"
+                                    class="form-control dropval ws-select backgroundHide hideOption" title="">
+                                    <option class="addNew" value=""></option>
+                                    <%if(permission.add=="yes" ) { %>
+                                        <option class="addNew" value="addStatus">Add Status</option>
+                                        <%}%>
+                                            <% _.each(categoryList, function(modelcat) { %>
+                                                <% if(modelcat.attributes.slug=="task_status" )
+                                                    _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                    <option <% if(model1.category_id==model.task_status ){ %> selected
+                                                        <%}%> value="<%=model1.category_id%>"><%=model1.categoryName %>
+                                                    </option>
+                                                    <%})%>
+                                                        <%})%>
+                                </select>
+                                <label for="task_status" class="form-label taskDate tasktop fortask">Task Status</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <%}else if(menuName=="ticket" ){%>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-float" style="margin-bottom: 30px;">
+                                <div class="form-line ">
+                                    <select for="task_priority" autocomplete="off" id="task_priority"
+                                        name="task_priority"
+                                        class="form-control dropval ws-select show-tick repeatChange backgroundHide">
+                                        <option class="addNew" value=""></option>
+                                        <%if(permission.add=="yes" ) { %>
+                                            <option class="addNew" value="addPriority">Add Priority</option>
+                                            <%}%>
+                                                <% _.each(categoryList, function(modelcat) { %>
+                                                    <% if(modelcat.attributes.slug=="ticket_priority" )
+                                                        _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                        <option <% if(model1.category_id==model.task_priority ){ %>
+                                                            selected <% } %>value="<%=model1.category_id%>">
+                                                                    <%=model1.categoryName%>
+                                                        </option>
+                                                        <%})%>
+                                                            <%})%>
+                                    </select>
+                                    <label for="task_priority" class="form-label taskDate tasktop fortask">Task
+                                        Priority</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-float" style="margin-bottom: 30px;">
+                                <div class="form-line">
+                                    <select id="task_type" autocomplete="off" name="task_type"
+                                        class="form-control dropval ws-select " title="">
+                                        <option class="addNew" value=""></option>
+                                        <%if(permission.add=="yes" ) { %>
+                                            <option class="addNew" value="addType">Add Type</option>
+                                            <%}%>
+                                                <% _.each(categoryList, function(modelcat) { %>
+                                                    <% if(modelcat.attributes.slug=="ticket_type" )
+                                                        _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                        <option <% if(model1.category_id==model.task_type ){ %> selected
+                                                            <%}%> value="<%=model1.category_id%>">
+                                                                    <%=model1.categoryName%>
+                                                        </option>
+                                                        <%})%>
+                                                            <%})%>
+                                    </select>
+                                    <label for="task_type" class="form-label taskDate tasktop title=""">Task
+                                        Type</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <select id="task_status" autocomplete="off" name="task_status"
+                                        class="form-control dropval ws-select" title="Status">
+                                        <option class="addNew" value=""></option>
+                                        <%if(permission.add=="yes" ) { %>
+                                            <option class="addNew" value="addStatus">Add Status</option>
+                                            <%}%>
+                                                <% _.each(categoryList, function(modelcat) { %>
+                                                    <% if(modelcat.attributes.slug=="ticket_status" )
+                                                        _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                        <option <% if(model1.category_id==model.task_status ){ %>
+                                                            selected <%}%> value="<%=model1.category_id%>">
+                                                                    <%=model1.categoryName %>
+                                                        </option>
+                                                        <%})%>
+                                                            <%})%>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <%}%>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line taskDate">
+                                        <input id="customer_id" type="text" autocomplete="off"
+                                            class="form-control custChange ddcnt taskDate" name="customer"
+                                            value="<%=model.customerName%>" />
+                                        <label for="customer_id" class="form-label taskDate">Customer</label>
                                     </div>
+                                </div>
+                                <div class="customer-input"></div>
+                                <div id="customerDropdown" class="dropdown-content custDrop" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+
+                        
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group form-float taskDropDown">
+                                    <div class="form-line taskDate">
+                                        <input id="assignee" type="text" autocomplete="off"
+                                            class="form-control ddcnt assignChange taskDate" name="assignee"
+                                            value="<%=model.assigneeName%>" />
+                                        <label for="assignee" class="form-label taskDate">Assignee</label>
+                                    </div>
+                                </div>
+                                <div class="assignee-input"></div>
+                                <div id="assigneeDropdown" class="dropdown-content custDrop" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group form-float d-flex">
+                                    <select id="does_repeat" name="does_repeat" autocomplete="off"
+                                        class="form-control dropval ws-select show-tick repeatChange">
+                                        <option <% if(model.does_repeat=="does_not_repeat" ){%> selected <%}%>
+                                                value="does_not_repeat">Does not Repeat</option>
+                                        <option <% if(model.does_repeat=="daily" ){%>selected<%}%> value="daily">Daily
+                                        </option>
+                                        <option <% if(model.does_repeat=="mon_to_fir" ){%>selected<%}%>
+                                                value="mon_to_fir">Mon-Fri</option>
+                                        <option <% if(model.does_repeat=="weekend" ){%>selected<%}%>
+                                                value="weekend">Weekend (Sat-Sun)</option>
+                                        <option <% if(model.does_repeat=="custom" ){%>selected<%}%>
+                                                value="custom">Custom</option>
+                                    </select>
+
                                     <div class="ws-repeatTask" <%if(model.does_repeat=="custom" ){%>
                                         style="display:block;"<%}else{%>style="display: none;"<%}%> >
                                                 <button type="button" class="loadCustom ws-repeatTaskbtn bg-white"
@@ -302,168 +415,57 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-float">
-                                    <div class="form-line">
-                                        <%if (model.task_id == null){%>
-                                            <input type="text" class="form-control" disabled value="<%=ADMINNAME%>">
-                                        <%}else{%>
-                                            <input type="text" class="form-control" disabled value="<%=model.createdByname%>">
-                                        <%}%>
-                                        <label class="form-label">Created By</label>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                    </div>
-                </div>
-                <%if(model.task_id !=null){%>
-                    <div class="list-row mb-3">
-                        <div class="icon-left">
-                            <div class="ws-icon "><span class="input-group-addon lg" style="margin-top:8px;">
-                                    <i class="material-icons">attach_file</i>
-                                </span></div>
-                        </div>
-                        <div class="right-layout">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <p class="mt-2">Attachments</p>
-                                </div>
-                            </div>
-                            <div class="row attachupdate">
-                                <button <% if(model.task_id==undefined ){%>disabled <%}%> type="button" class="loadMedia
-                                        ws-taskModalbtn dotborder" data-change="ws-bg-image" data-toggle="modal"
-                                        data-target="#largeModal"><span class="material-icons">add</span></button>
-                                <div id="attachedDoc" class="row"></div>
-                            </div>
 
-                        </div>
-                    </div>
-                    <ul id="taskCom" class="nav nav-tabs task-nav-tab">
-                        <li class="nav-item"><a class="nav-link loadview" data-view="singleCommentData"
-                                data-task_id="<%=model.task_id%>" data-toggle="tab" href="">Comments</a></li>
-                        <li class="nav-item"><a class="nav-link loadview" data-view="singleHistoryData"
-                                data-task_id="<%=model.task_id%>" data-toggle="tab" href="">History</a></li>
-                    </ul>
-                    <div class="showHistory"></div>
-                    <div class="showComment">
-                        <div class="list-row mt-2">
-                            <div class="icon-left">
-                                <div class="ws-icon">
-                                    <span class="input-group-addon lg">
-                                        <i class="material-icons">rate_review</i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="right-layout ws-quill">
-                                <div class="row">
-                                    <div class="col-md-12 mb-2">
-                                        <div class="outerCommentdiv">
-                                            <div class="form-control comment-box">Enter Comment</div>
-                                        </div>
-                                        <div class="commentEditor">
-                                            <div id="comment" class="form-control comment-editor"
-                                                style="display: none;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 text-right">
-                                        <button name="post" id="post" type="button" class="btn bg-indigo saveComment"
-                                            data-action="cput">Post</button>
-                                        <button type="button" class="btn bg-indigo cancelPost">Cancel</button>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group form-float">
+                                    <div class="form-line taskDate">
+                                        <%if (model.task_id==null){%>
+                                            <input type="text" class="form-control taskCreate taskDate" disabled
+                                                value="<%=ADMINNAME%>">
+                                            <%}else{%>
+                                                <input type="text" class="form-control taskCreate taskDate" disabled
+                                                    value="<%=model.createdByname%>">
+                                                <%}%>
+                                                    <label class="form-label taskDate">Created By</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="list-row mt-5" <% if(commentList=="" ){%>style="display: none;"<%}else{%>
-                                style="display: block;"<%}%> >
-                                    <div class="right-layout">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="card-body">
-                                                    <h6 class="card-title">Recent Comments</h6>
-                                                </div>
-                                                <div class="showPages">
-                                                    <% var count=0; _.each(commentList, function(model1) { if (count <
-                                                        6) { %>
-                                                        <ul class="inbox-widget list-unstyled clearfix">
-                                                            <li class="inbox-inner">
-                                                                <div class="inbox-item">
-                                                                    <div class="inbox-img">
-                                                                        <img src="<%=PROFILEPHOTOUPLOAD%><%=model1.attributes.adminID%>/profilePic/<%=model1.attributes.photo%>"
-                                                                            width="48" height="48" alt="User" />
-                                                                    </div>
-                                                                    <div class="inbox-item-info">
-                                                                        <p class="author">
-                                                                            <%=model1.attributes.name%>
-                                                                        </p>
-                                                                        <div id="editCmt_<%=model1.attributes.comment_id%>"
-                                                                            class="inbox-message m-b-5 m-t-10 editComment"
-                                                                            data-commentID="<%=model1.attributes.comment_id%>">
-                                                                            <%=model1.attributes.comment_text%>
-                                                                        </div>
-                                                                        <div class="col-md-12 text-right editCmtBtn_<%=model1.attributes.comment_id%>"
-                                                                            style="display: none;">
-                                                                            <button name="post" id="post" type="button"
-                                                                                data-commentID="<%=model1.attributes.comment_id%>"
-                                                                                class="btn bg-indigo saveComment"
-                                                                                data-action="cpost">Post</button>
-                                                                            <button type="button"
-                                                                                class="btn bg-indigo cancelEditedComment">Cancel</button>
-                                                                        </div>
-                                                                        <p class="inbox-date">
-                                                                            <%=model1.attributes.created_date%>
-                                                                        </p>
-                                                                        <button type="button"
-                                                                            data-commentID="<%=model1.attributes.comment_id%>"
-                                                                            class="ws-btn-default editBtn"
-                                                                            data-toggle="tooltip" data-placement="top"
-                                                                            title="Edit" <%if(ADMINID
-                                                                            !=model1.attributes.adminID ){%>
-                                                                            style="display: none;" <%}%> ><i
-                                                                                    class="material-icons">mode_edit</i></button>
-                                                                        <button type="button"
-                                                                            data-commentID="<%=model1.attributes.comment_id%>"
-                                                                            class="ws-btn-default deleteBtn"
-                                                                            data-toggle="tooltip" data-placement="top"
-                                                                            title="Delete" <%if(ADMINID
-                                                                            !=model1.attributes.adminID ){%>
-                                                                            style="display: none;" <%}%> ><i
-                                                                                    class="material-icons">delete</i></button>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                        </ul>
-                                                        <% count++; } }); %>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mt-3">
-                                            <div class="col-md-12 text-right">
-                                                <button name="read_more" id="read_more" type="button"
-                                                    class="btn bg-indigo loadview" data-task_id="<%=model.task_id%>"
-                                                    data-view="singleCommentData">Read
-                                                    More..</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                        </div>
-                    </div>
-                    <% } %>
-            </div>
-            <div class="col-md-4 ws-assignee-container">
-                <div class="row">
-                    <div class="col-md-12 ws-assignee-column">
-                        <div class="form-group form-float" style="margin-bottom: 68px;">
-                            <div class="form-line">
-                                <input id="typehead" type="text" class="form-control  watchersName ws-assignee-input"
-                                    name="typehead">
-                                <label for="typehead" class="form-label">Watchers</label>
-                            </div>
-                        </div>
-                        <div class="tm-input"></div>
-                    </div>
-                </div>
-            </div>
+
         </div>
-    </form>
+    </div>
+
+
+    <div class="showWatch" style="display: none;">
+
+        <div class="form-group form-float">
+            <div class="">
+                <div class="form-line taskDate forWatcher">
+                    <label><i class="material-icons"> add_circle </i></label>
+                    <input id="watchers" type="text" autocomplete="off" placeholder="Add Watchers"
+                        class="form-control ddcnt watcherdetails ws-assignee-input" name="typehead">
+                    <!-- <label for="typehead" class="form-label">  <i class="material-icons"> add_circle </i>Add Watchers</label> -->
+                </div>
+                <div id="watcherDropdown" class="dropdown-content taskWatchDropdown"></div>
+
+            </div>
+
+        </div>
+        <div class="noWatchers" style="display: none;">
+            <div class="noWatchersPic">
+                <img src="images/noWatcher.png" alt="" />
+            </div>
+            <h4>No watchers yet</h4>
+        </div>
+        <div class="showTaskDetails">
+            <div class="showWatchers">
+                <h4>Watchers</h4>
+            </div>
+            <div class="tm-input forTask"></div>
+        </div>
+    </div>
+
+
 </div>

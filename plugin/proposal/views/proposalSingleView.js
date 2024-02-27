@@ -144,6 +144,7 @@ define([
       let selfobj = this;
       e.stopPropagation();
       var client_id = $(e.currentTarget).val();
+      this.model.set({"client_id":client_id});
       if (client_id != null) {
         this.projectList.fetch({
           headers: {
@@ -154,7 +155,6 @@ define([
           $(".popupLoader").hide();
           selfobj.render();
         });
-        console.log(this.projectList);
       }
     },
     onErrorHandler: function (collection, response, options) {

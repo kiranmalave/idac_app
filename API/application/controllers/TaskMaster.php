@@ -641,18 +641,25 @@ class TaskMaster extends CI_Controller
 		$updateDate = date("Y/m/d H:i:s");
 		$where=array('task_id'=>$ids);
 		
-			if(!isset($ids) || empty($ids)){
+		if(!isset($ids) || empty($ids)){
 			$status['msg'] = $this->systemmsg->getErrorCode(998);
 			$status['statusCode'] = 998;
 			$status['data'] = array();
 			$status['flag'] = 'F';
 			$this->response->output($status,200);
-			}
-			$taskDetails['task_status'] = "40";
-			$taskDetails['modified_by'] = $this->input->post('SadminID');
-			$taskDetails['modified_date'] = $updateDate;
-			// print_r($taskDetails);exit;
-			$iscreated = $this->CommonModel->updateMasterDetails('tasks',$taskDetails,$where);
+		}
+		$whereCategory = array(
+			"slug" => 'task_complete'
+		);
+		
+		$completeCat = $this->CommonModel->getMasterDetails('categories','',$whereCategory);
+		if(!empty($completeCat)){
+			$categoryID = array_column($completeCat,'category_id');
+		}
+		$taskDetails['task_status'] = $categoryID[0];
+		$taskDetails['modified_by'] = $this->input->post('SadminID');
+		$taskDetails['modified_date'] = $updateDate;
+		$iscreated = $this->CommonModel->updateMasterDetails('tasks',$taskDetails,$where);
 
 	}
 
