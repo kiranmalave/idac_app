@@ -25,16 +25,13 @@ define([
         this.dynamicData = null;
         this.toClose = "projectSingleView";
         this.pluginName = "projectList";
-        this.loadFrom = options.loadfrom;
+        this.loadFrom = options.loadFrom;
         this.model = new projectSingleModel();
         var selfobj = this;
-        // this.dynamicFieldRenderobj = new dynamicFieldRender({
-        //   ViewObj: selfobj,
-        //   formJson: {},
-        // });
         this.multiselectOptions = new multiselectOptions();
         $(".modelbox").hide();
         scanDetails = options.searchproject;
+        console.log(options);
         
         $(".popupLoader").show();
         var projectList = new projectCollection();
@@ -178,6 +175,9 @@ define([
         let selfobj = this;
         var mid = this.model.get("project_id");
         let isNew = $(e.currentTarget).attr("data-action");
+        var inputStr = $('#project_name').val();
+        let capitalizedString = inputStr.charAt(0).toUpperCase() + inputStr.slice(1);
+        this.model.set({"project_name": capitalizedString});
         if (permission.edit != "yes") {
           alert("You dont have permission to edit");
           return false;
@@ -215,13 +215,14 @@ define([
               scanDetails.initialize();
             }else if(selfobj.loadFrom == "proposalSingleView") {
               scanDetails.refreshProj();
+            }else if(selfobj.loadFrom == "projectViewOther"){
+              scanDetails.initialize(scanDetails);
             }else{
               scanDetails.filterSearch();
             }
             if (res.flag == "S") {
               if (isNew == "new") {
                 selfobj.model.clear().set(selfobj.model.defaults);
-                // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                 let url = APIPATH + 'projUpload/' + selfobj.projID;
                 selfobj.uploadFileEl.elements.parameters.action = url;
                 selfobj.uploadFileEl.prepareUploads(selfobj.uploadFileEl.elements);
@@ -272,8 +273,6 @@ define([
       },
   
       render: function () {
-        //var isexits = checkisoverlay(this.toClose);
-        //if(!isexits){
         var selfobj = this;
         var source = projecttemp;
         var template = _.template(source);
@@ -287,7 +286,6 @@ define([
         this.$el.data("current", "yes");
         $(".tab-content").append(this.$el);
         $("#" + this.toClose).show();
-        // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
         this.initializeValidate();
         this.setOldValues();
         $(".ws-select").selectpicker();

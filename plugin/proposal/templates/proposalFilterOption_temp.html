@@ -31,7 +31,7 @@
           <option>Company Name</option>
           <% _.each(customerList, function(model1) { %>
             <option value="<%=model1.attributes.customer_id%>">
-              <%=model1.attributes.company_name%>
+              <%=model1.attributes.name%>
             </option>
             <%}); %>
         </select>

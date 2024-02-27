@@ -374,10 +374,10 @@ define([
             if(selfobj.loadFrom == "dashboard"){
               handelClose(selfobj.toClose);
             }else if(selfobj.loadFrom == undefined){
-              handelClose(selfobj.toClose); 
+              handelClose(selfobj.toClose);
+              scanDetails.filterSearch();
             }else{
               scanDetails.filterSearch();
-             
             }
             
             if (res.flag == "S") {
