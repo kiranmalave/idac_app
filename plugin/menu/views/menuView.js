@@ -146,6 +146,7 @@ define([
       filterOption.clear().set(filterOption.defaults);
       $(".multiOptionSel").removeClass("active");
       $("#textval").val("");
+      $('#textSearch').prop('selectedIndex', 0);
       $('#textSearch option[value=menuID]').attr('selected', 'selected');
       this.filterSearch(false);
     },

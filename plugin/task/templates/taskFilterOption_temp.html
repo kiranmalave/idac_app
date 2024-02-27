@@ -5,6 +5,7 @@
   <div class="row">
     <div class="col-md-6">
       <select id="textSearch" class="form-control txtchange changeBox" name="textSearch">
+        <option value="select">Select</option>
         <option value="subject">Task Name</option>
         <option value="task_id">Task ID</option>
       </select>
@@ -51,28 +52,34 @@
             <option value="<%=model1.category_id%>">
               <%=model1.categoryName %>
             </option>
-          <%})%>
-        <%})%>
+            <%})%>
+              <%})%>
       </select>
     </div>
     <div class="col-md-6">
-        <select id="customer_id" name="customer_id" class="form-control ws-select show-tick dropval" data-live-search="true" title="Select Client" multiple>
+      <select id="customer_id" name="customer_id" class="form-control ws-select show-tick dropval"
+        data-live-search="true" title="Select Client" multiple>
         <% _.each(customerList, function(model1) { %>
-          <option value="<%=model1.attributes.customer_id%>"><%=model1.attributes.company_name%></option>
-        <%}); %>
+          <option value="<%=model1.attributes.customer_id%>">
+            <%=model1.attributes.company_name%>
+          </option>
+          <%}); %>
       </select>
     </div>
-    
+
   </div>
   <div class="clearfix">&nbsp;</div>
   <div class="row">
-      <div class="col-md-6">
-        <select id="created_by" name="created_by" class="form-control ws-select dropval" data-live-search="true" title="Created By" multiple>
-          <% _.each(adminList, function(model1) { %>
-            <option value="<%=model1.attributes.adminID%>"><%=model1.attributes.name%></option>
+    <div class="col-md-6">
+      <select id="created_by" name="created_by" class="form-control ws-select dropval" data-live-search="true"
+        title="Created By" multiple>
+        <% _.each(adminList, function(model1) { %>
+          <option value="<%=model1.attributes.adminID%>">
+            <%=model1.attributes.name%>
+          </option>
           <%}); %>
-        </select>
-      </div>
+      </select>
+    </div>
   </div>
 
   <div class="clearfix">&nbsp;</div>
@@ -122,6 +129,7 @@
     <input type="button" id="filterSearch" class="filterSearch btn btn-raised bg-green waves-effect"
       value="Search"></button>
     <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval" value="Reset"></button>
-    <input id="taskFilterOption" type="button" class="btn btn-raised bg-blue-grey colseFil closeFilter" data-item="taskFilterView" value="Close"></button>
+    <input id="taskFilterOption" type="button" class="btn btn-raised bg-blue-grey colseFil closeFilter"
+      data-item="taskFilterView" value="Close"></button>
   </div>
 </form>

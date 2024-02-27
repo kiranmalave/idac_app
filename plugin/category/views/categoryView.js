@@ -152,6 +152,7 @@ define([
       $(".extraOptionSel").removeClass("active");
       $(".multiOptionSel").removeClass("active");
       $("#textval").val("");
+      $('#textSearch').prop('selectedIndex', 0);
       $('#textSearch option[value=category_id]').attr('selected', 'selected');
       this.filterSearch(false);
     },
