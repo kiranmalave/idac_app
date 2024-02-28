@@ -1018,9 +1018,9 @@ class TaskMaster extends CI_Controller
 			'description' => $description,
 			'user_id' => $user_id,
 			'col'=> 'Task',
-			'timestamp' => date('Y-m-d H:i:s')
+			'activity_date' => date('Y-m-d H:i:s')
 		);
-		$iscreated = $this->CommonModel->saveMasterDetails('task_history', $taskDetails);
+		$iscreated = $this->CommonModel->saveMasterDetails('history', $taskDetails);
 	}
 
 	public function getTaskHistory()
@@ -1041,7 +1041,7 @@ class TaskMaster extends CI_Controller
 		$orderBy = "history_id";
 		$order = "DESC";
 		$other = array("orderBy" => $orderBy, "order" => $order);
-		$historyDetails = $this->CommonModel->GetMasterListDetails($selectC = '*', 'task_history', $wherec, '', '', $join, $other);
+		$historyDetails = $this->CommonModel->GetMasterListDetails($selectC = '*', 'history', $wherec, '', '', $join, $other);
 		// print_r($historyDetails);exit;
 		foreach ($historyDetails as $key => $value) {
 			if($value->col == "Task Priority" || $value->col == "Task Type" || $value->col == "Task Status"){
