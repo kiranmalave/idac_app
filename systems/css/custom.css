@@ -9805,3 +9805,8 @@ label.form-label.taskDate.tasktop.fortask {
 .proposalActoinCol {
   display: flex;
 }
+
+.forActivty .activitySave .activityList ul li a {
+  width: 100%;
+  text-decoration: none;
+}

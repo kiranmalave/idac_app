@@ -14,22 +14,13 @@
         </div>
     </div>
     <div class="actionBtns taskAction">
-        <!-- <div> -->
-
-        <span class="input-group-addon lg scroll taskWatch" <%if ( model.task_id==null ) {%> style="color:#ccc" <%}%>
-                data-scroll="comment">
-
+        <span class="input-group-addon lg scroll taskWatch" <%if ( model.task_id==null ) {%> style="color:#ccc" <%}%> data-scroll="comment">
                 <i class="material-icons" <%if ( model.task_id==null ) {%> style="color:#ccc" <%}%> >chat</i>
         </span>
-        <span class="input-group-addon lg scroll taskWatch" <%if ( model.task_id==null ) {%> style="color:#ccc" <%}%>
-                data-scroll="history">
+        <span class="input-group-addon lg scroll taskWatch" <%if ( model.task_id==null ) {%> style="color:#ccc" <%}%>data-scroll="history">
                 <i class="material-icons" <%if ( model.task_id==null ) {%> style="color:#ccc" <%}%> >history</i>
         </span>
-        <!-- </div> -->
 
-        <!-- <span class="material-symbols-outlined mr-2 watchers" style="color: #5f6368;">
-                    eyeglasses
-                </span> -->
         <div class="watchers taskWatch visableTask" id="watcherEye">
             <i class="material-icons">visibility</i>
 
@@ -73,9 +64,7 @@
                         <div class="row ">
                             <div class="col-md-12">
                                 <label for="description" class="taskDescription">Description</label>
-                                <div id="task_description" class="form-control mb-3">
-                                    <%=model.description%>
-                                </div>
+                                <div id="task_description" class="form-control mb-3"><%=model.description%></div>
                             </div>
 
                         </div>
@@ -98,9 +87,7 @@
                         </div>
                     </div>
                     <div class="row attachupdate taskAttach">
-                        <button type="button" class="loadMedia ws-taskModalbtn dotborder" data-change="ws-bg-image"
-                            data-toggle="modal" data-target="#largeModal"><span
-                                class="material-icons">add</span></button>
+                        <button type="button" class="loadMedia ws-taskModalbtn dotborder" data-change="ws-bg-image"  data-toggle="modal" data-target="#largeModal"><span class="material-icons">add</span></button>
                         <div id="attachedDoc" class="row taskAttachDoc"></div>
                     </div>
                 </div>
@@ -358,9 +345,7 @@
                             <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line taskDate">
-                                        <input id="customer_id" type="text" autocomplete="off"
-                                            class="form-control custChange ddcnt taskDate" name="customer"
-                                            value="<%=model.customerName%>" />
+                                        <input id="customer_id" type="text" autocomplete="off" class="form-control custChange ddcnt taskDate" name="customer" value="<%=model.customerName%>" />
                                         <label for="customer_id" class="form-label taskDate">Customer</label>
                                     </div>
                                 </div>
@@ -391,27 +376,16 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group form-float d-flex">
-                                    <select id="does_repeat" name="does_repeat" autocomplete="off"
-                                        class="form-control dropval ws-select show-tick repeatChange">
-                                        <option <% if(model.does_repeat=="does_not_repeat" ){%> selected <%}%>
-                                                value="does_not_repeat">Does not Repeat</option>
-                                        <option <% if(model.does_repeat=="daily" ){%>selected<%}%> value="daily">Daily
-                                        </option>
-                                        <option <% if(model.does_repeat=="mon_to_fir" ){%>selected<%}%>
-                                                value="mon_to_fir">Mon-Fri</option>
-                                        <option <% if(model.does_repeat=="weekend" ){%>selected<%}%>
-                                                value="weekend">Weekend (Sat-Sun)</option>
-                                        <option <% if(model.does_repeat=="custom" ){%>selected<%}%>
-                                                value="custom">Custom</option>
+                                    <select id="does_repeat" name="does_repeat" autocomplete="off" class="form-control dropval ws-select show-tick repeatChange">
+                                        <option <% if(model.does_repeat=="does_not_repeat" ){%> selected <%}%> value="does_not_repeat">Does not Repeat</option>
+                                        <option <% if(model.does_repeat=="daily" ){%>selected<%}%> value="daily">Daily </option>
+                                        <option <% if(model.does_repeat=="mon_to_fir" ){%>selected<%}%>  value="mon_to_fir">Mon-Fri</option>
+                                        <option <% if(model.does_repeat=="weekend" ){%>selected<%}%> value="weekend">Weekend (Sat-Sun)</option>
+                                        <option <% if(model.does_repeat=="custom" ){%>selected<%}%> value="custom">Custom</option>
                                     </select>
 
-                                    <div class="ws-repeatTask" <%if(model.does_repeat=="custom" ){%>
-                                        style="display:block;"<%}else{%>style="display: none;"<%}%> >
-                                                <button type="button" class="loadCustom ws-repeatTaskbtn bg-white"
-                                                    data-item="repeatTaskCustomView" data-view="repeatTask"
-                                                    data-task_id="<%=model.task_id%>" data-toggle="modal"
-                                                    data-target="#defaultModal"><span
-                                                        class="material-icons">add</span></button>
+                                    <div class="ws-repeatTask" <%if(model.does_repeat=="custom" ){%> style="display:block;"<%}else{%>style="display: none;"<%}%> >
+                                        <button type="button" class="loadCustom ws-repeatTaskbtn bg-white" data-item="repeatTaskCustomView" data-view="repeatTask" data-task_id="<%=model.task_id%>" data-toggle="modal" data-target="#defaultModal"><span class="material-icons">add</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -422,13 +396,11 @@
                                 <div class="form-group form-float">
                                     <div class="form-line taskDate">
                                         <%if (model.task_id==null){%>
-                                            <input type="text" class="form-control taskCreate taskDate" disabled
-                                                value="<%=ADMINNAME%>">
-                                            <%}else{%>
-                                                <input type="text" class="form-control taskCreate taskDate" disabled
-                                                    value="<%=model.createdByname%>">
-                                                <%}%>
-                                                    <label class="form-label taskDate">Created By</label>
+                                            <input type="text" class="form-control taskCreate taskDate" disabled value="<%=ADMINNAME%>">
+                                        <%}else{%>
+                                            <input type="text" class="form-control taskCreate taskDate" disabled value="<%=model.createdByname%>">
+                                        <%}%>
+                                            <label class="form-label taskDate">Created By</label>
                                     </div>
                                 </div>
                             </div>

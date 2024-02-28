@@ -187,7 +187,7 @@ class TaskMaster extends CI_Controller
 			$page = 0;
 		}
 
-		$selectC = "t.*, c.categoryName AS status_slug, ca.categoryName AS priority_slug, a.name, p.project_name AS projectName, p.project_number AS projectNumb";
+		$selectC = "t.*, c.categoryName AS status_slug, c.cat_color AS status_color, ca.categoryName AS priority_slug, ca.cat_color AS priority_color, a.name, p.project_name AS projectName, p.project_number AS projectNumb";
 
 		if ($isAll == "Y") {
 			$join = array();
@@ -616,21 +616,6 @@ class TaskMaster extends CI_Controller
 				$this->response->output($status, 200);
 			}
 		}
-		// $commentID= $this->input->post("list");
-		// $wherec["comment_id ="] = $commentID;
-		// $changestatus = $this->CommonModel->deleteMasterDetails('task_comments',$wherec);
-		// if($changestatus){
-		// 	$status['data'] = array();
-		// 	$status['statusCode'] = 200;
-		// 	$status['flag'] = 'S';
-		// 	$this->response->output($status, 200);
-		// } else {
-		// 	$status['data'] = array();
-		// 	$status['msg'] = $this->systemmsg->getErrorCode(996);
-		// 	$status['statusCode'] = 996;
-		// 	$status['flag'] = 'F';
-		// 	$this->response->output($status, 200);
-		// }
   }
 
 	public function dashboardStatus()
@@ -660,6 +645,18 @@ class TaskMaster extends CI_Controller
 		$taskDetails['modified_by'] = $this->input->post('SadminID');
 		$taskDetails['modified_date'] = $updateDate;
 		$iscreated = $this->CommonModel->updateMasterDetails('tasks',$taskDetails,$where);
+		if ($iscreated) {
+			$status['data'] = array();
+			$status['statusCode'] = 200;
+			$status['flag'] = 'S';
+			$this->response->output($status, 200);
+		} else {
+			$status['data'] = array();
+			$status['msg'] = $this->systemmsg->getErrorCode(996);
+			$status['statusCode'] = 996;
+			$status['flag'] = 'F';
+			$this->response->output($status, 200);
+		}
 
 	}
 
@@ -1020,7 +1017,7 @@ class TaskMaster extends CI_Controller
 			'col'=> 'Task',
 			'timestamp' => date('Y-m-d H:i:s')
 		);
-		$iscreated = $this->CommonModel->saveMasterDetails('task_history', $taskDetails);
+		$iscreated = $this->CommonModel->saveMasterDetails('history', $taskDetails);
 	}
 
 	public function getTaskHistory()
