@@ -234,6 +234,7 @@ define([
 
     saveNoteDetails: function (e) {
       let selfobj = this;
+      console.log(this.model);
       var id = this.model.get("note_id");
 
       var title = $("#title").val();

@@ -30,51 +30,93 @@ class TaxInvoice extends CI_Controller {
 		$this->load->model('CommonModel');
 		$this->load->library("pagination");
 		$this->load->library('ValidateData');
+		$this->load->library("Datatables");
+		// $this->load->library("Filters");
 		
 	}
 	public function index()
 	{
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
-		$textSearch = trim($this->input->post('textSearch'));
+		$isAll = $this->input->post('getAll');
+		$textSearch = $this->input->post('textSearch');
 		$curPage = $this->input->post('curpage');
 		$textval = $this->input->post('textval');
 		$statuscode = $this->input->post('status');
+		$record_type = $this->input->post('record_type');
 		$orderBy = $this->input->post('orderBy');
 		$order = $this->input->post('order');
 		$filterCName = $this->input->post('filterCName');
-		$cutomerID = $this->input->post('customer_id');
+		$config = $this->config->item('pagination');
+		$this->menuID = $this->input->post('menuId');
+		$join = array();
+		
+		// if($isAll !="Y"){
+		// 	$this->filters->menuID = $this->menuID;
+		// 	$this->filters->getMenuData();
+		// 	$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		// 	$this->menuDetails = $this->filters->menuDetails;
+		// 	$wherec = $join = array();
+		// 	$menuId = $this->input->post('menuId');
+		// 	$whereData = $this->filters->prepareFilterData($_POST);
+		// 	$wherec = $whereData["wherec"];
+		// 	$other = $whereData["other"];
+		// 	$join = $whereData["join"];
+		// 	$selectC = $whereData["select"];
 
-		$config = array();
+		// 	// create join for created by and modified data details
+		// 	$jkey = (count($join)+1);
+		// 	$join[$jkey]['type'] ="LEFT JOIN";
+		// 	$join[$jkey]['table']="admin";
+		// 	$join[$jkey]['alias'] ="ad";
+		// 	$join[$jkey]['key1'] ="created_by";
+		// 	$join[$jkey]['key2'] ="adminID";
+		// 	$jkey = (count($join)+1);
+		// 	$join[$jkey]['type'] ="LEFT JOIN";
+		// 	$join[$jkey]['table']="admin";
+		// 	$join[$jkey]['alias'] ="am";
+		// 	$join[$jkey]['key1'] ="modified_by";
+		// 	$join[$jkey]['key2'] ="adminID";
+		// 	if($selectC !=""){
+		// 		$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// 	}else{
+		// 		$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// 	}
+		// }
+		
+		// $config = array();
 		if(!isset($orderBy) || empty($orderBy)){
 			$orderBy = "invoiceNumber";
 			$order ="DESC";
 		}
 		$other = array("orderBy"=>$orderBy,"order"=>$order);
-		$config = $this->config->item('pagination');
-		$wherec = $join = array();
-		
+		// $wherec = $join = array();
 		if(isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)){
+			$textSearch = trim($textSearch);
 			$wherec["$textSearch like  "] = "'".$textval."%'";
 		}
 		if(isset($filterCName) && !empty($filterCName)){
-			$wherec["i.customer_id"] = ' = "'.$filterCName.'"';
+			$wherec["t.customer_id"] = ' = "'.$filterCName.'"';
 		}
-		
-		if(isset($cutomerID) && !empty($cutomerID)){
-			$wherec["i.customer_id"] = ' = "'.$cutomerID.'"';
+		if(isset($record_type) && !empty($record_type)){
+			$wherec["t.record_type"] = ' = "'.$record_type.'"';
 		}
-
-		if (isset($statuscode) && !empty($statuscode)) {
-			$statusStr = str_replace(",", '","', $statuscode);
-			$wherec["i.status"] = 'IN ("' . $statusStr . '")';
+		if(isset($statuscode) && !empty($statuscode)){
+			$wherec["t.status"] = ' = "'.$statuscode.'"';
 		}
-
 		// get comapny access list
 		$adminID = $this->input->post('SadminID');
 		
+		// if ($isAll == "Y") {
+		// 	$join = $wherec = array();
+		// 	if (isset($statuscode) && !empty($statuscode)) {
+		// 		$statusStr = str_replace(",", '","', $statuscode);
+		// 		$wherec["t.status"] = 'IN ("' . $statusStr . '")';
+		// 	}
+		// }
+		
 		$config["base_url"] = base_url() . "members";
-        $config["total_rows"] = $this->TaxInvoiceModel->getTotalTaxInvoice($wherec);
+		$config["total_rows"] = $this->TaxInvoiceModel->getTotalTaxInvoice('invoiceID','invoice_header',$wherec,$other);
         $config["uri_segment"] = 2;
         $this->pagination->initialize($config);
         if(isset($curPage) && !empty($curPage)){
@@ -85,8 +127,9 @@ class TaxInvoice extends CI_Controller {
 			$curPage = 0;
 			$page = 0;
 		}
+		
         $memberDetails = $this->TaxInvoiceModel->getTaxInvoiceDetails($selectC='',$wherec,$config["per_page"],$page,$join,$other);
-		// print_r($memberDetails);exit;
+		
 		$status['data'] = $memberDetails;
 		
 		$status['paginginfo']["curPage"] = $curPage;
@@ -162,6 +205,69 @@ class TaxInvoice extends CI_Controller {
 				
 			if($changestatus){
 
+				if ($statusCode == 'approved')
+				{
+
+
+					
+					// if($invoiceLine[0]->record_type == "delivery"){
+						$oldqty = 0 ;
+						$inLineData = $this->CommonModel->getMasterDetails('invoice_line', '', array('invoiceID'=>$ids));
+						if(isset($inLineData) && !empty($inLineData)){
+							foreach ($inLineData as $key => $value) {
+								$whereP = array('productID' => $value->invoiceLineChrgID);
+								$getStock = $this->CommonModel->getMasterDetails('stocks', '', $whereP);
+									
+								if(isset($getStock) && !empty($getStock)){
+
+									$orderIn = $getStock[0]->orderIn;
+									$orderSettle = $getStock[0]->orderSettle;
+									$orderOpen = $getStock[0]->orderOpen;
+									$orderCancel = $getStock[0]->orderCancel;
+									$orderBalance = $getStock[0]->orderBalance;
+									// $getOrderIn = number_format((floatval($orderIn) + floatval($value->quantity)) - floatval($oldQuantity),2, '.', '');
+									// $avblStock['orderIn'] = $getOrderIn; 
+									// $avblStock['orderBalance'] = $getOrderBlce;
+									$orderSettle = $orderSettle + $value->invoiceLineQty;
+									$getOrderBlce = number_format(floatval($orderOpen) + floatval($orderIn) - floatval($orderSettle) - floatval($orderCancel),2, '.', ''); //0+13-19-26
+									$avblStock['orderSettle'] = $orderSettle;
+									$avblStock['orderBalance'] = $getOrderBlce;
+									$isinsert1 = $this->CommonModel->updateMasterDetails('stocks',$avblStock,$whereP);
+									
+								}
+							}
+						// }
+					}else
+					{
+						// if($invoiceLine[0]->record_type == "delivery"){
+							$oldqty = 0 ;
+							$inLineData = $this->CommonModel->getMasterDetails('invoice_line', '', array('invoiceID'=>$ids));
+							if(isset($inLineData) && !empty($inLineData)){
+								foreach ($inLineData as $key => $value) {
+									$whereP = array('productID' => $value->invoiceLineChrgID);
+									$getStock = $this->CommonModel->getMasterDetails('stocks', '', $whereP);
+										
+									if(isset($getStock) && !empty($getStock)){
+										$orderIn = $getStock[0]->orderIn;
+										$orderSettle = $getStock[0]->orderSettle;
+										$orderOpen = $getStock[0]->orderOpen;
+										$orderCancel = $getStock[0]->orderCancel;
+										$orderBalance = $getStock[0]->orderBalance;
+										// $getOrderIn = number_format((floatval($orderIn) + floatval($value->quantity)) - floatval($oldQuantity),2, '.', '');
+										// $avblStock['orderIn'] = $getOrderIn; 
+										// $avblStock['orderBalance'] = $getOrderBlce;
+										$orderSettle = $orderSettle + $value->invoiceLineQty;
+										$getOrderBlce = number_format(floatval($orderOpen) + floatval($orderIn) - floatval($orderSettle) - floatval($orderCancel),2, '.', ''); //0+13-19-26
+										$orderCancel =	$orderCancel + $value->invoiceLineQty;
+										$avblStock['orderCancel'] = $orderCancel;
+										$avblStock['orderBalance'] = $getOrderBlce;
+										$isinsert1 = $this->CommonModel->updateMasterDetails('stocks',$avblStock,$whereP);
+									}
+								}						
+							}
+						// }    
+					}
+				}
 				$status['data'] = array();
 				$status['statusCode'] = 200;
 				$status['flag'] = 'S';
@@ -173,6 +279,33 @@ class TaxInvoice extends CI_Controller {
 				$status['flag'] = 'F';
 				$this->response->output($status,200);
 			}
+		}
+	}
+
+	public function deleteTaxInvoices()
+	{
+		$this->access->checkTokenKey();
+		$this->response->decodeRequest(); 
+		$action = $this->input->post("action");
+			if(trim($action) == "delete"){
+				$ids = $this->input->post("list");
+				$where['invoiceID'] = $ids;
+				$changestatus = $this->TaxInvoiceModel->deleteInvoices('',$where);
+				
+				if($changestatus){
+
+					$status['data'] = array();
+					$status['statusCode'] = 200;
+					$status['flag'] = 'S';
+					$this->response->output($status,200);
+				}else{
+					
+					$status['data'] = array();
+					$status['msg'] = $this->systemmsg->getErrorCode(996);
+					$status['statusCode'] = 996;
+					$status['flag'] = 'F';
+					$this->response->output($status,200);
+				}
 		}
 	}
 	public function invoiceItemList($value='')
@@ -241,8 +374,20 @@ class TaxInvoice extends CI_Controller {
 		$roundOff = 0;
 		$inline = array();
 		$i=0;
+
+		$wheredoct = array();
+		if($invoiceLine[0]->record_type == "invoice")
+			$wheredoct["docTypeID"] = "1";
+		else if($invoiceLine[0]->record_type == "qoutation")
+			$wheredoct["docTypeID"] = "3";	
+		else if($invoiceLine[0]->record_type == "delivery")
+			$wheredoct["docTypeID"] = "4";
+		else if($invoiceLine[0]->record_type == "receipt")
+			$wheredoct["docTypeID"] = "2";
+
 		// Get Last Count for Invoice
-		$lastInvoiceDetails = $this->CommonModel->getMasterDetails("doc_prefix","docPrefixCD,docYearCD,docCurrNo",array("docTypeID"=>"1"));
+		$lastInvoiceDetails = $this->CommonModel->getMasterDetails("doc_prefix","docPrefixCD,docYearCD,docCurrNo",$wheredoct);
+
 		if(!$lastInvoiceDetails){
 			$status['data'] = array();
 			$status['msg'] = $this->systemmsg->getErrorCode(267);
@@ -252,16 +397,29 @@ class TaxInvoice extends CI_Controller {
 		}
 		$this->db->trans_begin();
 		if($isNew=="yes"){
+			
 			$datacc = array(
 				"invoiceDate"=>dateFormat($invoiceLine[0]->invoiceDate),
 				"customer_id"=>$invoiceLine[0]->customerID,
+				"record_type"=>$invoiceLine[0]->record_type,
 				"stateGstPercent"=>$invoiceLine[0]->stateGstPercent,
 				"centralGstPercent"=>$invoiceLine[0]->centralGstPercent,
 				"interGstAmount"=>$invoiceLine[0]->interGstPercent,
-				"invoiceNumber"=>$lastInvoiceDetails[0]->docPrefixCD.$lastInvoiceDetails[0]->docCurrNo.$lastInvoiceDetails[0]->docYearCD,
-				"status"=>'pending',
+				"invoiceNumber"=>$lastInvoiceDetails[0]->docPrefixCD.$lastInvoiceDetails[0]->docCurrNo."/".$lastInvoiceDetails[0]->docYearCD,
+				"status"=>'draft',
 				"created_by"=>$this->input->post('SadminID'),"created_date"=>date("Y-m-d H:i:s"));
-
+			$cDetails = $this->getCustomerDetails($invoiceLine[0]->customerID);
+			// $datacc['customer_name'] = $cDetails[0]->name;
+			// $datacc['customer_mobile']=$cDetails[0]->mobile_no;
+			// $datacc['customer_address']=$cDetails[0]->address;
+			// $datacc['customer_gst']=$cDetails[0]->gst_no;
+			// $datacc['customer_s_address']=$cDetails[0]->address;
+			// $datacc['customer_s_mobile']=$cDetails[0]->mobile_no;
+			// $datacc['customer_state']=$cDetails[0]->customer_state;
+			// $datacc['terms']=$cDetails[0]->terms;
+			$headerDetails = (array) $invoiceLine[0];
+			// $fieldData = $this->datatables->mapDynamicFeilds($invoiceLine[0]->record_type,$headerDetails);
+			// $datacc = array_merge($fieldData, $datacc);
 			$invoiceID = $this->TaxInvoiceModel->createTaxInvoiceInfo($datacc);
 			if(!$invoiceID){
 				$status['data'] = array();
@@ -271,7 +429,7 @@ class TaxInvoice extends CI_Controller {
 				$this->response->output($status,200);
 			}else{
 				$inID = array("docCurrNo"=>($lastInvoiceDetails[0]->docCurrNo+1));
-				$isupdate = $this->CommonModel->updateMasterDetails("doc_prefix",$inID,array("docTypeID"=>"1"));
+				$isupdate = $this->CommonModel->updateMasterDetails("doc_prefix",$inID,$wheredoct);
 				if(!$isupdate){
 					$this->db->trans_rollback();
 				   	$status['data'] = array();
@@ -292,14 +450,21 @@ class TaxInvoice extends CI_Controller {
 				
 				if($key !=0)
 				{
-					if(!isset($value->invoiceLineChrgID ) || empty($value->invoiceLineChrgID )){
-						$error[] = "Item type can not blank. Row No.".$value->srno."\n";
-					}
+					// if(!isset($value->invoiceLineChrgID ) || empty($value->invoiceLineChrgID )){
+					// 	$error[] = "Item type can not blank. Row No.".$value->srno."\n";
+					// }
 					if(!isset($value->quantity) || empty($value->quantity)){
 						$error[] = "Item quantity can not blank. Row No.".$value->srno."\n";
 					}
-					if(!isset($value->rate) || empty($value->rate)){
-						$error[] = "Item rate can not blank. Row No.".$value->srno."\n";
+					if($invoiceLine[0]->record_type != "delivery"){
+						if(!isset($value->rate) || empty($value->rate)){
+							$error[] = "Item rate can not blank. Row No.".$value->srno."\n";
+						}
+					}else
+					{
+						if($value->rate== '' ){
+							$value->rate == 0 ;
+						}
 					}
 				}
 			}
@@ -314,7 +479,7 @@ class TaxInvoice extends CI_Controller {
 				$this->response->output($status,200);
 		}
 		if(isset($invoiceLine) && !empty($invoiceLine)){
-
+			// print_r($invoiceLine);exit;
 			foreach ($invoiceLine as $key => $value) {
 				if($key !=0){
 					$inline[$i]["srNo"]=$value->srno;
@@ -323,28 +488,143 @@ class TaxInvoice extends CI_Controller {
 					$sel = "*";
 					$wher = array("invoiceID"=>$value->invoiceID,"srNo"=>$value->srno);
 					$itemDetails = $this->TaxInvoiceModel->getTaxInvoiceLineDetails($sel,$wher);
-					
+					$rate = 0 ;
+					$amt = 0 ;
+
+                    if($invoiceLine[0]->record_type == "delivery"){
+                     $oldQuantity = 0 ;
+                     $inLineData = $this->CommonModel->getMasterDetails('invoice_line', '', array('invoiceID'=>$invoiceLine[0]->invoiceID));
+                     // print_r($inLineData);
+                     if (isset($inLineData) && !empty($inLineData)) {
+                         if($value->invoiceLineChrgID == $inLineData[0]->invoiceLineChrgID)
+                         	$oldQuantity = $inLineData[0]->invoiceLineQty;
+                     }
+                     $whereP = array('productID' => $value->invoiceLineChrgID);
+                     $getStock = $this->CommonModel->getMasterDetails('stocks', '', $whereP);
+                        
+                     if(isset($getStock) && !empty($getStock)){
+                         $orderIn = $getStock[0]->orderIn;
+                         $orderSettle = $getStock[0]->orderSettle;
+                         $orderOpen = $getStock[0]->orderOpen;
+                         $orderCancel = $getStock[0]->orderCancel;
+                         $orderBalance = $getStock[0]->orderBalance;
+						 
+                         $getOrderIn = number_format((floatval($orderIn) + floatval($value->quantity)) - floatval($oldQuantity),2, '.', '');
+                         $getOrderBlce = number_format(floatval($orderOpen) + floatval($getOrderIn) - floatval($orderSettle) - floatval($orderCancel),2, '.', ''); //0+13-19-26
+
+                         $avblStock['orderIn'] = $getOrderIn; 
+                         $avblStock['orderBalance'] = $getOrderBlce;
+                            
+                         $isinsert1 = $this->CommonModel->updateMasterDetails('stocks',$avblStock,$whereP);
+
+                     }else{
+                         $orderIn = 0;
+                         $orderSettle = 0;
+                         $orderOpen = 0;
+                         $orderCancel = 0;
+                         $getOrderIn = number_format((floatval($orderIn) + floatval($value->quantity)) - floatval($oldQuantity),2, '.', '');
+
+                         $getOrderBlce = number_format(floatval($orderOpen) + floatval($getOrderIn) - floatval($orderSettle) - floatval($orderCancel),2, '.', ''); 
+
+                         $avblStock['orderIn'] = $getOrderIn; 
+                         $avblStock['orderBalance'] = $getOrderBlce;
+                         //$avblStock['orderCancel'] = $getOrderBlce;
+                         $avblStock['productID'] = $value->productID;
+
+                         $isinsert1 = $this->CommonModel->saveMasterDetails('stocks',$avblStock);
+                     }
+                    }    
+
 					if(isset($itemDetails) && !empty($itemDetails)){
+						
 						// update item
-						$rate = number_format($value->rate,2, '.', '');
-						$amt = number_format(($value->quantity * $rate),2, '.', '');
+						if($value->rate!= '' ){
+							$rate = number_format($value->rate,2, '.', '');
+							$amt = number_format(($value->quantity * $rate),2, '.', '');
+						}
+											
 						if($itemDetails[0]->isEdit == "no"){
 							$data = array("invoiceLineNarr"=>$value->description);	
 
 						}else{
-							$data = array("invoiceLineChrgID"=>$value->invoiceLineChrgID,"invoiceLineNarr"=>$value->description,"invoiceLineAmount"=>$amt,"invoiceLineQty"=>$value->quantity,"invoiceLineRate"=>$rate,"invoiceLineUnit"=>$value->unit);
-
+							$data = array("invoiceLineChrgID"=>$value->invoiceLineChrgID,"invoiceLineNarr"=>$value->description,"invoiceLineAmount"=>$amt,"invoiceLineQty"=>$value->quantity,"invoiceLineRate"=>$rate,"invoiceLineUnit"=>$value->unit , "is_gst" =>$value->apply_taxes);
 						}
+						if($value->apply_taxes == "y")
+						{
+							$data['sgst'] = $value->stateGstPercent;
+							$data['cgst']= $value->centralGstPercent;
+							$data['igst'] = $value->interGstPercent;
+							$data['sgst_amt'] = $value->stateGstAmount;
+							$data['cgst_amt'] = $value->centralGstAmount;
+							$data['igst_amt'] = $value->interGstAmount;
+						}else
+						{
+							$data['sgst'] = 0;
+							$data['cgst']= 0;
+							$data['igst'] = 0;
+							$data['sgst_amt'] = 0;
+							$data['cgst_amt'] = 0;
+							$data['igst_amt'] = 0;
+						}	
+						// print_r($data);
 						$wherup = array("invoiceID"=>$value->invoiceID,"srNo"=>$value->srno);
 						$isupdate = $this->TaxInvoiceModel->saveInvoiceLineInfo($data,$wherup);
-						
 					}else{
 						// Insert item
-						$rate = number_format($value->rate,2, '.', '');
-						$amt = number_format(($value->quantity * $rate),2, '.', '');
-						$data = array("invoiceID"=>$value->invoiceID,"srNo"=>$value->srno,"invoiceLineNarr"=>$value->description,"invoiceLineChrgID"=>$value->invoiceLineChrgID,"invoiceLineAmount"=>$amt,"invoiceLineQty"=>$value->quantity,"invoiceLineRate"=>$rate,"invoiceLineUnit"=>$value->unit,"isEdit"=>"yes");
-
+						if($value->rate!= '' ){
+							$rate = number_format($value->rate,2, '.', '');
+							$amt = number_format(($value->quantity * $rate),2, '.', '');
+						}
+						print_r("<pre>");
+						print_r($value);exit;
+						$data = array("invoiceID"=>$value->invoiceID,"srNo"=>$value->srno,"invoiceLineNarr"=>$value->description,"invoiceLineChrgID"=>$value->invoiceLineChrgID,"invoiceLineAmount"=>$amt,"invoiceLineQty"=>$value->quantity,"invoiceLineRate"=>$rate,"invoiceLineUnit"=>$value->unit,"isEdit"=>"yes", "is_gst" =>$value->apply_taxes);
+						if($value->apply_taxes == 'y')
+						{
+							$data['sgst'] = $value->stateGstPercent;
+							$data['cgst']= $value->centralGstPercent;
+							$data['igst'] = $value->interGstPercent;
+							$data['sgst_amt'] = $value->stateGstAmount;
+							$data['cgst_amt'] = $value->centralGstAmount;
+							$data['igst_amt'] = $value->interGstAmount;
+						}else
+						{
+							$data['sgst'] = 0;
+							$data['cgst']= 0;
+							$data['igst'] = 0;
+							$data['sgst_amt'] = 0;
+							$data['cgst_amt'] = 0;
+							$data['igst_amt'] = 0;
+						}	
+						// print_r($data);exit;
 						$isupdate = $this->TaxInvoiceModel->createInvoiceLineInfo($data);
+						if($isupdate){
+							// if($invoiceLine[0]->record_type == "delivery")
+							// {
+							// 	$whereP = array('productID' => $value->invoiceLineChrgID);
+							// 	$pdet = $this->CommonModel->getMasterDetails('stocks', '', $whereP);
+								
+							// 	if (isset($pdet) && !empty($pdet))
+							// 	{
+							// 		if($isNew == "yes")
+							// 		{
+							// 			$bal = $pdet[0]->qtyBalance ;
+							// 			if($bal > 0 && $bal >= $value->quantity )
+							// 			{
+							// 				$bal = $bal -  $value->quantity;
+							// 			}else{
+							// 				$status['data'] = array();
+							// 				$status['msg'] = "Insufficient Stock Row No ".$value->srno ;
+							// 				$status['statusCode'] = 277;
+							// 				$status['flag'] = 'F';
+							// 				$this->response->output($status,200);
+							// 			}
+							// 			$qtout = $value->quantity;
+							// 			$pd = array("qtyBalance"=>$bal,"qtyOut"=>$qtout);
+							// 			$iscreated = $this->CommonModel->updateMasterDetails('stocks', $pd,$whereP);
+							// 		}
+							// 	}		
+							// }
+						}
 					}
 					if(!$isupdate){
 
@@ -384,7 +664,7 @@ class TaxInvoice extends CI_Controller {
 				$datain['stateGstAmount'] = number_format(($subTotal*$invoiceLine[0]->stateGstPercent/100),2, '.', ''); 
 			}else{
 				$datain['stateGstPercent'] =$invoiceLine[0]->stateGstPercent;
-				$datain['stateGstAmount'] = 0; 
+				$datain['stateGstAmount'] = number_format((float)$invoiceLine[0]->stateGstAmount,2, '.', ''); 
 			}
 			if($cGst == "yes"){
 
@@ -392,7 +672,7 @@ class TaxInvoice extends CI_Controller {
 				$datain['centralGstAmount'] = number_format(($subTotal*$invoiceLine[0]->centralGstPercent/100),2, '.', ''); 
 			}else{
 				$datain['centralGstPercent'] = $invoiceLine[0]->centralGstPercent;
-				$datain['centralGstAmount'] = 0; 
+				$datain['centralGstAmount'] = number_format((float)$invoiceLine[0]->centralGstAmount,2, '.', ''); 
 			}
 			if($iGst == "yes"){
 
@@ -400,7 +680,7 @@ class TaxInvoice extends CI_Controller {
 				$datain['interGstAmount'] = number_format(($subTotal*$invoiceLine[0]->interGstPercent/100),2, '.', ''); 
 			}else{
 				$datain['interGstPercent'] = $invoiceLine[0]->interGstPercent;
-				$datain['interGstAmount'] = 0;
+				$datain['interGstAmount'] = number_format((float)$invoiceLine[0]->interGstAmount,2, '.', ''); 
 			}
 			$gm = number_format(($subTotal + $datain['stateGstAmount'] + $datain['centralGstAmount'] + $datain['interGstAmount']),2, '.', '');
 			$datain['grossAmount'] = round($gm);
@@ -408,7 +688,7 @@ class TaxInvoice extends CI_Controller {
 			$datain['roundOff'] = number_format($datain['grossAmount']-$gm,2,'.', '');
 			$datain['modified_by'] = $this->input->post('SadminID');
 			$datain['modified_date'] = date("Y-m-d H:i:s");
-			$datain['status'] ='active';
+			$datain['status'] ='draft';
 			$wherec = array("invoiceID"=>$invoiceLine[0]->invoiceID,"customer_id"=>$invoiceLine[0]->customerID);
 			$isup = $this->TaxInvoiceModel->saveTaxInvoiceInfo($datain,$wherec);
 
@@ -447,12 +727,51 @@ class TaxInvoice extends CI_Controller {
 	}
 
 	public function getNarration($type="invoice"){
-
+		
 		$type = trim($type);
+		$join = array();
+		$join[0]['type'] ="LEFT JOIN";
+		$join[0]['table']="categories";
+		$join[0]['alias'] ="c";
+		$join[0]['key1'] ="product_type";
+		$join[0]['key2'] ="category_id";
+
+		$join[1]['type'] ="LEFT JOIN";
+		$join[1]['table']="categories";
+		$join[1]['alias'] ="c1";
+		$join[1]['key1'] ="generation";
+		$join[1]['key2'] ="category_id";
 		
-		$where = array("type ="=>"'".$type."'");
-		$getNarrList = $this->CommonModel->GetMasterListDetails("invoiceChargeID,invoiceChargeName,invoiceChargeNarr","invoice_charge_master",$where);
+		$join[2]['type'] ="LEFT JOIN";
+		$join[2]['table']="categories";
+		$join[2]['alias'] ="c2";
+		$join[2]['key1'] ="processor";
+		$join[2]['key2'] ="category_id";
+
+		$join[3]['type'] ="LEFT JOIN";
+		$join[3]['table']="categories";
+		$join[3]['alias'] ="c4";
+		$join[3]['key1'] ="memory";
+		$join[3]['key2'] ="category_id";
+
+		$join[4]['type'] ="LEFT JOIN";
+		$join[4]['table']="categories";
+		$join[4]['alias'] ="c5";
+		$join[4]['key1'] ="operating_system";
+		$join[4]['key2'] ="category_id";
+
+		$join[5]['type'] ="LEFT JOIN";
+		$join[5]['table']="stocks";
+		$join[5]['alias'] ="c6";
+		$join[5]['key1'] ="product_id";
+		$join[5]['key2'] ="productID";
+
 		
+		// $where = array("type ="=>"'".$type."'");
+		
+		$getNarrList = $this->CommonModel->GetMasterListDetails($selectC="product_id,model_name,model_number,product_name,quantity,product_serial_no,product_type,product_description,c.categoryName As product_type,c1.categoryName AS generation,c2.categoryName AS processor,c4.categoryName AS memory,c5.categoryName AS os,c6.qtyBalance AS balance",'products',$where = array(),'','',$join,$other=array());	
+		// $getNarrList = $this->CommonModel->GetMasterListDetails(,"",);
+
 		if(isset($getNarrList) && !empty($getNarrList)){
 				$status['data'] = $getNarrList;
 				$status['statusCode'] = 200;
@@ -534,6 +853,7 @@ class TaxInvoice extends CI_Controller {
 	{
 		// check is bill created
 		$data= array();
+		$pdfFilePath = '';
 		$wherec = array("infoID"=>1);
 	 	$contract = $this->CommonModel->getMasterDetails("info_settings","*",$wherec);
 	 	$data['infoSettings']= $contract;
@@ -545,24 +865,97 @@ class TaxInvoice extends CI_Controller {
 	 	$taxInvoiceData = $this->TaxInvoiceModel->getTaxInvoiceDetailsSingle("*",$wherec);
 	 	$data['taxInvoiceData']= $taxInvoiceData;
 	 	
-	 	$sel = "*";
+	 	$sel = "itemID,invoiceID,srNo,invoiceLineChrgID,invoiceLineNarr,invoiceLineQty,invoiceLineUnit,invoiceLineRate,invoiceLineAmount,count(itemID) as total";
 		$wher = array("invoiceID"=>$invoiceID);
-		$invoiceLineDetails = $this->TaxInvoiceModel->getTaxInvoiceLineDetails($sel,$wher);
+		
+		$invoiceLineDetails = $this->TaxInvoiceModel->getTaxInvoiceLineDetails($sel,$wher,true);
 		$data['invoiceLineDetails']= $invoiceLineDetails;
+		
+		$sel = "itemID,invoiceID,srNo,invoiceLineChrgID,invoiceLineNarr,invoiceLineQty,invoiceLineUnit,invoiceLineRate,invoiceLineAmount";
+		$wher = array("invoiceID"=>$invoiceID);
+		
+		$join = array();
+		$join[0]['type'] ="LEFT JOIN";
+		$join[0]['table']="products";
+		$join[0]['alias'] ="p";
+		$join[0]['key1'] ="invoiceLineChrgID";
+		$join[0]['key2'] ="product_id";
+		$wher = array("invoiceID"=>"= ".$invoiceID);
+		$invoiceLineDetailsDesc = $this->CommonModel->GetMasterListDetails("t.invoiceLineNarr,t.usb_mouse,t.usb_keyboard,t.laptop_backpack,t.wifi_adapter,t.display_connector,t.usb_c_type_connector,t.hdmi_cable,t.charger,p.product_serial_no",'invoice_line',$wher,'','',$join);
+		$data['invoiceLineDetailsDesc']= $invoiceLineDetailsDesc;
+		//print_r($invoiceLineDetailsDesc); exit;
 		$data['counDetails']= "-";	
 		//this the the PDF filename that user will get to download
 	
 		$wherec = array("customer_id"=>$taxInvoiceData[0]->customer_id);
-	 	$customerDetails = $this->CommonModel->getMasterDetails("customer","company_name, address",$wherec);
-		$data['companyDetails'] = $customerDetails;
+	 	$customerDetails = $this->CommonModel->getMasterDetails("customer","name,address,gst_no,state_id,mobile_no",$wherec);
 		
-        $pdfFilePath = $this->load->view("invoicepdf",$data,true);
+		if ( $customerDetails[0]->state_id != 0) {
+			$wherec = array("state_id"=> $customerDetails[0]->state_id);
+			$stateD = $this->CommonModel->getMasterDetails("states","*",$wherec);
+			if(isset($stateD) && !empty($stateD))
+			{
+				$customerDetails[0]->customer_state = $stateD[0]->state_name;
+			}
+		}	
+		$data['companyDetails'] = $customerDetails;
+			
+		if($taxInvoiceData[0]->record_type == 'delivery')	
+			$pdfFilePath = $this->load->view("deliveryPdf",$data,true);	
+		else if($taxInvoiceData[0]->record_type == 'receipt')
+        	$pdfFilePath = $this->load->view	("taxReceiptPdf",$data,true);
+		else if($taxInvoiceData[0]->record_type == 'qoutation')
+        	$pdfFilePath = $this->load->view("qoutationPdf",$data,true);
+		else if($taxInvoiceData[0]->record_type == 'invoice')
+			$pdfFilePath = $this->load->view("invoicepdf",$data,true);
 
-        //load mPDF library
-        $this->load->library('MPDFCI');
-        $this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
- 	    $this->mpdfci->WriteHTML($pdfFilePath);
-       	$this->mpdfci->Output();  
+
+		if(!$this->config->item('development')){
+			//load mPDF library
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			$this->mpdfci->WriteHTML($pdfFilePath);
+			// Add the watermark
+			$this->mpdfci->SetWatermarkText($taxInvoiceData[0]->status);
+			$this->mpdfci->showWatermarkText = true;
+			$this->mpdfci->watermark_font = 'Arial';
+			$this->mpdfci->watermarkTextAlpha = 0.3;
+			$this->mpdfci->watermark_font_size = 36;
+			$this->mpdfci->watermarkTextColor = array(192, 192, 192);
+			$this->mpdfci->Output();  
+		}else
+		{
+			print_r($pdfFilePath);
+		}  
+
 	}
-	
+	public function getCustomerDetails($cust_id ='')
+	{
+		$wherec = array("customer_id"=>$cust_id);
+	 	$cDetails = $this->CommonModel->getMasterDetails("customer","*",$wherec);
+		
+		if(isset($cDetails) && !empty($cDetails))
+		{	
+			$wherec = array("infoID"=>1);
+	 		$contract = $this->CommonModel->getMasterDetails("info_settings","*",$wherec);
+			if(isset($contract) && !empty($contract))
+			{
+				$cDetails[0]->terms = $contract[0]->termsConditions;
+			}
+			if ( $cDetails[0]->state_id != '0') {
+				$wherec = array("state_id"=> $cDetails[0]->state_id);
+				$stateD = $this->CommonModel->getMasterDetails("states","*",$wherec);
+				if(isset($stateD) && !empty($stateD))
+				{
+					$cDetails[0]->customer_state = $stateD[0]->state_name;
+				}
+			}else{
+				$status['msg'] = "Customer's State is not exists! ";
+				$status['statusCode'] = 996;
+				$status['flag'] = 'F';
+				$this->response->output($status,200);	
+			}
+			return $cDetails;
+		}		
+	}
 }
