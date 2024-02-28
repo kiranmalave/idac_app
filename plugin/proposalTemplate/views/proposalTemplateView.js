@@ -62,6 +62,31 @@ define([
       "click .changeStatus": "changeStatusListElement",
       "click .showpage": "loadData",
       "change .changeBox": "changeBox",
+      "click .sortColumns": "sortColumn",
+    },
+    sortColumn: function (e) {
+      var order = $(e.currentTarget).attr("data-value");
+      var selfobj = this;
+      var newsetval = [];
+      $("#clist").find(".up").removeClass("active");
+      $("#clist").find(".down").removeClass("active");
+      newsetval["order"] = $(e.currentTarget).attr("data-value");
+      newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+      if (order == "" || order == "DESC") {
+        order = "ASC";
+        $(e.currentTarget).find(".down").removeClass("active");
+        $(e.currentTarget).find(".up").addClass("active");
+      } else {
+        order = "DESC";
+        $(e.currentTarget).find(".down").addClass("active");
+        $(e.currentTarget).find(".up").removeClass("active");
+      }
+      $(e.currentTarget).attr("data-value", order);
+      newsetval["order"] = order;
+      newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+      console.log("newsetval", newsetval);
+      filterOption.set(newsetval);
+      selfobj.filterSearch();
     },
     updateOtherDetails: function (e) {
       var valuetxt = $(e.currentTarget).val();

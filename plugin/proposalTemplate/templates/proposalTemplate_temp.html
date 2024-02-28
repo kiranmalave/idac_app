@@ -12,58 +12,67 @@
               <span type="button" style="display:none;" class="changeStatus deleteAll" data-action="delete"
                 data-toggle="tooltip" data-placement="top" title="Delete"><i class="material-icons"
                   data-toggle="tooltip" data-placement="top" title="Delete"
-                  style="background-color: #494b94; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px; color:#fff !important;"">delete</i></span>
-                        <% } %>
-                   </div>
-                    <table id=" clist" class="table bulk_action tableList table-hover">
-                  <thead id="thead">
-                    <tr class="headings">
-                      <th style="width:60px;">
-                        <div class="listCheckbox">
-                          <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
-                          <label for="cAll">&nbsp;</label>
-                        </div>
-                      </th>
-                      <th class="column-title">Template Name</th>
-                      <th class="column-title" style="width:60px;">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody id="projectList">
-                  </tbody>
-                  </table>
-                  <div class="profile-loader-msg text-center"></div>
-                  <div class="profile-loader text-center">
-                    <div class="preloader">
-                      <div class="spinner-layer pl-amber">
-                        <div class="circle-clipper left">
-                          <div class="circle"></div>
-                        </div>
-                        <div class="circle-clipper right">
-                          <div class="circle"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div id="loadMember" data-index="1" data-currPage="1"></div>
+                  style="background-color: #494b94; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px; color:#fff !important;">delete</i></span>
+              <% } %>
           </div>
-          <!-- paggination -->
-          <div class="footer row">
-            <div class="col-sm-5">
-              <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
-                  class="page-info"></span></div>
-            </div>
-            <div class="col-sm-7">
-              <div class="showPageDetails dataTables_paginate paging_simple_numbers">
-                <ul class="pagination">
-                </ul>
+          <table id=" clist" class="table bulk_action tableList table-hover">
+            <thead id="thead">
+              <tr class="headings">
+                <th style="width:60px;">
+                  <div class="listCheckbox">
+                    <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
+                    <label for="cAll">&nbsp;</label>
+                  </div>
+                </th>
+                <th class="order sortColumns column-title" data-value="" data-field="temp_name">
+                  Template Name
+                  <span class="material-symbols-outlined sortarrow up">
+                    north
+                  </span>
+                  <span class="material-symbols-outlined sortarrow down">
+                    south
+                  </span>
+
+                </th>
+                <th class="column-title" style="width:60px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="projectList">
+            </tbody>
+          </table>
+          <div class="profile-loader-msg text-center"></div>
+          <div class="profile-loader text-center">
+            <div class="preloader">
+              <div class="spinner-layer pl-amber">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
               </div>
             </div>
           </div>
-          <!-- paggination -->
+          <div id="loadMember" data-index="1" data-currPage="1"></div>
         </div>
+        <!-- paggination -->
+        <div class="footer row">
+          <div class="col-sm-5">
+            <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
+                class="page-info"></span></div>
+          </div>
+          <div class="col-sm-7">
+            <div class="showPageDetails dataTables_paginate paging_simple_numbers">
+              <ul class="pagination">
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- paggination -->
       </div>
     </div>
   </div>
+</div>
 </div>
 <div class="sidebar-right">
   <ul class="nav side-menu">
