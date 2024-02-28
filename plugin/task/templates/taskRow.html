@@ -1,55 +1,90 @@
-<%
-const currentDate = new Date();
-const currentYear = currentDate.getFullYear();
-const currentMonth = ('0' + (currentDate.getMonth() + 1)).slice(-2);
-const currentDay = ('0' + currentDate.getDate()).slice(-2);
+<% const currentDate=new Date(); const currentYear=currentDate.getFullYear(); const currentMonth=('0' +
+  (currentDate.getMonth() + 1)).slice(-2); const currentDay=('0' + currentDate.getDate()).slice(-2); const
+  formattedDate=`${currentDay}-${currentMonth}-${currentYear}`; const dueDate=new Date(taskDetails.attributes.newDate);
+  let cssClass="" ; if (taskDetails.attributes.status_slug !=="Completed" ) {
+  if(dueDate.toDateString()===currentDate.toDateString()) { cssClass="#f7d000" ; } else if (dueDate < currentDate) {
+  cssClass="#ff5858" ; } else if (dueDate==currentDate){ cssClass="#fff8e2" ; } }else{ cssClass="#7acf54" ; } %>
 
-const formattedDate = `${currentDay}-${currentMonth}-${currentYear}`;
 
-const dueDate = new Date(taskDetails.attributes.newDate);
+  <tr class="even pointer">
+    <td class="a-center">
+      <div class="listCheckbox">
+        <input id="cAll_<%= taskDetails.attributes.task_id %>" class="memberlistcheck chk-col-amber"
+          data-task_id="<%= taskDetails.attributes.task_id %>" type="checkbox" />
+        <label for="cAll_<%= taskDetails.attributes.task_id %>">&nbsp;</label>
+      </div>
+    </td>
+    <td class="">
+      <%=taskDetails.attributes.task_id%>
+    </td>
+    <td class="">
+      <span class="taskPriorityColor" style="background: <%=cssClass%>"></span>
+    </td>
+    <td class="loadview textwrap taskOverFlow" data-task_id="<%=taskDetails.attributes.task_id%>"
+      data-view="singletaskData" style="width:13%">
+      <div class="nametooltip">
+        <p class="mailtruncate">
+          <a href="javascript:;">
+            <%=taskDetails.attributes.subject%>
+          </a>
+        </p>
+        <span class="tooltiptxt">
+          <a href="javascript:;" style="z-index: 10; color: white">
+            <%=taskDetails.attributes.subject%>
+          </a>
+        </span>
+      </div>
+    </td>
+    <td class="">
+      <div class="nametooltip">
+        <p class="mailtruncate">
+          <%=taskDetails.attributes.name%>
+        </p>
+        <span class="tooltiptxt">
+          <%=taskDetails.attributes.name%>
+        </span>
+    </td>
+    <td class="">
+      <span <%if(taskDetails.attributes.priority_color != ""){%>style="background: <%=taskDetails.attributes.priority_color%>; color:white;  padding:4px 10px; "<%}%>>
+        <%=taskDetails.attributes.priority_slug%>
+      </span>
+    </td>
 
-let cssClass = "even pointer";
+    <td class="">
+      <span <%if(taskDetails.attributes.status_color != ""){%>style="background: <%=taskDetails.attributes.status_color%>; color:white;  padding:4px 10px; "<%}%>>
+        <%=taskDetails.attributes.status_slug%>
+      </span>
+    </td>
 
-if (taskDetails.attributes.status_slug !== "Completed") {
-  if (dueDate.toDateString() === currentDate.toDateString()) {
-    cssClass = "even pointer backg-orange";
-  } else if (dueDate < currentDate) {
-    cssClass = "even pointer backg-red";
-  } else if (dueDate == currentDate){
-    cssClass = "even pointer backg-orange";
-  }
-}else{
-  cssClass = "even pointer backg-green";
-}
-%>
+    <td class="">
+      <%=taskDetails.attributes.due_date%>
+    </td>
 
-<tr class="<%=cssClass%>">
-  <td class="a-center">
-    <div class="listCheckbox">
-      <input id="cAll_<%= taskDetails.attributes.task_id %>" class="memberlistcheck chk-col-amber"
-        data-task_id="<%= taskDetails.attributes.task_id %>" type="checkbox">
-      <label for="cAll_<%= taskDetails.attributes.task_id %>">&nbsp;</label>
-    </div>
-  </td>
-  <td class="">
-    <%=taskDetails.attributes.task_id%>
-  </td>
-  <td class="loadview textwrap" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"><a href="javascript:;"><%=taskDetails.attributes.subject%></a></td>
-  <td class="">
-    <%=taskDetails.attributes.name%>
-  </td>
-  <td class="">
-    <%=taskDetails.attributes.priority_slug%>
-  </td>
-  <td class="">
-    <%=taskDetails.attributes.status_slug%>
-  </td>
-  <td class="">
-    <%=taskDetails.attributes.due_date%>
-  </td>
-  <td>
-    <button type="button" class="ws-btn-default loadview" data-task_id="<%=taskDetails.attributes.task_id%>"
-      data-view="singletaskData" data-toggle="tooltip" data-placement="top" title="Edit"><i
-        class="material-icons">mode_edit</i></button>
-  </td>
-</tr>
+    <% _.each(arrangedColumnList, function(column) { %>
+      <td class="">
+        <div class="nametooltip description">
+          <!-- <p class="mailtruncate"> -->
+          <% if (column.linkedWith !="" && column.linkedWith !=null && column.linkedWith !="undefined" ) { %>
+            <%= taskDetails.attributes["" + column.linkedWith + "_" + column.column_name] %>
+              <% } else { %>
+                <%= taskDetails.attributes["" + column.column_name] %>
+                  <% } %>
+                    <!-- </p> -->
+                    <span class="tooltiptxt">
+                      <% if (column.linkedWith !="" && column.linkedWith !=null && column.linkedWith !="undefined" ) {
+                        %>
+                        <%= taskDetails.attributes["" + column.linkedWith + "_" + column.column_name] %>
+                          <% } else { %>
+                            <%= taskDetails.attributes["" + column.column_name]%>
+                              <% } %>
+                    </span>
+        </div>
+      </td>
+      <% }); %>
+        <td>
+          <button type="button" class="ws-btn-default loadview" data-task_id="<%=taskDetails.attributes.task_id%>"
+            data-view="singletaskData" data-toggle="tooltip" data-placement="top" title="Edit">
+            <i class="material-icons">mode_edit</i>
+          </button>
+        </td>
+  </tr>

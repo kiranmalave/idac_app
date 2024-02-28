@@ -24,7 +24,7 @@ define([
       var selfobj = this;
       this.loadFrom = options.loadfrom;
       // this function is called to render the dynamic view
-      this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
+      // this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
 
       $(".modelbox").hide();
       scanDetails = options.searchCategory;
@@ -182,7 +182,7 @@ define([
           if (res.flag == "S") {
             if (isNew == "new") {
               selfobj.model.clear().set(selfobj.model.defaults);
-              selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+              // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
               selfobj.render();
             } else {
               handelClose(selfobj.toClose);
@@ -215,15 +215,15 @@ define([
         }
       };
       var feildsrules = feilds;
-      var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+      // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
 
-      if (!_.isEmpty(dynamicRules)) {
-        var feildsrules = $.extend({}, feilds, dynamicRules);
-        // var feildsrules = {
-        // ...feilds,
-        // ...dynamicRules
-        // };
-      }
+      // if (!_.isEmpty(dynamicRules)) {
+      //   var feildsrules = $.extend({}, feilds, dynamicRules);
+      //   // var feildsrules = {
+      //   // ...feilds,
+      //   // ...dynamicRules
+      //   // };
+      // }
 
       var messages = {
         categoryName: "Please enter Category Name",
@@ -255,7 +255,7 @@ define([
       $(".tab-content").append(this.$el);
       $('#' + this.toClose).show();
       // this is used to append the dynamic form in the single view html
-      $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
+      // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
       // Do call this function from dynamic module it self.
       this.initializeValidate();
       this.setOldValues();

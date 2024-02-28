@@ -1,0 +1,28 @@
+<div class="comment-widgets">
+    <div class="d-flex flex-row comment-row">
+        <div class="comment-text w-100">
+            <div class="alert alert-secondary m-b-5 m-t-10" role="alert"><b>
+                    <%=historyList.name%>
+                </b>
+                <%=historyList.description%> <b>
+                        <%=historyList.col%>
+                    </b> <span class="historyspan">
+                        <%=historyList.timeString%>
+                    </span><br>
+                    <%if(historyList.description !="Created" ){%>
+                        <% if(historyList.col=="description" ){%>
+                            from "<%=historyList.old_desc%>" to "<%=historyList.new_desc%>"
+                        <%}else if(historyList.col=="Start Date"){%>
+                            from "<%=historyList.old_date%>" to "<%=historyList.new_date%>"
+                        <%}else if(historyList.col=="Due Date"){%>
+                            from "<%=historyList.old_date%>" to "<%=historyList.new_date%>"
+                        <%}else if(historyList.col=="Comment"){%>
+                            
+                        <%}else{%>
+                            from "<%=historyList.old_val%>" to "<%=historyList.new_val%>"
+                        <%}%>
+                    <%}%>
+            </div>
+        </div>
+    </div>
+</div>

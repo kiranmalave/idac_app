@@ -7,28 +7,30 @@ define([
   "datepickerBT",
   'typeahead',
   'moment',
+  'Swal',
   "../../core/views/multiselectOptions",
-  "../../dynamicForm/views/dynamicFieldRender",
   "../collections/commentCollection",
   "../models/commentModel",
   "text!../templates/commentSingle_temp.html",
-], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, moment, multiselectOptions, dynamicFieldRender, commentCollection, commentModel, commentTemp) {
+  "text!../templates/commentRow_temp.html",
+], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, moment, Swal, multiselectOptions, commentCollection, commentModel, commentTemp, commentRow) {
   var commentSingleView = Backbone.View.extend({
     model: commentModel,
+    nextPage: '',
+    task_id: '',
+    remaining: '',
+    totalrec: '',
+    pageLimit: '',
     initialize: function (options) {
       this.dynamicData = null;
       this.toClose = "commentSingleView";
       var selfobj = this;
-      this.pluginName = "taskList";
+      // this.pluginName = "taskList";
       this.model1 = new commentModel();
-      // use this valiable for dynamic fields to featch the data from server
-      this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {}, });
       this.multiselectOptions = new multiselectOptions();
-      scanDetails = options.searchcomment;
-      // this.collection.on('add',this.addOne,this);
-      // this.collection.on('reset',this.addAll,this);
+      scanDetails = options.searchComment;
+      this.task_id = options.task_id;
       $(".popupLoader").show();
-
       this.commentList = new commentCollection();
       if (options.task_id !== "") {
         this.commentList.fetch({
@@ -38,29 +40,30 @@ define([
         }).done(function (res) {
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".popupLoader").hide();
+          selfobj.totalrec = res.paginginfo.totalRecords;
+          selfobj.nextPage = res.paginginfo.nextpage;
           selfobj.render();
-          setPagging(res.paginginfo, res.loadstate, res.msg);
         });
 
       }
-      // console.log(this.commentList);
-
 
     },
 
     events: {
-      "click .savecommentDetails": "savecommentDetails",
+      "click .saveComment": "saveComment",
       "click .item-container li": "setValues",
       "blur .txtchange": "updateOtherDetails",
       "change .bDate": "updateOtherDetails",
       "change .dropval": "updateOtherDetails",
-
+      "click .showPage": "loadData",
+      "click .editBtn": "editComment",
+      "click .deleteBtn": "deleteComment",
+      "click #readMoreBtn": "readMoreComments",
+      "click .cancel": "cancelPost",
     },
     attachEvents: function () {
-      // Detach previous event bindings
-      this.$el.off("click", ".savecommentDetails", this.savecommentDetails);
-      // Reattach event bindings
-      this.$el.on('click', '.savecommentDetails', this.savecommentDetails.bind(this));
+      this.$el.off('click', '.saveComment', this.saveComment);
+      this.$el.on('click', '.saveComment', this.saveComment.bind(this));
       this.$el.off("change", ".bDate", this.updateOtherDetails);
       this.$el.on("change", ".bDate", this.updateOtherDetails.bind(this));
       this.$el.off('click', '.item-container li', this.setValues);
@@ -68,10 +71,14 @@ define([
       this.$el.off("change", ".dropval", this.updateOtherDetails);
       this.$el.off('click', '.editBtn', this.editComment);
       this.$el.on('click', '.editBtn', this.editComment.bind(this));
-      // this.$el.on("change", ".dropval", this.updateOtherDetails.bind(this));
-      // this.$el.off("blur", ".txtchange", this.updateOtherDetails);
-      // this.$el.on("blur", ".txtchange", this.updateOtherDetails.bind(this));   
-
+      this.$el.off('click', '.deleteBtn', this.deleteComment);
+      this.$el.on('click', '.deleteBtn', this.deleteComment.bind(this));
+      this.$el.off('click', '.showPage', this.loadData);
+      this.$el.on('click', '.showPage', this.loadData.bind(this));
+      this.$el.off('click', '#readMoreBtn', this.readMoreComments);
+      this.$el.on('click', '#readMoreBtn', this.readMoreComments.bind(this));
+      this.$el.off('click', '.cancel', this.cancelPost);
+      this.$el.on('click', '.cancel', this.cancelPost.bind(this));
     },
 
     onErrorHandler: function (collection, response, options) {
@@ -93,9 +100,7 @@ define([
           $(".ws-repeatTask").hide();
         }
       }
-      console.log(this.model);
     },
-
     setOldValues: function () {
       var selfobj = this;
       setvalues = ["is_custom", "category", "admin"];
@@ -111,13 +116,18 @@ define([
       $("#comment").val(comment);
       this.model1.set({ "comment_text": comment });
     },
+
+    cancelPost: function (e) {
+      this.getCommentList();
+    },
+
+
     editComment: function (e) {
       let selfobj = this;
       var $parentContainer = $(e.target).closest('.inbox-widget');
       var commentID = $(e.currentTarget).attr("data-commentID");
       $parentContainer.find('.inbox-message').hide();
       $("#editCmt_" + commentID).show();
-      // $(".edit_comment_" + commentID).show();
       $(".editCmtBtn_" + commentID).show();
       var __toolbarOptions = [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -136,8 +146,7 @@ define([
           },
           theme: 'snow'  // or 'bubble'
         });
-        //const delta = editor.clipboard.convert();
-        //editor.setContents(delta, 'silent');
+
         editor.on('text-change', function (delta, oldDelta, source) {
           if (source == 'api') {
             console.log("An API call triggered this change.");
@@ -146,80 +155,147 @@ define([
             var text = editor.getText();
             var justHtml = editor.root.innerHTML;
             selfobj.model1.set({ "comment_text": justHtml });
+            console.log(selfobj.model1);
           }
         });
       }
     },
+    deleteComment: function (e) {
+      let selfobj = this;
+      let status = "delete";
+      let action = "changeStatus";
+      let id = $(e.currentTarget).attr("data-commentID");
+      Swal.fire({
+        title: "Delete Comment ",
+        text: "Do you want to delete this Comment ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Delete',
+        animation: "slide-from-top",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: APIPATH + 'commentDelete',
+            method: 'POST',
+            data: { list: id, status: status, action: action },
+            datatype: 'JSON',
+            beforeSend: function (request) {
+              request.setRequestHeader("token", $.cookie('_bb_key'));
+              request.setRequestHeader("SadminID", $.cookie('authid'));
+              request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+              request.setRequestHeader("Accept", 'application/json');
+            },
+            success: function (res) {
+              if (res.flag == "F")
+                alert(res.msg);
+              if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+              if (res.flag == "S") {
+                selfobj.totalrec--;
+                $("#commentRow_"+id).remove();
+                $('#totalComments').empty().text($('#totalComments').text() + 'All Comments ('+selfobj.totalrec+')');
+                if(selfobj.totalrec == 0){
+                  $("#totalComments").hide();
+                }
+              }
+            }
+          });
+        }else{
+
+        }
+      });
+      
+    },
+
+    readMoreComments: function(e){
+      var readMoreBtn = document.getElementById('readMoreBtn');
+      var hiddenComments = document.querySelectorAll('.newComments');
+
+      if (readMoreBtn) {
+          readMoreBtn.addEventListener('click', function() {
+              hiddenComments.forEach(function(comment) {
+                  comment.style.display = 'block';
+              });
+              readMoreBtn.style.display = 'none';
+          });
+      }
+    },
+
     saveComment: function (e) {
       e.preventDefault();
       let selfobj = this;
-      let isNew = $(e.currentTarget).attr("data-action");
-      //this.model1.set({ "user_id": comment });
-      let mid = "";
-      isNew = "new";
-      if (mid == "" || mid == null) {
-        var methodt = "PUT";
-      } else {
-        var methodt = "POST";
-      }
-      this.model1.save({}, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, type: methodt
-      }).done(function (res) {
-        if (res.flag == "S") {
-          // selfobj.model1.clear().set(selfobj.model1.defaults);
-          // selfobj.dynamicFieldRenderobj.initialize({ViewObj: selfobj,formJson: {},});
-          // selfobj.render();
+      var taskID = this.task_id;
+      var commentID = $(e.currentTarget).attr("data-commentID");
+      var commentText = selfobj.model1.get("comment_text");
+      $(e.currentTarget).attr("disabled", "disabled");
+      $.ajax({
+        url: APIPATH + 'taskComment/' + commentID,
+        method: 'POST',
+        data: { comment_text: commentText, task_id: taskID, status: "active" },
+        datatype: 'JSON',
+        beforeSend: function (request) {
+          request.setRequestHeader("token", $.cookie('_bb_key'));
+          request.setRequestHeader("SadminID", $.cookie('authid'));
+          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+          request.setRequestHeader("Accept", 'application/json');
+        },
+        success: function (res) {
+          if (res.flag == "F")
+            alert(res.msg);
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          if (res.flag == "S") {
+            selfobj.getCommentList();
+            $(e.currentTarget).removeAttr('disabled');
+          }
         }
-
       });
-
     },
-    saveCommentDetails: function (e) {
-      e.preventDefault();
+    getCommentList: function () {
       let selfobj = this;
-      var mid = this.model.get("lesson_id");
-      this.model.set({ "comment_id": this.comment_id });
-      console.log(this.model);
-      let isNew = $(e.currentTarget).attr("data-action");
-      if (permission.edit != "yes") {
-        alert("You dont have permission to edit");
-        return false;
-      }
-      if (mid == "" || mid == null) {
-        var methodt = "PUT";
-      } else {
-        var methodt = "POST";
-      }
-      if ($("#commentDetails").valid()) {
-        $(e.currentTarget).html("<span>Saving..</span>");
-        $(e.currentTarget).attr("disabled", "disabled");
-        this.model.save({}, {
+      $(".popuploader").show();
+      this.commentList = new commentCollection();
+      var task_id = this.task_id
+      if (task_id !== "") {
+        this.commentList.fetch({
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-          }, error: selfobj.onErrorHandler, type: methodt
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler, type: 'post', data: { status: "active", getAll: 'Y', task_id: task_id }
         }).done(function (res) {
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-
-          if (isNew == "new") {
-            showResponse(e, res, "Save & New");
-          } else {
-            showResponse(e, res, "Save");
-          }
-          scanDetails.filterSearch();
-          if (res.flag == "S") {
-            if (isNew == "new") {
-              selfobj.model.clear().set(selfobj.model.defaults);
-              selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
-              alert("herer");
-              selfobj.render();
-            } else {
-              handelClose(selfobj.toClose);
-            }
-          }
+          selfobj.render();
+          selfobj.attachEvents();
         });
       }
+    },
+
+    loadData: function (e) {
+      e.stopPropagation();
+      var selfobj = this;
+      var index = $(e.currentTarget).attr("data-index");
+      $element = $('#read_more');
+      this.commentList.reset();
+      this.commentList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: 'post', data: { getAll: 'Y', status: "active", curpage: index, task_id: this.task_id }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        var totalreco = res.paginginfo.totalRecords;
+        var pagelimit = res.paginginfo.pageLimit;
+        var remaining = totalreco - pagelimit;
+        $element.attr("data-index", res.paginginfo.nextpage);
+        if (res.loadstate) {
+        } else {
+          $(e.currentTarget).hide();
+        }
+        var template = _.template(commentRow);
+        res.data.forEach(function (objectModel) {
+          console.log(objectModel);
+          $("#commentRow").append(template({ commentList: objectModel }));
+        });
+      });
     },
 
     initializeValidate: function () {
@@ -234,7 +310,7 @@ define([
 
       };
       var feildsrules = feilds;
-      var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+      var dynamicRules = '';
 
       if (!_.isEmpty(dynamicRules)) {
         var feildsrules = $.extend({}, feilds, dynamicRules);
@@ -252,25 +328,13 @@ define([
     },
     render: function () {
       $(".showPages").empty();
-      $(".showHistory").empty();
       var selfobj = this;
       var source = commentTemp;
       var template = _.template(source);
-      $("#" + this.toClose).remove();
-      this.$el.html(template({ "commentList": this.commentList.models }))
-      // this.$el.addClass("tab-pane in active panel_overflow");
-      this.$el.attr("id", this.toClose);
-      this.$el.addClass(this.toClose);
-      this.$el.data("role", "tabpanel");
-      this.$el.data("current", "yes");
+      this.$el.html(template({ "commentList": this.commentList.models, "total": this.totalrec }))
       $(".showPages").append(this.$el);
-      $("#" + this.toClose).show();
-      // this is used to append the dynamic form in the single view html
-      $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
-      // Do call this function from dynamic module it self.
+      this.attachEvents();
       $('.ws-select').selectpicker();
-      this.initializeValidate();
-      // rearrageOverlays("Comments", this.toClose);
       return this;
     },
 
