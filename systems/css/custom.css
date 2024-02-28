@@ -8767,6 +8767,7 @@ input.form-control.taskCreate[disabled] {
   padding: 0px 5px;
   border-radius: 3px;
 }
+
 .dn-mail {
   box-shadow: none;
 }
@@ -9779,12 +9780,12 @@ label.form-label.taskDate.tasktop.fortask {
   margin-bottom: 0;
 }
 
-.nametooltip.description span.tooltiptxt p {
+.nametooltip.description span.tooltiptxt p {}
 
-}
 .nametooltip.description span.tooltiptxt p {
   max-width: 450px;
 }
+
 .nametooltip.description span.tooltiptxt p span {
   color: #fff !important;
   font-size: 12px;
@@ -9801,6 +9802,6 @@ label.form-label.taskDate.tasktop.fortask {
 
 }
 
-.proposalActoinCol{
+.proposalActoinCol {
   display: flex;
 }
