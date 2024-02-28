@@ -2982,3 +2982,33 @@ section.content.dashBordTotal {
 .block-header {
   padding: 10px !important;
 }
+
+.googleAddress {
+  position: relative;
+}
+
+.taskDate input::placeholder {
+  color: transparent !important;
+}
+
+/* .googleAddress:before {
+  content: "Enter a google location";
+  position: absolute;
+  top: -16px;
+  left: 11px;
+  right: 0;
+  font-size: 14px;
+  color: #ccc;
+  width: auto;
+  z-index: 999999;
+} */
+
+.form-group .form-line label.form-label.addressGoolge {
+  left: 9px !important;
+}
+
+.form-group .form-line.focused .form-label.addressGoolge {
+  top: -17px;
+  left: 9px;
+  font-size: 14px;
+}

@@ -45,14 +45,15 @@
 
                 <% if (menuName=="task" ){%>
                   <div class="quickFlterDetails">
-                    <select for="quick_filter" id="quick_filter" name="quick_filter" title="Quick Filter" class="form-control ws-select sortbydate QuickFlter">
+                    <select for="quick_filter" id="quick_filter" name="quick_filter" title="Quick Filter"
+                      class="form-control ws-select sortbydate QuickFlter">
                       <option value="today">Today's Task</option>
                       <option value="tomorrow">Tomorrow's Task</option>
                       <option value="yesterday">Yesterday's Task</option>
                     </select>
                   </div>
                   <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval taskReset"
-                    value="Reset"/>
+                    value="Reset" />
                   <%}%>
               </div>
             </div>
@@ -62,7 +63,7 @@
               <span type="button" style="display:none;" class="changeStatus deleteAll" data-action="delete"
                 data-toggle="tooltip" data-placement="top" title="Delete"><i class="material-icons"
                   data-toggle="tooltip" data-placement="top" title="Delete"
-                  style="background-color: #494b94; border-radius: 50%; padding: 2px 5px; color:#fff;">delete</i></span>
+                  style="background-color: #494b94; border-radius: 50%; padding: 2px 5px; color:#fff !important;">delete</i></span>
               <% } %>
           </div>
           <div class="customTableClass forTask">
@@ -216,7 +217,7 @@
             <div class="col-sm-4">
               <div class="profile-loader-msg text-center"></div>
             </div>
-            
+
             <div class="col-sm-4" style="padding: 0;">
               <div class="showPageDetails dataTables_paginate paging_simple_numbers">
                 <ul class="pagination"></ul>
