@@ -23,12 +23,13 @@ define([
   '../../menu/models/singleMenuModel',
   '../../category/collections/slugCollection',
   "../../emailMaster/collections/emailMasterCollection",
+  '../../core/views/timeselectOptions',
   'text!../templates/customerRow.html',
   'text!../templates/leadGridRow.html',
   'text!../templates/customer_temp.html',
   'text!../templates/customerFilterOption_temp.html',
-  'text!../../dynamicForm/templates/linkedDropdown.html',
-], function ($, _, Backbone, datepickerBT, moment, Swal, customerSingleView, customerNotesView, mailView, customerActivityView, taskSingleView, customerCollection, customerNotesCollection, customerFilterOptionModel, customerModel, customerNoteModel, appSettings, columnArrangeModalView, configureColumnsView, dynamicFormData, singleMenuModel, slugCollection, emailMasterCollection, customerRowTemp, leadGridRow, customerTemp, customerFilterTemp, linkedDropdown) {
+  'text!../../dynamicForm/templates/linkedDropdown.html'
+], function ($, _, Backbone, datepickerBT, moment, Swal, customerSingleView, customerNotesView, mailView, customerActivityView, taskSingleView, customerCollection, customerNotesCollection, customerFilterOptionModel, customerModel, customerNoteModel, appSettings, columnArrangeModalView, configureColumnsView, dynamicFormData, singleMenuModel, slugCollection, emailMasterCollection, timeselectOptions, customerRowTemp, leadGridRow, customerTemp, customerFilterTemp, linkedDropdown) {
   var customerView = Backbone.View.extend({
     plural_label: '',
     module_desc: '',
@@ -38,6 +39,7 @@ define([
     paginginfo: [],
     totalRec: 0,
     View: 'list',
+    module_name: 'leads',
     customerModel: customerModel,
     initialize: function (options) {
       this.toClose = "customerFilterView";
@@ -57,6 +59,7 @@ define([
       this.menuId = permission.menuID;
       this.appSettings = new appSettings();
       this.dynamicFormDatas = new dynamicFormData();
+      this.timeselectOptions = new timeselectOptions();
       this.menuList = new singleMenuModel();
       this.appSettings.getMenuList(this.menuId, function (plural_label, module_desc, form_label, result) {
         selfobj.plural_label = plural_label;
@@ -427,7 +430,7 @@ define([
     openColumnArrangeModal: function (e) {
       let selfobj = this;
       var show = $(e.currentTarget).attr("data-action");
-      var stdColumn = ['company_name', 'name', 'email', 'mobile_no', 'record_type'];
+      var stdColumn = ['customer_id','company_name', 'name', 'email', 'mobile_no', 'record_type'];
       switch (show) {
         case "arrangeColumns": {
           var isOpen = $(".ws_ColumnConfigure").hasClass("open");
@@ -691,6 +694,20 @@ define([
           var customer_id = $(e.currentTarget).attr("data-customer_id");
           var cust_name = $(e.currentTarget).attr("data-first_name");
           new taskSingleView({ customer_id: customer_id, customerName: cust_name, loadFrom: "customer", searchtask: this });
+
+          break;
+        }
+        case "appointment": {
+          var customer_id = $(e.currentTarget).attr("data-customer_id");
+          var cust_name = $(e.currentTarget).attr("data-first_name");
+          var cust_mail = $(e.currentTarget).attr("data-email");
+          new appointmentSingleView({ customer_id: customer_id, customerName: cust_name, cust_mail: cust_mail, loadFrom: "customer", searchappointment: this })
+          $('body').find(".loder");
+          break;
+        }
+        case "notificationView": {
+          new notificationView({ menuID: this.menuId, searchreceipt: this, module_name: this.module_name });
+          $('body').find(".loder");
           break;
         }
       }
@@ -701,7 +718,7 @@ define([
     resetSearch: function (stage) {
       let selfobj = this;
       filterOption.clear().set(filterOption.defaults);
-      if (this.mname == "lead") {
+      if (this.mname == "leads") {
         filterOption.set({ type: "lead" });
       } else if (this.mname == "customer") {
         filterOption.set({ type: "customer" });
@@ -789,6 +806,7 @@ define([
         $("#customerList").append(template({ customerDetails: objectModel, arrangedColumnList: this.arrangedColumnList, menuName: this.mname }));
       } else {
         var template = _.template(leadGridRow);
+        objectModel.set({"lastActivityTime" : selfobj.timeselectOptions.displayRelativeTime(objectModel.attributes.last_activity_date)});
         if (objectModel.attributes.stages != 0) {
           $("#" + objectModel.attributes.stages).append(template({ customerDetails: objectModel, customerLength: this.collection.length }));
         } else {
@@ -818,6 +836,8 @@ define([
     addAllGrid: function (col_name) {
       $("#customerList").empty();
       let selfobj = this;
+      // $('#' + col_name).children().not(".totalCount").empty();
+      // $('#otherStage').children().not(".totalCount").empty();
       selfobj.listDataGrid[col_name].models.forEach(element => {
         selfobj.addOne(element);
       });
@@ -1006,11 +1026,6 @@ define([
         this.stageColumnUpdate(stage);
         return;
       }
-      if (this.mname == "leads") {
-        filterOption.set({ type: "lead" });
-      } else if (this.mname == "customer") {
-        filterOption.set({ type: "customer" });
-      }
       this.collection.reset();
       var selfobj = this;
       readyState = true;
@@ -1067,13 +1082,13 @@ define([
         }
 
         selfobj.totalRec = res.paginginfo.totalRecords;
-        if (selfobj.totalRec == 0) {
-          $('#leadlistview').hide();
-          $('.noCustRec').show();
-        } else {
-          $('#leadlistview').show();
-          $('.noCustRec').hide();
-        }
+        // if (selfobj.totalRec == 0) {
+        //   $('#leadlistview').hide();
+        //   $('.noCustRec').show();
+        // } else {
+        //   $('#leadlistview').show();
+        //   $('.noCustRec').hide();
+        // }
         selfobj.setValues();
       });
 
