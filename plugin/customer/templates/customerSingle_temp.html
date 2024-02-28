@@ -15,28 +15,56 @@
                         <li class="record_type multiSel" data-single="Y" data-value="individual">Customer</li>
                         <li class="record_type multiSel" data-single="Y" data-value="company">Company</li>
                     </ul>
-                    <%if(menuName=="leads" ){%>
-                        <div class="col-md-6">
-                            <div class="form-group form-float removeBorder" style="margin-top:-6px;">
-                                <!-- <label for="lead_stages" class="form-label taskDate"> Lead Stages</label> -->
-                                <select for="lead_stages" id="stages" name="stages"
-                                    class="form-control dropval ws-select show-tick repeatChange backgroundHide lead-al"
-                                    title="Lead stages">
-                                    <% _.each(categoryList, function(modelcat) { %>
-                                        <% if(modelcat.attributes.slug=="lead_stages" ) {
-                                            _.each(modelcat.attributes.sublist, function(model1) { %>
-                                            <option <% if(model1.category_id==model.stages ){ %> selected <% } %>
-                                                    value="<%=model1.category_id%>"><%=model1.categoryName %>
-                                            </option>
-                                            <%})%>
-                                                <%} })%>
-                                </select>
-                            </div>
-                        </div>
-                        <%}%>
                 </div>
             </div>
 
+            <div class="col-md-8">
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <span class="material-symbols-outlined">
+                                upcoming
+                                </span>
+                        </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-float taskDropDown" style="margin-bottom: 30px;">
+                                    <div class="form-line taskDate removeBorder">
+                                        <select for="lead_source" autocomplete="off" id="lead_source" name="lead_source" title="Lead Source" class="form-control dropval ws-select show-tick repeatChange backgroundHide">
+                                            <%if(permission.add=="yes" ) { %>
+                                                <option class="addNew" value="addLeadSource">Add Lead Source</option>
+                                            <%}%>
+                                            <% _.each(categoryList, function(modelcat) { %>
+                                                <% if(modelcat.attributes.slug=="lead_source" ) _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                    <option <% if(model1.category_id==model.lead_source ){ %> selected <% } %>value="<%=model1.category_id%>"> <%=model1.categoryName%> </option>
+                                                <%})%>
+                                            <%})%>
+                                        </select>
+                                        <label for="lead_source" class="form-label">Lead Source</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <%if(menuName=="leads" ){%>
+                                <div class="col-md-6">
+                                    <div class="form-group form-float removeBorder">
+                                        <!-- <label for="lead_stages" class="form-label taskDate"> Lead Stages</label> -->
+                                        <select  for="lead_stages" id="stages" name="stages" class="form-control dropval ws-select show-tick repeatChange backgroundHide lead-al" title="Lead stages">
+                                            <% _.each(categoryList, function(modelcat) { %>
+                                                <% if(modelcat.attributes.slug=="lead_stages" ) {
+                                                    _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                    <option <% if(model1.category_id==model.stages ){ %> selected <% } %> value="<%=model1.category_id%>"><%=model1.categoryName %></option>
+                                                    <%})%>
+                                            <%} })%>
+                                        </select>                               
+                                    </div>
+                                </div>
+                                <%}%>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <% if (model.record_type=="individual" ) { %>
                 <div class="col-md-8">
                     <div class="list-row" style="margin-bottom:10px;">
@@ -152,20 +180,17 @@
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="birth_date" type="text" class="form-control txtchange taskDate"
-                                                readonly name="birth_date" value="<%=model.birth_date%>">
-                                            <label for="birth_date " class="form-label  taskDate"
-                                                style="top: -18px;">Date of Birth</label>
+                                            <input id="birth_date" type="text" class="form-control txtchange taskDate" readonly name="birth_date" value="<%=model.birth_date%>">
+                                            <label for="birth_date " class="form-label  taskDate">Date of Birth</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="address" title="Addresss" class="form-control txtchange taskDate"
-                                                name="address" value="<%=model.address%>">
-                                            <label for="address" class="form-label addressGoolge">Enter a Google
-                                                location</label>
+                                            <input id="address" title="Addresss" class="form-control txtchange taskDate" name="address" value="<%=model.address%>">
+                                            <label for="address" class="form-label addressGoolge">Enter a Google location</label>
+
                                         </div>
                                     </div>
                                 </div>
@@ -404,36 +429,36 @@
                                             <div class="form-line">
                                                 <input id="office_land_line" class="form-control txtchange"
                                                     name="office_land_line" value="<%=model.office_land_line%>">
-                                                <label for="office_land_line" class="form-label">Office Land Line
-                                                    number</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="right-layout">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group form-float">
-                                            <div class="form-line">
-                                                <input id="person_name" class="form-control txtchange"
-                                                    name="person_name" value="<%=model.person_name%>">
-                                                <label for="person_name" class="form-label">Pe Name</label>
+                                                <label for="office_land_line" class="form-label">Office Land Line number</label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                </div>
+            <%}%>
+            
+
+            <div class="col-md-8">
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <i class="material-icons">
+                                location_on
+                            </i>
+                        </div>
                     </div>
-                    <%}%>
-                        <div class="col-md-8">
-                            <div class="list-row">
-                                <div class="icon-left">
-                                    <div class="ws-icon">
-                                        <span class="material-symbols-outlined">
-                                            upcoming
-                                        </span>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group input-group form-float">
+                                    <div class="form-line removeBorder">
+                                        <select id="country_id" name="country_id" class="form-control countryChange ws-select show-tick repeatChange backgroundHide" data-live-search="true" title="Select Country">
+                                            <% _.each(countryList, function(model1) { %>
+                                                <option <% if(model1.attributes.country_id==model.country_id ){ %> selected <%}%> value="<%=model1.attributes.country_id%>"><%=model1.attributes.country_name%></option>
+                                            <%})%>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="right-layout">
