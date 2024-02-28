@@ -112,14 +112,14 @@ class Proposal extends CI_Controller {
 		
 		if($isAll=="Y"){
 			if($roleID[0]->roleID != 1){
-				$selectC = "proposal_id,proposal_number,name,t.project_id,t.client_id,t.description,confirm,t.created_by,t.created_date,t.modified_by,t.modified_date,t.status";
+				$selectC = "proposal_id,proposal_number,t.name,t.project_id,t.client_id,t.description,confirm,t.created_by,t.created_date,t.modified_by,t.modified_date,t.status";
 			}else{
 				$selectC='*';
 			}
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC,'proposal',$wherec,'','',$join,$other);	
 		}else{
 			if($roleID[0]->roleID != 1){
-				$selectC = "proposal_id, proposal_number, name, project_id, client_id, description, confirm, created_by, created_date, modified_by, modified_date, status, c.name AS custName , p.confirm_proposal, p.project_name";
+				$selectC = "proposal_id, proposal_number, t.name, t.project_id, t.client_id, t.description, confirm, t.created_by, t.created_date, t.modified_by, t.modified_date, t.status, c.name AS custName , p.confirm_proposal, p.project_name";
 			}else{
 				$selectC = "t.*, c.name AS custName ,p.confirm_proposal, p.project_name";
 			}
@@ -346,10 +346,9 @@ class Proposal extends CI_Controller {
 							}
 							$proposalDetails = $this->CommonModel->getMasterDetails('proposal',$selectC,$where);
 							if(isset($proposalDetails) && !empty($proposalDetails)){
-
-							$wherec["project_id"] = "".$proposalDetails[0]->project_id."";
-							$selectC = "confirm_proposal";
-							$confirmation = $this->CommonModel->getMasterDetails('project',$selectC, $wherec);
+								$wherec["project_id"] = "".$proposalDetails[0]->project_id."";
+								$selectC = "confirm_proposal";
+								$confirmation = $this->CommonModel->getMasterDetails('project',$selectC, $wherec);
 							if(!empty($confirmation)){
 								$created = array_column($confirmation,'confirm_proposal');
 								$proposalDetails[0]->confirmProposal = $created;
@@ -436,11 +435,8 @@ class Proposal extends CI_Controller {
 
 	public function printProposal($proposal_id)
 	{
-
-		// $where = array("proposal_id"=>$proposal_id);
 		$where["proposal_id = "] = $proposal_id;
-		// $selectC = "*";
-		$selectC = "proposal_id,proposal_number,name,p.project_name,c.name,t.description,confirm,cost";
+		$selectC = "proposal_id,proposal_number,t.name,p.project_name,c.name AS company_name,t.description,confirm,cost";
 		$join = array();
 		$join[0]['type'] ="LEFT JOIN";
 		$join[0]['table']="project";
@@ -458,10 +454,8 @@ class Proposal extends CI_Controller {
 		
 		$data= array();
 	 	$data['proposalData']= $proposalDetails;
-		// print_r("<pre>");
-		// print_r($proposalDetails);exit;
         $pdfFilePath = $this->load->view("proposalpdf",$data,true);
-
+		
         //load mPDF library
         $this->load->library('MPDFCI');
         $this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');

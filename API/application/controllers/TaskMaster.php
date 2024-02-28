@@ -1041,7 +1041,7 @@ class TaskMaster extends CI_Controller
 		$orderBy = "history_id";
 		$order = "DESC";
 		$other = array("orderBy" => $orderBy, "order" => $order);
-		$historyDetails = $this->CommonModel->GetMasterListDetails($selectC = '*', 'task_history', $wherec, '', '', $join, $other);
+		$historyDetails = $this->CommonModel->GetMasterListDetails($selectC = '*', 'history', $wherec, '', '', $join, $other);
 		// print_r($historyDetails);exit;
 		foreach ($historyDetails as $key => $value) {
 			if($value->col == "Task Priority" || $value->col == "Task Type" || $value->col == "Task Status"){
