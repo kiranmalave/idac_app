@@ -5,7 +5,8 @@ define([
   var taskFilterOptionModel = Backbone.Model.extend({
     idAttribute: "task_id",
     defaults: {
-      textSearch: 'subject',
+      textSearch: '',
+      record_type: null,
       textval: null,
       fromDate: null,
       toDate: null,
@@ -16,9 +17,10 @@ define([
       task_status: null,
       customer_id: null,
       assignee: null,
+      created_by: null,
       status: 'Active',
-      orderBy: 'due_date',
-      order: 'ASC',
+      orderBy: null,
+      order: null,
     }
   });
   return taskFilterOptionModel;

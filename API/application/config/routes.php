@@ -218,6 +218,9 @@ $route['taskComment'] = 'taskMaster/taskCommentMaster';
 // $route['taskComment/(:num)'] = 'taskMaster/taskCommentMaster/$1';
 $route['commentsList'] = 'taskMaster/gettaskCommentDetails';
 $route['getHistory'] = 'taskMaster/getTaskHistory';
+$route['getCustomerList'] = 'systems/Application/getList';
+$route['getAssigneeList'] = 'systems/Application/getList';
+$route['getList'] = 'systems/Application/getList';
 
 ######Invoice
 $route['taxInvoiceList'] = 'TaxInvoice/index';

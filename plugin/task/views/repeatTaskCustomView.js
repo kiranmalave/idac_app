@@ -14,10 +14,10 @@ define([
     model: repeatTaskModel,
     initialize: function (options) {
       this.dynamicData = null;
-      this.model = new repeatTaskModel();
+      this.model = options.model;
       var selfobj = this;
       this.task_id = options.task_id;
-      this.model.set({ task_id: this.task_id });
+      console.log(options.model);
       // this function is called to render the dynamic view
       this.multiselectOptions = new multiselectOptions();
       $(".modelbox").hide();
@@ -55,7 +55,6 @@ define([
       var newdetails = [];
       newdetails["" + toID] = valuetxt;
       this.model.set(newdetails);
-      alert(valuetxt);
       console.log(this.model);
 
       if (toID == "repeat_on") {
@@ -70,9 +69,7 @@ define([
           $(".monthly_setting").hide();
         }
       }
-
       $('input[type=radio][name=group5]').change(function () {
-
         if (this.value == "on") {
           $(".onDate").show();
           $(".occurenceDate").hide();
@@ -95,11 +92,11 @@ define([
       var selfobj = this;
       var da = selfobj.multiselectOptions.setCheckedValue(e);
       selfobj.model.set(da);
+      console.log(selfobj.model);
     },
 
 
     saveCustomRepeatDetails: function (e) {
-      alert("here");
       e.preventDefault();
       let selfobj = this;
       var mid = this.model.get("task_id");
@@ -124,7 +121,6 @@ define([
           showResponse(e, res, "Save");
           if (res.flag == "S") {
             selfobj.model.clear().set(selfobj.model.defaults);
-            selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
             selfobj.getlist();
             selfobj.model.set({ userID: this.userID });
           }
@@ -163,18 +159,24 @@ define([
         rules: feildsrules,
         messages: messages
       });
-      $("#cal").datepickerBT({
-        todayBtn: 1,
-        autoclose: true,
-        changeYear: true,
-        changeMonth: true,
-        dateFormat: "dd-mm-yy",
 
-      })
+      endOnDate = $('#end_on_date').datepickerBT({
+        format: "dd-mm-yyyy",
+        todayBtn: "linked",
+        clearBtn: true,
+        todayHighlight: true,
+        StartDate: new Date(),
+        numberOfMonths: 1,
+        autoclose: true,
+      }).on('changeDate', function (ev) {
+        selfobj.model.set({ "end_on_date": $('#end_on_date').val() });
+        console.log(selfobj.model);
+      });
+
       $("#week_numb").spinner({
         min: 1,
       });
-      $("#occurrences").spinner({
+      $("#end_after_date").spinner({
         min: 1,
       });
 
@@ -188,7 +190,7 @@ define([
       this.initializeValidate();
       this.setOldValues();
       this.attachEvents();
-      $('.ws-select').selectpicker();
+      // $('.ws-select').selectpicker();
       $('#customRepeatTaskModal').modal('show');
       return this;
     }, onDelete: function () {
