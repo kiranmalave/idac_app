@@ -112,17 +112,18 @@ class Proposal extends CI_Controller {
 		
 		if($isAll=="Y"){
 			if($roleID[0]->roleID != 1){
-				$selectC = "proposal_id,proposal_number,name,t.project_id,t.client_id,t.description,confirm,t.created_by,t.created_date,t.modified_by,t.modified_date,t.status";
+				$selectC = "proposal_id,proposal_number,t.name,t.project_id,t.client_id,t.description,confirm,t.created_by,t.created_date,t.modified_by,t.modified_date,t.status";
 			}else{
 				$selectC='*';
 			}
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC,'proposal',$wherec,'','',$join,$other);	
 		}else{
 			if($roleID[0]->roleID != 1){
-				$selectC = "proposal_id, proposal_number, name, project_id, client_id, description, confirm, created_by, created_date, modified_by, modified_date, status, c.name AS custName , p.confirm_proposal, p.project_name";
+				$selectC = "t.proposal_id, proposal_number, t.name, t.project_id, t.client_id, t.description, confirm, t.created_by, t.created_date, t.modified_by, t.modified_date, t.status, c.name AS custName , p.confirm_proposal, p.project_name";
 			}else{
 				$selectC = "t.*, c.name AS custName ,p.confirm_proposal, p.project_name";
 			}
+			// print_r($wherec);exit;
 			$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC,'proposal',$wherec,$config["per_page"],$page,$join,$other);
 		}
 		$status['data'] = $proposalDetails;

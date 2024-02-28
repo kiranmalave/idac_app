@@ -462,8 +462,12 @@ define([
     fromEditors: function () {
       if (tinyMCE.activeEditor != undefined) {
         tinyMCE.activeEditor.remove("proposaldescription");
-        tinyMCE.activeEditor.remove("costing");
+        if($('#costing').length){
+          tinyMCE.activeEditor.remove("costing");
+        }
       }
+
+      
       tinyMCE.init({
         selector: "#proposaldescription, #costing",
         deprecation_warnings: false,
