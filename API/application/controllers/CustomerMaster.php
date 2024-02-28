@@ -156,6 +156,8 @@ class CustomerMaster extends CI_Controller
 			$customerDetails['customer_id'] = $this->validatedata->validate('customer_id', 'Customer ID', false, '', array());
 			$customerDetails['salutation'] = $this->validatedata->validate('salutation', 'Salutation', false, '', array());
 			$customerDetails['name'] = $this->validatedata->validate('name', 'Name', false, '', array());
+			$customerDetails['company_name'] = $this->validatedata->validate('company_name', 'Comapany Name', false, '', array());
+			$customerDetails['person_name'] = $this->validatedata->validate('person_name', 'Perso Name', false, '', array());
 			$customerDetails['email'] = $this->validatedata->validate('email', 'Email', false, '', array());
 			$customerDetails['mobile_no'] = $this->validatedata->validate('mobile_no', 'Mobile', false, '', array());
 			$customerDetails['birth_date'] = $this->validatedata->validate('birth_date', 'Birth Date', false, '', array());

@@ -24,7 +24,7 @@
                         <div class="ws-icon">
                             <span class="material-symbols-outlined">
                                 upcoming
-                                </span>
+                            </span>
                         </div>
                     </div>
                     <div class="right-layout">
@@ -32,15 +32,21 @@
                             <div class="col-md-6">
                                 <div class="form-group form-float taskDropDown" style="margin-bottom: 30px;">
                                     <div class="form-line taskDate removeBorder">
-                                        <select for="lead_source" autocomplete="off" id="lead_source" name="lead_source" title="Lead Source" class="form-control dropval ws-select show-tick repeatChange backgroundHide">
+                                        <select for="lead_source" autocomplete="off" id="lead_source" name="lead_source"
+                                            title="Lead Source"
+                                            class="form-control dropval ws-select show-tick repeatChange backgroundHide">
                                             <%if(permission.add=="yes" ) { %>
                                                 <option class="addNew" value="addLeadSource">Add Lead Source</option>
-                                            <%}%>
-                                            <% _.each(categoryList, function(modelcat) { %>
-                                                <% if(modelcat.attributes.slug=="lead_source" ) _.each(modelcat.attributes.sublist, function(model1) { %>
-                                                    <option <% if(model1.category_id==model.lead_source ){ %> selected <% } %>value="<%=model1.category_id%>"> <%=model1.categoryName%> </option>
-                                                <%})%>
-                                            <%})%>
+                                                <%}%>
+                                                    <% _.each(categoryList, function(modelcat) { %>
+                                                        <% if(modelcat.attributes.slug=="lead_source" )
+                                                            _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                            <option <% if(model1.category_id==model.lead_source ){ %>
+                                                                selected <% } %>value="<%=model1.category_id%>">
+                                                                        <%=model1.categoryName%>
+                                                            </option>
+                                                            <%})%>
+                                                                <%})%>
                                         </select>
                                         <label for="lead_source" class="form-label">Lead Source</label>
                                     </div>
@@ -50,14 +56,18 @@
                                 <div class="col-md-6">
                                     <div class="form-group form-float removeBorder">
                                         <!-- <label for="lead_stages" class="form-label taskDate"> Lead Stages</label> -->
-                                        <select  for="lead_stages" id="stages" name="stages" class="form-control dropval ws-select show-tick repeatChange backgroundHide lead-al" title="Lead stages">
+                                        <select for="lead_stages" id="stages" name="stages"
+                                            class="form-control dropval ws-select show-tick repeatChange backgroundHide lead-al"
+                                            title="Lead stages">
                                             <% _.each(categoryList, function(modelcat) { %>
                                                 <% if(modelcat.attributes.slug=="lead_stages" ) {
                                                     _.each(modelcat.attributes.sublist, function(model1) { %>
-                                                    <option <% if(model1.category_id==model.stages ){ %> selected <% } %> value="<%=model1.category_id%>"><%=model1.categoryName %></option>
+                                                    <option <% if(model1.category_id==model.stages ){ %> selected <% }
+                                                            %> value="<%=model1.category_id%>"><%=model1.categoryName %>
+                                                    </option>
                                                     <%})%>
-                                            <%} })%>
-                                        </select>                               
+                                                        <%} })%>
+                                        </select>
                                     </div>
                                 </div>
                                 <%}%>
@@ -79,10 +89,14 @@
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group form-float salutation removeBorder">
-                                        <select id="salutation" name="salutation" class="form-control dropval ws-select show-tick repeatChange backgroundHide">
-                                            <option value="mr" <% if(model.salutation=='mr' ){ %> selected <% } %>>Mr </option>
-                                            <option value="mrs" <% if(model.salutation=='mrs' ){ %> selected <% } %>>Mrs </option>
-                                            <option value="miss" <% if(model.salutation=='miss' ){ %> selected <% } %>>Miss </option>
+                                        <select id="salutation" name="salutation"
+                                            class="form-control dropval ws-select show-tick repeatChange backgroundHide">
+                                            <option value="mr" <% if(model.salutation=='mr' ){ %> selected <% } %>>Mr
+                                            </option>
+                                            <option value="mrs" <% if(model.salutation=='mrs' ){ %> selected <% } %>>Mrs
+                                            </option>
+                                            <option value="miss" <% if(model.salutation=='miss' ){ %> selected <% } %>
+                                                    >Miss </option>
                                         </select>
                                     </div>
                                 </div>
@@ -90,7 +104,8 @@
                                 <div class="col-md-9">
                                     <div class="form-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="name" class="form-control txtchange taskDate" name="name" value="<%=model.name%>">
+                                            <input id="name" class="form-control txtchange taskDate" name="name"
+                                                value="<%=model.name%>">
                                             <label for="name" class="form-label taskDate">Name</label>
                                         </div>
                                     </div>
@@ -112,14 +127,16 @@
                                     <div class="form-group form-float">
                                         <div class="form-line taskDate">
                                             <label for="email" class="form-label taskDate">Email</label>
-                                            <input id="email" class="form-control txtchange taskDate" name="email" value="<%=model.email%>">
+                                            <input id="email" class="form-control txtchange taskDate" name="email"
+                                                value="<%=model.email%>">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="mobile_no" class="form-control txtchange taskDate" name="mobile_no" value="<%=model.mobile_no%>">
+                                            <input id="mobile_no" class="form-control txtchange taskDate"
+                                                name="mobile_no" value="<%=model.mobile_no%>">
                                             <label for="mobile_no" class="form-label taskDate">Mobile No:</label>
                                         </div>
                                     </div>
@@ -140,7 +157,9 @@
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="adhar_number" type="text" class="form-control txtchange taskDate" name="adhar_number" value="<%=model.adhar_number%>" minlength="12" maxlength="12">
+                                            <input id="adhar_number" type="text" class="form-control txtchange taskDate"
+                                                name="adhar_number" value="<%=model.adhar_number%>" minlength="12"
+                                                maxlength="12">
                                             <label for="adhar_number" class="form-label taskDate">Aadhaar Number</label>
                                         </div>
                                     </div>
@@ -148,7 +167,9 @@
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="pan_number" class="form-control txtchange taskDate" name="pan_number" type="text" maxlength="10" value="<%=model.pan_number%>">
+                                            <input id="pan_number" class="form-control txtchange taskDate"
+                                                name="pan_number" type="text" maxlength="10"
+                                                value="<%=model.pan_number%>">
                                             <label for="Pan Number " class="form-label taskDate">Pan Number</label>
                                         </div>
                                     </div>
@@ -169,16 +190,20 @@
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="birth_date" type="text" class="form-control txtchange taskDate" readonly name="birth_date" value="<%=model.birth_date%>">
+                                            <input id="birth_date" type="text" class="form-control txtchange taskDate"
+                                                readonly name="birth_date" value="<%=model.birth_date%>">
                                             <label for="birth_date " class="form-label  taskDate">Date of Birth</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
-                                        <div class="form-line">
-                                            <input id="address" title="Addresss" class="form-control txtchange taskDate" name="address" value="<%=model.address%>">
-                                            <!-- <label for="address" class="form-label">Address</label> -->
+                                        <div class="form-line taskDate">
+                                            <input id="address" title="Addresss" class="form-control txtchange taskDate"
+                                                name="address" value="<%=model.address%>">
+                                            <label for="address" class="form-label addressGoolge">Enter a Google
+                                                location</label>
+
                                         </div>
                                     </div>
                                 </div>
@@ -200,7 +225,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="gst_no" class="form-control txtchange taskDate" name="gst_no" value="<%=model.gst_no%>">
+                                            <input id="gst_no" class="form-control txtchange taskDate" name="gst_no"
+                                                value="<%=model.gst_no%>">
                                             <label for="gst_no" class="form-label taskDate">Gst No</label>
                                         </div>
                                     </div>
@@ -209,8 +235,10 @@
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="office_land_line" class="form-control txtchange taskDate" name="office_land_line" value="<%=model.office_land_line%>">
-                                            <label for="office_land_line"  class="form-label taskDate">Office Land Line number</label>
+                                            <input id="office_land_line" class="form-control txtchange taskDate"
+                                                name="office_land_line" value="<%=model.office_land_line%>">
+                                            <label for="office_land_line" class="form-label taskDate">Office Land Line
+                                                number</label>
                                         </div>
                                     </div>
                                 </div>
@@ -218,8 +246,8 @@
                         </div>
                     </div>
                 </div>
-            <% }else if (model.record_type=="company" ) { %>
-                <div class="col-md-8">
+                <% }else if (model.record_type=="company" ) { %>
+                    <div class="col-md-8">
                         <div class="list-row">
                             <div class="icon-left">
                                 <div class="ws-icon">
@@ -231,9 +259,9 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <input id="name" class="form-control txtchange" name="name"
-                                                    value="<%=model.name%>">
-                                                <label for="name" class="form-label">Company Name</label>
+                                                <input id="company_name" class="form-control txtchange"
+                                                    name="company_name" value="<%=model.company_name%>">
+                                                <label for="company_name" class="form-label">Company Name</label>
                                             </div>
                                         </div>
                                     </div>
@@ -252,7 +280,8 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <input id="billing_name" class="form-control txtchange" name="billing_name" value="<%=model.billing_name%>">
+                                                <input id="billing_name" class="form-control txtchange"
+                                                    name="billing_name" value="<%=model.billing_name%>">
                                                 <label for="billing_name" class="form-label">Billing Name</label>
                                             </div>
                                         </div>
@@ -272,7 +301,8 @@
                                     <div class="col-md-12">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="address" title="Addresss" class="form-control txtchange" name="address" value="<%=model.address%>">
+                                                <input id="address" title="Addresss" class="form-control txtchange"
+                                                    name="address" value="<%=model.address%>">
                                             </div>
                                         </div>
                                     </div>
@@ -292,14 +322,16 @@
                                         <div class="form-group form-float">
                                             <div class="form-line">
                                                 <label for="email" class="form-label">Email</label>
-                                                <input id="email" class="form-control txtchange" name="email" value="<%=model.email%>">
+                                                <input id="email" class="form-control txtchange" name="email"
+                                                    value="<%=model.email%>">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <input id="mobile_no" class="form-control txtchange" name=" mobile_no" value="<%=model.mobile_no%>">
+                                                <input id="mobile_no" class="form-control txtchange" name=" mobile_no"
+                                                    value="<%=model.mobile_no%>">
                                                 <label for="mobile_no" class="form-label">Mobile No:</label>
                                             </div>
                                         </div>
@@ -307,7 +339,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="list-row">
                             <div class="icon-left">
                                 <div class="ws-icon">
@@ -319,7 +351,8 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="branch_id" class="form-control txtchange" name="branch_id" value="<%=model.branch_id%>">
+                                                <input id="branch_id" class="form-control txtchange" name="branch_id"
+                                                    value="<%=model.branch_id%>">
                                                 <label for="branch_id" class="form-label">Branch Name</label>
                                             </div>
                                         </div>
@@ -327,7 +360,8 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="gst_no" class="form-control txtchange" name="gst_no" value="<%=model.gst_no%>">
+                                                <input id="gst_no" class="form-control txtchange" name="gst_no"
+                                                    value="<%=model.gst_no%>">
                                                 <label for="gst_no" class="form-label">Gst No</label>
                                             </div>
                                         </div>
@@ -347,7 +381,8 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="adhar_number" class="form-control txtchange" type="number" name="adhar_number" value="<%=model.adhar_number%>">
+                                                <input id="adhar_number" class="form-control txtchange" type="number"
+                                                    name="adhar_number" value="<%=model.adhar_number%>">
                                                 <label for="adhar_number" class="form-label">Aadhaar Number</label>
                                             </div>
                                         </div>
@@ -355,7 +390,8 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="pan_number" class="form-control txtchange" type="text" name="pan_number" value="<%=model.pan_number%>">
+                                                <input id="pan_number" class="form-control txtchange" type="text"
+                                                    name="pan_number" value="<%=model.pan_number%>">
                                                 <label for="pan_number" class="form-label">Pan Number</label>
                                             </div>
                                         </div>
@@ -374,7 +410,8 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="zipcode" class="form-control txtchange" name="zipcode" value="<%=model.zipcode%>">
+                                                <input id="zipcode" class="form-control txtchange" name="zipcode"
+                                                    value="<%=model.zipcode%>">
                                                 <label for="zipcode" class="form-label">Zip Code</label>
                                             </div>
                                         </div>
@@ -382,7 +419,8 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="website" class="form-control txtchange" name="website" value="<%=model.website%>">
+                                                <input id="website" class="form-control txtchange" name="website"
+                                                    value="<%=model.website%>">
                                                 <label for="website" class="form-label">Website</label>
                                             </div>
                                         </div>
@@ -402,85 +440,192 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="office_land_line" class="form-control txtchange" name="office_land_line" value="<%=model.office_land_line%>">
-                                                <label for="office_land_line" class="form-label">Office Land Line number</label>
+                                                <input id="office_land_line" class="form-control txtchange"
+                                                    name="office_land_line" value="<%=model.office_land_line%>">
+                                                <label for="office_land_line" class="form-label">Office Land Line
+                                                    number</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-float">
+                                            <div class="form-line">
+                                                <input id="person_name" class="form-control txtchange"
+                                                    name="person_name" value="<%=model.person_name%>">
+                                                <label for="person_name" class="form-label">Person Name</label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                </div>
-            <%}%>
-            
+                            
 
-            <div class="col-md-8">
-                <div class="list-row">
-                    <div class="icon-left">
-                        <div class="ws-icon">
-                            <i class="material-icons">
-                                location_on
-                            </i>
                         </div>
                     </div>
-                    <div class="right-layout">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group input-group form-float">
-                                    <div class="form-line removeBorder">
-                                        <select id="country_id" name="country_id" class="form-control countryChange ws-select show-tick repeatChange backgroundHide" data-live-search="true" title="Select Country">
-                                            <% _.each(countryList, function(model1) { %>
-                                                <option <% if(model1.attributes.country_id==model.country_id ){ %> selected <%}%> value="<%=model1.attributes.country_id%>"><%=model1.attributes.country_name%></option>
-                                            <%})%>
-                                        </select>
+                    <%}%>
+
+
+                        <div class="col-md-8">
+                            <div class="list-row">
+                                <div class="icon-left">
+                                    <div class="ws-icon">
+                                        <i class="material-icons">
+                                            location_on
+                                        </i>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group input-group form-float">
-                                    <div class="form-line removeBorder">
-                                        <select id="state_id" name="state_id" class="form-control stateChange ws-select show-tick repeatChange backgroundHide" data-live-search="true" title="Select State" disabled>
-                                            <% _.each(stateList, function(model1) { %>
-                                                <option <% if(model1.attributes.state_id==model.state_id ){ %>selected <% } %>value="<%=model1.attributes.state_id%>"><%=model1.attributes.state_name%></option>
-                                            <%})%>
-                                        </select>
+                                <div class="right-layout">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group input-group form-float">
+                                                <div class="form-line removeBorder">
+                                                    <select id="country_id" name="country_id"
+                                                        class="form-control countryChange ws-select show-tick repeatChange backgroundHide"
+                                                        data-live-search="true" title="Select Country">
+                                                        <% _.each(countryList, function(model1) { %>
+                                                            <option <% if(model1.attributes.country_id==model.country_id
+                                                                ){ %> selected <%}%> value="
+                                                                    <%=model1.attributes.country_id%>">
+                                                                        <%=model1.attributes.country_name%>
+                                                            </option>
+                                                            <%})%>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="right-layout">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group form-float taskDropDown"
+                                                            style="margin-bottom: 30px;">
+                                                            <div class="form-line taskDate removeBorder">
+                                                                <select for="lead_source" autocomplete="off"
+                                                                    id="lead_source" name="lead_source"
+                                                                    title="Lead Source"
+                                                                    class="form-control dropval ws-select show-tick repeatChange backgroundHide">
+                                                                    <%if(permission.add=="yes" ) { %>
+                                                                        <option class="addNew" value="addLeadSource">Add
+                                                                            Lead Source
+                                                                        </option>
+                                                                        <%}%>
+                                                                            <% _.each(categoryList, function(modelcat) {
+                                                                                %>
+                                                                                <% if(modelcat.attributes.slug=="lead_source"
+                                                                                    )
+                                                                                    _.each(modelcat.attributes.sublist,
+                                                                                    function(model1) { %>
+                                                                                    <option <%
+                                                                                        if(model1.category_id==model.lead_source
+                                                                                        ){ %> selected <% } %>value="
+                                                                                            <%=model1.category_id%>">
+                                                                                                <%=model1.categoryName%>
+                                                                                    </option>
+                                                                                    <%})%>
+                                                                                        <%})%>
+                                                                </select>
+                                                                <label for="lead_source" class="form-label">Lead
+                                                                    Source</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <div class="list-row">
+                                            <div class="icon-left">
+                                                <div class="ws-icon">
+                                                    <i class="material-icons">
+                                                        location_on
+                                                    </i>
+                                                </div>
+                                            </div>
+                                            <div class="right-layout">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group input-group form-float">
+                                                            <div class="form-line removeBorder">
+                                                                <select id="country_id" name="country_id"
+                                                                    class="form-control countryChange ws-select show-tick repeatChange backgroundHide"
+                                                                    data-live-search="true" title="Select Country">
+                                                                    <% _.each(countryList, function(model1) { %>
+                                                                        <option <%
+                                                                            if(model1.attributes.country_id==model.country_id
+                                                                            ){ %> selected <%}%> value="
+                                                                                <%=model1.attributes.country_id%>">
+                                                                                    <%=model1.attributes.country_name%>
+                                                                        </option>
+                                                                        <%})%>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group input-group form-float">
+                                                            <div class="form-line removeBorder">
+                                                                <select id="state_id" name="state_id"
+                                                                    class="form-control stateChange ws-select show-tick repeatChange backgroundHide"
+                                                                    data-live-search="true" title="Select State"
+                                                                    disabled>
+                                                                    <% _.each(stateList, function(model1) { %>
+                                                                        <option <%
+                                                                            if(model1.attributes.state_id==model.state_id
+                                                                            ){ %>selected <% } %>value="
+                                                                                <%=model1.attributes.state_id%>
+                                                                                    "><%=model1.attributes.state_name%>
+                                                                        </option>
+                                                                        <%})%>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group input-group form-float">
+                                                            <div class="form-line removeBorder">
+                                                                <select id="city_id" name="city_id"
+                                                                    class="form-control cityChange dropval ws-select show-tick repeatChange backgroundHide"
+                                                                    data-live-search="true" title="Select City"
+                                                                    disabled>
+                                                                    <% _.each(cityList, function(model1) { %>
+                                                                        <option <%
+                                                                            if(model1.attributes.city_id==model.city_id
+                                                                            ){ %>
+                                                                            selected <% } %>value="
+                                                                                <%=model1.attributes.city_id%>">
+                                                                                    <%=model1.attributes.city_name%>
+                                                                        </option>
+                                                                        <%})%>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="clearfix">&nbsp;</div>
+                                        <div id="dynamicFormFields" class=""></div>
+                                    </div>
+
+                                    <div class="col-md-4 ws-assignee-container" style="right:15px">
+                                        <div class="row">
+                                            <div class="col-md-12 ws-assignee-column">
+                                                <label for="assignee" style="margin-left: 7px;">Company Logo</label>
+                                                <div class="clearfix">&nbsp;
+                                                    <input id="typehead" class="btn loadMedia" type="button"
+                                                        value="Select Picture" name="Select Picture"
+                                                        data-change="ws-bg-image" data-toggle="modal"
+                                                        data-target="#largeModal">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mt-5">
+                                                <img id="profile_pic_view" style="max-width: 100%;"
+                                                    src="<%=model.customer_image%>">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group input-group form-float">
-                                    <div class="form-line removeBorder">
-                                        <select id="city_id" name="city_id" class="form-control cityChange dropval ws-select show-tick repeatChange backgroundHide" data-live-search="true" title="Select City" disabled>
-                                            <% _.each(cityList, function(model1) { %>
-                                                <option <% if(model1.attributes.city_id==model.city_id ){ %>selected <% } %>value="<%=model1.attributes.city_id%>"><%=model1.attributes.city_name%></option>
-                                            <%})%>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="clearfix">&nbsp;</div>
-                <div id="dynamicFormFields" class=""></div>
-            </div>
-
-            <div class="col-md-4 ws-assignee-container">
-                <div class="row">
-                    <div class="col-md-12 ws-assignee-column">
-                        <label for="assignee" style="margin-left: 7px;">Company Logo</label>
-                        <div class="clearfix">&nbsp;
-                            <input id="typehead" class="btn loadMedia" type="button" value="Select Picture"
-                                name="Select Picture" data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal">
-                        </div>
-                    </div>
-                    <div class="col-md-12 mt-5">
-                        <img id="profile_pic_view" style="max-width: 100%;" src="<%=model.customer_image%>">
-                    </div>
-                </div>
-            </div>      
-        </div>
     </form>
 
     <div class="col-md-8">
@@ -488,11 +633,13 @@
             <div class="right-layout">
                 <div class="row">
                     <div class="col-md-4">
-                        <p class="mt-2 taskAttachTitle dragdrop-image"><i class="material-icons">attach_file</i>  Attachments</p>
+                        <p class="mt-2 taskAttachTitle dragdrop-image"><i class="material-icons">attach_file</i>
+                            Attachments</p>
                     </div>
                 </div>
                 <div class="row attachupdate taskAttach" style="margin-top:8px;">
-                    <button type="button" class="loadFile ws-taskModalbtn dotborder" data-change="ws-bg-image"><span class="material-icons">add</span></button>
+                    <button type="button" class="loadFile ws-taskModalbtn dotborder" data-change="ws-bg-image"><span
+                            class="material-icons">add</span></button>
                     <div id="attachedDoc" class="row taskAttachDoc"></div>
                 </div>
             </div>
@@ -510,7 +657,7 @@
                 <div class="row ">
                     <div class="col-md-12 ws-dragbox taskAttachDragBox">
                         <div class="ws-assignee-column">
-                            <input type="file" multiple class="btn btn-default btn__action" id="custUpload1"/>
+                            <input type="file" multiple class="btn btn-default btn__action" id="custUpload1" />
                         </div>
                     </div>
                     <div class="col-md-12 text-right ">
