@@ -19,18 +19,18 @@ define([
       this.dynamicData = null;
       this.toClose = "menuSingleView";
       // use this valiable for dynamic fields to featch the data from server
-
       this.pluginName = "menuList";
       this.model = new singleMenuModel();
       var selfobj = this;
       selfobj.pluginId = options.menuID;
       // this function is called to render the dynamic view
-      // this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
+      this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
       this.multiselectOptions = new multiselectOptions();
       scanDetails = options.searchmenu;
       this.iconList = new iconData();
       $(".popupLoader").show();
-      selfobj.render();
+      $(".profile-loader").show();
+      // selfobj.render();
       this.menuList = new menuCollection();
       this.menuList.fetch({
         headers: {
@@ -39,10 +39,10 @@ define([
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
+        $(".profile-loader").hide();
         selfobj.model.set("menuList", res.data);
         selfobj.render();
       });
-
       if (options.menuID != "") {
         this.model.set({ menuID: options.menuID });
         this.model.fetch({
@@ -52,6 +52,7 @@ define([
         }).done(function (res) {
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".popupLoader").hide();
+          $(".profile-loader").hide();
           selfobj.render();
         });
       }
@@ -66,6 +67,7 @@ define([
       "change .bDate": "updateOtherDetails",
       "change .dropval": "updateOtherDetails",
       "click .iconSelection": "setIconValues",
+      // "keyup #iconSearch": "searchIcon",
     },
     attachEvents: function () {
       // Detach previous event bindings
@@ -83,10 +85,13 @@ define([
       this.$el.on('click', '.iconSelection', this.setIconValues.bind(this));
       this.$el.off('blur', '.txtchange', this.updateOtherDetails);
       this.$el.on('blur', '.txtchange', this.updateOtherDetails.bind(this));
+      // this.$el.off('keyup', '#iconSearch', this.searchIcon);
+      // this.$el.on('keyup', '#iconSearch', this.searchIcon.bind(this));
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
       $(".profile-loader").hide();
+      // $(e.currentTarget).removeAttr("disabled");
     },
     updateOtherDetails: function (e) {
       var valuetxt = $(e.currentTarget).val();
@@ -94,6 +99,7 @@ define([
       var newdetails = [];
       newdetails["" + toID] = valuetxt;
       this.model.set(newdetails);
+      console.log(this.model);
     },
     setOldValues: function () {
       var selfobj = this;
@@ -103,8 +109,11 @@ define([
     setValues: function (e) {
       var selfobj = this;
       var da = selfobj.multiselectOptions.setCheckedValue(e);
-      console.log(da);
+      // console.log(da);
       selfobj.model.set(da);
+      if(selfobj.model.get("isParent") == 'yes'){
+        selfobj.model.set("parentID",'');
+      }
       let isRender = $(e.currentTarget).attr("data-render");
       if (isRender == "yes") {
         selfobj.render();
@@ -113,10 +122,16 @@ define([
     setIconValues: function (e) {
       selfobj = this;
       var objectDetails = [];
-      objectDetails["iconName"] = $(e.currentTarget).attr("data-value");
-      selfobj.model.set(objectDetails);
-      $(".iconList").removeClass("active");
-      $(e.currentTarget).closest(".iconList").addClass("active");
+      if($(e.currentTarget).closest(".iconSelection").hasClass("active")){
+        $(e.currentTarget).closest(".iconSelection").removeClass("active"); 
+        objectDetails["iconName"] = '';
+        selfobj.model.set(objectDetails);
+      }else{
+        $(".iconSelection").removeClass("active");
+        $(e.currentTarget).closest(".iconSelection").addClass("active");
+        objectDetails["iconName"] = $(e.currentTarget).attr("data-value");
+        selfobj.model.set(objectDetails);
+      }
     },
     saveMenuDetails: function (e) {
       e.preventDefault();
@@ -140,26 +155,51 @@ define([
             'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
           }, error: selfobj.onErrorHandler, type: methodt
         }).done(function (res) {
-          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-
-          if (isNew == "new") {
-            showResponse(e, res, "Save & New");
+          if(res.statusCode == 994){app_router.navigate("logout", { trigger: true }); }
+          let re=false;
+          if(isNew == "new") {
+            re = showResponse(e, res, "Save & New");
           } else {
-            showResponse(e, res, "Save");
+            re = showResponse(e, res, "Save");
           }
-          scanDetails.filterSearch();
-          if (res.flag == "S") {
-            if (isNew == "new") {
-              selfobj.model.clear().set(selfobj.model.defaults);
-              // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
-              selfobj.render();
-            } else {
-              handelClose(selfobj.toClose);
-            }
-          }
+          scanDetails.sidebarUpdates();
+          setTimeout(function () {
+            selfobj.resetModel(re,res,isNew);
+          }, 1000);
+          // if(re){
+          //   if (res.flag == "S") {
+          //     if(isNew == "new") {
+          //       selfobj.model.clear().set(selfobj.model.defaults);
+          //       selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+          //       selfobj.render();
+          //     } else {
+          //       handelClose(selfobj.toClose);
+          //     }
+          //   }
+          // }
+          $(e.currentTarget).removeAttr("disabled");
         });
       }
     },
+
+    resetModel:function(re,res,isNew){
+      let selfobj = this;
+      // let re=false;
+      // let isNew = $(e.currentTarget).attr("data-action");
+        if(re){
+            console.log("after sidebarUpdates");
+            if (res.flag == "S") {
+              if(isNew == "new") {
+                selfobj.model.clear().set(selfobj.model.defaults);
+                selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
+                selfobj.render();
+              } else {
+                handelClose(selfobj.toClose);
+              }
+            }
+        }
+    },
+
     initializeValidate: function () {
       var selfobj = this;
       var feilds = {
@@ -173,22 +213,24 @@ define([
           required: true,
           onlyalpha: true,
         },
-
         status: {
           required: true,
-        }
+        },
+        menu_custom_link: {
+          required: true,
+        },
       };
       var feildsrules = feilds;
-      // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+      var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
 
-      // if (!_.isEmpty(dynamicRules)) {
+      if (!_.isEmpty(dynamicRules)) {
 
-      //   var feildsrules = $.extend({}, feilds, dynamicRules);
-      //   // var feildsrules = {
-      //   // ...feilds,
-      //   // ...dynamicRules
-      //   // };
-      // }
+        var feildsrules = $.extend({}, feilds, dynamicRules);
+        // var feildsrules = {
+        // ...feilds,
+        // ...dynamicRules
+        // };
+      }
       var messages = {
         menuName: "Please enter Menu Name",
         menuLink: "Please enter Menu link",
@@ -199,10 +241,53 @@ define([
         messages: messages
       });
     },
+
+    searchIcon: function (e) {
+      var searchValue = $(e.currentTarget).val().toLowerCase();
+      $('.iconsectioName').each(function () {
+          var iconSection = $(this);
+          var hasVisibleIcons = false;
+          iconSection.next('.setIconList').find('.iconName').each(function () {
+              var iconNameElement = $(this);
+              var iconName = iconNameElement.text().toLowerCase();
+              if (iconName.includes(searchValue)) {
+                  hasVisibleIcons = true;
+                  return false;
+              }
+          });
+          var clearfix = iconSection.next('.setIconList').next('.iconClearfix');
+          if (hasVisibleIcons) {
+              iconSection.show();
+              clearfix.show();
+              $('.defaultMessage').hide();
+          } else {
+            $('.defaultMessage').show();
+              iconSection.hide();
+              clearfix.hide();
+          }
+      });
+      $('.iconName').each(function () {
+        var iconNameElement = $(this);
+        var iconName = iconNameElement.text().toLowerCase();
+        var iconContainer = iconNameElement.closest('.iconList');
+        if (iconName.includes(searchValue)) {
+            iconContainer.show();
+            $('.defaultMessage').hide();
+        } else {
+            iconContainer.hide();
+        }
+      });
+    },
+  
     render: function () {
+      var selfobj = this;
       var source = menutemp;
       var template = _.template(source);
       $("#" + this.toClose).remove();
+      $(".profile-loader").hide();
+      if(this.model.attributes.menuList){
+        this.model.attributes.menuList = this.model.attributes.menuList.filter(item => item.menuID !== this.model.attributes.menuID);
+      }
       this.$el.html(template({ "model": this.model.attributes, "iconList": this.iconList.attributes.icons }));
       this.$el.addClass("tab-pane in active panel_overflow");
       this.$el.attr('id', this.toClose);
@@ -217,6 +302,9 @@ define([
       this.initializeValidate();
       this.setOldValues();
       this.attachEvents();
+      $('#iconSearch').on('input', function (e) {
+        selfobj.searchIcon(e);
+      });
       rearrageOverlays("Menu", this.toClose);
       return this;
     }, onDelete: function () {

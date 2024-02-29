@@ -34,13 +34,23 @@ define([
       selfobj.arrangedColumnList = [];
       this.filteredFields = [];
       this.filterCount = null;
+      this.taskID = options.action;
       $(".profile-loader").show();
       $(".loder").hide();
       this.mname = Backbone.history.getFragment();
-      permission = ROLE[this.mname];
-      this.menuId = permission.menuID;
-      this.appSettings = new appSettings();
-      this.dynamicFormDatas = new dynamicFormData();
+      const match = this.mname.match(/^task(?:\/(\d+))?$/);
+
+      if (match) {
+        // If the pattern is matched, set this.mname to "task"
+        this.mname = match[1] ? "task" : this.mname;
+        this.mname = "task"
+        // Continue with the rest of the code
+        permission = ROLE[this.mname];
+        this.menuId = permission.menuID;
+        this.appSettings = new appSettings();
+        this.dynamicFormDatas = new dynamicFormData();
+        this.openSingleTemp(this.taskID);
+      }
       this.menuList = new singleMenuModel();
       this.appSettings.getMenuList(this.menuId, function(plural_label,module_desc,form_label,result) {
         selfobj.plural_label = plural_label;
@@ -159,6 +169,14 @@ define([
       "click .arrangeColumns": "openColumnArrangeModal",
       "click .downloadReport": "downloadReport",
     },
+
+    openSingleTemp: function(taskID){
+      let selfobj = this;
+      if(taskID != ""){
+        new taskSingleView({ task_id: taskID, searchtask: selfobj,menuId:selfobj.menuId,form_label:"Task", menuName: selfobj.mname});
+      }
+    },
+    
 
     downloadReport: function (e) {
       e.preventDefault();

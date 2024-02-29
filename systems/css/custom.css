@@ -7761,7 +7761,7 @@ button.arrangeColumns.btn-bgColor {
 .CustomerHoverButton {
   position: absolute;
   top: 35px;
-  width: 180px;
+  width: 145px;
   background: #f4f5f6d9;
   left: 70px;
   z-index: 4;
@@ -9724,10 +9724,18 @@ span.taskPriorityColor {
 
 .focused~.task-lable {}
 
-.form-line.taskDate.removeBorder .dropdown.bootstrap-select.show-tick.form-control.dropval.ws-select.repeatChange.backgroundHide.dropup.focused+label.form-label.taskDate.tasktop {
+.form-line.taskDate.removeBorder .dropdown.bootstrap-select.show-tick.form-control.dropval.ws-select.repeatChange.backgroundHide.hideOption.dropup~label.form-label.taskDate.tasktop {
   top: -16px;
 }
 
+.dropdown.bootstrap-select.form-control.dropval.ws-select.backgroundHide.hideOption.dropup~label.form-label.taskDate.tasktop {
+  top: -16px;
+}
+
+.dropdown.bootstrap-select.show-tick.form-control.dropval.ws-select.repeatChange.backgroundHide.hideOption~label.form-label.taskDate.tasktop {
+  top: -16px !important;
+}
+/* .dropdown.bootstrap-select.show-tick.form-control.dropval.ws-select.repeatChange.backgroundHide.hideOption.dropup */
 .dropdown.bootstrap-select.form-control.dropval.ws-select.backgroundHide.dropup.focused+label.form-label.taskDate.tasktop {
   top: -16px;
 }
@@ -9742,7 +9750,8 @@ span.taskPriorityColor {
 }
 
 label.form-label.taskDate.tasktop.fortask {
-  top: -1px;
+  top: -1px ;
+  z-index: -1;
 }
 
 .donloadBtn button.dropdown-toggle.btn-bgColor {

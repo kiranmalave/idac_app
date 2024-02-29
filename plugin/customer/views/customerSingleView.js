@@ -7,6 +7,8 @@ define([
   'datepickerBT',
   'moment',
   'RealTimeUpload',
+  'Swal',
+  '../../category/views/categorySingleView',
   '../../core/views/multiselectOptions',
   '../../dynamicForm/views/dynamicFieldRender',
   "../../category/collections/slugCollection",
@@ -16,7 +18,7 @@ define([
   '../models/customerSingleModel',
   '../../readFiles/views/readFilesView',
   'text!../templates/customerSingle_temp.html',
-], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, RealTimeUpload, multiselectOptions, dynamicFieldRender, slugCollection, countryCollection, stateCollection, cityCollection, customerSingleModel, readFilesView, customertemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, RealTimeUpload, Swal, categorySingleView, multiselectOptions, dynamicFieldRender, slugCollection, countryCollection, stateCollection, cityCollection, customerSingleModel, readFilesView, customertemp) {
   var customerSingleView = Backbone.View.extend({
     model: customerSingleModel,
     form_label: '',
@@ -129,6 +131,7 @@ define([
       "change .stateChange": "setState",
       "click .loadFile" : "loadFile",
       "click .hideUpload" : "hideUpload",
+      "click .deleteAttachment": "deleteAttachment",
     },
     attachEvents: function () {
       // Detach previous event bindings
@@ -158,6 +161,8 @@ define([
       this.$el.on('click', '.loadFile', this.loadFile.bind(this));
       this.$el.off('click', '.hideUpload', this.hideUpload);
       this.$el.on('click', '.hideUpload', this.hideUpload.bind(this));
+      this.$el.off('click', '.deleteAttachment', this.deleteAttachment);
+      this.$el.on('click', '.deleteAttachment', this.deleteAttachment.bind(this));
     },
 
     onErrorHandler: function (collection, response, options) {
@@ -170,6 +175,9 @@ define([
     updateOtherDetails: function (e) {
       var valuetxt = $(e.currentTarget).val();
       var toName = $(e.currentTarget).attr("id");
+      if(valuetxt == "add_lead"){
+        new categorySingleView({ searchCategory: this, loadfrom: "cutomer" , form_label:"Categories"});
+      }
       var newdetails = [];
       newdetails["" + toName] = valuetxt;
       this.model.set(newdetails);
@@ -185,6 +193,18 @@ define([
     hideUpload: function (e) {
       $(".upload").hide();
       $('.dotborder').show();
+    },
+    
+    refreshCat: function () {
+      let selfobj = this;
+      this.categoryList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y', slug: 'lead_stages,lead_source' }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        selfobj.render();
+      });
     },
 
     updatemultiSelDetails: function (e) {
@@ -279,6 +299,57 @@ define([
     //   var da = selfobj.multiselectOptions.setCheckedValue(e);
     //   selfobj.model.set(da);
     // },
+
+    deleteAttachment: function (e) {
+      let file_id = $(e.currentTarget).attr("data-file_id");
+      let customer_id = this.model.get("customer_id");
+      let div = document.getElementById('removeIMG');
+      let status = "delete";
+      let selfobj = this;
+      Swal.fire({
+        title: "Delete Task ",
+        text: "Do you want to delete Attachment ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Delete',
+        animation: "slide-from-top",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          if (file_id != null) {
+            $.ajax({
+              url: APIPATH + 'customer/removeAttachment',
+              method: 'POST',
+              data: { fileID: file_id, status: status, custID: customer_id },
+              datatype: 'JSON',
+              beforeSend: function (request) {
+                request.setRequestHeader("token", $.cookie('_bb_key'));
+                request.setRequestHeader("SadminID", $.cookie('authid'));
+                request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+                request.setRequestHeader("Accept", 'application/json');
+              },
+              success: function (res) {
+                if (res.flag == "F")
+                  alert(res.msg);
+                if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+                if (res.flag == "S") {
+                  $('#' + file_id + 'removeDiv').remove();
+                  selfobj.model.set({ "attachment_file": "" });
+                }
+    
+              }
+            });
+          } else {
+            div.remove();
+            selfobj.model.set({ "attachment_file": "" });
+          }
+        }else{
+
+        }
+      });
+    },
+
     setValues: function (e) {
       setvalues = ["status", "record_type", "order"];
       var selfobj = this;

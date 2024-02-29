@@ -566,11 +566,28 @@ class TaskMaster extends CI_Controller
 					$join[0]['key1'] ="created_by";
 					$join[0]['key2'] ="adminID";
 
-					$selectC = "aa.name AS adminName";
+					$join[1]['type'] ="LEFT JOIN";
+					$join[1]['table']="customer";
+					$join[1]['alias'] ="c";
+					$join[1]['key1'] ="customer_id";
+					$join[1]['key2'] ="customer_id";
+
+					$join[2]['type'] ="LEFT JOIN";
+					$join[2]['table']="admin";
+					$join[2]['alias'] ="ad";
+					$join[2]['key1'] ="assignee";
+					$join[2]['key2'] ="adminID";
+
+					$selectC = "aa.name AS adminName, c.name AS customerName, ad.name";
 					$createdBy = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, '', '', $join, '');
+					
 					if(!empty($createdBy)){
 						$created = array_column($createdBy,'adminName');
+						$customerName = array_column($createdBy,'customerName');
+						$assigneeName = array_column($createdBy,'name');
 						$taskDetails[0]->createdByname = $created;
+						$taskDetails[0]->customerName = $customerName;
+						$taskDetails[0]->assigneeName = $assigneeName;
 					}
 
 					$watchersDetailsName = $this->CommonModel->getMasterDetails('tasks_watchers', '', $whereGuest);
@@ -587,20 +604,16 @@ class TaskMaster extends CI_Controller
 						$taskDetails[0]->attachment_file = $attachment;
 						$taskDetails[0]->attachment_id = $attachmentID;
 					}
-					// print_r("<pre>");
-					// print_r($watchersDetailsName);exit;
-				$status['data'] = $taskDetails;
-				$status['statusCode'] = 200;
-				$status['flag'] = 'S';
-				$this->response->output($status,200);
-
+					$status['data'] = $taskDetails;
+					$status['statusCode'] = 200;
+					$status['flag'] = 'S';
+					$this->response->output($status,200);
 				}else{
-
-				$status['msg'] = $this->systemmsg->getErrorCode(227);
-				$status['statusCode'] = 227;
-				$status['data'] =array();
-				$status['flag'] = 'F';
-				$this->response->output($status,200);
+					$status['msg'] = $this->systemmsg->getErrorCode(227);
+					$status['statusCode'] = 227;
+					$status['data'] =array();
+					$status['flag'] = 'F';
+					$this->response->output($status,200);
 				}
 		}
 	}
@@ -1830,5 +1843,60 @@ class TaskMaster extends CI_Controller
 				$this->response->output($status, 200);
 			}
 		}
+	}
+
+	public function taskUpload($task_id = '')
+	{
+		$this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$this->load->library('realtimeupload');
+		$extraData = array();
+		if(isset($task_id) && !empty($task_id)){
+			$mediapatharr = $this->config->item("mediaPATH") ."task/".$task_id ;
+			// print_r($mediapatharr);exit; 
+			if (!is_dir($mediapatharr)) {
+				mkdir($mediapatharr, 0777);
+				chmod($mediapatharr, 0777);
+			} else {
+				if (!is_writable($mediapatharr)) {
+					chmod($mediapatharr, 0777);
+				}
+			}
+		}
+		if (empty($task_id) || $task_id == 0){
+			$mediapatharr = $this->config->item("mediaPATH") ."task/temp-";
+			if (!is_dir($mediapatharr)) {
+				if (mkdir($mediapatharr, 0777, true)) {
+				} else {
+					$status['msg'] = "Failed to create directory: " . $mediapatharr . "</br>" . $this->systemmsg->getErrorCode(273);
+					$status['statusCode'] = 227;
+					$status['flag'] = 'F';
+					$this->response->output($status, 200);
+				}
+			}
+		}
+		
+		
+		$extraData["task_id"] = $task_id;
+		
+		$settings = array(
+			'uploadFolder' => $mediapatharr,
+			'extension' => ['png', 'pdf', 'jpg', 'jpeg', 'gif','docx', 'doc', 'xls', 'xlsx'],
+			'maxFolderFiles' => 0,
+			'maxFolderSize' => 0,
+			'rename'=>true,
+			'returnLocation' => false,
+			'uniqueFilename' => false,
+			'dbTable' => 'tasks_attachment',
+			'fileTypeColumn' => 'attachment_file',
+			'fileColumn' => 'attachment_file',
+			'forignKey' => '',
+			'forignValue' => '',
+			'docType' => "",
+			'docTypeValue' => '',
+			'isSaveToDB' => "Y",
+			'extraData' => $extraData,
+		);
+		$this->realtimeupload->init($settings);
 	}
 }

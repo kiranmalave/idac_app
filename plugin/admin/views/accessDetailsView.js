@@ -7,8 +7,11 @@ define([
   'moment',
   '../../userRole/collections/userRoleCollection',
   '../collections/accessMenuCollection',
+  '../../core/views/appSettings',
+  '../../menu/models/menuFilterOptionModel',
+  '../../menu/collections/menuCollection',
   'text!../templates/accessControl_temp.html',
-], function ($, _, Backbone, select2, moment, userRoleCollection, accessList, accessControl) {
+], function ($, _, Backbone, select2, moment, userRoleCollection, accessList,appSettings,menuFilterOptionModel,menuCollections,accessControl) {
 
   var accessDetailsView = Backbone.View.extend({
     //model:reportOptionModel,
@@ -18,8 +21,11 @@ define([
       $(".profile-loader").show();
       var roleList = new userRoleCollection();
       this.collection = new accessList();
+      this.appSettings = new appSettings();
+      this.filterOption = new menuFilterOptionModel();
+      this.menuCollection = new menuCollections();
+      this.appSettings.initialize({filterOption:this.filterOption,menuCollection:this.menuCollection}); 
       // this.model = new singleCompanyCommercialsModel();
-
       roleList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
@@ -32,17 +38,16 @@ define([
       });
       $(".profile-loader").hide();
       //below 8 lnes code added by sanjay to load role default
-
-
-      this.collection.roleID= 0;
-      this.collection.fetch({headers: {
-        'contentType':'application/x-www-form-urlencoded','SadminID':$.cookie('authid'),'token':$.cookie('_bb_key'),'Accept':'application/json'
-      },error: selfobj.onErrorHandler}).done(function(res){
-        if(res.statusCode == 994){app_router.navigate("logout",{trigger:true});}
-
-        $(".popupLoader").hide();
-        selfobj.render();
-      });
+      // this.collection.roleID = 2;
+      // this.collection.fetch({
+      //   headers: {
+      //     'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+      //   }, error: selfobj.onErrorHandler
+      // }).done(function (res) {
+      //   if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+      //   $(".popupLoader").hide();
+      //   selfobj.render();
+      // });
 
       //_.bindAll(this,"update");
       //this.bind('change : cost', this.update);      
@@ -67,14 +72,16 @@ define([
         var newsetval = [];
         newsetval["" + initID] = "no";
       }
+      console.log(newsetval);
       var mm = this.collection.get(collid);
       mm.set(newsetval);
       this.collection.set(mm, { remove: false });
     },
     checkboxChange: function (e) {
       var isChecked = $(e.currentTarget).prop('checked');
-      var modelIDToDisable = $(e.currentTarget).attr("data-modelid");
-      console.log(modelIDToDisable);
+      var modelIDToDisable = $(e.currentTarget).attr("data-modelID");
+      var newsetval =[];
+      var mm = this.collection.get(modelIDToDisable);
       if (isChecked) {
         // Uncheck the checkbox before disabling
         $('.addCheckbox[data-modelID="' + modelIDToDisable + '"]').prop('disabled', false);
@@ -83,8 +90,13 @@ define([
       } else {
         // Enable the checkbox and leave it unchecked
         $('.addCheckbox[data-modelID="' + modelIDToDisable + '"]').prop('disabled', true).prop('checked', false);
+        newsetval["" + "add"] = "no";
         $('.editCheckbox[data-modelID="' + modelIDToDisable + '"]').prop('disabled', true).prop('checked', false);
+        newsetval["" + "edit"] = "no";
         $('.deleteCheckbox[data-modelID="' + modelIDToDisable + '"]').prop('disabled', true).prop('checked', false);
+        newsetval["" + "delete"] = "no";
+        mm.set(newsetval);
+        this.collection.set(mm, { remove: false });
       }
     },
     saveAccessDetails: function (e) {
@@ -109,6 +121,8 @@ define([
         } else {
           $(e.currentTarget).html("<span>Saved</span>");
           //scanDetails.filterSearch();
+          getLocalData(true);
+          selfobj.appSettings.sidebarUpdate();
         }
         setTimeout(function () {
           $(e.currentTarget).html("<span>Save</span>");
@@ -138,7 +152,6 @@ define([
         $("#moduleTable").remove();
         return false;
       }
-
       this.collection.roleID = roleID;
       this.collection.fetch({
         headers: {
@@ -146,20 +159,19 @@ define([
         }, error: selfobj.onErrorHandler
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-
         $(".popupLoader").hide();
         selfobj.render();
+        $("#moduleTable").show();
       });
 
     },
-
     render: function () {
       var template = _.template(accessControl);
       this.$el.html(template({ accessDetails: this.collection }));
       $(".main_container").append(this.$el);
-      $('#companyID').select2({ width: '100%' });
+      $("#moduleTable").hide();
+      $('#companyID').select2({ width: '100%' });    
       return this;
-
     }
   });
 

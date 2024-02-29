@@ -641,6 +641,7 @@ class CustomerMaster extends CI_Controller
 				$wherec["parent_record_id ="] = "'".$customer."'";
 			}
 			$adminID = $this->input->post('SadminID');
+
 			if ($isAll == "Y") {
 				$join = array();
 				$customerActivityDetails = $this->CommonModel->GetMasterListDetails($selectC='*','history',$wherec,'','','', $other);	
@@ -676,11 +677,12 @@ class CustomerMaster extends CI_Controller
 			$whereNotes["record_id = "] = $customer;
 			$customerNoteUpcoming = $this->CommonModel->GetMasterListDetails("*", 'notes', $whereNotes, '', '', '', '');
 
-			// print_r($customerNoteUpcoming);exit;
+			// print_r($customerTaskUpcoming);exit;
 			$upcomingActivity = array();
 			foreach ($customerTaskUpcoming as $key => $value) {
 				$record = new stdClass();
 				$record->record_type = "task";
+				$record->record_id = $value->task_id;
 				$record->description =$value->subject;
 				$record->timestamp =$value->created_date;
 				$record->start_date =$value->start_date;
@@ -737,6 +739,7 @@ class CustomerMaster extends CI_Controller
 		}
 		
 	}
+
 	public function getCustomerEmailList()
 	{
 		// print('here');exit;
@@ -859,5 +862,31 @@ class CustomerMaster extends CI_Controller
 			'extraData' => $extraData,
 		);
 		$this->realtimeupload->init($settings);
+	}
+
+	public function removeAttachment()
+	{
+		$this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$action = $this->input->post("status");
+			if(trim($action) == "delete"){
+				$fileID = $this->input->post("fileID");
+				$custID= $this->input->post("custID");
+				$wherec["customer_id ="] = $custID;
+				$wherec["attachment_id ="] = $fileID;
+				$changestatus = $this->CommonModel->deleteMasterDetails('customer_attachment',$wherec);
+			if($changestatus){
+				$status['data'] = array();
+				$status['statusCode'] = 200;
+				$status['flag'] = 'S';
+				$this->response->output($status, 200);
+			} else {
+				$status['data'] = array();
+				$status['msg'] = $this->systemmsg->getErrorCode(996);
+				$status['statusCode'] = 996;
+				$status['flag'] = 'F';
+				$this->response->output($status, 200);
+			}
+		}	
 	}
 }

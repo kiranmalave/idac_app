@@ -35,7 +35,7 @@
     <%if(taskDetails.attributes.name != null){%>
       <span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="Assignee"> <%=taskDetails.attributes.name%> </span>  
     <%}%>
-      <%if(taskDetails.attributes.due_date != "0000-00-00"){%>
+      <%if(taskDetails.attributes.due_date != "0000-00-00" && taskDetails.attributes.due_date != null ){%>
         <small class="comment-date float-sm-right"><span><i class="material-icons">event</i></span><%=taskDetails.attributes.due_date%></small>  
       <%}%>
     <button type="button" class="ws-btn-default loadview editButton" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"  data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>

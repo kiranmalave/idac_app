@@ -29,66 +29,69 @@ var taxInvoiceView = Backbone.View.extend({
   form_label:'',
     initialize: function(options){
       this.toClose = "taxInvoiceFilterView";
-        var selfobj = this;
-        selfobj.arrangedColumnList = [];
-        this.filteredFields = [];
-        selfobj.filteredData = [];
-        $(".profile-loader").show();
-        var mname = Backbone.history.getFragment();
-        this.menuName = mname;
-        permission = ROLE[mname];
-        var getmenu = permission.menuID;
-        this.menuId = getmenu;
-        this.appSettings = new appSettings();
-        this.dynamicFormDatas = new dynamicFormData();
-        this.menuList = new singleMenuModel();
-        this.dynamicStdFieldsList = new dynamicStdFieldsCol();
-        // Pass a callback to handle the result of getMenuList
-        // this.appSettings.getMenuList(this.menuId, function(plural_label,module_desc,form_label,result) {
-        //   selfobj.plural_label = plural_label;
-        //   selfobj.module_desc = module_desc;
-        //   selfobj.form_label = form_label;
-        //   readyState = true;
-        //   selfobj.getColumnData();
-        //   // selfobj.getMenuList();
-        //   if(result.data[0] != undefined){
-        //     selfobj.tableName = result.data[0].table_name;
-        //   }
-        //   if(selfobj.dynamicStdFieldsList && selfobj.dynamicStdFieldsList != undefined){
-        //     selfobj.dynamicStdFieldsList.fetch({
-        //       headers: {
-        //         'contentType': 'application/x-www-form-urlencoded',
-        //         'SadminID': $.cookie('authid'),
-        //         'token': $.cookie('_bb_key'),
-        //         'Accept': 'application/json'
-        //       },
-        //       error: selfobj.onErrorHandler,
-        //       type: 'post',
-        //       data: { "table": "ab_" + selfobj.tableName }
-        //     }).done(function (res) {
-        //       selfobj.dynamicStdFieldsList = selfobj.dynamicStdFieldsList.filter(model => {
-        //         const field = model.attributes.Field;
-        //         return !selfobj.filteredData.includes(field);
-        //       });
+      this.loadFrom = options.loadFrom;
+      var selfobj = this;
+      selfobj.arrangedColumnList = [];
+      this.filteredFields = [];
+      selfobj.filteredData = [];
+      $(".profile-loader").show();
+      this.mname = Backbone.history.getFragment();
+      const match = this.mname.match(/^customerDashboard(?:\/(\d+))?$/);
+      if (match) {
+        // If the pattern is matched, set this.mname to "task"
+        this.mname = match[1] ? "customerDashboard" : this.mname;
+        this.mname = "invoice"
+      }
+      permission = ROLE[this.mname];
+      this.menuId = permission.menuID;
+      this.appSettings = new appSettings();
+      this.dynamicFormDatas = new dynamicFormData();
+      // Pass a callback to handle the result of getMenuList
+      this.appSettings.getMenuList(this.menuId, function(plural_label,module_desc,form_label,result) {
+        selfobj.plural_label = plural_label;
+        selfobj.module_desc = module_desc;
+        selfobj.form_label = form_label;
+        readyState = true;
+        selfobj.getColumnData();
+        // selfobj.getMenuList();
+        // if(result.data[0] != undefined){
+        //   selfobj.tableName = result.data[0].table_name;
+        // }
+        // if(selfobj.dynamicStdFieldsList && selfobj.dynamicStdFieldsList != undefined){
+        //   selfobj.dynamicStdFieldsList.fetch({
+        //     headers: {
+        //       'contentType': 'application/x-www-form-urlencoded',
+        //       'SadminID': $.cookie('authid'),
+        //       'token': $.cookie('_bb_key'),
+        //       'Accept': 'application/json'
+        //     },
+        //     error: selfobj.onErrorHandler,
+        //     type: 'post',
+        //     data: { "table": "ab_" + selfobj.tableName }
+        //   }).done(function (res) {
+        //     selfobj.dynamicStdFieldsList = selfobj.dynamicStdFieldsList.filter(model => {
+        //       const field = model.attributes.Field;
+        //       return !selfobj.filteredData.includes(field);
         //     });
-        //   }
-        // });
-        filterOption = new taxInvoiceFilterOptionModel();
-        if (this.menuName == "receipt") {
-          filterOption.set({ record_type: "receipt" });
-        } else if (this.menuName == "delivery") {
-          filterOption.set({ record_type: "delivery" });
-        } else if (this.menuName == "qoutation") {
-          filterOption.set({ record_type: "qoutation" });
-        }
-        
-        // filterOption.set({ "menuId": this.menuId });
-        // filterOption.set({ "getAll": 'Y' });
-        this.collection = new taxInvoiceCollection();
-        selfobj.getModuleData();
-        this.collection.on('add',this.addOne,this);
-        this.collection.on('reset',this.addAll,this);
-        this.render();
+        //   });
+        // }
+      });
+      filterOption = new taxInvoiceFilterOptionModel();
+      if (this.menuName == "receipt") {
+        filterOption.set({ record_type: "receipt" });
+      } else if (this.menuName == "delivery") {
+        filterOption.set({ record_type: "delivery" });
+      } else if (this.menuName == "qoutation") {
+        filterOption.set({ record_type: "qoutation" });
+      }
+      
+      // filterOption.set({ "menuId": this.menuId });
+      // filterOption.set({ "getAll": 'Y' });
+      this.collection = new taxInvoiceCollection();
+      selfobj.getModuleData();
+      this.collection.on('add',this.addOne,this);
+      this.collection.on('reset',this.addAll,this);
+      this.render();
     },
 
     getMenuList: function (e) {
@@ -1024,9 +1027,15 @@ var taxInvoiceView = Backbone.View.extend({
     render: function(){
       var selfobj = this;
       var template = _.template(taxInvoice_temp);
-      this.$el.html(template({closeItem:this.toClose,"pluralLable":selfobj.plural_label,"moduleDesc":selfobj.module_desc,"arrangedColumnList": selfobj.arrangedColumnList}));
-      $(".ws-select").selectpicker();
-      $(".main_container").append(this.$el);
+
+      if (this.loadFrom != undefined) {
+        this.$el.html(template({ closeItem: this.toClose, "loadFrom": this.loadFrom }));
+        $("#invoice").append(this.$el);
+      } else {
+        this.$el.html(template({ closeItem: this.toClose, "loadFrom": this.loadFrom }));
+        $(".ws-select").selectpicker();
+        $(".main_container").append(this.$el);
+      }
       return this;
     }
 });

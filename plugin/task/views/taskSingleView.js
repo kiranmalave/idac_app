@@ -75,9 +75,11 @@ define([
         }).done(function (res) {
           var startDate = selfobj.model.get("start_date");
           var due_date = selfobj.model.get("due_date");
-          if (startDate != null && startDate != "0000-00-00" || due_date != null && due_date != "0000-00-00") {
-            selfobj.model.set({ "due_date": moment(due_date).format("DD-MM-YYYY") });
+          if (startDate != null && startDate != "0000-00-00") {
             selfobj.model.set({ "start_date": moment(startDate).format("DD-MM-YYYY") });
+          }
+          if(due_date != null && due_date != "0000-00-00"){
+            selfobj.model.set({ "due_date": moment(due_date).format("DD-MM-YYYY") });
           }
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".popupLoader").hide();
@@ -387,8 +389,6 @@ define([
 
         }
       });
-
-      
     },
     scroll: function (e) {
       let selfobj = this;

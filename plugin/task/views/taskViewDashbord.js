@@ -154,15 +154,7 @@ define([
                   alert(res.msg);
                 if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
                 if (res.flag == "S") {
-                  selfobj.searchtask.fetch({
-                    headers: {
-                      'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-                    }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
-                  }).done(function (res) {
-                    if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-                    $(".preloader").hide();
-                    setPagging(res.paginginfo, res.loadstate, res.msg);
-                  });
+                  selfobj.filterSearch();
                 }
               }
             });
@@ -304,7 +296,7 @@ define([
         var template = _.template(taskRowTemp);
         var dueDateMoment = moment(objectModel.attributes.due_date);
         objectModel.attributes.newDate = objectModel.attributes.due_date;
-        if (objectModel.attributes.due_date != "0000-00-00") {
+        if (objectModel.attributes.due_date != "0000-00-00" && objectModel.attributes.due_date != null) {
           objectModel.attributes.due_date = dueDateMoment.format("DD-MMM-YYYY");
           var today = moment();
           if (dueDateMoment.isSame(today, 'day')) {
