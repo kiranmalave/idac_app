@@ -174,6 +174,15 @@ a:hover,
   background: var(--primary-hover-color);
 }
 
+.sidebar-left .navigation-left .side-menu li:hover,
+.sidebar-left .navigation-left .side-menu li.active,
+.sidebar-right .side-menu li.active,
+.sidebar-right .side-menu li:hover,
+.app-btn:hover {
+  background: #dfe0e3;
+}
+
+
 .sub-nav li a:hover {
   background: var(--primary-hover-color);
 }
@@ -2286,23 +2295,23 @@ label.label-style {
   border-bottom: none;
 }
 
-.swal2-modal {
+/* .swal2-modal {
   margin: auto;
   width: 50%;
   padding: 30px;
-}
+} */
 
 .swal2-popup .swal2-styled {
   margin-top: 0 !important;
 }
 
 .swal2-popup .swal2-title {
-  font-size: 18px !important;
+  font-size: 23px !important;
 }
 
 .swal2-popup .swal2-styled {
-  font-size: 14px !important;
-  padding: 10px 16px !important;
+  font-size: 18px !important;
+  padding: 10px 29px !important;
 }
 
 .swal2-popup .swal2-styled:focus {
@@ -3011,4 +3020,53 @@ section.content.dashBordTotal {
   top: -17px;
   left: 9px;
   font-size: 14px;
+}
+
+.forProject .dropdown-menu.show {
+  height: 240px;
+  overflow: hidden !important;
+}
+
+.forProject .dropdown-menu.show .inner.show ul.dropdown-menu.inner.show {
+  overflow: auto !important;
+}
+
+
+.proposalActoinCol {
+  gap: 5px;
+}
+
+.showWatch {
+  top: 90px;
+}
+
+
+.ws-assignee-column.customer .RTU-uploadContainer {
+
+  min-height: 60px;
+  min-width: 104%;
+  display: inline-block;
+}
+
+.greedLeadTotal .leadDetailsCard .leadDetailsCardfooter button.ws-btn-default {
+  height: 25px;
+  width: 25px;
+  position: relative;
+}
+
+.greedLeadTotal .leadDetailsCard .leadDetailsCardfooter button.ws-btn-default span {
+  position: absolute;
+  top: -2px;
+  right: -6px;
+  background: #c2bbea;
+  height: 17px;
+  width: 17px;
+  border-radius: 50%;
+  font-size: 11px;
+}
+
+.greedLeadTotal .leadDetailsCard .leadDetailsCardfooter button.ws-btn-default:hover span {
+  background: #4b4d9a;
+  font-weight: 600;
+  color: #fff;
 }
