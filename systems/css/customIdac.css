@@ -69,17 +69,8 @@
 }
 
 
-.iconList {
-  box-sizing: border-box;
-  display: inline-block;
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.iconList:hover,
-.iconList.active {
+.iconSelection:hover,
+.iconSelection.active {
   background: #f3be00;
   -webkit-transition: all 0.3s ease-in-out;
   -moz-transition: all 0.3s ease-in-out;

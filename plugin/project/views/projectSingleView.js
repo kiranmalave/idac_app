@@ -31,7 +31,6 @@ define([
         this.multiselectOptions = new multiselectOptions();
         $(".modelbox").hide();
         scanDetails = options.searchproject;
-        console.log(options);
         
         $(".popupLoader").show();
         var projectList = new projectCollection();
@@ -57,7 +56,7 @@ define([
         selfobj.render();
       });
 
-  
+      this.projID = options.project_id;
         if (options.project_id != "") {
           this.model.set({ project_id: options.project_id });
           this.model.fetch({
@@ -87,6 +86,7 @@ define([
         "click .loadMedia": "loadMedia",
         "click .loadFile" : "loadFile",
         "click .hideUpload" : "hideUpload",
+        "click .deleteAttachment": "deleteAttachment",
       },
       attachEvents: function () {
         // Detach previous event bindings
@@ -108,12 +108,12 @@ define([
         this.$el.on('click', '.loadFile', this.loadFile.bind(this));
         this.$el.off('click', '.hideUpload', this.hideUpload);
         this.$el.on('click', '.hideUpload', this.hideUpload.bind(this));
+        this.$el.off('click', '.deleteAttachment', this.deleteAttachment);
+        this.$el.on('click', '.deleteAttachment', this.deleteAttachment.bind(this));
       },
   
       onErrorHandler: function (collection, response, options) {
-        alert(
-          "Something was wrong ! Try to refresh the page or contact administer. :("
-        );
+        alert("Something was wrong ! Try to refresh the page or contact administer. :(");
         $(".profile-loader").hide();
       },
       updateOtherDetails: function (e) {
@@ -149,7 +149,6 @@ define([
       },
       loadMedia: function (e) {
         e.stopPropagation();
-        // alert("here");
         $('#largeModal').modal('toggle');
         this.elm = "profile_pic";
         new readFilesView({ loadFrom: "addpage", loadController: this });
@@ -237,6 +236,55 @@ define([
           });
         }
       },
+      deleteAttachment: function (e) {
+        let file_id = $(e.currentTarget).attr("data-file_id");
+        let project_id = this.model.get("project_id");
+        let div = document.getElementById('removeIMG');
+        let status = "delete";
+        let selfobj = this;
+        Swal.fire({
+          title: "Delete Task ",
+          text: "Do you want to delete Attachment ?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Delete',
+          animation: "slide-from-top",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            if (file_id != null) {
+              $.ajax({
+                url: APIPATH + 'project/removeAttachment',
+                method: 'POST',
+                data: { fileID: file_id, status: status, projID: project_id },
+                datatype: 'JSON',
+                beforeSend: function (request) {
+                  request.setRequestHeader("token", $.cookie('_bb_key'));
+                  request.setRequestHeader("SadminID", $.cookie('authid'));
+                  request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+                  request.setRequestHeader("Accept", 'application/json');
+                },
+                success: function (res) {
+                  if (res.flag == "F")
+                    alert(res.msg);
+                  if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+                  if (res.flag == "S") {
+                    $('#' + file_id + 'removeDiv').remove();
+                    selfobj.model.set({ "attachment_file": "" });
+                  }
+      
+                }
+              });
+            } else {
+              div.remove();
+              selfobj.model.set({ "attachment_file": "" });
+            }
+          }else{
+  
+          }
+        });
+      },
       initializeValidate: function () {
         var selfobj = this;
         var feilds = {
@@ -268,8 +316,6 @@ define([
           rules: feildsrules,
           messages: messages,
         });
-  
-       
       },
   
       render: function () {

@@ -36,17 +36,13 @@
                                             title="Lead Source"
                                             class="form-control dropval ws-select show-tick repeatChange backgroundHide">
                                             <%if(permission.add=="yes" ) { %>
-                                                <option class="addNew" value="addLeadSource">Add Lead Source</option>
-                                                <%}%>
-                                                    <% _.each(categoryList, function(modelcat) { %>
-                                                        <% if(modelcat.attributes.slug=="lead_source" )
-                                                            _.each(modelcat.attributes.sublist, function(model1) { %>
-                                                            <option <% if(model1.category_id==model.lead_source ){ %>
-                                                                selected <% } %>value="<%=model1.category_id%>">
-                                                                        <%=model1.categoryName%>
-                                                            </option>
-                                                            <%})%>
-                                                                <%})%>
+                                                <option class="addNew" value="add_lead">Add Lead Source</option>
+                                            <%}%>
+                                            <% _.each(categoryList, function(modelcat) { %>
+                                                <% if(modelcat.attributes.slug=="lead_source" ) _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                    <option <% if(model1.category_id==model.lead_source ){ %> selected <% } %>value="<%=model1.category_id%>"> <%=model1.categoryName%> </option>
+                                                <%})%>
+                                            <%})%>
                                         </select>
                                         <label for="lead_source" class="form-label">Lead Source</label>
                                     </div>
@@ -532,21 +528,19 @@
                             <div id="dynamicFormFields" class=""></div>
                         </div>
 
-                        <div class="col-md-4 ws-assignee-container">
-                            <div class="row">
-                                <div class="col-md-12 ws-assignee-column">
-                                    <label for="assignee" style="margin-left: 7px;">Company Logo</label>
-                                    <div class="clearfix">&nbsp;
-                                        <input id="typehead" class="btn loadMedia" type="button" value="Select Picture"
-                                            name="Select Picture" data-change="ws-bg-image" data-toggle="modal"
-                                            data-target="#largeModal">
-                                    </div>
-                                </div>
-                                <div class="col-md-12 mt-5">
-                                    <img id="profile_pic_view" style="max-width: 100%;" src="<%=model.customer_image%>">
-                                </div>
-                            </div>
+            <div class="col-md-4 ws-assignee-container">
+                <div class="row">
+                    <div class="col-md-12 ws-assignee-column">
+                        <label for="assignee" style="margin-left: 7px;">Company Logo</label>
+                        <div class="clearfix">&nbsp;
+                            <input id="typehead" class="btn loadMedia" type="button" value="Select Picture" name="Select Picture" data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal">
                         </div>
+                    </div>
+                    <div class="col-md-12 mt-5">
+                        <img id="profile_pic_view" style="max-width: 100%;" src="<%=model.customer_image%>">
+                    </div>
+                </div>
+            </div>      
         </div>
     </form>
 

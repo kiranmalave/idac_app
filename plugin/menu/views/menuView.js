@@ -4,47 +4,43 @@ define([
   'underscore',
   'backbone',
   'datepickerBT',
+  'Swal',
   '../views/menuSingleView',
   '../collections/menuCollection',
   '../models/menuFilterOptionModel',
+  '../../core/views/appSettings',
   'text!../templates/menuRow.html',
   'text!../templates/menuRowDragble.html',
   'text!../templates/menu_temp.html',
   'text!../templates/menuFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, menuSingleView, menuCollection, menuFilterOptionModel, menuRowTemp, menuRowDragable, menuTemp, menuFilterTemp) {
+], function ($, _, Backbone, datepickerBT,Swal, menuSingleView, menuCollection, menuFilterOptionModel,appSettings, menuRowTemp, menuRowDragable, menuTemp, menuFilterTemp) {
 
   var menuView = Backbone.View.extend({
     recordCount: 0,
+    setupNest:null,
     initialize: function (options) {
       this.toClose = "menuFilterView";
       var selfobj = this;
       $(".profile-loader").show();
       var mname = Backbone.history.getFragment();
       permission = ROLE[mname];
-
-      readyState = true;
+      this.menuId = permission.menuID;
+      this.appSettings = new appSettings();
+      this.appSettings.initialize({parentObj:this});
       this.render();
-      filterOption = new menuFilterOptionModel();
-      searchmenu = new menuCollection();
-      searchmenu.fetch({
+      this.filterOption = new menuFilterOptionModel();
+      this.collection = new menuCollection();
+      this.collection.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+        }, error: selfobj.onErrorHandler, type: 'post', data: selfobj.filterOption.attributes
       }).done(function (res) {
-
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
-        //setPagging(res.paginginfo,res.loadstate,res.msg);
       });
-
-      this.collection = searchmenu;
+      
       this.collection.on('add', this.addOne, this);
       this.collection.on('reset', this.addAll, this);
-      /* $(".right_col").on("scroll",function(){
-             console.log("wait..");
-             selfobj.loadData();
-             
-         });*/
     },
     events:
     {
@@ -59,6 +55,8 @@ define([
       "change .txtchange": "updateOtherDetails",
       "click .changeStatus": "changeStatusListElement",
       "click .showpage": "loadData",
+      "click .deleteModule": "deleteModule",
+      "click .row-action": "minimizeChild",
     },
     updateOtherDetails: function (e) {
 
@@ -66,11 +64,80 @@ define([
       var toID = $(e.currentTarget).attr("id");
       var newdetails = [];
       newdetails["" + toID] = valuetxt;
-      filterOption.set(newdetails);
+      this.filterOption.set(newdetails);
     },
     settextSearch: function (e) {
       var usernametxt = $(e.currentTarget).val();
-      filterOption.set({ textSearch: usernametxt });
+      this.filterOption.set({ textSearch: usernametxt });
+    },
+    deleteModule:function(e){
+      var selfobj = this;
+      var menuID = $(e.currentTarget).attr("data-menuID");
+      var custom_module = '';
+      var menuCollection = [];
+      var swalText = '';
+      this.collection.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: 'post', data: selfobj.filterOption.attributes
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".profile-loader").hide();
+        menuCollection = res.data;
+        var menuItem = menuCollection.find((item) => {
+          if (item.menuID == menuID) {
+            return true; 
+          } else {
+            return item.subMenu.find((menu) => {
+              return menu.menuID == menuID;
+            });
+          }
+        });
+        custom_module = menuItem ? menuItem.custom_module : '';
+        if(custom_module == 'yes'){
+          swalText = "After you delete this menu, all the associated data removed from our system .";
+        }else{
+          swalText ="After you delete this menu, all associated data will be permanently removed from our system and cannot be restored. Please ensure that you have backed up any crucial data and double-check your decision before proceeding with the deletion.";
+        }
+        Swal.fire({
+          title: 'Are you Sure you want to delete?',
+          text: swalText, 
+          showDenyButton: true,
+          showCancelButton: false,
+          confirmButtonText: 'Delete',
+          denyButtonText: `Cancel`,
+          icon: "question",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              url: APIPATH + 'menuMaster/status',
+              method: 'POST',
+              data: { list: menuID, action:"permanentDelete" },
+              datatype: 'JSON',
+              beforeSend: function (request) {
+                //$(e.currentTarget).html("<span>Updating..</span>");
+                request.setRequestHeader("token", $.cookie('_bb_key'));
+                request.setRequestHeader("SadminID", $.cookie('authid'));
+                request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+                request.setRequestHeader("Accept", 'application/json');
+              },
+              success: function (res) {
+                if (res.flag == "F")
+                  alert(res.msg);
+      
+                if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+                if (res.flag == "S") {
+                  // selfobj.filterSearch();
+                  selfobj.sidebarUpdates();
+                }
+                setTimeout(function () {
+                  $(e.currentTarget).html(status);
+                }, 3000);
+              }
+            });
+          }
+        });
+      });
     },
     changeStatusListElement: function (e) {
       var selfobj = this;
@@ -115,7 +182,8 @@ define([
 
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           if (res.flag == "S") {
-            selfobj.filterSearch();
+            // selfobj.filterSearch();
+            selfobj.sidebarUpdates();
           }
           setTimeout(function () {
             $(e.currentTarget).html(status);
@@ -140,15 +208,16 @@ define([
         }
       }
     },
-    resetSearch: function () {
+    resetSearch: function (e) {
+      var selfobj = this;
       //filterOption.set({curpage:0,menuID:null,textval: null,textSearch:'menuName',status:'active',orderBy:'createdDate',order:'DESC'});
       //filterOption.reset();
-      filterOption.clear().set(filterOption.defaults);
+      this.filterOption.clear().set(this.filterOption.defaults);
       $(".multiOptionSel").removeClass("active");
       $("#textval").val("");
-      $('#textSearch').prop('selectedIndex', 0);
       $('#textSearch option[value=menuID]').attr('selected', 'selected');
-      this.filterSearch(false);
+      // this.filterSearch(false);
+      selfobj.sidebarUpdates();
     },
     loaduser: function () {
       var memberDetails = new singlememberDataModel();
@@ -159,24 +228,29 @@ define([
       //$("#menuList").append(template3({menuDetails:objectModel}));
       $("#dd-list").append(template({ menuDetails: objectModel }));
       this.recordCount++;
-      if (this.recordCount >= this.collection.models.length) {
+      if (this.recordCount >= this.collection.models.length && this.setupNest != true) {
         this.createNestable();
       }
-
     },
+
     createNestable: function () {
       let selfobj = this;
+      
       $('#nestableMenu').nestable({
         maxDepth: 2,
         group: $(this).prop('id')
       });
+      //setTimeout(function () { selfobj.savePositions(); }, 100);
+      
       $('#nestableMenu').on('change', function () {
         var $this = $(this);
         var serializedData = window.JSON.stringify($(this).nestable('serialize'));
-        setTimeout(function () { selfobj.savePostions(); }, 100);
-
+        setTimeout(function () { selfobj.savePositions(); }, 100);
       });
+      this.setupNest= true;
+    
     },
+
     addAll: function () {
       //$("#menuList").empty();
       $("#dd-list").empty();
@@ -244,7 +318,7 @@ define([
       setvalues = ["status", "orderBy", "order"];
       var selfobj = this;
       $.each(setvalues, function (key, value) {
-        var modval = filterOption.get(value);
+        var modval = selfobj.filterOption.get(value);
         if (modval != null) {
           var modeVal = modval.split(",");
         } else { var modeVal = {}; }
@@ -279,7 +353,7 @@ define([
 
           objectDetails["" + classname[0]] = newsetvalue;
           $("#valset__" + classname[0]).html(newsetvalue);
-          filterOption.model.set(objectDetails);
+          this.filterOption.model.set(objectDetails);
         }
       }, 3000);
     },
@@ -291,7 +365,7 @@ define([
         var newsetval = [];
         var classname = $(e.currentTarget).attr("class").split(" ");
         newsetval["" + classname[0]] = $(e.currentTarget).attr("data-value");
-        filterOption.set(newsetval);
+        selfobj.filterOption.set(newsetval);
 
       }
       if (issingle == "N") {
@@ -313,7 +387,7 @@ define([
           else { var newsetvalue = ""; }
 
           objectDetails["" + classname[0]] = newsetvalue;
-          filterOption.set(objectDetails);
+          selfobj.filterOption.set(objectDetails);
         }, 500);
       }
     },
@@ -322,28 +396,26 @@ define([
         $('.' + this.toClose).remove();
         rearrageOverlays();
       }
-
-      searchmenu.reset();
+      this.recordCount = 0;
+      this.collection.reset();
       var selfobj = this;
       readyState = true;
-      filterOption.set({ curpage: 0 });
+      this.filterOption.set({ curpage: 0 });
       var $element = $('#loadMember');
       $(".profile-loader").show();
       $element.attr("data-index", 1);
       $element.attr("data-currPage", 0);
 
-      searchmenu.fetch({
+      this.collection.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, add: true, remove: false, merge: false, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
-
         //setPagging(res.paginginfo,res.loadstate,res.msg);  
         $element.attr("data-currPage", 1);
-        $element.attr("data-index", res.paginginfo.nextpage);
-
+        // $element.attr("data-index", res.paginginfo.nextpage);
         //$(".page-info").html(recset);
         if (res.loadstate === false) {
           $(".profile-loader-msg").html(res.msg);
@@ -351,7 +423,6 @@ define([
         } else {
           $(".profile-loader-msg").hide();
         }
-
         selfobj.setValues();
       });
     },
@@ -365,15 +436,15 @@ define([
       } else {
 
         $element.attr("data-index", cid);
-        searchmenu.reset();
+        this.collection.reset();
         var index = $element.attr("data-index");
         var currPage = $element.attr("data-currPage");
 
-        filterOption.set({ curpage: index });
-        var requestData = filterOption.attributes;
+        selfobj.filterOption.set({ curpage: index });
+        var requestData = selfobj.filterOption.attributes;
 
         $(".profile-loader").show();
-        searchmenu.fetch({
+        this.collection.fetch({
           headers: {
             'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
           }, add: true, remove: false, merge: false, type: 'post', error: selfobj.onErrorHandler, data: requestData
@@ -388,8 +459,8 @@ define([
         });
       }
     },
-    savePostions: function () {
 
+    savePositions: function () {
       var selfobj = this;
       var positions = [];
       $('.updated').each(function () {
@@ -397,11 +468,11 @@ define([
         $(this).removeClass('updated');
       })
       var positionsToSave = positions;
-
+ 
       var action = "changePositions";
 
       var serializedData = window.JSON.stringify($("#nestableMenu").nestable('serialize'));
-      console.log(serializedData);
+
       $.ajax({
         url: APIPATH + 'systemMenuUpdatePositions',
         method: 'POST',
@@ -415,14 +486,34 @@ define([
           request.setRequestHeader("Accept", 'application/json');
         },
         success: function (res) {
+          selfobj.sidebarUpdates();
           if (res.flag == "F")
             alert(res.msg);
-
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         }
       });
 
     },
+
+    minimizeChild: function(e) {
+      var state = $(e.currentTarget).attr("data-state");
+      if (state === "minimize") {
+          $(e.currentTarget).html("expand_less");
+          $(e.currentTarget).parents('li.dd-item').find('.submenuList').addClass("hide");
+          $(e.currentTarget).attr("data-state", "maximize");
+          $(e.currentTarget).attr("title", "Maximize");
+      } else {
+          $(e.currentTarget).html("expand_more");
+          $(e.currentTarget).attr("data-state", "minimize");
+          $(e.currentTarget).attr("title", "Minimize");
+          $(e.currentTarget).parents('li.dd-item').find('.submenuList').removeClass("hide");
+      }
+    },
+
+    sidebarUpdates: function(){
+      this.appSettings.sidebarUpdate();
+    },
+  
     render: function () {
       var selfobj = this;
       var template = _.template(menuTemp);

@@ -167,6 +167,7 @@ $route['customerMaster/leadUpdate'] = 'customerMaster/leadUpdate';
 $route['leadColumnUpdatePositions'] = 'customerMaster/updatePositions';
 $route['custUpload'] = 'customerMaster/custUpload';
 $route['custUpload/(:num)'] = 'customerMaster/custUpload/$1';
+$route['customer/removeAttachment'] = 'customerMaster/removeAttachment';
 
 
 ######branch
@@ -203,6 +204,7 @@ $route['project/(:num)'] = 'project/project/$1';
 $route['project/status'] = 'project/projectchangeStatus';
 $route['projUpload'] = 'project/projUpload';
 $route['projUpload/(:num)'] = 'project/projUpload/$1';
+$route['project/removeAttachment'] = 'project/removeAttachment';
 
 
 ######task
@@ -215,6 +217,8 @@ $route['taskMaster/saveWatchersDetails'] = 'taskMaster/saveWatchersDetails';
 $route['taskMaster/removeWatchers'] = 'taskMaster/removeWatchers';
 $route['taskMaster/removeAttachment'] = 'taskMaster/removeAttachment';
 $route['taskComment'] = 'taskMaster/taskCommentMaster';
+$route['taskUpload'] = 'taskMaster/taskUpload';
+$route['taskUpload/(:num)'] = 'taskMaster/taskUpload/$1';
 // $route['taskComment/(:num)'] = 'taskMaster/taskCommentMaster/$1';
 $route['commentsList'] = 'taskMaster/gettaskCommentDetails';
 $route['getHistory'] = 'taskMaster/getTaskHistory';

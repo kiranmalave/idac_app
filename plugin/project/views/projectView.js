@@ -387,7 +387,6 @@ define([
       if (isClose && typeof isClose != 'object') {
         $('.' + this.toClose).remove();
         rearrageOverlays();
-        //alert("sdfsf 222");
       }
 
       searchproject.reset();
@@ -412,12 +411,20 @@ define([
         $element.attr("data-currPage", 1);
         $element.attr("data-index", res.paginginfo.nextpage);
 
-        //$(".page-info").html(recset);
         if (res.loadstate === false) {
           $(".profile-loader-msg").html(res.msg);
           $(".profile-loader-msg").show();
         } else {
           $(".profile-loader-msg").hide();
+        }
+
+        selfobj.totalRec = res.paginginfo.totalRecords;
+        if(selfobj.totalRec == 0){
+          $(".noRec").show();
+          $("#projectMainContainer").hide();
+        }else{
+          $(".noRec").hide();
+          $("#projectMainContainer").show();
         }
 
         selfobj.setValues();
@@ -509,7 +516,7 @@ define([
       } else {
         var template = _.template(projectTemp);
       }
-      this.$el.html(template({ closeItem: this.toClose }));
+      this.$el.html(template({ closeItem: this.toClose, totalRec:this.totalRec }));
       if (this.loadFrom != null) {
         $("#dasboradHolder").append(this.$el);
       } else {

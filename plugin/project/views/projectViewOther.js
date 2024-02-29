@@ -220,12 +220,12 @@ define([
       let projectID = $(e.currentTarget).attr('data-project_id');
       var element = document.querySelector(".addFlex");
       element.classList.add("hideFolder");
+      $('.projectFooter').hide();
       var element = document.querySelector(".hideTable");
       $('#dasboradProposalHolder').empty();
       element.classList.add("ShowTable");
       var element = document.querySelector(".hideheader");
       element.classList.add("headerHide");
-
       new proposalView({ loadFrom: 'dashboard', projectID: projectID, customerID: selfobj.customerID });
     },
 
@@ -236,6 +236,7 @@ define([
       element.classList.remove("ShowTable");
       var element = document.querySelector(".hideheader");
       element.classList.remove("headerHide");
+      $('.projectFooter').show();
     },
 
     loadSubView: function (e) {

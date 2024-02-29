@@ -22,16 +22,10 @@
                             <%}%>   
                             <% if(activityDetails.attributes.record_type =='reciept'){ %>
                                 <i class="material-icons">receipt</i>
-                            <%}%>
-                            <% if(activityDetails.attributes.record_type =='project'){ %>
-                                <i class="material-icons">folder</i>
-                            <%}%>   
-                            <% if(activityDetails.attributes.record_type =='proposal'){ %>
-                                <i class="material-icons">insert_drive_file</i>
-                            <%}%>         
+                            <%}%>           
                     </div>
                 </div>
-                <a href="<%=APPPATH%><%if(activityDetails.attributes.record_type == 'task'){%>#task/<%}else if(activityDetails.attributes.record_type == 'project'){%>#project/<%}else if(activityDetails.attributes.record_type == 'proposal'){%>#proposal/<%}%><%=activityDetails.attributes.record_id%>" target="_blank">
+                <a href="<%=APPPATH%><%if(activityDetails.attributes.record_type == 'task'){%>#task/<%}else if(activityDetails.attributes.record_type == 'appointment'){%>#appointment/<%}%><%=activityDetails.attributes.record_id%>" target="_blank">
                     <div class="activityRight loadView" >
                         <div class="activitytop">
                             <div class="heading">
@@ -52,12 +46,6 @@
                                 <%}%>
                                 <% if(activityDetails.attributes.record_type =='reciept'){ %>
                                     <h4>Receipt</h4>
-                                <%}%>
-                                <% if(activityDetails.attributes.record_type =='project'){ %>
-                                    <h4>Project</h4>
-                                <%}%>
-                                <% if(activityDetails.attributes.record_type =='proposal'){ %>
-                                    <h4>Proposal</h4>
                                 <%}%>
                             </div>
                             <div class="Time">

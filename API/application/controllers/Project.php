@@ -177,6 +177,7 @@ class Project extends CI_Controller {
 							$this->response->output($status,200);
 
 						}else{
+							$projID = $this->db->insert_id();
 							$inID = array("docCurrNo"=>($lastProjectDetails[0]->docCurrNo+1));
 							$isupdate = $this->CommonModel->updateMasterDetails("doc_prefix",$inID,array("docTypeID"=>"2"));
 							if(!$isupdate){
@@ -186,8 +187,7 @@ class Project extends CI_Controller {
 								$status['flag'] = 'F';
 								$this->response->output($status,200);
 							}else{
-								$custID = $this->db->insert_id();
-								$status['lastID'] = $custID;
+								$status['lastID'] = $projID;
 								$status['msg'] = $this->systemmsg->getSucessCode(400);
 								$status['statusCode'] = 400;
 								$status['data'] =array();
@@ -367,5 +367,31 @@ class Project extends CI_Controller {
 			'extraData' => $extraData,
 		);
 		$this->realtimeupload->init($settings);
+	}
+
+	public function removeAttachment()
+	{
+		$this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$action = $this->input->post("status");
+			if(trim($action) == "delete"){
+				$fileID = $this->input->post("fileID");
+				$projID= $this->input->post("projID");
+				$wherec["project_id ="] = $projID;
+				$wherec["attachment_id ="] = $fileID;
+				$changestatus = $this->CommonModel->deleteMasterDetails('project_attachment',$wherec);
+			if($changestatus){
+				$status['data'] = array();
+				$status['statusCode'] = 200;
+				$status['flag'] = 'S';
+				$this->response->output($status, 200);
+			} else {
+				$status['data'] = array();
+				$status['msg'] = $this->systemmsg->getErrorCode(996);
+				$status['statusCode'] = 996;
+				$status['flag'] = 'F';
+				$this->response->output($status, 200);
+			}
+		}	
 	}
  }

@@ -192,6 +192,8 @@ define([
             scanDetails.refreshCat();
           } else if(selfobj.loadFrom == "ProductSingleView"){
             scanDetails.refreshCat();
+          }else if(selfobj.loadFrom == "cutomer"){
+            scanDetails.refreshCat();
           }else {
             scanDetails.filterSearch();
           }
