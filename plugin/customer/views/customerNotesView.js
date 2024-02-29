@@ -11,17 +11,17 @@ define([
   '../models/customerNoteSingleModel',
   'text!../templates/customerNotesRow_temp.html',
   'text!../templates/customerNotes_temp.html',
-], function ($, _, Backbone, Swal, moment,timepicker, timeselectOptions, customerNotesCollection, customerNoteSingleModel, customerNotesRow_temp, customerNotesTemp) {
+], function ($, _, Backbone, Swal, moment, timepicker, timeselectOptions, customerNotesCollection, customerNoteSingleModel, customerNotesRow_temp, customerNotesTemp) {
 
   var customerView = Backbone.View.extend({
-    editor:"",
+    editor:null,
     initialize: function (options) {
       var selfobj = this;
       $(".profile-loader").show();
       this.custName = options.customerName;
       scanDetails = options.searchCustomer;
+      this.render();
       this.model = new customerNoteSingleModel();
-      
       this.customer_id = options.customer_id;
       this.stage_id = options.stageID;
       this.timeselectOptions = new timeselectOptions();
@@ -29,7 +29,6 @@ define([
       this.collection.on('add', this.addOne, this);
       this.collection.on('reset', this.addAll, this);
       selfobj.getNotesDetails();
-      this.render();
     },
 
     getNotesDetails: function () {
@@ -145,6 +144,8 @@ define([
               if (res.flag == "S") {
                 selfobj.model.clear().set(selfobj.model.defaults);
                 $("#title").val("");
+                $("#reminder_date").val("");
+                $("#reminder_time").val("");
                 selfobj.editor.root.innerHTML = "";
                 selfobj.collection.reset();
                 selfobj.getNotesDetails();
@@ -285,9 +286,17 @@ define([
       }
       $('.newNote').removeClass('activeNew');
     },
+    
+    render: function () {
+      var selfobj = this;
+      var template = _.template(customerNotesTemp);
+      this.$el.html(template({ customerNotes: selfobj.collection, name: this.custName}));
+      $('#noteMedia').empty();
+      $("#noteMedia").append(this.$el);
+      setToolTip();
+      // this.initializeValidate();
+      $(".profile-loader").hide();
 
-
-    initializeValidate: function(){
       $("#reminder_date").datepickerBT({
         format: "dd-mm-yyyy",
         todayBtn: "linked",
@@ -302,31 +311,20 @@ define([
         selfobj.model.set({ reminder_date: valuetxt });
       });
 
-        $('#reminder_time').timepicker({
-          timeFormat: 'hh:mm a',
-          interval: 15,
-          startTime: '00:00',
-          dynamic: false,
-          dropdown: true,
-          scrollbar: true,
-          change: function (e) {
-            var st = $("#reminder_time").val();
-            var tempsTime = moment(st, "hh:mm a").format("HH:mm:ss");
-            selfobj.model.set({ reminder_time: tempsTime });
-            console.log(tempsTime);
-          },
-        });
-    },
-    
-    render: function () {
-      var selfobj = this;
-      var template = _.template(customerNotesTemp);
-      this.$el.html(template({ customerNotes: selfobj.collection, name: this.custName}));
-      $('#noteMedia').empty();
-      $("#noteMedia").append(this.$el);
-      setToolTip();
-      this.initializeValidate();
-      $(".profile-loader").hide();
+      $('#reminder_time').timepicker({
+        timeFormat: 'hh:mm a',
+        interval: 15,
+        startTime: '00:00',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true,
+        change: function (e) {
+          var st = $("#reminder_time").val();
+          var tempsTime = moment(st, "hh:mm a").format("HH:mm:ss");
+          selfobj.model.set({ reminder_time: tempsTime });
+          console.log(tempsTime);
+        },
+      });
 
       var __toolbarOptions = [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -338,10 +336,8 @@ define([
         // ['clean'],
         // ['image']                              // remove formatting button
       ];
-      let ed = $("body").find("#notes_description1");
-      this.editor = new Quill(ed.get(0), {
+      this.editor = new Quill($("#notes_description1").get(0), {
         placeholder: 'Type your notes here...',
-        theme: 'snow',
         modules: {
          
           imageResize: {
@@ -354,7 +350,9 @@ define([
               image: imageHandler
             }
           },
+          
         },
+        theme: 'snow'
       });
       function imageHandler() {
         var range = this.quill.getSelection();

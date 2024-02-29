@@ -433,7 +433,7 @@ class Proposal extends CI_Controller {
 		}
 	}
 
-	public function printProposal($proposal_id)
+	public function printProposal($proposal_id,$adminID)
 	{
 		$where["proposal_id = "] = $proposal_id;
 		$selectC = "proposal_id,proposal_number,t.name,p.project_name,c.name AS company_name,t.description,confirm,cost";
@@ -451,7 +451,9 @@ class Proposal extends CI_Controller {
 		$join[1]['key2'] ="customer_id";
 
 		$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC,'proposal',$where,'','',$join,'');
-		
+		$where = array("adminID"=> $adminID);
+		$roleID = $this->CommonModel->getMasterDetails('admin','roleID',$where);
+		$proposalDetails[0]->roleID = $roleID[0]->roleID;
 		$data= array();
 	 	$data['proposalData']= $proposalDetails;
         $pdfFilePath = $this->load->view("proposalpdf",$data,true);

@@ -9810,3 +9810,22 @@ label.form-label.taskDate.tasktop.fortask {
   width: 100%;
   text-decoration: none;
 }
+
+.form-line input#address::placeholder {
+  opacity: 0;
+}
+
+.customerTable .body.table .customerListTable .tableList tbody#customerList tr.even.pointer.bg- td .CustomerHoverButton button.ws-btn-default.loadview span {
+  position: absolute;
+  top: 0px;
+  right: -3px;
+  background: #c2bbea;
+  height: 17px;
+  width: 17px;
+  border-radius: 50%;
+  font-size: 11px;
+}
+
+.customerTable .body.table .customerListTable .tableList tbody#customerList tr.even.pointer.bg- td .CustomerHoverButton button.ws-btn-default.loadview {
+  position: relative;
+}
