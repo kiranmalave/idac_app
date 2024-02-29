@@ -18,7 +18,9 @@
                             <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line" style="margin-top: -5px;">
-                                        <input id="proposal_number" class="form-control txtchange ws-disable-cursor" type="text" value="<%=model.proposal_number%>" disabled placeholder="Proposal Number Auto Generated">
+                                        <input id="proposal_number" class="form-control txtchange ws-disable-cursor"
+                                            type="text" value="<%=model.proposal_number%>" disabled
+                                            placeholder="Proposal Number Auto Generated">
                                     </div>
                                 </div>
                             </div>
@@ -35,8 +37,10 @@
                             <div class="col-md-6">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <label for="name" class="form-label pl-2" style="margin-left: 4px !important;">Name</label>
-                                        <input id="name" class="form-control txtchange" name="name" type="text"  value="<%=model.name%>" style="margin-left:10px !important;">
+                                        <label for="name" class="form-label pl-2"
+                                            style="margin-left: 4px !important;">Name</label>
+                                        <input id="name" class="form-control txtchange" name="name" type="text"
+                                            value="<%=model.name%>" style="margin-left:10px !important;">
                                     </div>
                                 </div>
                             </div>
@@ -44,17 +48,28 @@
                             <div class="col-md-6">
                                 <div class="form-group form-float">
                                     <div class="form-line" style="margin-top: -5px; ">
-                                        <select id="client_id" name="client_id" class="form-control dropval ws-select show-tick changeClient mt-2 " title="Select Client" data-live-search="true"data-live-search="true">
+                                        <select id="client_id" name="client_id"
+                                            class="form-control dropval ws-select show-tick changeClient mt-2 "
+                                            title="Select Client" data-live-search="true" data-live-search="true">
                                             <%if(permission.add=="yes" ) { %>
                                                 <option class="addNew" value="addClient">Add Client</option>
                                                 <%}%>
                                                     <% _.each(customerList, function(model1) { %>
                                                         <%if(model.client_id==null){%>
-                                                            <option <% if(model1.attributes.customer_id == model.client_id ){%> selected <%}%> value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%></option>
-                                                        <%}else{%>
-                                                            <option <% if(model1.attributes.customer_id == model.client_id ){%> selected <%}%> value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%></option>
-                                                        <%}%>
-                                                    <%}); %>
+                                                            <option <% if(model1.attributes.customer_id==model.client_id
+                                                                ){%> selected <%}%> value="
+                                                                    <%=model1.attributes.customer_id%>">
+                                                                        <%=model1.attributes.name%>
+                                                            </option>
+                                                            <%}else{%>
+                                                                <option <%
+                                                                    if(model1.attributes.customer_id==model.client_id
+                                                                    ){%> selected <%}%> value="
+                                                                        <%=model1.attributes.customer_id%>">
+                                                                            <%=model1.attributes.name%>
+                                                                </option>
+                                                                <%}%>
+                                                                    <%}); %>
                                         </select>
                                     </div>
                                 </div>
@@ -140,7 +155,7 @@
                     <div class="right-layout mb-5">
                         <div class="row">
                             <div class="col-md-12">
-                                <label for="description">Proposal Description</label>
+                                <label for="description" style="color: #999;">Proposal Description</label>
                                 <div id="proposaldescription" class="form-control">
                                     <%=model.description%>
                                 </div>

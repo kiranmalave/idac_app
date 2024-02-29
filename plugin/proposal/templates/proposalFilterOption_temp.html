@@ -1,56 +1,58 @@
 <form id="demo-form" action="#">
-    <h6>Filter Search</h6>
-    <hr>
-    <div class="clearfix">&nbsp;</div>
-    <div class="row">
-      <div class="col-md-6">
-        <select id="textSearch" class="form-control changeBox" name="textSearch">
-          <option>Select</option>
-          <option value="t.name">Proposal Name</option>
-          <option value="proposal_number">Proposal Number</option>
-        </select>
+  <h6>Filter Search</h6>
+  <hr>
+  <div class="clearfix">&nbsp;</div>
+  <div class="row">
+    <div class="col-md-6">
+      <select id="textSearch" class="form-control changeBox" name="textSearch">
+        <option>Select</option>
+        <option value="t.name">Proposal Name</option>
+        <option value="proposal_number">Proposal Number</option>
+      </select>
+    </div>
+    <div class="col-md-6">
+      <div class="textvalBox contacttxt">
+        <input id="textval" class="form-control txtchange filterClear" name="textval" type="text">
       </div>
-      <div class="col-md-6">
-        <div class="textvalBox contacttxt">
+    </div>
+    <div class="col-md-6 contacttxt hidetextval" style="display: none;">
+      <div class="form-group form-float">
+        <div class="form-line">
           <input id="textval" class="form-control txtchange filterClear" name="textval" type="text">
         </div>
       </div>
-      <div class="col-md-6 contacttxt hidetextval" style="display: none;">
-        <div class="form-group form-float">
-          <div class="form-line">
-            <input id="textval" class="form-control txtchange filterClear" name="textval" type="text">
-          </div>
-        </div>
-      </div>
     </div>
-  
-    <div class="clearfix">&nbsp;</div>
-    <div class="row">
-      <div class="col-md-6">
-        <select id="company" class="form-control dropval ws-select show-tick txtchange" name="textSearch" data-live-search="true">
-          <option>Company Name</option>
-          <% _.each(customerList, function(model1) { %>
-            <option value="<%=model1.attributes.customer_id%>">
-              <%=model1.attributes.name%>
-            </option>
-            <%}); %>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <select id="project_id" class="form-control dropval ws-select show-tick txtchange" name="textSearch" data-live-search="true">
-          <option>Project Name</option>
-          <% _.each(projectList, function(model1) { %>
-            <option value="<%=model1.attributes.project_id%>">
-              <%=model1.attributes.project_name%>
-            </option>
-            <%}); %>
-        </select>
-      </div>
+  </div>
+
+  <div class="clearfix">&nbsp;</div>
+  <div class="row">
+    <div class="col-md-6">
+      <select id="company" class="form-control dropval ws-select show-tick txtchange" name="textSearch"
+        data-live-search="true">
+        <option>Company Name</option>
+        <% _.each(customerList, function(model1) { %>
+          <option value="<%=model1.attributes.customer_id%>">
+            <%=model1.attributes.name%>
+          </option>
+          <%}); %>
+      </select>
     </div>
+    <div class="col-md-6">
+      <select id="project_id" class="form-control dropval ws-select show-tick txtchange" name="textSearch"
+        data-live-search="true">
+        <option>Project Name</option>
+        <% _.each(projectList, function(model1) { %>
+          <option value="<%=model1.attributes.project_id%>">
+            <%=model1.attributes.project_name%>
+          </option>
+          <%}); %>
+      </select>
+    </div>
+  </div>
 
 
-    <!-- <label>Date of Birth</label> -->
-    <!-- <div class="row dateList">
+  <!-- <label>Date of Birth</label> -->
+  <!-- <div class="row dateList">
       <div class="col-5">
         <input type="text" id="fromDate" class="form-control txtchange filterClear" placeholder="Start Date" readonly>
       </div>
@@ -59,21 +61,24 @@
         <input type="text" id="toDate" class="form-control txtchange filterClear" placeholder="End Date" readonly>
       </div>
     </div> -->
-    <!-- <div class="clearfix">&nbsp;</div> -->
-    <div class="row pt-2">
+  <div class="clearfix">&nbsp;</div>
+  <div class="clearfix">&nbsp;</div>
+  <div class="row pt-2">
 
-      <div class="col-md-12">
-        <label>Order:</label>
-        <ul class="item-container" data-valid="order">
-          <li class="order multiOptionSel" data-single="Y" data-value="ASC">Ascending</li>
-          <li class="order multiOptionSel" data-single="Y" data-value="DESC">Descending</li>
-        </ul>
-      </div>
+    <div class="col-md-12">
+      <label>Order:</label>
+      <ul class="item-container" data-valid="order">
+        <li class="order multiOptionSel" data-single="Y" data-value="ASC">Ascending</li>
+        <li class="order multiOptionSel" data-single="Y" data-value="DESC">Descending</li>
+      </ul>
     </div>
-    <div class="col-xs-12 text-right">
-      <hr>
-      <input type="button" id="filterSearch" class="filterSearch btn btn-raised bg-green waves-effect" value="Search"></button>
-      <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval" value="Reset"></button>
-      <input id="filterOption" type="button" class="btn btn-raised bg-blue-grey colseFil closeFilter" value="Close"></button>
-    </div>
-  </form>
+  </div>
+  <div class="col-xs-12 text-right">
+    <hr>
+    <input type="button" id="filterSearch" class="filterSearch btn btn-raised bg-green waves-effect"
+      value="Search"></button>
+    <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval" value="Reset"></button>
+    <input id="filterOption" type="button" class="btn btn-raised bg-blue-grey colseFil closeFilter"
+      value="Close"></button>
+  </div>
+</form>
