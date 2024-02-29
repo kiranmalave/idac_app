@@ -20,11 +20,9 @@ define([
   var customerSingleView = Backbone.View.extend({
     model: customerSingleModel,
     form_label: '',
-    makeRender:true,
     custID:'',
     initialize: function (options) {
       this.toClose = "customerSingleView";
-      // this.pluginName = "customerList";
       this.menuName = options.menuName;
       this.menuId = options.menuId;
       this.loadFrom = options.loadfrom;
@@ -53,7 +51,6 @@ define([
         selfobj.render();
         // $(".profile-loader").hide();
       });
-
       this.countryList = new countryCollection();
       this.countryList.fetch({
         headers: {
@@ -67,11 +64,8 @@ define([
         // $(".profile-loader").hide();
       });
       
-      // selfobj.dynamicFieldRenderobj = new dynamicFieldRender({
-      //   ViewObj: selfobj,
-      //   formJson: {},
-      // });
-      
+      selfobj.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
+      this.custID = options.customer_id;
       if (options.customer_id != "" && options.customer_id != undefined) {
         this.model.set({ customer_id: options.customer_id });
         this.model.fetch({
@@ -112,7 +106,8 @@ define([
               selfobj.render();
             });
           }
-          // selfobj.dynamicFieldRenderobj.prepareForm();
+           // selfobj.dynamicFieldRenderobj.prepareForm();
+           selfobj.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
           selfobj.render();
           selfobj.setOldValues();
         });
@@ -398,37 +393,27 @@ define([
           }
           if (selfobj.loadFrom == "TaskSingleView") {
             scanDetails.refreshCust();
-          } else if (selfobj.loadFrom == "dashboard") {
-            handelClose(selfobj.toClose);
-            scanDetails.initialize({action:selfobj.model.get("customer_id")});
-          } else if (selfobj.loadFrom == "projectSingleView"){
-            scanDetails.refreshCus({action:selfobj.model.get("customer_id")});
-            // scanDetails.initialize({action:selfobj.model.get("customer_id")});
-            scanDetails.refreshCus(res.data.customer_id);
-          }else if (selfobj.loadFrom == "proposalSingleView"){
-            // scanDetails.initialize({action:selfobj.model.get("customer_id")});
-            scanDetails.refreshCus(res.data.customer_id);
-          }else{
-            scanDetails.filterSearch();
+          }else if(selfobj.loadFrom == "TaxInvoice") {
+            scanDetails.refreshCust();
+          }else  if(selfobj.loadFrom == "AppointmentView") {
+            scanDetails.render();
+          }else  if(selfobj.loadFrom == "ReceiptSingleView") {
+            scanDetails.refreshCust();
+          }else {
+            scanDetails.filterSearch(false, stage);
           }
-          
           if (res.flag == "S") {
             if (isNew == "new") {
               selfobj.model.clear().set(selfobj.model.defaults);
               selfobj.model.set({ menuId: selfobj.menuId });
-              selfobj.makeRender = false;
               // selfobj.dynamicFieldRenderobj.prepareForm();
-              // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
-              
               let url = APIPATH + 'custUpload/' + selfobj.custID;
               selfobj.uploadFileEl.elements.parameters.action = url;
               selfobj.uploadFileEl.prepareUploads(selfobj.uploadFileEl.elements);
-              selfobj.makeRender = true;
+              selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
               selfobj.render();
-              selfobj.attachEvents();
+              // selfobj.attachEvents();
             } else {
-              console.log(selfobj.custID);
-              console.log(selfobj.uploadFileEl);
               let url = APIPATH + 'custUpload/' + selfobj.custID;
               selfobj.uploadFileEl.elements.parameters.action = url;
               selfobj.uploadFileEl.prepareUploads(selfobj.uploadFileEl.elements);
@@ -448,7 +433,7 @@ define([
 
         office_land_line: {
           number: true,
-          minlength: 10,
+          minlength: 8,
           maxlength: 10
         },
 
@@ -478,12 +463,12 @@ define([
 
       };
       var feildsrules = feilds;
-      // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+      var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
 
-      // if (!_.isEmpty(dynamicRules)) {
-      //   var feildsrules = $.extend({}, feilds, dynamicRules);
+      if (!_.isEmpty(dynamicRules)) {
+        var feildsrules = $.extend({}, feilds, dynamicRules);
 
-      // }
+      }
 
       var messages = {
         name: "Please enter Name",
@@ -537,20 +522,21 @@ define([
     },
 
     render: function () {
+      //var isexits = checkisoverlay(this.toClose);
+      //if(!isexits){
       var selfobj = this;
       var source = customertemp;
       var template = _.template(source);
       $("#" + this.toClose).remove();
-      console.log(this.model);
       this.$el.html(template({ model: this.model.attributes, categoryList: this.categoryList.models, menuName: this.menuName, countryList: this.countryList.models, stateList: this.stateList.models, cityList: this.cityList.models }));
-      this.$el.addClass("tab-pane in active panel_overflow");
+      this.$el.addClass("tab-pane in active panel_overflow heading-top");
       this.$el.attr("id", this.toClose);
       this.$el.addClass(this.toClose);
       this.$el.data("role", "tabpanel");
       this.$el.data("current", "yes");
       $(".tab-content").append(this.$el);
       $("#" + this.toClose).show();
-      // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
+      $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
       this.initializeValidate();
       this.setOldValues();
       this.attachEvents();
@@ -566,7 +552,22 @@ define([
       }
       rearrageOverlays(selfobj.form_label, this.toClose);
 
-      
+      this.uploadFileEl = $("#custUpload").RealTimeUpload({
+        text: 'Drag and Drop or Select a File to Upload.',
+        maxFiles: 0,
+        maxFileSize: 4194304,
+        uploadButton: false,
+        notification: true,
+        autoUpload: false,
+        extension: ['png', 'jpg', 'jpeg', 'gif', 'pdf','docx', 'doc', 'xls', 'xlsx'],
+        thumbnails: true,
+        action: APIPATH + 'custUpload/',
+        element: 'custUpload',
+        onSucess: function () {
+          selfobj.model.attributes.mediaArr.push(this.elements.uploadList[0].name);
+          $('.modal-backdrop').hide();
+        }
+      });
 
       let docUrl = "";
       const attachment_file = this.model.get("attachment_file");
@@ -590,23 +591,7 @@ define([
         document.getElementById("attachedDoc").innerHTML += docUrl;
 
       }
-      selfobj.uploadFileEl = $("#custUpload1").RealTimeUpload({
-        text: 'Drag and Drop or Select a File to Upload.',
-        maxFiles: 0,
-        maxFileSize: 4194304,
-        uploadButton: false,
-        notification: true,
-        autoUpload: false,
-        extension: ['png', 'jpg', 'jpeg', 'gif', 'pdf','docx', 'doc', 'xls', 'xlsx'],
-        thumbnails: true,
-        action: APIPATH + 'custUpload/',
-        element: 'custUpload1',
-        onSucess: function () {
-          selfobj.model.attributes.mediaArr.push(this.elements.uploadList[0].name);
-          $('.modal-backdrop').hide();
-        }
-      });
-      console.log(selfobj.uploadFileEl);
+
       return this;
     },
     onDelete: function () {

@@ -5,9 +5,10 @@ define([
     'backbone',
     "../../core/views/timeselectOptions",
     '../collections/customerActivityCollection',
+    '../../task/views/taskSingleView',
     'text!../templates/customerActivityRow_temp.html',
     'text!../templates/customerActivity_temp.html',
-], function ($, _, Backbone, timeselectOptions, customerActivityModel, customerActivityRow_temp, customerActivity_temp) {
+], function ($, _, Backbone, timeselectOptions, customerActivityModel, taskSingleView, customerActivityRow_temp, customerActivity_temp) {
 
     var customerView = Backbone.View.extend({
         initialize: function (options) {
@@ -21,6 +22,7 @@ define([
             this.collection.on('add', this.addOne, this);
             this.collection.on('reset', this.addAll, this);
             this.getHistory("upcoming");
+            // this.getMenuList();
         },
 
         getHistory: function (historyType) {
@@ -65,6 +67,13 @@ define([
                     $(e.currentTarget).addClass('activeAcrive');
                     $('.btnPast').removeClass('activeAcrive');
                     selfobj.getHistory("upcoming");
+                    break;
+                }
+                case "task":{
+                    var taskID = $(e.currentTarget).attr("data-id");
+                    alert(taskID);
+                    new taskSingleView({ task_id:taskID });
+                    break;
                 }
             }
         },

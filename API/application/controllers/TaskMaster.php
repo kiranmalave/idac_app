@@ -27,7 +27,12 @@ class TaskMaster extends CI_Controller
 		$this->load->library("pagination");
 		$this->load->library("response");
 		$this->load->library("ValidateData");
-		// $this->load->library("notifications");
+		if(!$this->config->item('development'))
+		{
+			$this->load->library("notifications");
+			$this->load->library("emails");
+			
+		}
 	}
 
 
@@ -187,7 +192,7 @@ class TaskMaster extends CI_Controller
 			$page = 0;
 		}
 
-		$selectC = "t.*, c.categoryName AS status_slug, ca.categoryName AS priority_slug, a.name, p.project_name AS projectName, p.project_number AS projectNumb";
+		$selectC = "t.*, c.categoryName AS status_slug, c.cat_color AS status_color, ca.categoryName AS priority_slug, ca.cat_color AS priority_color, a.name, p.project_name AS projectName, p.project_number AS projectNumb";
 
 		if ($isAll == "Y") {
 			$join = array();
@@ -247,7 +252,8 @@ class TaskMaster extends CI_Controller
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$method = $this->input->method(TRUE);
-		$watchers_name = $this->input->post("tasksWatchers");
+		$watchers_name = $this->input->post("tasksWatchersArray");
+		$watchers_ID = $this->input->post("tasks_watchersAdminID");
 		$task_attachments = $this->input->post("attachment_file");
 		if ($method == "PUT" || $method == "POST") {
 			$taskDetails = array();
@@ -255,7 +261,6 @@ class TaskMaster extends CI_Controller
 			$taskDetails['subject'] = $this->validatedata->validate('subject', 'Subject', false, '', array());
 			$taskDetails['description'] = $this->validatedata->validate('description', 'Description', false, '', array());
 			$taskDetails['customer_id'] = $this->validatedata->validate('customer_id', 'Customer', false, '', array());
-			$taskDetails['project_id'] = $this->validatedata->validate('project_id', 'Project', false, '', array());
 			$taskDetails['task_status'] = $this->validatedata->validate('task_status', 'Task Status', false, '', array());
 			$taskDetails['task_priority'] = $this->validatedata->validate('task_priority', 'Task Priority', false, '', array());
 			$taskDetails['task_repeat'] = $this->validatedata->validate('task_repeat', 'Task Repeat', false, '', array());
@@ -265,21 +270,39 @@ class TaskMaster extends CI_Controller
 			$taskDetails['task_type'] = $this->validatedata->validate('task_type', 'Task_Type', false, '', array());
 			$taskDetails['status'] = $this->validatedata->validate('status', 'Status', true, '', array());
 			$taskDetails['does_repeat'] = $this->validatedata->validate('does_repeat', 'does_repeat', false, '', array());
+			$taskDetails['record_type'] = $this->validatedata->validate('record_type', 'record_type', false, '', array());
+			$taskDetails['week_numb'] = $this->validatedata->validate('week_numb', 'week_numb', false, '', array());
+			$taskDetails['repeat_on'] = $this->validatedata->validate('repeat_on', 'repeat_on', false, '', array());
+			$taskDetails['days'] = $this->validatedata->validate('days', 'days', false, '', array());
+			$taskDetails['monthly'] = $this->validatedata->validate('monthly', 'monthly', false, '', array());
+			$taskDetails['ends'] = $this->validatedata->validate('ends', 'ends', false, '', array());
+			$taskDetails['end_on_date'] = $this->validatedata->validate('end_on_date', 'end_on_date', false, '', array());
+			$taskDetails['end_after_date'] = $this->validatedata->validate('end_after_date', 'end_after_date', false, '', array());
+
 
 			if (isset($taskDetails['start_date']) && !empty($taskDetails['start_date']) && $taskDetails['start_date'] != "0000-00-00") {
 				$taskDetails['start_date'] = str_replace("/", "-", $taskDetails['start_date']);
 				$taskDetails['start_date'] = date("Y-m-d", strtotime($taskDetails['start_date']));
+			}else{
+				$taskDetails['start_date'] = null;
 			}
 
 			if (isset($taskDetails['due_date']) && !empty($taskDetails['due_date']) && $taskDetails['due_date'] != "0000-00-00") {
 				$taskDetails['due_date'] = str_replace("/", "-", $taskDetails['due_date']);
 				$taskDetails['due_date'] = date("Y-m-d", strtotime($taskDetails['due_date']));
+			}else{
+				$taskDetails['due_date'] = null;
 			}
 
-				$cat = $this->input->post("category_id");
+			if (isset($taskDetails['end_on_date']) && !empty($taskDetails['end_on_date']) && $taskDetails['end_on_date'] != "0000-00-00") {
+				$taskDetails['end_on_date'] = str_replace("/", "-", $taskDetails['end_on_date']);
+				$taskDetails['end_on_date'] = date("Y-m-d", strtotime($taskDetails['end_on_date']));
+			}else{
+				$taskDetails['end_on_date'] = null;
+			}
 
-				
-			//   
+			$cat = $this->input->post("category_id");
+			
 			if ($method == "PUT") {
 				$taskDetails['status'] = "active";
 				$taskDetails['created_by'] = $this->input->post('SadminID');
@@ -293,14 +316,31 @@ class TaskMaster extends CI_Controller
 					$this->response->output($status, 200);
 				} else {
 					$taskID = $this->db->insert_id();
+					$status['lastID'] = $taskID;
+					// print_r($taskID);exit;
 					$notification = array(
 						'title' => "Task assigned to you",
 						'body' => $taskDetails['subject'],
 					);
-					// $this->notifications->sendmessage($notification,$taskDetails['assignee']);
-					$this->addTaskHistory($taskID, 'Task Created', 'Created', $taskDetails['created_by']);
+					if(!$this->config->item('development')){
+						$this->notifications->sendmessage($notification,$taskDetails['assignee']);
+					
+						// get user details to send email
+						$where = array("adminID" => $taskDetails['assignee']);
+						$tDetails = $this->CommonModel->getMasterDetails('admin', 'name,email', $where);
+						$assignByDetails = $this->CommonModel->getMasterDetails('admin', 'name,email', array("adminID"=>$taskDetails['created_by']));
+						$assignedBy ="";
+						if(isset($assignByDetails)&& !empty($assignByDetails)){
+							$assignedBy = $assignByDetails[0]->name;
+						}
+						if(isset($tDetails)&& !empty($tDetails)){
+							$messageDetails = $taskDetails['subject']." <br> ";
+							$this->emails->sendMailDetails("","",$tDetails[0]->email,'','',$assignedBy." assigned task-".$taskID." to you",);
+						}
+					}
+					$this->addTaskHistory($taskID, 'Task Created', 'Created', $taskDetails['created_by'],$taskDetails['customer_id']);
 					if (isset($watchers_name) && !empty($watchers_name)) {
-						$saveFlag = $this->saveWatchersDetails($watchers_name, $taskID, $taskDetails['created_by']);
+						$saveFlag = $this->saveWatchersDetails($watchers_name, $taskID, $taskDetails);
 						// send notification to user
 						
 						if ($saveFlag == true) {
@@ -310,7 +350,7 @@ class TaskMaster extends CI_Controller
 							$status['flag'] = 'S';
 							$this->response->output($status, 200);
 						} else {
-							$status['msg'] = $this->systemmsg->getErrorCode(424);
+							$status['msg'] = $this->systemmsg->getErrorCode(289);
 							$status['statusCode'] = 998;
 							$status['data'] = array();
 							$status['flag'] = 'F';
@@ -326,7 +366,7 @@ class TaskMaster extends CI_Controller
 							$status['flag'] = 'S';
 							$this->response->output($status, 200);
 						} else {
-							$status['msg'] = $this->systemmsg->getErrorCode(424);
+							$status['msg'] = $this->systemmsg->getErrorCode(289);
 							$status['statusCode'] = 998;
 							$status['data'] = array();
 							$status['flag'] = 'F';
@@ -336,66 +376,9 @@ class TaskMaster extends CI_Controller
 					$status['msg'] = $this->systemmsg->getSucessCode(400);
 					$status['statusCode'] = 400;
 					$status['data'] = array();
+					$status['lastID'] = $taskID;
 					$status['flag'] = 'S';
 					$this->response->output($status, 200);
-
-				}
-				
-				if (empty($cat)) {
-					$status['msg'] = "Course Category Required";
-					$status['statusCode'] = 998;
-					$status['data'] = array();
-					$status['flag'] = 'F';
-					$this->response->output($status, 200);
-				} else {
-			        $taskDetails['category_id'] = implode(",", $cat);
-				}
-
-				$taskDetails['modified_by'] = $this->input->post('SadminID');
-				$taskDetails['modified_date'] = $updateDate;
-
-				$iscreated = $this->CommonModel->updateMasterDetails('tasks', $taskDetails, $where);
-				if (!$iscreated) {
-					$status['msg'] = $this->systemmsg->getErrorCode(998);
-					$status['statusCode'] = 998;
-					$status['data'] = array();
-					$status['flag'] = 'F';
-					$this->response->output($status, 200);
-				} else {
-
-					if (isset($watchers_name) && !empty($watchers_name)) {
-						$saveFlag = $this->saveWatchersDetails($watchers_name, $task_id, $taskDetails['modified_by']);
-					}
-					if (isset($task_attachments) && !empty($task_attachments)) {
-
-						$saveFlag1 = $this->saveAttachments($task_attachments, $task_id, $taskDetails['modified_by']);
-					}
-
-					if (isset($saveFlag1) && !empty($saveFlag1)) {
-						if ($saveFlag == true && $saveFlag1 == true) {
-							$status['msg'] = $this->systemmsg->getSucessCode(400);
-							$status['statusCode'] = 400;
-							$status['data'] = array();
-							$status['flag'] = 'S';
-							$this->response->output($status, 200);
-						} else {
-							$status['msg'] = $this->systemmsg->getErrorCode(424);
-							$status['statusCode'] = 998;
-							$status['data'] = array();
-							$status['flag'] = 'F';
-							$this->response->output($status, 200);
-						}
-					} elseif (isset($saveFlag) && !empty($saveFlag)) {
-						if ($saveFlag == true) {
-							$status['msg'] = $this->systemmsg->getSucessCode(400);
-							$status['statusCode'] = 400;
-							$status['data'] = array();
-							$status['flag'] = 'S';
-
-							$this->response->output($status,200);
-						}
-
-					}
 				}
 			}elseif($method=="POST"){
 				$where=array('task_id'=>$task_id);
@@ -406,11 +389,12 @@ class TaskMaster extends CI_Controller
 				$status['flag'] = 'F';
 				$this->response->output($status,200);
 				}
-				
+
 				$taskDetails['modified_by'] = $this->input->post('SadminID');
 				$taskDetails['modified_date'] = $updateDate;
 				
 				$iscreated = $this->CommonModel->updateMasterDetails('tasks',$taskDetails,$where);
+				
 				if(!$iscreated){
 					$status['msg'] = $this->systemmsg->getErrorCode(998);
 					$status['statusCode'] = 998;
@@ -418,14 +402,68 @@ class TaskMaster extends CI_Controller
 					$status['flag'] = 'F';
 					$this->response->output($status,200);
 				}else{
-					$notification = array(
-						'title' => "Task assigned to you",
-						'body' => $taskDetails['subject'],
-					);
-					// $this->notifications->sendmessage($notification,$taskDetails['assignee']);
-					// $this->addTaskHistory($task_id, 'Task Updated', 'Updated', $taskDetails['modified_by']);
+					$created['id'] = $this->input->post("created_by");
 					if(isset($watchers_name) && !empty($watchers_name)){
-						$saveFlag = $this->saveWatchersDetails($watchers_name,$task_id,$taskDetails['modified_by']);
+						$clientWatchers = array_column($watchers_name, "id");
+						
+						foreach ($clientWatchers as $key => $value) {
+							$messageDetails = '' ;
+							$notification = array();
+							if (!$this->config->item('development')) {
+								$where = array("adminID" =>$value);
+								$tDetails = $this->CommonModel->getMasterDetails('admin', 'name,email', $where);
+	
+								$assignByDetails = $this->CommonModel->getMasterDetails('admin', 'name,email', array("adminID"=> $taskDetails['modified_by']));
+								$assignedBy ="";
+								if(isset($assignByDetails)&& !empty($assignByDetails)){
+									$assignedBy = $assignByDetails[0]->name;
+								}
+	
+								$join = array();
+								$join[0]['type'] ="LEFT JOIN";
+								$join[0]['table']="categories";
+								$join[0]['alias'] ="c";
+								$join[0]['key1'] ="old_val";
+								$join[0]['key2'] ="category_id";
+	
+								$join[1]['type'] ="LEFT JOIN";
+								$join[1]['table']="categories";
+								$join[1]['alias'] ="ca";
+								$join[1]['key1'] ="new_val";
+								$join[1]['key2'] ="category_id";
+								
+								$whereT["record_id ="] = "'".$task_id."'";
+								$whereT[" t.description ="] = "'update'";
+								$whereT[" t.is_notify ="] = "'n'";
+	
+								$taskHistory = $this->CommonModel->GetMasterListDetails('t.*,c.categoryName AS oldName, ca.categoryName AS newName','history', $whereT ,'', '', $join, '');
+	
+								foreach($taskHistory as $key => $value1) {
+									if(!empty($value1->oldName) && !empty($value1->newName)){
+										$messageDetails.= $assignedBy." Updated".$value1->col." <br> From <del>'".$value1->oldName."'</del> To '".$value1->newName."'<br> <br>";
+									}
+								}
+								if(isset($messageDetails) && !empty($messageDetails)){
+									$notification = array(
+										'title' => "Task Updated",
+										'body' => $messageDetails,
+									);
+								}
+								if(isset($notification) && !empty($notification)){
+									// $this->notifications->sendmessage($notification,$value);
+									if(isset($tDetails)&& !empty($tDetails)){
+										$this->emails->sendMailDetails("","",$tDetails[0]->email,'','',"Task Updated:- ".$task_id, $messageDetails);
+									}
+								}
+							}
+						}
+						$taskHistoryUpdate['is_notify'] = 'y';
+						$whereH = array('record_id'=>$task_id);
+						$history = $this->CommonModel->updateMasterDetails('history',$taskHistoryUpdate,$whereH);
+					}
+
+					if(isset($watchers_name) && !empty($watchers_name)){
+						$saveFlag = $this->saveWatchersDetails($watchers_name,$task_id,$taskDetails);
 					}
 					if(isset($task_attachments) && !empty($task_attachments)){
 						
@@ -440,7 +478,7 @@ class TaskMaster extends CI_Controller
 							$status['flag'] = 'S';
 							$this->response->output($status,200);
 						}else{
-							$status['msg'] = $this->systemmsg->getErrorCode(424);
+							$status['msg'] = $this->systemmsg->getErrorCode(289);
 							$status['statusCode'] = 998;
 							$status['data'] = array();
 							$status['flag'] = 'F';
@@ -454,7 +492,7 @@ class TaskMaster extends CI_Controller
 							$status['flag'] = 'S';
 							$this->response->output($status,200);
 						}else{
-							$status['msg'] = $this->systemmsg->getErrorCode(424);
+							$status['msg'] = $this->systemmsg->getErrorCode(289);
 							$status['statusCode'] = 998;
 							$status['data'] = array();
 							$status['flag'] = 'F';
@@ -508,9 +546,8 @@ class TaskMaster extends CI_Controller
 				}
 			}
 	
-		}else
-		{ 
-				$where = array("task_id"=>$task_id);
+		}else{ 
+			$where = array("task_id"=>$task_id);
 				$taskDetails = $this->CommonModel->getMasterDetails('tasks','',$where);
 				if(isset($taskDetails) && !empty($taskDetails)){
 					$whereGuest = array(
@@ -564,7 +601,7 @@ class TaskMaster extends CI_Controller
 				$status['data'] =array();
 				$status['flag'] = 'F';
 				$this->response->output($status,200);
-				}	
+				}
 		}
 	}
 
@@ -616,21 +653,6 @@ class TaskMaster extends CI_Controller
 				$this->response->output($status, 200);
 			}
 		}
-		// $commentID= $this->input->post("list");
-		// $wherec["comment_id ="] = $commentID;
-		// $changestatus = $this->CommonModel->deleteMasterDetails('task_comments',$wherec);
-		// if($changestatus){
-		// 	$status['data'] = array();
-		// 	$status['statusCode'] = 200;
-		// 	$status['flag'] = 'S';
-		// 	$this->response->output($status, 200);
-		// } else {
-		// 	$status['data'] = array();
-		// 	$status['msg'] = $this->systemmsg->getErrorCode(996);
-		// 	$status['statusCode'] = 996;
-		// 	$status['flag'] = 'F';
-		// 	$this->response->output($status, 200);
-		// }
   }
 
 	public function dashboardStatus()
@@ -660,6 +682,18 @@ class TaskMaster extends CI_Controller
 		$taskDetails['modified_by'] = $this->input->post('SadminID');
 		$taskDetails['modified_date'] = $updateDate;
 		$iscreated = $this->CommonModel->updateMasterDetails('tasks',$taskDetails,$where);
+		if ($iscreated) {
+			$status['data'] = array();
+			$status['statusCode'] = 200;
+			$status['flag'] = 'S';
+			$this->response->output($status, 200);
+		} else {
+			$status['data'] = array();
+			$status['msg'] = $this->systemmsg->getErrorCode(996);
+			$status['statusCode'] = 996;
+			$status['flag'] = 'F';
+			$this->response->output($status, 200);
+		}
 
 	}
 
@@ -702,48 +736,102 @@ class TaskMaster extends CI_Controller
 		}
 	}
 
-	public function saveWatchersDetails($watchers_name = '', $task_id = '', $adminID = '')
+	public function saveWatchersDetails($watchers_name = '', $task_id = '', $taskDetails = array(), $isRepeat = '')
 	{
+		if(isset($taskDetails['created_by']) && !empty(isset($taskDetails['created_by']))){
+			$adminId = $taskDetails['created_by'];
+		}else{
+			$adminId = $taskDetails['modified_by'];
+		}
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$method = $this->input->method(TRUE);
-		// print_r("<pre>");
-		// print_r($method);exit;
+		$notification = array(
+			'title' => "You have been Added as a watcher in a Task",
+			'body' => "Task ID = " . $task_id,
+		);
 		$tasks_watchers = array();
 		if ($method == "PUT" || $method == "POST") {
 			$where = array('task_id' => $task_id);
-			$changestatus = $this->CommonModel->deleteMasterDetails('tasks_watchers', $where);
 			$tasks_watchers['task_id'] = $task_id;
-			$tasks_watchers['created_by'] = $adminID;
+			$tasks_watchers['created_by'] = $adminId;
+
 			if ($method == "PUT" || $method == "POST") {
 
-				if (empty($watchers_name)) {
-					// // print_r($guest_email);exit;	
-					// $status['msg'] = "Watchers Name Required";
-					// $status['statusCode'] = 998;
-					// $status['data'] = array();
-					// $status['flag'] = 'F';
-					// $this->response->output($status, 200);
-					return false;
-				} else {
-					foreach ($watchers_name as $single_guest) {
-						if (is_string($single_guest)) {
-							$tasks_watchers['watchers_name'] = $single_guest;
-						} elseif (is_object($single_guest) && isset($single_guest->name)) {
-							$tasks_watchers['watchers_name'] = $single_guest->name;
-							$tasks_watchers['admin_id'] = $single_guest->id;
+				if(isset($isRepeat) && !empty($isRepeat) && $isRepeat == "yes"){
+					foreach($watchers_name as $key => $value){
+						if (is_array($value) && isset($value['id']) && isset($value['name'])) {
+							$add_watchers = array(
+								'admin_id' => $value['id'],
+								'watchers_name' => $value['name'],
+								'task_id' => $task_id
+							);
+							return $iscreated = $this->CommonModel->saveMasterDetails('tasks_watchers', $add_watchers);
 						}
-						// print_r($tasks_watchers);exit;	
-						$iscreated = $this->CommonModel->saveMasterDetails('tasks_watchers', $tasks_watchers);
 					}
 				}
-				if (!$iscreated) {
+
+				if (empty($watchers_name)) {
 					return false;
 				} else {
-					return true;
+					$clientWatchers = array_column($watchers_name, "id");
+					$serverWatchers = $this->CommonModel->getMasterDetails('tasks_watchers','watchers_name,admin_id',$where);
+					$serverWatchersGet = array_column($serverWatchers, "admin_id");
+					foreach ($clientWatchers as $key => $value) {
+						if (!in_array($value, $serverWatchersGet)) {
+							$getWatcher = array_filter($watchers_name, function ($watcher) use ($value) {
+								return $watcher->id == $value;
+							});
+							if (!empty($getWatcher)) {
+
+								$getWatcher = reset($getWatcher); // Get the first element
+
+								$add_watchers = array(
+									'admin_id' => $getWatcher->id,  // Save 'id' property as 'admin_id'
+									'watchers_name' => $getWatcher->name,
+									'task_id' => $task_id  // Save 'name' property as 'watchers_name'
+								);
+
+								if (!$this->config->item('development')) {
+									$loggedInID = $this->input->post('SadminID');
+									if ($loggedInID != $getWatcher->id ){
+										$this->notifications->sendmessage($notification,$getWatcher->id);
+										$where = array("adminID" =>$getWatcher->id);
+										$tDetails = $this->CommonModel->getMasterDetails('admin', 'name,email', $where);
+										$assignByDetails = $this->CommonModel->getMasterDetails('admin', 'name,email', array("adminID"=> $adminId));
+										$assignedBy ="";
+										if(isset($assignByDetails)&& !empty($assignByDetails)){
+											$assignedBy = $assignByDetails[0]->name;
+										}
+										if(isset($tDetails)&& !empty($tDetails)){
+											$messageDetails = $taskDetails['subject']."<br>";
+											$this->emails->sendMailDetails("","",$tDetails[0]->email,'','',"You have added as watcher to task:-".$task_id, "Subject :-".$messageDetails);
+										}
+									}
+								}				
+								$iscreated = $this->CommonModel->saveMasterDetails('tasks_watchers', $add_watchers);
+								if(!$iscreated){
+									//return false;
+								}
+							}
+						}
+					}
+					
+
+					foreach ($serverWatchersGet as $key => $value) {
+						if (!in_array($value, $clientWatchers)) {
+							$where = array(
+								'task_id' => $task_id,
+							 	'admin_id' => $value
+							);
+							// $deleteWacther = $this->CommonModel->deleteMasterDetails('tasks_watchers', $where);
+						}
+					}
 				}
+				
 			}
 		}
+		return true;
 	}
 
 	public function removeWatchers()
@@ -1020,7 +1108,7 @@ class TaskMaster extends CI_Controller
 			'col'=> 'Task',
 			'timestamp' => date('Y-m-d H:i:s')
 		);
-		$iscreated = $this->CommonModel->saveMasterDetails('task_history', $taskDetails);
+		$iscreated = $this->CommonModel->saveMasterDetails('history', $taskDetails);
 	}
 
 	public function getTaskHistory()
@@ -1041,7 +1129,7 @@ class TaskMaster extends CI_Controller
 		$orderBy = "history_id";
 		$order = "DESC";
 		$other = array("orderBy" => $orderBy, "order" => $order);
-		$historyDetails = $this->CommonModel->GetMasterListDetails($selectC = '*', 'task_history', $wherec, '', '', $join, $other);
+		$historyDetails = $this->CommonModel->GetMasterListDetails($selectC = '*', 'history', $wherec, '', '', $join, $other);
 		// print_r($historyDetails);exit;
 		foreach ($historyDetails as $key => $value) {
 			if($value->col == "Task Priority" || $value->col == "Task Type" || $value->col == "Task Status"){

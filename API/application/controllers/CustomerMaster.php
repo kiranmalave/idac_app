@@ -110,6 +110,32 @@ class CustomerMaster extends CI_Controller
 			$customerDetails = $this->CommonModel->GetMasterListDetails($selectC = 't.*, c.categoryName AS lead_stage', 'customer', $wherec, $config["per_page"], $page, $join, $other);
 		}
 
+		foreach ($customerDetails as $key => $value) {
+			$wherec = array();
+			$wherec["t.record_id"] = ' = "' . $value->customer_id . '"';
+			$customerNoteCount = $this->CommonModel->getCountByParameter('note_id', 'notes', $wherec, '');
+			$customerDetails[$key]->noteCount = $customerNoteCount;
+			
+			$whereTask = array();
+			$whereTask["start_date >="] = "'".date('Y-m-d')."'";
+			$whereTask["customer_id = "] = $value->customer_id;
+			$customerTaskUpcoming = $this->CommonModel->getCountByParameter('task_id', 'tasks', $whereTask, '');
+
+			$whereAppoint = array();
+			$whereAppoint["start_date >="] = "'".date('Y-m-d')."'";
+			$whereAppoint["customer_ID = "] = $value->customer_id;
+			$customerAppUpcoming = $this->CommonModel->getCountByParameter('appointmentID', 'appointment', $whereAppoint, '');
+
+			$whereNotes = array();
+			$whereNotes["reminder_date >="] = "'".date('Y-m-d')."'";
+			$whereNotes["record_id = "] = $value->customer_id;
+			$customerNoteUpcoming = $this->CommonModel->getCountByParameter('note_id', 'notes', $whereNotes, '');
+			
+			$result = $customerTaskUpcoming + $customerAppUpcoming + $customerNoteUpcoming;
+			$customerDetails[$key]->upcomingCount = $result;
+
+		}
+
 		$status['data'] = $customerDetails;
 		$status['paginginfo']["curPage"] = $curPage;
 		if ($curPage <= 1)

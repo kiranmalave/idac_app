@@ -4,18 +4,19 @@ define([
   'backbone',
   'validate',
   'inputmask',
+  'minicolors',
   '../../core/views/multiselectOptions',
-  '../../dynamicForm/views/dynamicFieldRender',
   '../collections/categoryCollection',
   '../models/categorySingleModel',
   '../../readFiles/views/readFilesView',
   'text!../templates/categorySingle_temp.html',
-], function ($, _, Backbone, validate, inputmask, multiselectOptions, dynamicFieldRender, categoryCollection, categorySingleModel, readFilesView, categorytemp) {
+], function ($, _, Backbone, validate, inputmask, minicolors, multiselectOptions, categoryCollection, categorySingleModel, readFilesView, categorytemp) {
 
   var categorySingleView = Backbone.View.extend({
     model: categorySingleModel,
+    form_label:'',
     initialize: function (options) {
-      this.dynamicData = null;
+      this.form_label = options.form_label;
       this.multiselectOptions = new multiselectOptions();
       this.toClose = "categorySingleView";
       // use this valiable for dynamic fields to featch the data from server
@@ -23,15 +24,10 @@ define([
       this.model = new categorySingleModel();
       var selfobj = this;
       this.loadFrom = options.loadfrom;
-      // this function is called to render the dynamic view
-      // this.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
-
       $(".modelbox").hide();
       scanDetails = options.searchCategory;
       $(".popupLoader").show();
-
       var categoryList = new categoryCollection();
-
       categoryList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
@@ -53,14 +49,20 @@ define([
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".popupLoader").hide();
           selfobj.render();
-          selfobj.dynamicData = res.data.dynamicFields;
-
         });
       } else {
-        selfobj.render();
-        $(".popupLoader").hide();
+          if(options.slug != undefined && options.slug != "")
+          {
+            console.log(options);
+            this.model.set({parent_id : options.slug});
+            
+            // $('#parent_id').val(options.slug);
+          }
+          selfobj.render();
+          $(".popupLoader").hide();
       }
     },
+    
     events:
     {
       "click .savecategoryDetails": "savecategoryDetails",
@@ -72,6 +74,7 @@ define([
       "click .loadMedia": "loadMedia",
       "keyup .titleChange": "updateURL",
     },
+
     attachEvents: function () {
       // Detach previous event bindings
       this.$el.off('click', '.savecategoryDetails', this.savecategoryDetails);
@@ -93,30 +96,33 @@ define([
       this.$el.off('keyup', '.titleChange', this.updateURL);
       this.$el.on('keyup', '.titleChange', this.updateURL.bind(this));
     },
+
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
       $(".profile-loader").hide();
     },
+
     updateURL: function (e) {
       var url = $(e.currentTarget).val().trim().toLowerCase().replace(/[^A-Z0-9]+/ig, "_");
       //var url = $(e.currentTarget).val().toLowerCase().trim().replace(/[^A-Z0-9]+/ig, "-");
       $("#slug").val(url);
       this.model.set({ "slug": url });
     },
+
     updateOtherDetails: function (e) {
       var valuetxt = $(e.currentTarget).val();
       var toID = $(e.currentTarget).attr("id");
       var newdetails = [];
       newdetails["" + toID] = valuetxt;
       this.model.set(newdetails);
-      console.log(this.model);
     },
-
+    
     setOldValues: function () {
       var selfobj = this;
       setvalues = ["status", "is_parent"];
       selfobj.multiselectOptions.setValues(setvalues, selfobj);
     },
+
     getSelectedFile: function (url) {
       $('.' + this.elm).val(url);
       $('.' + this.elm).change();
@@ -125,8 +131,8 @@ define([
       $('#largeModal').modal('toggle');
       this.model.set({ "cover_image": url });
       this.render();
-      // console.log(this.model);
     },
+
     loadMedia: function (e) {
       e.stopPropagation();
       $('#largeModal').modal('toggle');
@@ -145,6 +151,7 @@ define([
         selfobj.render();
       }
     },
+
     savecategoryDetails: function (e) {
       e.preventDefault();
       let selfobj = this;
@@ -174,15 +181,23 @@ define([
           } else {
             showResponse(e, res, "Save");
           }
+          // alert(selfobj.loadFrom);
           if (selfobj.loadFrom == "TaskSingleView") {
             scanDetails.refreshCat();
-          } else {
+          }else if(selfobj.loadFrom == "courseSingleView") {
+            scanDetails.refreshCat();
+          }else if(selfobj.loadFrom == "PageMasterSingle"){
+            scanDetails.refreshCat();
+          }else if(selfobj.loadFrom == "dynamicForm"){
+            scanDetails.refreshCat();
+          } else if(selfobj.loadFrom == "ProductSingleView"){
+            scanDetails.refreshCat();
+          }else {
             scanDetails.filterSearch();
           }
           if (res.flag == "S") {
             if (isNew == "new") {
               selfobj.model.clear().set(selfobj.model.defaults);
-              // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
               selfobj.render();
             } else {
               handelClose(selfobj.toClose);
@@ -215,15 +230,6 @@ define([
         }
       };
       var feildsrules = feilds;
-      // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
-
-      // if (!_.isEmpty(dynamicRules)) {
-      //   var feildsrules = $.extend({}, feilds, dynamicRules);
-      //   // var feildsrules = {
-      //   // ...feilds,
-      //   // ...dynamicRules
-      //   // };
-      // }
 
       var messages = {
         categoryName: "Please enter Category Name",
@@ -238,7 +244,35 @@ define([
         rules: feildsrules,
         messages: messages
       });
+
+      $('.color').minicolors({
+        format: "rgb",
+        opacity: true,
+        change: function (value, opacity) {
+          console.log($(this));
+          if ($(this).hasClass("subObj")) {
+            let inID = $(this).attr("data-toChange");
+            let ob = selfobj.model.get(inID);
+            console.log(ob);
+            if (typeof (ob) == "string") {
+              ob = JSON.parse(ob);
+            }
+            ob.color = value;
+            let elID = $(this).attr("data-toChange");
+            let newdetails = [];
+            newdetails["" + elID] = ob;
+            selfobj.model.set(newdetails);
+          } else {
+            let elID = this.id;
+            let newdetails = [];
+            newdetails["" + elID] = value;
+            selfobj.model.set(newdetails);
+          }
+        },
+        theme: 'bootstrap',
+      });
     },
+
     render: function () {
       var selfobj = this;
       //var isexits = checkisoverlay(this.toClose);
@@ -254,15 +288,12 @@ define([
       this.$el.data("current", "yes");
       $(".tab-content").append(this.$el);
       $('#' + this.toClose).show();
-      // this is used to append the dynamic form in the single view html
-      // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
       // Do call this function from dynamic module it self.
       this.initializeValidate();
       this.setOldValues();
       this.attachEvents();
-      console.log(this.model);
       //}
-      rearrageOverlays("Category", this.toClose);
+      rearrageOverlays(selfobj.form_label, this.toClose);
 
       var __toolbarOptions = [
         ["bold", "italic", "underline", "strike"], // toggled buttons

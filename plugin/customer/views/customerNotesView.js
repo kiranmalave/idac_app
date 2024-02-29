@@ -5,12 +5,13 @@ define([
   'backbone',
   'Swal',
   'moment',
+  'timepicker',
   "../../core/views/timeselectOptions",
   '../collections/customerNotesCollection',
   '../models/customerNoteSingleModel',
   'text!../templates/customerNotesRow_temp.html',
   'text!../templates/customerNotes_temp.html',
-], function ($, _, Backbone, Swal, moment, timeselectOptions, customerNotesCollection, customerNoteSingleModel, customerNotesRow_temp, customerNotesTemp) {
+], function ($, _, Backbone, Swal, moment, timepicker, timeselectOptions, customerNotesCollection, customerNoteSingleModel, customerNotesRow_temp, customerNotesTemp) {
 
   var customerView = Backbone.View.extend({
     editor:null,
@@ -88,11 +89,20 @@ define([
       this.collection.forEach(this.addOne, this);
     },
     editNote: function (e) {
+      let selfobj = this;
       var id = $(e.currentTarget).attr("data-id");
       $('.pointer').removeClass('active');
       $(e.currentTarget).addClass('active');
       $('.newNote').removeClass('activeNew');
       this.model.set({ "note_id": id });
+      var reminderDate = $(e.currentTarget).attr('data-time');
+      var dateTimeArray = reminderDate.split(' ');
+      var datePart = moment(dateTimeArray[0]).format("DD-MM-YYYY");
+      var timePart = moment(reminderDate).format("h:mm a");
+      selfobj.model.set({"reminder_date":dateTimeArray[0]});
+      selfobj.model.set({"reminder_time":dateTimeArray[1]});
+      $('#reminder_date').val(datePart);
+      $('#reminder_time').val(timePart);
       var desc = $.trim($(e.currentTarget).find('.editNoteDesc').html());
       var title = $.trim($(e.currentTarget).find('.editnotestHeading').text());
       $("#title").val(title);
@@ -134,6 +144,8 @@ define([
               if (res.flag == "S") {
                 selfobj.model.clear().set(selfobj.model.defaults);
                 $("#title").val("");
+                $("#reminder_date").val("");
+                $("#reminder_time").val("");
                 selfobj.editor.root.innerHTML = "";
                 selfobj.collection.reset();
                 selfobj.getNotesDetails();
@@ -299,6 +311,20 @@ define([
         selfobj.model.set({ reminder_date: valuetxt });
       });
 
+      $('#reminder_time').timepicker({
+        timeFormat: 'hh:mm a',
+        interval: 15,
+        startTime: '00:00',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true,
+        change: function (e) {
+          var st = $("#reminder_time").val();
+          var tempsTime = moment(st, "hh:mm a").format("HH:mm:ss");
+          selfobj.model.set({ reminder_time: tempsTime });
+          console.log(tempsTime);
+        },
+      });
 
       var __toolbarOptions = [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -306,6 +332,9 @@ define([
         [{ 'direction': 'rtl' }],                         // text direction
         [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
         [{ 'align': [] }],
+        // ['link'],
+        // ['clean'],
+        // ['image']                              // remove formatting button
       ];
       this.editor = new Quill($("#notes_description1").get(0), {
         placeholder: 'Type your notes here...',
@@ -316,11 +345,22 @@ define([
           },
           toolbar: {
             container: __toolbarOptions,
-          }
+            
+            handlers: {
+              image: imageHandler
+            }
+          },
           
         },
         theme: 'snow'
       });
+      function imageHandler() {
+        var range = this.quill.getSelection();
+        var value = prompt('please copy paste the image url here.');
+        if (value) {
+          this.quill.insertEmbed(range.index, 'image', value, Quill.sources.USER);
+        }
+      }
       this.editor.on('text-change', function (delta, oldDelta, source) {
         if (source == 'api') {
           console.log("An API call triggered this change.");

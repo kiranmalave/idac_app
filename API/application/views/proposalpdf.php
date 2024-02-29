@@ -87,8 +87,10 @@
         <h2>Proposal Description:</h2>
 	</div>
      <div><?php echo ($proposalData[0]->description); ?></div>
-    <div>
-        <h2>Costing:</h2>
-	</div>
-    <div><?php echo ($proposalData[0]->cost); ?></div>
+	 <?php if($proposalData[0]->roleID == 1){?>
+		<div>
+			<h2>Costing:</h2>
+		</div>
+		<div><?php echo ($proposalData[0]->cost); ?></div>
+	<?php }?>
 </div>

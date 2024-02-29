@@ -40,7 +40,7 @@ define([
               if(result.data[0]){
                   plural_label = result.data[0].plural_label;
                   module_desc = result.data[0].module_desc;
-                  form_label = result.data[0].label;
+                  form_label = result.data[0].menuName;
                   // Pass the label to the callback
                   callback(plural_label,module_desc,form_label,result);
               }

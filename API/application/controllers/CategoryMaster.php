@@ -196,7 +196,7 @@ class CategoryMaster extends CI_Controller
 
 			$categoryDetails['cover_image'] = $this->validatedata->validate('cover_image', 'Select Picture', false, '', array());
 
-			// $categoryDetails['profile_pic_view'] = $this->validatedata->validate('profile_pic_view','Profile Picture',true,'',array());
+			$categoryDetails['cat_color'] = $this->validatedata->validate('cat_color', 'Category Color', false, '', array());
 
 
 
