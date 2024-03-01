@@ -327,58 +327,6 @@ class CustomerMaster extends CI_Controller
 				$status['flag'] = 'F';
 				$this->response->output($status, 200);
 			}
-			// if($customer_id ==""){
-			// 	$status['msg'] = $this->systemmsg->getSucessCode(400);
-			// 	$status['statusCode'] = 400;
-			// 	$status['data'] =array();
-			// 	$status['flag'] = 'S';
-			// 	$this->response->output($status,200);
-			// }
-
-			// $whereAttachment = array(
-			// 	"customer_id" => $customer_id
-			// );
-
-			// $this->menuID = $this->input->post('menuId');
-			// // $this->filters->menuID = $this->menuID;
-			// // $this->filters->getMenuData();
-			// // $this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
-			// // $this->menuDetails = $this->filters->menuDetails;
-			// $wherec = $join = array();
-			// $menuId = $this->input->post('menuId');
-			// // $whereData = $this->filters->prepareFilterData($_POST);
-			// $wherec = $whereData["wherec"];
-			// $other = $whereData["other"];
-			// $join = $whereData["join"];
-			// $selectC = $whereData["select"];
-			
-			// $other = array();
-			// $wherec["t.customer_id"] = "=".$customer_id;
-			// //$customerDetails = $this->CommonModel->GetMasterListDetails('customer', '', $where);
-			// if($selectC != ""){
-			// 	$selectC="t.*,".$selectC;
-			// }
-			// $customerDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, array());
-			// if (isset($customerDetails) && !empty($customerDetails)) {
-			// 	$custAttachments = $this->CommonModel->getMasterDetails('customer_attachment','',$whereAttachment);
-			// 	if(!empty($custAttachments)){
-			// 		$attachment = array_column($custAttachments,'attachment_file');
-			// 		$attachmentID = array_column($custAttachments,'attachment_id');
-			// 		$customerDetails[0]->attachment_file = $attachment;
-			// 		$customerDetails[0]->attachment_id = $attachmentID;
-			// 	}
-			// 	$status['data'] = $customerDetails;
-			// 	$status['statusCode'] = 200;
-			// 	$status['flag'] = 'S';
-			// 	$this->response->output($status, 200);
-			// } else {
-
-			// 	$status['msg'] = $this->systemmsg->getErrorCode(227);
-			// 	$status['statusCode'] = 227;
-			// 	$status['data'] = array();
-			// 	$status['flag'] = 'F';
-			// 	$this->response->output($status, 200);
-			// }
 		}
 	}
 

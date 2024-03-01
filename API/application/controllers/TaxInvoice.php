@@ -107,14 +107,6 @@ class TaxInvoice extends CI_Controller {
 		// get comapny access list
 		$adminID = $this->input->post('SadminID');
 		
-		// if ($isAll == "Y") {
-		// 	$join = $wherec = array();
-		// 	if (isset($statuscode) && !empty($statuscode)) {
-		// 		$statusStr = str_replace(",", '","', $statuscode);
-		// 		$wherec["t.status"] = 'IN ("' . $statusStr . '")';
-		// 	}
-		// }
-		
 		$config["base_url"] = base_url() . "members";
 		$config["total_rows"] = $this->TaxInvoiceModel->getTotalTaxInvoice('invoiceID','invoice_header',$wherec,$other);
         $config["uri_segment"] = 2;

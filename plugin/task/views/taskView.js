@@ -28,18 +28,32 @@ define([
     module_desc:'',
     plural_label:'',
     form_label:'',
+    loadfrom: null,
+    totalRec: 0,
     initialize: function (options) {
+      
       this.toClose = "taskFilterView";
       var selfobj = this;
       selfobj.arrangedColumnList = [];
       this.filteredFields = [];
       this.filterCount = null;
+      
+      if (options.loadfrom != undefined) {
+        selfobj.loadfrom = options.loadfrom;
+        permission = ROLE['task'];
+        this.mname = 'task';
+      } else {
+        this.mname = Backbone.history.getFragment();
+      }
+      this.totalRec = 0;
       this.taskID = options.action;
+      this.appSettings = new appSettings();
       $(".profile-loader").show();
       $(".loder").hide();
-      this.mname = Backbone.history.getFragment();
-      const match = this.mname.match(/^task(?:\/(\d+))?$/);
 
+      
+      
+      const match = this.mname.match(/^task(?:\/(\d+))?$/);
       if (match) {
         // If the pattern is matched, set this.mname to "task"
         this.mname = match[1] ? "task" : this.mname;
@@ -47,10 +61,12 @@ define([
         // Continue with the rest of the code
         permission = ROLE[this.mname];
         this.menuId = permission.menuID;
-        this.appSettings = new appSettings();
         this.dynamicFormDatas = new dynamicFormData();
-        this.openSingleTemp(this.taskID);
+        if(options.loadfrom != 'dashboard' && options.loadfrom != 'taskMenu'){
+          this.openSingleTemp(this.taskID);
+        }
       }
+      
       this.menuList = new singleMenuModel();
       this.appSettings.getMenuList(this.menuId, function(plural_label,module_desc,form_label,result) {
         selfobj.plural_label = plural_label;
@@ -63,7 +79,7 @@ define([
         }
      
       });
-
+      // alert("menuName: "+this.mname+" loadform: "+options.loadfrom);
       this.adminList = new adminCollection();
       this.adminList.fetch({
         headers: {
@@ -144,6 +160,7 @@ define([
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         setPagging(res.paginginfo, res.loadstate, res.msg);
+        selfobj.totalRec = res.paginginfo.totalRecords;
         $(".profile-loader").hide();
       });
       selfobj.render();
@@ -447,6 +464,14 @@ define([
 
     addOne: function (objectModel) {
       var selfobj = this;
+      this.totalRec = this.collection.length;
+      if (this.totalRec == 0) {
+        $(".noCustRec").show();
+        $("#leadlistview").hide();
+      }else{
+        $(".noCustRec").hide();
+        $("#leadlistview").show();
+      }
       var template = _.template(taskRowTemp);
       var dueDateMoment = moment(objectModel.attributes.due_date);
       objectModel.attributes.newDate = objectModel.attributes.due_date;
@@ -766,7 +791,7 @@ define([
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
-
+        selfobj.totalRec = res.paginginfo.totalRecords;
         setPagging(res.paginginfo, res.loadstate, res.msg);
         $element.attr("data-currPage", 1);
         $element.attr("data-index", res.paginginfo.nextpage);
@@ -1178,12 +1203,17 @@ define([
       selfobj.arrangedColumnList.forEach((column) => {
           var index = colName.indexOf(column.column_name);
           column.fieldLabel = index !== -1 ? fieldName[index] : column.fieldLabel;
-      });  
-      this.$el.html(template({ closeItem: this.toClose,"pluralLable":selfobj.plural_label,"moduleDesc":selfobj.module_desc,"arrangedColumnList": selfobj.arrangedColumnList, menuName: this.mname}));
+      });
+      this.$el.html(template({ closeItem: this.toClose,"pluralLable":selfobj.plural_label,"moduleDesc":selfobj.module_desc,"arrangedColumnList": selfobj.arrangedColumnList, menuName: this.mname, totalRec: this.totalRec}));
       var numColumns = selfobj.arrangedColumnList ? selfobj.arrangedColumnList.length : 0;
       var defaultWidth = numColumns == 0 ? '100%' : 100 + (numColumns * 16) + '%';
       $("#clist").css("width", defaultWidth);
-      $(".app_playground").append(this.$el);
+      if (this.loadfrom == 'dashboard') {
+        $("body").find("#dasboradTaskHolder").append(this.$el);
+      } else {
+        $(".app_playground").append(this.$el);
+        setToolTip();
+      }
       $(".ws-select").selectpicker();
       return this;
     }
