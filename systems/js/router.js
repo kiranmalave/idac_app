@@ -80,7 +80,7 @@ define([
       'media': 'readFilesView',
       'category': 'categoryView',
       'task': 'taskView',
-      'task/:taskID': 'taskView',
+      'task/:taskID': 'taskActivityView',
       'invoice': 'invoiceView',
       'ourclients': 'ourClientsView',
       'ourteam': 'ourTeamView',
@@ -360,7 +360,15 @@ define([
     app_router.on('route:taskView', function (action) {
       var validate = preTemp();
       if (validate) {
-        new taskView({ action: action });
+        new taskView({ action: action, loadfrom: 'taskMenu'});
+        //setsidbar();
+      }
+    });
+
+    app_router.on('route:taskActivityView', function (action) {
+      var validate = preTemp();
+      if (validate) {
+        new taskView({ action: action, loadfrom: 'customerActivity' });
         //setsidbar();
       }
     });

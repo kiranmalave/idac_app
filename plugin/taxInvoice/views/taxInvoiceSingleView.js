@@ -660,14 +660,10 @@ define([
           handelClose(selfobj.toClose);
           scanDetails.filterSearch();
           if (res.flag == "S") {
-            if (isNew == "new") {
-              selfobj.model.clear().set(selfobj.model.defaults);
-              selfobj.model.set({ menuId: selfobj.menuId});
-              selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {}, });
-              selfobj.render();
-            } else {
-              handelClose(selfobj.toClose);
-            }
+            selfobj.model.clear().set(selfobj.model.defaults);
+            selfobj.model.set({ menuId: selfobj.menuId});
+            selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {}, });
+            selfobj.render();
           }
         }
         setTimeout(function () {

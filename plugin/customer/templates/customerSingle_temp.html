@@ -32,9 +32,7 @@
                             <div class="col-md-6">
                                 <div class="form-group form-float taskDropDown" style="margin-bottom: 30px;">
                                     <div class="form-line taskDate removeBorder">
-                                        <select for="lead_source" autocomplete="off" id="lead_source" name="lead_source"
-                                            title="Lead Source"
-                                            class="form-control dropval ws-select show-tick repeatChange backgroundHide">
+                                        <select for="lead_source" autocomplete="off" id="lead_source" name="lead_source" title="Source" class="form-control dropval ws-select show-tick repeatChange backgroundHide">
                                             <%if(permission.add=="yes" ) { %>
                                                 <option class="addNew" value="add_lead">Add Lead Source</option>
                                             <%}%>
@@ -52,17 +50,15 @@
                                 <div class="col-md-6">
                                     <div class="form-group form-float removeBorder">
                                         <!-- <label for="lead_stages" class="form-label taskDate"> Lead Stages</label> -->
-                                        <select for="lead_stages" id="stages" name="stages"
-                                            class="form-control dropval ws-select show-tick repeatChange backgroundHide lead-al"
-                                            title="Lead stages">
+                                        <select for="lead_stages" id="stages" name="stages" class="form-control dropval ws-select show-tick repeatChange backgroundHide lead-al" title="Lead stages">
+                                            <%if(permission.add=="yes" ) { %>
+                                                <option class="addNew" value="add_lead">Add Lead Source</option>
+                                            <%}%>
                                             <% _.each(categoryList, function(modelcat) { %>
-                                                <% if(modelcat.attributes.slug=="lead_stages" ) {
-                                                    _.each(modelcat.attributes.sublist, function(model1) { %>
-                                                    <option <% if(model1.category_id==model.stages ){ %> selected <% }
-                                                            %> value="<%=model1.category_id%>"><%=model1.categoryName %>
-                                                    </option>
-                                                    <%})%>
-                                                        <%} })%>
+                                                <% if(modelcat.attributes.slug=="lead_stages" ) { _.each(modelcat.attributes.sublist, function(model1) { %>
+                                                    <option <% if(model1.category_id==model.stages ){ %> selected <% } %> value="<%=model1.category_id%>"><%=model1.categoryName %> </option>
+                                                <%})%>
+                                            <%} })%>
                                         </select>
                                     </div>
                                 </div>
@@ -474,16 +470,10 @@
                                         <div class="col-md-4">
                                             <div class="form-group input-group form-float">
                                                 <div class="form-line removeBorder">
-                                                    <select id="country_id" name="country_id"
-                                                        class="form-control countryChange ws-select show-tick repeatChange backgroundHide"
-                                                        data-live-search="true" title="Select Country">
+                                                    <select id="country_id" name="country_id" class="form-control countryChange ws-select show-tick repeatChange backgroundHide" data-live-search="true" title="Select Country">
                                                         <% _.each(countryList, function(model1) { %>
-                                                            <option <% if(model1.attributes.country_id==model.country_id
-                                                                ){ %> selected <%}%> value="
-                                                                    <%=model1.attributes.country_id%>">
-                                                                        <%=model1.attributes.country_name%>
-                                                            </option>
-                                                            <%})%>
+                                                            <option <% if(model1.attributes.country_id == model.country_id ){%> selected <%}%> value="<%=model1.attributes.country_id%>"><%=model1.attributes.country_name%></option>
+                                                        <%})%>
                                                     </select>
                                                 </div>
                                             </div>
@@ -491,15 +481,10 @@
                                         <div class="col-md-4">
                                             <div class="form-group input-group form-float">
                                                 <div class="form-line removeBorder">
-                                                    <select id="state_id" name="state_id"
-                                                        class="form-control stateChange ws-select show-tick repeatChange backgroundHide"
-                                                        data-live-search="true" title="Select State" disabled>
+                                                    <select id="state_id" name="state_id" class="form-control stateChange ws-select show-tick repeatChange backgroundHide" data-live-search="true" title="Select State" disabled>
                                                         <% _.each(stateList, function(model1) { %>
-                                                            <option <% if(model1.attributes.state_id==model.state_id ){
-                                                                %>selected <% } %>value="<%=model1.attributes.state_id%>
-                                                                        "><%=model1.attributes.state_name%>
-                                                            </option>
-                                                            <%})%>
+                                                            <option <% if(model1.attributes.state_id == model.state_id ){ %>selected <% } %>value="<%=model1.attributes.state_id%>"><%=model1.attributes.state_name%></option>
+                                                        <%})%>
                                                     </select>
                                                 </div>
                                             </div>
@@ -507,15 +492,10 @@
                                         <div class="col-md-4">
                                             <div class="form-group input-group form-float">
                                                 <div class="form-line removeBorder">
-                                                    <select id="city_id" name="city_id"
-                                                        class="form-control cityChange dropval ws-select show-tick repeatChange backgroundHide"
-                                                        data-live-search="true" title="Select City" disabled>
+                                                    <select id="city_id" name="city_id" class="form-control cityChange dropval ws-select show-tick repeatChange backgroundHide" data-live-search="true" title="Select City" disabled>
                                                         <% _.each(cityList, function(model1) { %>
-                                                            <option <% if(model1.attributes.city_id==model.city_id ){ %>
-                                                                selected <% } %>value="<%=model1.attributes.city_id%>">
-                                                                        <%=model1.attributes.city_name%>
-                                                            </option>
-                                                            <%})%>
+                                                            <option <% if(model1.attributes.city_id == model.city_id ){ %> selected <% } %>value="<%=model1.attributes.city_id%>"><%=model1.attributes.city_name%></option>
+                                                        <%})%>
                                                     </select>
                                                 </div>
                                             </div>
