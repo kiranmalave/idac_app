@@ -24,10 +24,13 @@ class Dashboard extends CI_Controller {
 		$this->response->decodeRequest();
 		$adminID=$this->input->post('SadminID');
 		$wherec["status"] = 'active';
+		$wherec["type"] = 'customer';
+
+		$wherep["status"] = 'active';
 
 		$dashboardCustCount = $this->CommonModel->getMasterDetails('customer','count(customer_id) as totalcut',$wherec);
 		$customerLength = $dashboardCustCount[0]->totalcut;
-		$dashboardProjectCount = $this->CommonModel->getMasterDetails('project','count(project_id) as totalcut',$wherec);
+		$dashboardProjectCount = $this->CommonModel->getMasterDetails('project','count(project_id) as totalcut',$wherep);
 		$projectLength = $dashboardProjectCount[0]->totalcut;
 		
 		$countArray = array(

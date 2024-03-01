@@ -18,6 +18,7 @@ define([
 
   var proposalView = Backbone.View.extend({
     loadFrom: null,
+    totalRec:0,
     initialize: function (options) {
       console.log(options);
       this.loadFrom = options.loadFrom;
@@ -27,6 +28,7 @@ define([
       this.toClose = "proposalFilterView";
       filterOption = new proposalFilterOptionModel();
       var selfobj = this;
+      this.totalRec= 0;
       var mname = Backbone.history.getFragment();
       if (mname == "proposal") {
         permission = ROLE[mname];
@@ -51,6 +53,7 @@ define([
 
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
+        selfobj.totalRec = res.paginginfo.totalRecords;
         setPagging(res.paginginfo, res.loadstate, res.msg);
       });
 
@@ -320,6 +323,14 @@ define([
     },
     addOne: function (objectModel) {
       var template = _.template(proposalRowTemp);
+      this.totalRec = this.collection.length;
+      if (this.totalRec == 0) {
+        $(".noCustRec").show();
+        $("#proposaList").hide();
+      }else{
+        $(".noCustRec").hide();
+        $("#proposaList").show();
+      }
       $("#proposalList").append(template({ proposalDetails: objectModel }));
 
       var mailTruncateElements = document.querySelectorAll('.mailtruncate');
@@ -464,7 +475,6 @@ define([
     },
 
     filterSearch: function (isClose = false) {
-      console.log("filterSearch");
       if (isClose && typeof isClose != 'object') {
         $('.' + this.toClose).remove();
         rearrageOverlays();
@@ -487,7 +497,14 @@ define([
         console.log("ress", res);
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
-
+        selfobj.totalRec = res.paginginfo.totalRecords;
+        if (selfobj.totalRec == 0) {
+          $(".noCustRec").show();
+          $("#leadlistview").hide();
+        }else{
+          $(".noCustRec").hide();
+          $("#leadlistview").show();
+        }
         setPagging(res.paginginfo, res.loadstate, res.msg);
         $element.attr("data-currPage", 0);
         $element.attr("data-index", res.paginginfo.nextpage);
@@ -579,7 +596,7 @@ define([
     },
     render: function () {
       var template = _.template(proposalTemp);
-      this.$el.html(template({ closeItem: this.toClose, "loadFrom":this.loadFrom}));
+      this.$el.html(template({ closeItem: this.toClose, "loadFrom":this.loadFrom, totalRec: this.totalRec}));
       if (this.loadFrom != null) {
         $("#dasboradProposalHolder").append(this.$el);
       } else {
