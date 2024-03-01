@@ -792,6 +792,13 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
         selfobj.totalRec = res.paginginfo.totalRecords;
+        if (selfobj.totalRec == 0) {
+          $(".noCustRec").show();
+          $("#leadlistview").hide();
+        }else{
+          $(".noCustRec").hide();
+          $("#leadlistview").show();
+        }
         setPagging(res.paginginfo, res.loadstate, res.msg);
         $element.attr("data-currPage", 1);
         $element.attr("data-index", res.paginginfo.nextpage);

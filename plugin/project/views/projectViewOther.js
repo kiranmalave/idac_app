@@ -216,6 +216,7 @@ define([
     },
 
     showTable: function (e) {
+      e.stopPropagation();
       let selfobj = this;
       let projectID = $(e.currentTarget).attr('data-project_id');
       var element = document.querySelector(".addFlex");
@@ -569,7 +570,7 @@ define([
       var template = _.template(projectTempOther);
       this.$el.html(template({ closeItem: this.toClose }));
       $("#project").append(this.$el);
-      this.attachEvents();
+      // this.attachEvents();
       //$("#projects").show();
       // setToolTip();
 
