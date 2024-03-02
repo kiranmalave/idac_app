@@ -22,8 +22,9 @@ define([
     var dashboardView = Backbone.View.extend({
       model: dashboardModel,
       tagName: "div",
+      customerName:"",
       initialize: function (options) {
-        this.customerID =options.action;
+        this.customerID = options.action;
         this.multiselectOptions = new multiselectOptions();
         this.customerModel = new customerSingleModel();
         this.timeselectOptions = new timeselectOptions();
@@ -44,6 +45,7 @@ define([
             // selfobj.render();
           });
         }
+        
         this.historyList = new historyCollection();
           this.historyList.fetch({
             headers: {
@@ -64,7 +66,6 @@ define([
         "click .loadview" : "loadSubView",
         "click .tablinks": "tablinks",
         "click .multiSel": "setValues",
-        
       },
       onErrorHandler: function (collection, response, options) {
         alert("Something was wrong ! Try to refresh the page or contact administer. :(");
@@ -82,7 +83,7 @@ define([
           selfobj.timeselectOptions.displayRelativeTime(timestamp);
           model.set({ "timeString": selfobj.timeselectOptions.displayRelativeTime(timestamp) });
         }
-       
+        this.customerName = this.customerModel.get('name');
         this.render();
       },
       updateNote: function (e) {
@@ -143,7 +144,7 @@ define([
           new projectViewOther({ action:"", customerID: selfobj.customerID, loadFrom:"dashboard"});
         }else if(ctab =="task"){
           $("#invoice").hide();
-          new taskViewDashbord({ action:"", customerID: selfobj.customerID});
+          new taskViewDashbord({ action:"", customerID: selfobj.customerID, custName: this.customerName});
         }else if(ctab == "invoice"){
           $("#invoice").empty();
           new taxInvoiceView({action: "", customerID: selfobj.customerID, loadFrom: "custDashboardInvoice"}) 
@@ -163,7 +164,7 @@ define([
         var res = template({"customerModel":this.customerModel,"historyList":this.historyList.models});
         this.$el.html(res);
         $(".app_playground").append(this.$el);
-        new taskViewDashbord({ action:"", customerID: this.customerID}); 
+        new taskViewDashbord({ action:"", customerID: this.customerID, custName: this.customerName}); 
         return this;
       },
   

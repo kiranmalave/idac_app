@@ -20,7 +20,7 @@
                                     <div class="form-group form-float">
                                         <div class="form-line">
                                             <label for="categoryName" class="form-label">Name </label>
-                                            <input id="categoryName" class="form-control txtchange titleChange" autocomplete="off" name="categoryName" required="" maxlength="45" type="text" value="<%=model.categoryName%>">
+                                            <input id="categoryName" <%if(model.is_sys_category == "yes"){%>disabled class="form-control txtchange titleChange ws-disable-cursor"<%}else{%>class="form-control txtchange titleChange"<%}%> autocomplete="off" name="categoryName" required="" maxlength="45" type="text" value="<%=model.categoryName%>" >
                                         </div>
                                     </div>
                                 </div>
@@ -28,7 +28,7 @@
                                     <div class="form-group form-float">
                                         <div class="form-line">
                                             <label for="slug" class="form-label">Slug </label>
-                                            <input id="slug" class="form-control txtchange" autocomplete="off" name="slug" required="" type="text" value="<%=model.slug%>">
+                                            <input id="slug" <%if(model.is_sys_category == "yes"){%>disabled class="form-control txtchange titleChange ws-disable-cursor"<%}else{%>class="form-control txtchange titleChange"<%}%> autocomplete="off" name="slug" required="" type="text" value="<%=model.slug%>">
                                         </div>
                                     </div>
                                 </div>
@@ -47,17 +47,16 @@
                                 <div class="col-md-6">
                                     <label for="is_parent">is Parent?<span class="error"></span> :</label>
                                     <ul class="item-container" data-valid="is_parent">
-                                        <li class="is_parent multiSel" data-render="yes" data-single="Y" data-value="yes">Yes</li>
-                                        <li class="is_parent multiSel" data-render="yes" data-single="Y" data-value="no">No</li>
+                                        <li <%if(model.is_sys_category == "yes"){%>class="is_parent multiSel list disabled"<%}else{%>class="is_parent multiSel"<%}%> data-render="yes" data-single="Y" data-value="yes">Yes</li>
+                                        <li <%if(model.is_sys_category == "yes"){%>class="is_parent multiSel list disabled"<%}else{%>class="is_parent multiSel"<%}%> data-render="yes" data-single="Y" data-value="no">No</li>
                                     </ul>
-                                    <!-- </div> -->
                                 </div>
                                 <div class="col-md-x"></div>
                                 <div class="col-md-6 mt-3">
                                     <% if(model.is_parent !="yes" ){%>
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <select id="parent_id" name="parent_id" class="form-control dropval">
+                                                <select id="parent_id" name="parent_id" <%if(model.is_sys_category == "yes"){%>disabled class="form-control dropval ws-disable-cursor"<%}else{%>class="form-control dropval"<%}%>>
                                                     <option value="">Select Parent Menu</option>
                                                     <% _.each(model.categoryList, function(model1) { %>
                                                         <option <% if(model1.category_id==model.parent_id ){ %> selected <% } %> value="<%=model1.category_id%>"> <%=model1.categoryName%> </option>

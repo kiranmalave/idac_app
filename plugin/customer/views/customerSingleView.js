@@ -467,7 +467,9 @@ define([
             scanDetails.render();
           }else  if(selfobj.loadFrom == "ReceiptSingleView") {
             scanDetails.refreshCust();
-          }else {
+          }else if(selfobj.loadFrom == "proposalSingleView"){
+            scanDetails.refreshCust(selfobj.custID);
+          }else{
             scanDetails.filterSearch(false, stage);
           }
           if (res.flag == "S") {

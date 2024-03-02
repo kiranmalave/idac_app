@@ -18,9 +18,7 @@
                             <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line" style="margin-top: -5px;">
-                                        <input id="proposal_number" class="form-control txtchange ws-disable-cursor"
-                                            type="text" value="<%=model.proposal_number%>" disabled
-                                            placeholder="Proposal Number Auto Generated">
+                                        <input id="proposal_number" class="form-control txtchange ws-disable-cursor" type="text" value="<%=model.proposal_number%>" disabled placeholder="Proposal Number Auto Generated">
                                     </div>
                                 </div>
                             </div>
@@ -37,10 +35,8 @@
                             <div class="col-md-6">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <label for="name" class="form-label pl-2"
-                                            style="margin-left: 4px !important;">Name</label>
-                                        <input id="name" class="form-control txtchange" name="name" type="text"
-                                            value="<%=model.name%>" style="margin-left:10px !important;">
+                                        <label for="name" class="form-label pl-2" style="margin-left: 4px !important;">Name</label>
+                                        <input id="name" class="form-control txtchange" name="name" type="text" value="<%=model.name%>" style="margin-left:10px !important;">
                                     </div>
                                 </div>
                             </div>
@@ -54,9 +50,9 @@
                                             <%}%>
                                             <% _.each(customerList, function(model1) { %>
                                                 <%if(model.client_id==null){%>
-                                                    <option <% if(model1.attributes.customer_id == model.client_id ){%> selected <%}%> value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%></option>
+                                                    <option <% if(model1.attributes.customer_id == model.client_id ){%> selected <%}%> value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%> <% if(model1.attributes.type == "customer"){%>(C)<%}else{%>(L)<%}%></option>
                                                 <%}else{%>
-                                                    <option <% if(model1.attributes.customer_id == model.client_id ){%> selected <%}%> value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%></option>
+                                                    <option <% if(model1.attributes.customer_id == model.client_id ){%> selected <%}%> value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%> <% if(model1.attributes.type == "customer"){%>(C)<%}else{%>(L)<%}%></option>
                                                 <%}%>
                                             <%}); %>
                                         </select>
@@ -78,29 +74,17 @@
                                 <div class="form-group form-float">
                                     <div class="form-line">
                                         <label for="project_id" class="form-label pl-2"></label>
-                                        <select id="project_id" name="project_id"
-                                            class="form-control dropval ws-select show-tick mt-2 projectDrop"
-                                            title="Select Project" data-live-search="true" data-live-search="true">
+                                        <select id="project_id" name="project_id" class="form-control dropval ws-select show-tick mt-2 projectDrop" title="Select Project" data-live-search="true" data-live-search="true">
                                             <%if(permission.add=="yes" ) { %>
                                                 <option class="addNew" value="addProject">Add Project</option>
+                                            <%}%>
+                                            <% _.each(projectList, function(model1) { %>
+                                                <% if(projectID==null){%>
+                                                    <option <% if(model1.attributes.project_id==model.project_id ) { %>selected <%}%>value="<%=model1.attributes.project_id%>"><%=model1.attributes.project_name%></option>
+                                                <%}else{%>
+                                                    <option <% if(model1.attributes.project_id==projectID ) { %>selected <%}%>value="<%=model1.attributes.project_id%>"><%=model1.attributes.project_name%></option>
                                                 <%}%>
-
-                                                    <% _.each(projectList, function(model1) { %>
-                                                        <% if(projectID==null){%>
-                                                            <option <% if(model1.attributes.project_id==model.project_id
-                                                                ) { %>selected
-                                                                <%}%>value="<%=model1.attributes.project_id%>">
-                                                                        <%=model1.attributes.project_name%>
-                                                            </option>
-                                                            <%}else{%>
-                                                                <option <% if(model1.attributes.project_id==projectID) {
-                                                                    %>selected
-                                                                    <%}%>value="<%=model1.attributes.project_id%>">
-                                                                            <%=model1.attributes.project_name%>
-                                                                </option>
-                                                                <%}%>
-
-                                                                    <%}); %>
+                                            <%}); %>
                                         </select>
                                     </div>
                                 </div>
@@ -118,16 +102,10 @@
                             <div class="col-md-12">
                                 <div class="form-group form-float">
                                     <div class="form-line">
-                                        <select id="temp_id" name="temp_id"
-                                            class="form-control dropval getTemplate ws-select show-tick mt-2 aline_p_top"
-                                            title="Select Proposal Template" data-live-search="true"
-                                            data-live-search="true">
+                                        <select id="temp_id" name="temp_id" class="form-control dropval getTemplate ws-select show-tick mt-2 aline_p_top" title="Select Proposal Template" data-live-search="true" data-live-search="true">
                                             <% _.each(proposalTemplateList, function(model1) { %>
-                                                <option <% if(model1.attributes.temp_id==model.temp_id ) { %>selected
-                                                    <%}%>value="<%=model1.attributes.temp_id%>">
-                                                            <%=model1.attributes.temp_name%>
-                                                </option>
-                                                <%}); %>
+                                                <option <% if(model1.attributes.temp_id==model.temp_id ) { %>selected <%}%>value="<%=model1.attributes.temp_id%>"><%=model1.attributes.temp_name%></option>
+                                            <%}); %>
                                         </select>
                                     </div>
                                 </div>
@@ -170,29 +148,28 @@
                             </div>
                         </div>
                     </div>
-                    <%}%>
-                        <div class="list-row">
-                            <div class="icon-left">
-                                <div class="ws-icon">
-                                    <div class="input-group ws-input-group"> <span class="input-group-addon ">
-                                            <i class="material-icons"></i> </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="right-layout">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <label for="status">Status <span class="error">*</span> :</label>
-                                        <ul class="item-container" data-valid="status">
-                                            <li class="status multiSel" data-single="Y" data-value="active">Active</li>
-                                            <li class="status multiSel" data-single="Y" data-value="inactive">InActive
-                                            </li>
-                                            <li class="status multiSel" data-single="Y" data-value="delete">Delete</li>
-                                        </ul>
-                                    </div>
-                                </div>
+                <%}%>
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <div class="input-group ws-input-group"> <span class="input-group-addon ">
+                                    <i class="material-icons"></i> </span>
                             </div>
                         </div>
+                    </div>
+                    <div class="right-layout">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="status">Status <span class="error">*</span> :</label>
+                                <ul class="item-container" data-valid="status">
+                                    <li class="status multiSel" data-single="Y" data-value="active">Active</li>
+                                    <li class="status multiSel" data-single="Y" data-value="inactive">InActive</li>
+                                    <li class="status multiSel" data-single="Y" data-value="delete">Delete</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </form>

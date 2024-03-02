@@ -151,6 +151,8 @@ define([
         e.preventDefault();
         let selfobj = this;
         var mid = this.model.get("temp_id");
+        var proposalContent = tinymce.get("description").getContent();
+        this.model.set({"description": proposalContent});
         let isNew = $(e.currentTarget).attr("data-action");
         if (permission.edit != "yes") {
           alert("You dont have permission to edit");
@@ -258,10 +260,35 @@ define([
           }
         });
       },
+
+      fromEditors: function () {
+        if (tinyMCE.activeEditor != undefined) {
+          tinyMCE.activeEditor.remove("description");
+        }
+        tinyMCE.init({
+          selector: "#description, #costing",
+          deprecation_warnings: false,
+          removed_menuitems: 'newdocument | wordcount | sourcecode | image | media ',
+          height: 300,
+          plugins: ["advlist autolink link image lists charmap print preview hr anchor pagebreak save",
+            "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+            " table contextmenu directionality emoticons template paste textcolor"],
+          toolbar: "insertfile undo redo  | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link  | print preview  fullpage | forecolor backcolor emoticons ",
+  
+          style_formats: [{ title: "Bold text", inline: "b" },
+          { title: "Red text", inline: "span", styles: { color: "#ff0000" } },
+          { title: "Red header", block: "h1", styles: { color: "#ff0000" } },
+          { title: "Example 1", inline: "span", classes: "example1" },
+          { title: "Example 2", inline: "span", classes: "example2" },
+          { title: "Table styles" },
+          { title: "Table row 1", selector: "tr", classes: "tablerow1" }],
+  
+        })
+        tinyMCE.init({});
+        
+      },
   
       render: function () {
-        //var isexits = checkisoverlay(this.toClose);
-        //if(!isexits){
         var selfobj = this;
         var source = projecttemp;
         var template = _.template(source);
@@ -280,35 +307,8 @@ define([
         this.setOldValues();
         $(".ws-select").selectpicker();
         this.attachEvents();
+        this.fromEditors();
         rearrageOverlays("Proposal Templates", this.toClose);
-        var __toolbarOptions = [
-            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-            [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-            [{ 'direction': 'rtl' }],                         // text direction
-            [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-            [{ 'align': [] }],
-            ['link'],
-              ['clean']                                         // remove formatting button
-          ];
-        var editor = new Quill($("#description").get(0),{
-            modules: {
-                toolbar: __toolbarOptions
-            },
-            theme: 'snow' 
-            });
-      
-            //const delta = editor.clipboard.convert();
-            //editor.setContents(delta, 'silent');
-            editor.on('text-change', function(delta, oldDelta, source) {
-                if (source == 'api') {
-                    console.log("An API call triggered this change.");
-                  } else if (source == 'user') {
-                    var delta = editor.getContents();
-                    var text = editor.getText();
-                    var justHtml = editor.root.innerHTML;
-                    selfobj.model.set({"description":justHtml});
-                  }
-            });
         return this;
       },
       

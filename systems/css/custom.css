@@ -9838,3 +9838,8 @@ label.form-label.taskDate.tasktop.fortask {
 .customerTable .body.table .customerListTable .tableList tbody#customerList tr.even.pointer.bg- td .CustomerHoverButton button.ws-btn-default.loadview {
   position: relative;
 }
+
+.list.disabled{
+  pointer-events: none;
+  opacity: 0.5;
+}

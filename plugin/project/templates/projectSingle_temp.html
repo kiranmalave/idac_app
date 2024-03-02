@@ -52,9 +52,9 @@
                                         <%}%>
                                         <% _.each(customerList, function(model1) { %>
                                             <%if(customerID == null){%>
-                                                <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%> <% if(model1.attributes.type == "customer"){%>(c)<%}else{%>(l)<%}%></option>
+                                                <option <% if(model1.attributes.customer_id == model.client_id ) { %>selected <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%> <% if(model1.attributes.type == "customer"){%>(C)<%}else{%>(L)<%}%></option>
                                             <%}else{%>
-                                                <option <% if(model1.attributes.customer_id == customerID ) { %>selected <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%> <% if(model1.attributes.type == "customer"){%>(c)<%}else{%>(l)<%}%></option>
+                                                <option <% if(model1.attributes.customer_id == customerID ) { %>selected <%}%>value="<%=model1.attributes.customer_id%>"><%=model1.attributes.name%> <% if(model1.attributes.type == "customer"){%>(C)<%}else{%>(L)<%}%></option>
                                             <%}%>
                                         <%}); %>
                                     </select>

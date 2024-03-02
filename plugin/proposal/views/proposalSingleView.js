@@ -166,9 +166,9 @@ define([
     updateOtherDetails: function (e) {
       var valuetxt = $(e.currentTarget).val();
       if (valuetxt == "addClient") {
-        new customerSingleView({ searchCustomer: this, loadfrom: "proposalSingleView" });
+        new customerSingleView({ searchCustomer: this, loadfrom: "proposalSingleView", form_label:"Company/Clients" });
       }else if(valuetxt == "addProject"){
-        new projectSingleView({ searchproject: this, loadfrom: "proposalSingleView" });
+        new projectSingleView({ searchproject: this, loadFrom: "proposalSingleView" });
       }
       var toID = $(e.currentTarget).attr("id");
       var newdetails = [];
@@ -182,7 +182,7 @@ define([
       setvalues = ["status"];
       selfobj.multiselectOptions.setValues(setvalues, selfobj);
     },
-    refreshCus: function (customer_id){
+    refreshCust: function (customer_id){
       let selfobj = this;
       this.model.set({"client_id":customer_id});
       this.customerList.fetch({
@@ -383,7 +383,6 @@ define([
             if (res.flag == "S") {
               if (isNew == "new") {
                 selfobj.model.clear().set(selfobj.model.defaults);
-                // selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                 selfobj.render();
               } else {
                 handelClose(selfobj.toClose);
@@ -490,8 +489,6 @@ define([
     },
 
     render: function () {
-      //var isexits = checkisoverlay(this.toClose);
-      //if(!isexits){
       var selfobj = this;
       var source = proposaltemp;
       var template = _.template(source);
@@ -504,60 +501,12 @@ define([
       this.$el.data("current", "yes");
       $(".tab-content").append(this.$el);
       $("#" + this.toClose).show();
-      // $("#dynamicFormFields").empty().append(this.dynamicFieldRenderobj.getform());
       this.initializeValidate();
       this.setOldValues();
       $(".ws-select").selectpicker();
       this.attachEvents();
       rearrageOverlays("Proposals", this.toClose);
       this.fromEditors();
-      // var __toolbarOptions = [
-      //   ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-      //   [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-      //   [{ 'direction': 'rtl' }],                         // text direction
-      //   [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-      //   [{ 'align': [] }],
-      //   ['link'],
-      //   ['clean']                                         // remove formatting button
-      // ];
-      // var editor = new Quill($("#proposaldescription").get(0), {
-      //   modules: {
-      //     toolbar: __toolbarOptions
-      //   },
-      //   theme: 'snow'
-      // });
-      // var editor2 = new Quill($("#costing").get(0), {
-      //   modules: {
-      //     toolbar: __toolbarOptions
-      //   },
-      //   theme: 'snow'
-      // });
-
-
-      // editor.on('text-change', function (delta, oldDelta, source) {
-      //   if (source == 'api') {
-      //     console.log("An API call triggered this change.");
-      //   } else if (source == 'user') {
-      //     var delta = editor.getContents();
-      //     var text = editor.getText();
-      //     var justHtml = editor.root.innerHTML;
-      //     selfobj.model.set({ "description": justHtml });
-      //   }
-      // });
-
-      // editor2.on('text-change', function (delta, oldDelta, source) {
-      //   if (source == 'api') {
-      //     console.log("An API call triggered this change.");
-      //   } else if (source == 'user') {
-      //     var delta = editor2.getContents();
-      //     var text = editor2.getText();
-      //     var justHtml = editor2.root.innerHTML;
-      //     selfobj.model.set({ "cost": justHtml });
-      //     console.log(selfobj.model);
-      //   }
-      // });
-
-
       return this;
     },
     onDelete: function () {

@@ -88,13 +88,14 @@ define([
           selfobj.render();
         });
       }
+      this.model.set({ "customer_id": this.customerID });
+      this.model.set({ "customerName": this.customerName });
 
       if (options.task_id != "") {
         let temp = [];
         temp.push(ADMINNAME);
         let tempID = [];
         tempID.push(ADMINID);
-
         this.model.set({tasksWatchers : temp});
         this.model.set({tasks_watchersAdminID : tempID});
       }

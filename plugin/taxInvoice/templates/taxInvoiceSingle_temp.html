@@ -11,8 +11,8 @@
       <div class="col-sm-4 form-details">
         <div class="form-group form-float">
           <div class="form-line">
-            <label for="skillDesc" class="form-label">Invoice Number:</label>
-            <input type="text" name="invoiceNumber" id="invoiceNumber" class="form-control" value="<%=model.invoiceNumber%>"/>
+            <!-- <label for="skillDesc" class="form-label">Invoice Number:</label> -->
+            <input type="text" name="invoiceNumber" id="invoiceNumber" class="form-control ws-disable-cursor" value="<%=model.invoiceNumber%>"disabled placeholder="Invoice Number Auto Generated"/>
           </div>
         </div>
       </div>
@@ -42,39 +42,6 @@
       </div>  
     </div>
     <div class="clearfix">&nbsp;</div>
-    <!-- <div class="row">  
-      <div class="col-sm-4 form-details">
-        <div class="form-group form-float">
-          <div class="form-line">
-            <label for="reportMonth" class="form-label">Report Month:</label>
-            <select  id="reportMonth" name="reportMonth"class="form-control dropval ws-select show-tick repeatChange">
-              <option value="">Select Month</option>
-              <option <% if(model.processingMonth =='january'){ %> selected <% } %> value="january">January</option>
-              <option <% if(model.processingMonth =='february'){ %> selected <% } %> value="february">February</option>
-              <option <% if(model.processingMonth =='march'){ %> selected <% } %> value="march">March</option>
-              <option <% if(model.processingMonth =='april'){ %> selected <% } %> value="April">April</option>
-              <option <% if(model.processingMonth =='may'){ %> selected <% } %> value="May">May</option>
-              <option <% if(model.processingMonth =='june'){ %> selected <% } %> value="June">June</option>
-              <option <% if(model.processingMonth =='july'){ %> selected <% } %> value="July">July</option>
-              <option <% if(model.processingMonth =='august'){ %> selected <% } %> value="August">August</option>
-              <option <% if(model.processingMonth =='september'){ %> selected <% } %> value="September">September</option>
-              <option <% if(model.processingMonth =='october'){ %> selected <% } %> value="October">October</option>
-              <option <% if(model.processingMonth =='november'){ %> selected <% } %> value="November">November</option>
-              <option <% if(model.processingMonth =='december'){ %> selected <% } %> value="December">December</option>
-            </select>
-          </div>
-        </div>
-      </div> -->
-      <!-- <div class="col-sm-4 form-details">
-        <div class="form-group form-float">
-          <div class="form-line">
-            <label for="reportYear" class="form-label">Report Year:</label>
-            <select  name="reportYear"id="reportYear" class="form-control dropval ws-select show-tick repeatChange"><% if(model.isEdit == "no") { %>disabled <%}%></select>
-          </div>
-        </div>
-      </div>
-    </div> -->
-    <!--tax invoice heade ends-->
     <div class="col-xs-12">
       <table class="table table-striped">
         <tbody class="items-holder">

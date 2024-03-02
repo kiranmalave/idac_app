@@ -25,6 +25,7 @@ define([
       initialize: function (options) {
         var customer_id = options.customerID
         this.customerID = customer_id;
+        this.customerName = options.custName;
         this.toClose = "taskFilterView";
         var selfobj = this;
         $(".profile-loader").show();
@@ -284,7 +285,7 @@ define([
             } else {
               handelClose("historySingleView");
             }
-            new taskSingleView({ task_id: task_id, searchtask: selfobj, customerID: selfobj.customerID });
+            new taskSingleView({ task_id: task_id, searchtask: selfobj, customer_id: selfobj.customerID, form_label:"Task", customerName: selfobj.customerName });
             break;
           }
         }
