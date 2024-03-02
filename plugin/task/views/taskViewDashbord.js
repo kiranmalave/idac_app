@@ -113,7 +113,7 @@ define([
         "change .changeBox": "changeBox",
         "click .sortbydate": "sortByDate",
         "click .showpoup": "showpoup",
-        "click .closeTaskFilter": "closeFilter",
+        "click .closeFilter": "closeFilter",
       },
   
       attachEvents: function () {
@@ -123,8 +123,8 @@ define([
         this.$el.on('click', '.loadview', this.loadSubView.bind(this));
         this.$el.off('click', '#taskFilterOption', this.filterRender);
         this.$el.on('click', '#taskFilterOption', this.filterRender.bind(this));
-        this.$el.off('click', '.closeTaskFilter', this.closeFilter);
-        this.$el.on('click', '.closeTaskFilter', this.closeFilter.bind(this));
+        this.$el.off('click', '.closeFilter', this.closeFilter);
+        this.$el.on('click', '.closeFilter', this.closeFilter.bind(this));
       },
   
       showpoup: function (e) {
@@ -181,9 +181,6 @@ define([
             $(".ws_filterOptions").removeClass("open");
             $(e.currentTarget).removeClass("active");
             return;
-          } else {
-            $(e.currentTarget).addClass("active");
-            // this function will handel other exiting open popus
           }
       },
   
