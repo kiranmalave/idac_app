@@ -170,11 +170,11 @@ class Proposal extends CI_Controller {
 		{
 				$proposalDetails = array();
 				$updateDate = date("Y/m/d H:i:s");
-				// $proposalDetails['regiNoYSF'] = $this->validatedata->validate('regiNoYSF','regiNoYSF',true,'',array());
 				$proposalDetails['proposal_id'] = $this->validatedata->validate('proposal_id','proposal_id',false,'',array());
 				$proposalDetails['name'] = $this->validatedata->validate('name','Proposal Name',false,'',array());
 				$proposalDetails['description'] = $this->validatedata->validate('description','Description',false,'',array());
 				$proposalDetails['client_id'] = $this->validatedata->validate('client_id','Client Name',false,'',array());
+				$proposalDetails['temp_id'] = $this->validatedata->validate('temp_id','Template',false,'',array());
 				$proposalDetails['cost'] = $this->validatedata->validate('cost','Cost',false,'',array());
 				$proposalDetails['project_id'] = $this->validatedata->validate('project_id','Project Name',false,'',array());
 				$proposalDetails['status'] = $this->validatedata->validate('status','Status',false,'',array());

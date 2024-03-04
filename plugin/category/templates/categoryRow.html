@@ -1,12 +1,10 @@
 <tr class="even pointer bg-<%=categoryDetails.attributes.status%>">
   <td class="a-center">
     <div class="listCheckbox">
-      <input id="cAll_<%= categoryDetails.attributes.category_id %>" class="memberlistcheck chk-col-amber"
-        data-category_id="<%= categoryDetails.attributes.category_id %>" type="checkbox">
+      <input id="cAll_<%= categoryDetails.attributes.category_id %>" class="memberlistcheck chk-col-amber" data-category_id="<%= categoryDetails.attributes.category_id %>" type="checkbox">
       <label for="cAll_<%= categoryDetails.attributes.category_id %>">&nbsp;</label>
     </div>
   </td>
-  <!-- <td class=""><%=categoryDetails.attributes.category_id%></td> -->
   <td>
     <%=categoryDetails.attributes.categoryName%>
   </td>
@@ -18,15 +16,8 @@
   </td>
   <td>
     <%=categoryDetails.attributes.parentCatName%>
-
   </td>
-  <!-- <td><%=categoryDetails.attributes.categoryDiscription%></td> -->
   <td>
-    <button <% if(categoryDetails.attributes.is_sys_category=="yes" ){%> style="display: none;"<%}%> type="button"
-        class="ws-btn-default loadview" data-category_id="<%=categoryDetails.attributes.category_id%>"
-          data-view="singleCategoryData" data-toggle="tooltip" data-placement="top" title="Edit"><i
-            class="material-icons">mode_edit</i></button>
+    <button type="button" class="ws-btn-default loadview" data-category_id="<%=categoryDetails.attributes.category_id%>" data-view="singleCategoryData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
   </td>
 </tr>
-
-<!-- <a class="ws-btn-default loadview" href="#pageCustomFields/<%=categoryDetails.attributes.category_id%>"><i class="material-icons">extension</i></a>  -->

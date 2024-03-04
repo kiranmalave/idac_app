@@ -22,9 +22,7 @@
                 <div class="list-row">
                     <div class="icon-left">
                         <div class="ws-icon">
-                            <span class="material-symbols-outlined">
-                                upcoming
-                            </span>
+                            <span class="material-symbols-outlined"> upcoming </span>
                         </div>
                     </div>
                     <div class="right-layout">
@@ -72,23 +70,17 @@
                     <div class="list-row" style="margin-bottom:10px;">
                         <div class="icon-left">
                             <div class="ws-icon">
-                                <i class="material-icons">
-                                    person
-                                </i>
+                                <i class="material-icons"> person </i>
                             </div>
                         </div>
                         <div class="right-layout">
                             <div class="row">
                                 <div class="col-md-2">
                                     <div class="form-group form-float salutation removeBorder">
-                                        <select id="salutation" name="salutation"
-                                            class="form-control dropval ws-select show-tick repeatChange backgroundHide">
-                                            <option value="mr" <% if(model.salutation=='mr' ){ %> selected <% } %>>Mr
-                                            </option>
-                                            <option value="mrs" <% if(model.salutation=='mrs' ){ %> selected <% } %>>Mrs
-                                            </option>
-                                            <option value="miss" <% if(model.salutation=='miss' ){ %> selected <% } %>
-                                                    >Miss </option>
+                                        <select id="salutation" name="salutation" class="form-control dropval ws-select show-tick repeatChange backgroundHide">
+                                            <option value="mr" <% if(model.salutation=='mr' ){ %> selected <% } %>>Mr</option>
+                                            <option value="mrs" <% if(model.salutation=='mrs' ){ %> selected <% } %>>Mrs</option>
+                                            <option value="miss" <% if(model.salutation=='miss' ){ %> selected <% } %>>Miss </option>
                                         </select>
                                     </div>
                                 </div>
@@ -96,8 +88,7 @@
                                 <div class="col-md-9">
                                     <div class="form-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="name" class="form-control txtchange taskDate" name="name"
-                                                value="<%=model.name%>">
+                                            <input id="name" class="form-control txtchange taskDate" name="name" value="<%=model.name%>">
                                             <label for="name" class="form-label taskDate">Name</label>
                                         </div>
                                     </div>
@@ -108,9 +99,7 @@
                     <div class="list-row" style="margin-bottom:10px;">
                         <div class="icon-left">
                             <div class="ws-icon">
-                                <i class="material-icons">
-                                    email
-                                </i>
+                                <i class="material-icons"> email </i>
                             </div>
                         </div>
                         <div class="right-layout">
@@ -119,16 +108,14 @@
                                     <div class="form-group form-float">
                                         <div class="form-line taskDate">
                                             <label for="email" class="form-label taskDate">Email</label>
-                                            <input id="email" class="form-control txtchange taskDate" name="email"
-                                                value="<%=model.email%>">
+                                            <input id="email" class="form-control txtchange taskDate" name="email" value="<%=model.email%>">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="mobile_no" class="form-control txtchange taskDate"
-                                                name="mobile_no" value="<%=model.mobile_no%>">
+                                            <input id="mobile_no" class="form-control txtchange taskDate" name="mobile_no" value="<%=model.mobile_no%>">
                                             <label for="mobile_no" class="form-label taskDate">Mobile No:</label>
                                         </div>
                                     </div>
@@ -139,9 +126,7 @@
                     <div class="list-row" style="margin-bottom:10px;">
                         <div class="icon-left">
                             <div class="ws-icon">
-                                <i class="material-icons">
-                                    credit_card
-                                </i>
+                                <i class="material-icons"> credit_card </i>
                             </div>
                         </div>
                         <div class="right-layout">
@@ -149,9 +134,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="adhar_number" type="text" class="form-control txtchange taskDate"
-                                                name="adhar_number" value="<%=model.adhar_number%>" minlength="12"
-                                                maxlength="12">
+                                            <input id="adhar_number" type="number" class="form-control txtchange taskDate" name="adhar_number" value="<%=model.adhar_number%>" minlength="12" maxlength="12">
                                             <label for="adhar_number" class="form-label taskDate">Aadhaar Number</label>
                                         </div>
                                     </div>
@@ -159,9 +142,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="pan_number" class="form-control txtchange taskDate"
-                                                name="pan_number" type="text" maxlength="10"
-                                                value="<%=model.pan_number%>">
+                                            <input id="pan_number" class="form-control txtchange taskDate" name="pan_number" type="text" maxlength="10" value="<%=model.pan_number%>">
                                             <label for="Pan Number " class="form-label taskDate">Pan Number</label>
                                         </div>
                                     </div>
@@ -172,9 +153,7 @@
                     <div class="list-row" style="margin-bottom:10px;">
                         <div class="icon-left">
                             <div class="ws-icon">
-                                <i class="material-icons">
-                                    today
-                                </i>
+                                <i class="material-icons"> today </i>
                             </div>
                         </div>
                         <div class="right-layout">
@@ -182,8 +161,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="birth_date" type="text" class="form-control txtchange taskDate"
-                                                readonly name="birth_date" value="<%=model.birth_date%>">
+                                            <input id="birth_date" type="text" class="form-control txtchange taskDate" readonly name="birth_date" value="<%=model.birth_date%>">
                                             <label for="birth_date " class="form-label  taskDate">Date of Birth</label>
                                         </div>
                                     </div>
@@ -191,8 +169,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line">
-                                            <input id="address" title="Addresss" class="form-control txtchange taskDate"
-                                                name="address" value="<%=model.address%>">
+                                            <input id="address" title="Addresss" class="form-control txtchange taskDate" name="address" value="<%=model.address%>">
                                             <label for="address" class="form-label">Enter Google location</label>
                                         </div>
                                     </div>
@@ -205,9 +182,7 @@
                     <div class="list-row" style="margin-bottom:10px;">
                         <div class="icon-left">
                             <div class="ws-icon">
-                                <i class="material-icons">
-                                    credit_card
-                                </i>
+                                <i class="material-icons"> credit_card </i>
                             </div>
                         </div>
                         <div class="right-layout">
@@ -215,8 +190,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="gst_no" class="form-control txtchange taskDate" name="gst_no"
-                                                maxlength="15" value="<%=model.gst_no%>">
+                                            <input id="gst_no" class="form-control txtchange taskDate" name="gst_no" maxlength="15" value="<%=model.gst_no%>">
                                             <label for="gst_no" class="form-label taskDate">Gst No</label>
                                         </div>
                                     </div>
@@ -225,11 +199,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group input-group form-float">
                                         <div class="form-line taskDate">
-                                            <input id="office_land_line" class="form-control txtchange taskDate"
-                                                name="office_land_line" maxlength="10"
-                                                value="<%=model.office_land_line%>">
-                                            <label for="office_land_line" class="form-label taskDate">Office Land Line
-                                                number</label>
+                                            <input id="office_land_line" class="form-control txtchange taskDate" name="office_land_line" maxlength="10" value="<%=model.office_land_line%>">
+                                            <label for="office_land_line" class="form-label taskDate">Office Land Line number</label>
                                         </div>
                                     </div>
                                 </div>
@@ -250,8 +221,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <input id="name" class="form-control txtchange" name="name"
-                                                    value="<%=model.name%>">
+                                                <input id="name" class="form-control txtchange" name="name" value="<%=model.name%>">
                                                 <label for="name" class="form-label">Company Name</label>
                                             </div>
                                         </div>
@@ -271,8 +241,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <input id="billing_name" class="form-control txtchange"
-                                                    name="billing_name" value="<%=model.billing_name%>">
+                                                <input id="billing_name" class="form-control txtchange" name="billing_name" value="<%=model.billing_name%>">
                                                 <label for="billing_name" class="form-label">Billing Name</label>
                                             </div>
                                         </div>
@@ -292,8 +261,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="address" title="Addresss" class="form-control txtchange"
-                                                    name="address" value="<%=model.address%>">
+                                                <input id="address" title="Addresss" class="form-control txtchange" name="address" value="<%=model.address%>">
                                                 <label for="address" class="form-label">Enter Google location</label>
                                             </div>
                                         </div>
@@ -314,16 +282,14 @@
                                         <div class="form-group form-float">
                                             <div class="form-line">
                                                 <label for="email" class="form-label">Email</label>
-                                                <input id="email" class="form-control txtchange" name="email"
-                                                    value="<%=model.email%>">
+                                                <input id="email" class="form-control txtchange" name="email" value="<%=model.email%>">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <input id="mobile_no" class="form-control txtchange" name=" mobile_no"
-                                                    value="<%=model.mobile_no%>">
+                                                <input id="mobile_no" class="form-control txtchange" name=" mobile_no" value="<%=model.mobile_no%>">
                                                 <label for="mobile_no" class="form-label">Mobile No:</label>
                                             </div>
                                         </div>
@@ -343,8 +309,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="branch_id" class="form-control txtchange" name="branch_id"
-                                                    value="<%=model.branch_id%>">
+                                                <input id="branch_id" class="form-control txtchange" name="branch_id" value="<%=model.branch_id%>">
                                                 <label for="branch_id" class="form-label">Branch Name</label>
                                             </div>
                                         </div>
@@ -352,8 +317,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="gst_no" class="form-control txtchange" name="gst_no"
-                                                    maxlength="10" value="<%=model.gst_no%>">
+                                                <input id="gst_no" class="form-control txtchange" name="gst_no" maxlength="10" value="<%=model.gst_no%>">
                                                 <label for="gst_no" class="form-label">Gst No</label>
                                             </div>
                                         </div>
@@ -373,8 +337,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="adhar_number" class="form-control txtchange" type="number"
-                                                    name="adhar_number" value="<%=model.adhar_number%>">
+                                                <input id="adhar_number" class="form-control txtchange" type="number" name="adhar_number" value="<%=model.adhar_number%>">
                                                 <label for="adhar_number" class="form-label">Aadhaar Number</label>
                                             </div>
                                         </div>
@@ -382,8 +345,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="pan_number" class="form-control txtchange" type="text"
-                                                    name="pan_number" maxlength="10" value="<%=model.pan_number%>">
+                                                <input id="pan_number" class="form-control txtchange" type="text" name="pan_number" maxlength="10" value="<%=model.pan_number%>">
                                                 <label for="pan_number" class="form-label">Pan Number</label>
                                             </div>
                                         </div>
@@ -402,8 +364,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="zipcode" class="form-control txtchange" name="zipcode"
-                                                    value="<%=model.zipcode%>">
+                                                <input id="zipcode" class="form-control txtchange" name="zipcode" value="<%=model.zipcode%>">
                                                 <label for="zipcode" class="form-label">Zip Code</label>
                                             </div>
                                         </div>
@@ -411,8 +372,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="website" class="form-control txtchange" name="website"
-                                                    value="<%=model.website%>">
+                                                <input id="website" class="form-control txtchange" name="website" value="<%=model.website%>">
                                                 <label for="website" class="form-label">Website</label>
                                             </div>
                                         </div>
@@ -432,19 +392,15 @@
                                     <div class="col-md-6">
                                         <div class="form-group input-group form-float">
                                             <div class="form-line">
-                                                <input id="office_land_line" class="form-control txtchange"
-                                                    name="office_land_line" maxlength="10"
-                                                    value="<%=model.office_land_line%>">
-                                                <label for="office_land_line" class="form-label">Office Land Line
-                                                    number</label>
+                                                <input id="office_land_line" class="form-control txtchange" name="office_land_line" maxlength="10" value="<%=model.office_land_line%>">
+                                                <label for="office_land_line" class="form-label">Office Land Line number</label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group form-float">
                                             <div class="form-line">
-                                                <input id="person_name" class="form-control txtchange"
-                                                    name="person_name" value="<%=model.person_name%>">
+                                                <input id="person_name" class="form-control txtchange" name="person_name" value="<%=model.person_name%>">
                                                 <label for="person_name" class="form-label">Person Name</label>
                                             </div>
                                         </div>
@@ -460,9 +416,7 @@
                             <div class="list-row">
                                 <div class="icon-left">
                                     <div class="ws-icon">
-                                        <i class="material-icons">
-                                            location_on
-                                        </i>
+                                        <i class="material-icons"> location_on </i>
                                     </div>
                                 </div>
                                 <div class="right-layout">
@@ -529,13 +483,11 @@
             <div class="right-layout">
                 <div class="row">
                     <div class="col-md-4">
-                        <p class="mt-2 taskAttachTitle dragdrop-image"><i class="material-icons"
-                                style="padding-right: 10px;">attach_file</i> Attachments</p>
+                        <p class="mt-2 taskAttachTitle dragdrop-image"><i class="material-icons" style="padding-right: 10px;">attach_file</i> Attachments</p>
                     </div>
                 </div>
                 <div class="row attachupdate taskAttach" style="margin-top:8px; margin-left:5px;">
-                    <button type="button" class="loadFile ws-taskModalbtn dotborder" data-change="ws-bg-image"><span
-                            class="material-icons">add</span></button>
+                    <button type="button" class="loadFile ws-taskModalbtn dotborder" data-change="ws-bg-image"><span class="material-icons">add</span></button>
                     <div id="attachedDoc" class="row taskAttachDoc"></div>
                 </div>
             </div>
