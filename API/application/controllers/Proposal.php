@@ -436,7 +436,7 @@ class Proposal extends CI_Controller {
 	public function printProposal($proposal_id,$adminID)
 	{
 		$where["proposal_id = "] = $proposal_id;
-		$selectC = "proposal_id,proposal_number,t.name,p.project_name,c.name AS company_name,t.description,confirm,cost";
+		$selectC = "proposal_id,proposal_number,t.name,p.project_name,c.name AS company_name,t.description,confirm,cost, t.modified_date, t.created_date";
 		$join = array();
 		$join[0]['type'] ="LEFT JOIN";
 		$join[0]['table']="project";
@@ -451,15 +451,37 @@ class Proposal extends CI_Controller {
 		$join[1]['key2'] ="customer_id";
 
 		$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC,'proposal',$where,'','',$join,'');
+		$description = $proposalDetails[0]->description;
+		$details = array() ;
+		if($proposalDetails[0]->modified_date == "0000-00-00 00:00:00"){
+			$date = $proposalDetails[0]->created_date;
+		}else{
+			$date = $proposalDetails[0]->modified_date;
+		}
+		if(isset($description) && !empty($description))
+		{    
+			$key = "{{client_name}}";
+			if(isset($proposalDetails[0]->company_name) && !empty($proposalDetails[0]->company_name)){
+				$C_value = $proposalDetails[0]->company_name;
+			}else{
+				$C_value = "";
+			}
+			if (strpos($description,$key) !== false) {
+				$description =str_replace($key, $C_value, $description);
+				$proposalDetails[0]->description = $description;
+			}
+		}
 		$where = array("adminID"=> $adminID);
 		$roleID = $this->CommonModel->getMasterDetails('admin','roleID',$where);
 		$proposalDetails[0]->roleID = $roleID[0]->roleID;
+		$proposalDetails[0]->date = $date;
 		$data= array();
 	 	$data['proposalData']= $proposalDetails;
         $pdfFilePath = $this->load->view("proposalpdf",$data,true);
-		
+		// print_r($this->config->item( 'app_url' ));exit;
         //load mPDF library
         $this->load->library('MPDFCI');
+		$this->mpdfci->SetWatermarkImage($this->config->item( 'app_url' )."/images/idac_logo.svg",0.3,'F',array(17,50));
         $this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
  	    $this->mpdfci->WriteHTML($pdfFilePath);
        	$this->mpdfci->Output();  
