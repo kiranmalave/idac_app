@@ -1110,7 +1110,7 @@ class TaskMaster extends CI_Controller
 		}
 	}
 
-	public function addTaskHistory($task_id, $action_type, $description, $user_id)
+	public function addTaskHistory($task_id, $action_type, $description, $user_id, $parentRecordID)
 	{
 		
 		$taskDetails = array(
@@ -1118,10 +1118,15 @@ class TaskMaster extends CI_Controller
 			'action_type' => $action_type,
 			'description' => $description,
 			'user_id' => $user_id,
-			'col'=> 'Task',
+			'parent_record_id' => $parentRecordID,
+			'record_type' => 'task',
+			'col'=> 'Created',
+			'old_date'=>null,
+			'new_date'=>null,
 			'activity_date' => date('Y-m-d H:i:s')
 		);
-		$iscreated = $this->CommonModel->saveMasterDetails('history', $taskDetails);
+		return $this->CommonModel->saveMasterDetails('history', $taskDetails);
+		
 	}
 
 	public function getTaskHistory()

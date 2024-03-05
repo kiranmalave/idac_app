@@ -70,6 +70,12 @@ define([
         }
       }
     },
+    getInitials:function (name) {
+      const words = name.split(' ');
+      const initials = words.map(word => word.charAt(0));
+      console.log("nameDetails", initials)
+      return initials.join('').toUpperCase();
+    },
     checkLogin: function (e) {
       e.preventDefault();
       var selfobj = this;
@@ -109,11 +115,14 @@ define([
               $.cookie('bbauth', 'valid', { path: COKI, expires: expDate });
               $.cookie('_bb_key', res.loginkey, { path: COKI, expires: expDate });
               $.cookie('name', res.data.name, { path: COKI, expires: expDate });
+              $.cookie('photo', res.data.photo, {path:COKI, expires: expDate});
               $.cookie('uname', res.data.userName, { path: COKI, expires: expDate });
               $.cookie('authid', res.data.adminID, { path: COKI, expires: expDate });
               $.cookie('roleOfUser', res.data.roleOfUser, { path: COKI, expires: expDate });
               $.cookie('roleID', res.data.roleID, { path: COKI, expires: expDate });
               var bbauth = $.cookie('bbauth');
+              INITIALS = selfobj.getInitials(ADMINNAME);
+              PROFILEIMG = $.cookie('photo');
               ADMINNAME = $.cookie('name');
               ADMINID = $.cookie('authid');
               ROLEID = $.cookie('roleID');

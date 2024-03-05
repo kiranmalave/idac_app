@@ -130,7 +130,38 @@
                   <li class="footer"><a href="javascript:void(0);">View All Tasks</a></li>
               </ul> -->
           </li>            
-          <li><a href="#logout" class="mega-menu xs-hide" data-close="true"><i class="zmdi zmdi-power"></i></a></li>
+          <li class="user-info">
+            <div class="aline">
+                <div class="image">
+                    <!-- <span class="initial"><%=INITIALS%></span> -->
+                    <%if (PROFILEIMG=="" ){%>
+                        <span class="initial"><%=INITIALS%></span>
+                        <!-- <span><%=INITIALS%></span> -->
+                        <!-- <img src="images/avatar-default.png" alt="User" /> -->
+                        <%}else{%>
+                        <img src="<%=PROFILEPHOTOUPLOAD%><%=ADMINID%>/profilePic/<%=PROFILEIMG%>" />
+                    <%}%>
+                    <a href="#userProfile" style="padding: 0 0; text-decoration:none; color:#404040"><%=ADMINNAME%></a>
+                </div>
+                <div class="info-container">
+                    <div class="name">
+                        <li></li>
+                        <li><a href="#logout" class="mega-menu xs-hide" data-close="true"><i class="zmdi zmdi-power"></i></a></li>
+                       <!-- <span href="#userProfile">  </span>  -->
+                    </div>
+                    <!-- <div class="btn-group user-helper-dropdown" style="position: absolute; right: -25px">
+                        <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" role="button">
+                        keyboard_arrow_down </i>
+                        <ul class="dropdown-menu slideUp">
+                        <li><a href="#userProfile"><i class="material-icons">person</i>Profile</a></li>
+                        <li class="divider"></li>
+                        
+                        <li><a href="#logout"><i class="material-icons">input</i>Sign Out</a></li>
+                        </ul>
+                    </div> -->
+                </div>
+            </div>
+        </li> 
       </ul>
   </div>
 </nav>
