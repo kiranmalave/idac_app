@@ -1029,7 +1029,7 @@ table td,
 }
 
 .card .footer {
-  padding: 0px 20px;
+  padding:10px 0px 10px 0px;
 }
 
 .menuNameBar {
@@ -6753,7 +6753,7 @@ section.content {
 }
 
 .menu ul li.kdark a .material-icons {
-  color: #fff;
+  color: #fff !important;
 }
 
 /********ANiruddha global  Css end ***************/
@@ -9842,4 +9842,9 @@ label.form-label.taskDate.tasktop.fortask {
 .list.disabled{
   pointer-events: none;
   opacity: 0.5;
+}
+
+.card.customModule .body.table .header.moduleSec {
+  padding: 0;
+  margin-bottom: 10px;
 }

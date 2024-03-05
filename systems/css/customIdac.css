@@ -3061,3 +3061,6 @@ section.content.dashBordTotal {
   font-weight: 600;
   color: #fff;
 }
+.card .footer {
+  padding:10px 0px 10px 0px;
+}
