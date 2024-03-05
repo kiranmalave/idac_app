@@ -1119,7 +1119,7 @@ class TaskMaster extends CI_Controller
 			'description' => $description,
 			'user_id' => $user_id,
 			'col'=> 'Task',
-			'timestamp' => date('Y-m-d H:i:s')
+			'activity_date' => date('Y-m-d H:i:s')
 		);
 		$iscreated = $this->CommonModel->saveMasterDetails('history', $taskDetails);
 	}

@@ -25,6 +25,9 @@
                         <%}%>   
                         <% if(activityDetails.attributes.record_type =='reciept'){ %>
                             <i class="material-icons">receipt</i>
+                        <%}%> 
+                        <% if(activityDetails.attributes.record_type =='invoice'){ %>
+                            <i class="material-icons">attach_money</i>
                         <%}%>           
                 </div>
             </div>
@@ -52,6 +55,9 @@
                             <%}%>
                             <% if(activityDetails.attributes.record_type =='reciept'){ %>
                                 <h4>Receipt</h4>
+                            <%}%>
+                            <% if(activityDetails.attributes.record_type =='invoice'){ %>
+                                <h4>Invoice</h4>
                             <%}%>
                         </div>
                         <div class="Time">

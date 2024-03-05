@@ -95,7 +95,7 @@ define([
         switch(show){
           case "singlecustomerview":{
             var customer_id = $(e.currentTarget).attr("data-customer_id");
-            new customerSingleView({customer_id: customer_id,loadfrom:"dashboard", searchCustomer:this });
+            new customerSingleView({customer_id: customer_id,loadfrom:"dashboard", searchCustomer:this, form_label:"Company/Clients" });
             break;
           }
         }
