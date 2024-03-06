@@ -77,9 +77,10 @@ define([
       preparetime: function () {
         let selfobj = this;
         var models = this.historyList.models;
+        console.log(this.historyList.models);
         for (var i = 0; i < models.length; i++) {
           var model = models[i];
-          var timestamp = model.get('timestamp');
+          var timestamp = model.get('activity_date');
           selfobj.timeselectOptions.displayRelativeTime(timestamp);
           model.set({ "timeString": selfobj.timeselectOptions.displayRelativeTime(timestamp) });
         }
@@ -161,7 +162,8 @@ define([
   
       render: function () {
         var template = _.template(dashBoard_temp);
-        var res = template({"customerModel":this.customerModel,"historyList":this.historyList.models});
+        console.log(this.historyList.models);
+        var res = template({"customerModel":this.customerModel,"historyList": this.historyList.models});
         this.$el.html(res);
         $(".app_playground").append(this.$el);
         new taskViewDashbord({ action:"", customerID: this.customerID, custName: this.customerName}); 

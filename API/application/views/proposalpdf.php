@@ -94,3 +94,4 @@
 		<div><?php echo ($proposalData[0]->cost); ?></div>
 	<?php }?>
 </div>
+<div><?php echo ($proposalData[0]->date); ?></div>

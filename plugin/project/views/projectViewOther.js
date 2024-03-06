@@ -500,6 +500,7 @@ define([
         var currPage = $element.attr("data-currPage");
 
         filterOption.set({ curpage: index });
+        console.log(index);
         var requestData = filterOption.attributes;
 
         $(".profile-loader").show();

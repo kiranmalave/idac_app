@@ -206,18 +206,18 @@ define([
               showResponse(e, res, "Save & New");
             } else {
               showResponse(e, res, "Save");
-            }
-            if (selfobj.loadFrom == "TaskSingleView") {
-              scanDetails.refreshCust();
-            } else if (selfobj.loadFrom == "dashboard") {
-              handelClose(selfobj.toClose);
-              scanDetails.initialize();
-            }else if(selfobj.loadFrom == "proposalSingleView") {
-              scanDetails.refreshProj();
-            }else if(selfobj.loadFrom == "projectViewOther"){
-              scanDetails.initialize(scanDetails);
-            }else{
-              scanDetails.filterSearch();
+              if (selfobj.loadFrom == "TaskSingleView") {
+                scanDetails.refreshCust();
+              } else if (selfobj.loadFrom == "dashboard") {
+                handelClose(selfobj.toClose);
+                scanDetails.initialize();
+              }else if(selfobj.loadFrom == "proposalSingleView") {
+                scanDetails.refreshProj();
+              }else if(selfobj.loadFrom == "projectViewOther"){
+                scanDetails.initialize(scanDetails);
+              }else{
+                scanDetails.filterSearch();
+              }
             }
             if (res.flag == "S") {
               if (isNew == "new") {

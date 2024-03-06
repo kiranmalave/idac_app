@@ -95,11 +95,19 @@ define([
       '*actions': 'defaultAction'
     }
   });
+  function getInitials(name) {
+    const words = name ? name.split(' ') : '';
+    const initials = words ? words.map(word => word.charAt(0)) : '';
+    console.log("nameDetails", initials)
+    return initials ? initials.join('').toUpperCase() : '';
 
+  }
   var initialize = function () {
     var bbauth = $.cookie('bbauth');
+    PROFILEIMG = $.cookie('photo');
     ADMINNAME = $.cookie('name');
     ADMINID = $.cookie('authid');
+    INITIALS = getInitials(ADMINNAME);
     ROLEID = $.cookie('roleID');
     ISMENUSET = false;
     ROLE = '';
