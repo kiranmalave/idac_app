@@ -19,11 +19,7 @@
               <div class="row">
                 <div class="col-lg-6 col-md-4 col-12">
                   <h4 class="m-t-5 m-b-0">
-                    <% if(customerModel.attributes.record_type=='company' ){%>
-                      <%=customerModel.attributes.company_name%>
-                    <%}else{%>
                       <%=customerModel.attributes.name%>
-                    <%}%>
                   </h4>
                   <span class="m-t-5 job_post">
                     <%=customerModel.attributes.address%>
@@ -34,7 +30,7 @@
                     <strong>Contact Person Details</strong>
                   </h4>
                   <% if(customerModel.attributes.record_type=='company' ){%>
-                    <span class="m-t-5 job_post">Name :- <%=customerModel.attributes.person_name%></span>
+                    <span class="m-t-5 job_post">Name :- <%=customerModel.attributes.name%></span>
                   <%}%>
                     <span class="m-t-5 job_post">Email :- <a href=mailto:"<%=customerModel.attributes.email%>">
                         <%=customerModel.attributes.email%>
@@ -85,13 +81,13 @@
                     <%=model1.attributes.timeString%>
                   </div>
                   <p class="addtool">
-                    <%=model1.attributes.record_type%>
-                  <span class="text-info">
+                    <%=model1.attributes.description%>
+                  <!-- <span class="text-info">
                     <%=model1.attributes.col%> <%=model1.attributes.new_val%>
-                  </span>
-                  <div class="toolTip">
+                  </span> -->
+                  <!-- <div class="toolTip">
                     <%=model1.attributes.col%> <%=model1.attributes.new_val%>
-                  </div>
+                  </div> -->
                   </p>
                 </div>
               </div>

@@ -22,12 +22,14 @@ define([
   
     var taskView = Backbone.View.extend({
       taskCount:0,
+      totalRec: 0,
       initialize: function (options) {
         var customer_id = options.customerID
         this.customerID = customer_id;
         this.customerName = options.custName;
         this.toClose = "taskFilterView";
         var selfobj = this;
+        this.totalRec = 0;
         $(".profile-loader").show();
         var mname = Backbone.history.getFragment();
         permission = ROLE['task'];
@@ -88,7 +90,7 @@ define([
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".preloader").hide();
           setPagging(res.paginginfo, res.loadstate, res.msg);
-          
+          selfobj.totalRec = res.paginginfo.totalRecords;
         });
         
         this.collection = searchtask;
@@ -291,6 +293,14 @@ define([
         var memberDetails = new singlememberDataModel();
       },
       addOne: function (objectModel) {
+        this.totalRec = this.collection.length;
+        if (this.totalRec == 0) {
+          $(".noCustRec").show();
+          $("#taskDashboardList").hide();
+        }else{
+          $(".noCustRec").hide();
+          $("#taskDashboardList").show();
+        }
         var template = _.template(taskRowTemp);
         var dueDateMoment = moment(objectModel.attributes.due_date);
         objectModel.attributes.newDate = objectModel.attributes.due_date;
@@ -615,7 +625,7 @@ define([
       },
       render: function () {
         var template = _.template(taskTemp);
-        this.$el.html(template({ closeItem: this.toClose , taskCount: this.taskCount}));
+        this.$el.html(template({ closeItem: this.toClose , taskCount: this.taskCount, totalRec: this.totalRec}));
         $("#tasks").empty().append(this.$el);
         this.attachEvents();
         return this;

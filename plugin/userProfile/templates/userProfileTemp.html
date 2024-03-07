@@ -1,79 +1,161 @@
 <div class="right_col overflow-hidden" role="main">
-  <form id="userProfileDetails" name="userProfileDetails" action="#">
     <div class="col-md-12 col-sm-12 col-xs-12">
       <div class="x_panel">
-        <div class="x_title">
-          <div class="text-right actionBtns">
-            <button type="button" class="btn bg-indigo saveUserDetails">Save</button>
-          </div>
+        <div class="x_title" style="padding: 0;">
+          
           <!-- <h2>My Profile</h2>
         <div class="clearfix">&nbsp;</div> -->
 
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-4">
-                <div class="slim" data-size="640,640">
-                  <input type="file" name="slim[]" />
+        <div class="body profileTemp"> 
+          <!-- Nav tabs -->
+          <!-- <ul class="nav nav-tabs">
+              <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#Profile">Profile</a></li>
+              <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Shrink">Sync</a></li>
+          </ul>                         -->
+          <!-- Tab panes -->
+          <div class="tab-content">
+            
+              <div role="tabpanel" class="tab-pane in active" id="Profile">
+                <form id="userProfileDetails" name="userProfileDetails" action="#">
+                <div class="text-right actionBtns">
+                  <button type="button" class="btn bg-indigo saveUserDetails">Save</button>
                 </div>
-                <!-- <div class="clearfix">&nbsp;
-                  <input id="typehead" class="btn loadMedia" type="button" value="Select Profile Picture"
-                    name="Select Picture" data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div id="profilepic">
+                        <% if(model.photo=="" || model.photo=="avatar-default.svg" ) { %>
+                          <img src="<%=IMAGES%>/avatar-default.png">
+                        <% } else { %>
+                          <img src="<%=PROFILEPHOTOUPLOAD%><%=ADMINID%>/profilePic/<%=model.photo%>">
+                        <% } %>
+                          <input type="file" name="slim[]" />
+                      </div>
+                    </div>
+                    <div class="col-md-8">
+                      <div></div>
+                      <div class="col-sm-12">
+                        <div class="clearfix">&nbsp;</div>
+                        <div class="form-group form-float">
+                          <div class="form-line">
+                            <label for="Name" class="form-label">Name</label>
+                            <input id="Name" autocomplete="off" class="form-control txtchange" name="Name" required="" maxlength="45" type="text"
+                              value="<%=model.name%>">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <div class="form-group form-float">
+                          <div class="form-line">
+                            <label for="email" class="form-label">Email</label>
+                            <input id="email" class="form-control txtchange" name="email" required="" autocomplete="off" maxlength="45"
+                              type="text" value="<%=model.email%>">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <div class=" form-group form-float">
+                          <div class="form-line">
+                            <input id="contactNo" type="text" class="form-control txtchange" name="contactNo" autocomplete="off"
+                              value="<%=model.contactNo%>">
+                            <label for="contactNo" class="form-label">Contact Number</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <div class="form-group form-float">
+                          <div class="form-line">
+                            <label for="password" class="form-label">Password</label>
+                            <input id="password" type="password" class="form-control txtchange" autocomplete="off" name="password">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <div class="form-group form-float">
+                          <div class="form-line">
+                            <input id="dateOfBirth" class="form-control txtchange" name="dateOfBirth" type="text" autocomplete="off"
+                              value="<%=model.dateOfBirth %>" readonly>
+                            <label for="dateOfBirth" class="form-label">Date Of Birth</label>
+                          </div>
+                        </div>
+                      </div>
+      
+                      <div class="col-sm-12">
+                        <div class="form-group form-float">
+                          <div class="form-line">
+                            <input id="userName" class="form-control txtchange has-feedback-left" name="userName" type="text" autocomplete="off"
+                              value="<%=  model.userName %>">
+                            <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                            <label for="userName" class="form-label">User Name <span class="error">*</span></label>
+                          </div>
+                        </div>
+                      </div>
+      
+                      <div class="col-sm-12">
+                        <label for="status">Status <span class="error">*</span> :</label>
+                        <ul class="item-container" data-valid="status">
+                          <li class="status multiSel <%if(model.status == 'active'){%> active<%}%> " data-single="Y"
+                            data-value="active">Active</li>
+                          <li class="status multiSel  <%if(model.status == 'inactive'){%> active<%}%>" data-single="Y"
+                            data-value="inactive">InActive</li>
+                          <li class="status multiSel  <%if(model.status == 'delete'){%> active<%}%>" data-single="Y"
+                            data-value="delete">Delete</li>
+                        </ul>
+                      </div>
+                      <div class="clearfix">&nbsp;</div>
+      
+                      <div class="col-sm-12 ">
+                        <label for="address">Address :</label>
+                        <textarea id="address" class="form-control txtchange " name="address" value="<%=model.address%>"><%=model.address %></textarea>
+                        <div class="clearfix">&nbsp;</div>
+                      </div>
+      
+                    </div>
+                  </div>
                 </div>
-                <div class="col-md-12 mt-5">
-                  <img id="profile_pic_view" style="max-width: 100%;" src="<%=model.photo%>">
-                </div> -->
-                <!-- <img src="<%=APPPATH%>images/site/logo.png" width="240" height="240" alt="User" /> -->
-                <!-- <input id="photo" class="form-control fileAdded" type="file" max-file-size="1024" value="<%=model.photo%>"> -->
+                </form>
               </div>
-              <div class="col-md-8">
-                <div></div>
-                <div class="col-sm-12">
-                  <div class="form-group form-float">
-                    <div class="form-line">
-                      <label for="Name" class="form-label">Name</label>
-                      <input id="Name" class="form-control txtchange" name="Name" required="" maxlength="45" type="text"
-                        value="<%=model.name%>">
+              <div role="tabpanel" class="tab-pane" id="Shrink">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <!-- <div id="profilepic">
+                        <% if(model.photo=="" || model.photo=="avatar-default.svg" ) { %>
+                          <img src="<%=IMAGES%>/avatar-default.png">
+                          <% } else { %>
+                            <img src="<%=PROFILEPHOTOUPLOAD%><%=ADMINID%>/profilePic/<%=model.photo%>">
+                            <% } %>
+                              <input type="file" name="slim[]" />
+                      </div> -->
+                      <div class="companyImages">
+                        <img src="images/google.png" alt=""/>
+                      </div>
+                    </div>
+                    <div class="col-md-8">
+                      
+                      <p class="googleDetails">
+                        It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+                      </p>
+                      <% if(model.is_google_sync=="n") { %>
+                        <form action="<%=APIPATH%>googleSync" method="POST">
+                          <input type="hidden" id="userID" name="userID" value="<%=model.adminID%>">
+                          <button type="submit" class="btn bg-indigo googleAuth">Login with Google</button>
+                        </form>
+                      <%}else{%>
+                        <img src="<%=APPPATH%>/images/site/green_check.jpg"/> Your account is sync with google calender.
+                      <%}%>
                     </div>
                   </div>
-                </div>
-                <div class="col-sm-12">
-                  <div class="form-group form-float">
-                    <div class="form-line">
-                      <label for="email" class="form-label">Email</label>
-                      <input id="email" class="form-control txtchange" name="email" required="" maxlength="45"
-                        type="text" value="<%=model.email%>">
-                    </div>
-                  </div>
-                </div>
-                <div class="col-sm-12">
-                  <div class=" form-group form-float">
-                    <div class="form-line">
-                      <input id="contactNo" type="text" class="form-control txtchange" name="contactNo"
-                        value="<%=model.contactNo%>">
-                      <label for="contactNo" class="form-label">Contact Number</label>
-                    </div>
-                  </div>
-                </div>
-                <!-- <div class="col-sm-12">
-                  <div class="form-group form-float">
-                    <div class="form-line">
-                      <label for="password" class="form-label">Password</label>
-                      <input id="password" type="password" class="form-control txtchange" name="password"
-                        value="<%=model.password%>">
-                    </div>
-                  </div>
-                </div> -->
-                <div class="col-sm-12">
-                  <button class="launchOneDrivePicker">Open from OneDrive</button>
                 </div>
               </div>
-            </div>
+              
           </div>
+      </div>
         </div>
       </div>
     </div>
 </div>
-</form>
+
 </div>
 
 <!-- Large Size -->

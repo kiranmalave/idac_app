@@ -467,10 +467,10 @@ define([
       this.totalRec = this.collection.length;
       if (this.totalRec == 0) {
         $(".noCustRec").show();
-        $("#leadlistview").hide();
+        $("#tasklistview").hide();
       }else{
         $(".noCustRec").hide();
-        $("#leadlistview").show();
+        $("#tasklistview").show();
       }
       var template = _.template(taskRowTemp);
       var dueDateMoment = moment(objectModel.attributes.due_date);
@@ -794,10 +794,10 @@ define([
         selfobj.totalRec = res.paginginfo.totalRecords;
         if (selfobj.totalRec == 0) {
           $(".noCustRec").show();
-          $("#leadlistview").hide();
+          $("#tasklistview").hide();
         }else{
           $(".noCustRec").hide();
-          $("#leadlistview").show();
+          $("#tasklistview").show();
         }
         setPagging(res.paginginfo, res.loadstate, res.msg);
         $element.attr("data-currPage", 1);

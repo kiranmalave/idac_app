@@ -49,8 +49,7 @@
       </select>
     </div>
     <div class="col-md-6">
-      <select for="task_priority" id="task_priority" name="task_priority" title="Task priority"
-        class="form-control ws-select show-tick dropval repeatChange" multiple>
+      <select for="task_priority" id="task_priority" name="task_priority" title="Task priority" class="form-control ws-select show-tick dropval repeatChange" multiple>
         <% _.each(categoryList, function(modelcat) { %>
           <% if(modelcat.attributes.slug=="task_priority" ) _.each(modelcat.attributes.sublist, function(model1) { %>
             <option value="<%=model1.category_id%>">

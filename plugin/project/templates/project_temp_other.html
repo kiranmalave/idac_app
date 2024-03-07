@@ -6,34 +6,43 @@
                 <span class="material-icons">add</span>
             </li>
             <li id="projectFilterOption" class="nav-item addHover" data-item="<%=closeItem%>" data-toggle="tooltip" data-placement="top" title="Filter">
-                <span class="material-symbols-outlined">
-                  filter_alt
-                  </span>
-              </li>
+                <span class="material-symbols-outlined"> filter_alt </span>
+            </li>
         </ul>
     </div>
-    <div class="body">
-        <ul id="projectListOther" class="row list-unstyled c_review addFlex">
-        </ul>
-        <div class="hideTable">
-            <button type="button" class="ws-btn-default loadview backbutton" data-toggle="tooltip"  data-placement="top" title="Back to folder"><i class="material-icons">keyboard_backspace</i></button>
-            <div id="dasboradProposalHolder"></div>
-        </div>
-    </div>
-    <div id="loadMember" data-index="1" data-currPage="1"></div>
-    <div class="footer projectFooter row">
-        <div class="col-sm-5">
-          <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
-              class="page-info"></span></div>
-        </div>
-        <div class="col-sm-7">
-          <div class="showPageDetails dataTables_paginate paging_simple_numbers">
-            <ul class="pagination"></ul>
+    <div class="card customModule">
+        <div class="noRec noCustRec" <% if(totalRec == 0){%>style="display: block;"<%}else{%>style="display: none;"<%}%>>
+          <div class="noCustRecDetails">
+            <div class="noCustRecPic">
+              <img src="images/noRecrds.png" alt="">
+            </div>
+            <div class="noCustRecText">
+              <h1>You haven’t added any <span> Projects </span> here</h1>
+              <p>Click on add button to add the <span> Projects </span></p>
+              <div class="buttonAdd">
+                <button type="button" class="btn btn-link waves-effect loadview nav-item addCust" data-view="singleprojectData" data-item="projectSingleView">
+                  Add
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-    </div>
-   
-      <div class="ws_filterOptions">
-  
-      </div>
+        <div class="body" id="projectDashboardView">
+            <ul id="projectListOther" class="row list-unstyled c_review addFlex"></ul>
+            <div class="hideTable">
+                <button type="button" class="ws-btn-default loadview backbutton" data-toggle="tooltip"  data-placement="top" title="Back to folder"><i class="material-icons">keyboard_backspace</i></button>
+                <div id="dasboradProposalHolder"></div>
+            </div>
+            <div id="loadMember" data-index="1" data-currPage="1"></div>
+            <div class="footer projectFooter row">
+                <div class="col-sm-5">
+                <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span class="page-info"></span></div></div>
+                <div class="col-sm-7">
+                <div class="showPageDetails dataTables_paginate paging_simple_numbers">
+                    <ul class="pagination"></ul>
+                </div>
+                </div>
+            </div>
+        </div>
+      <div class="ws_filterOptions"></div>
   </div>
