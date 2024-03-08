@@ -18,7 +18,7 @@ define([
         myTarget:null,
         photo:null,
         eyeIcon:"fa fa-eye-slash",
-        inputType:"password"   ,
+        inputType:"password",
         created_by:null,
         modified_by:null,
         created_date:null,

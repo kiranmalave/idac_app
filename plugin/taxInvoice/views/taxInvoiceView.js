@@ -16,6 +16,7 @@ define([
 
   var taxInvoiceView = Backbone.View.extend({
     loadFrom: null,
+    totalRec:0,
     initialize: function (options) {
       this.loadFrom = options.loadFrom;
       this.toClose = "taxInvoiceFilterView";
@@ -30,6 +31,7 @@ define([
         permission = ROLE["invoice"];
         filterOption.set({ customer_id: this.customerID })
       }
+      this.totalRec= 0;
       console.log(filterOption);
       readyState = true;
       this.render();
@@ -42,6 +44,7 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
         setPagging(res.paginginfo, res.loadstate, res.msg);
+        selfobj.totalRec = res.paginginfo.totalRecords;
       });
 
       this.collection = searchtaxInvoice;
@@ -182,6 +185,14 @@ define([
       var memberDetails = new singlememberDataModel();
     },
     addOne: function (objectModel) {
+      this.totalRec = this.collection.length;
+      if (this.totalRec == 0) {
+        $(".noCustRec").show();
+        $("#invoiceListTable").hide();
+      }else{
+        $(".noCustRec").hide();
+        $("#invoiceListTable").show();
+      }
       var template = _.template(taxInvoiceRowTemp);
       $("#taxInvoiceList").append(template({ taxInvoiceDetails: objectModel }));
     },
@@ -407,10 +418,10 @@ define([
     render: function () {
       var template = _.template(taxInvoice_temp);
       if (this.loadFrom != undefined) {
-        this.$el.html(template({ closeItem: this.toClose, "loadFrom": this.loadFrom }));
+        this.$el.html(template({ closeItem: this.toClose, "loadFrom": this.loadFrom , totalRec: this.totalRec}));
         $("#invoice").append(this.$el);
       } else {
-        this.$el.html(template({ closeItem: this.toClose, "loadFrom": this.loadFrom }));
+        this.$el.html(template({ closeItem: this.toClose, "loadFrom": this.loadFrom , totalRec: this.totalRec}));
         $(".ws-select").selectpicker();
         $(".main_container").append(this.$el);
       }

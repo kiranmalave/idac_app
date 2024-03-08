@@ -101,6 +101,24 @@ define([
           }
         }
       },
+
+      refreshDashboard: function(customerID){
+        let selfobj = this;
+        this.customerModel.set({ customer_id: customerID });
+        this.customerModel.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler
+        }).done(function (res) {
+          var birthDate = selfobj.customerModel.get("birth_date");
+          if (birthDate != null && birthDate != "0000-00-00") {
+            selfobj.customerModel.set({ "birth_date": moment(birthDate).format("DD-MM-YYYY") });
+          }
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".popupLoader").hide();
+          selfobj.render();
+        });
+      },
   
       showOverlay: function (e) {
         var view = $(e.currentTarget).data("view");
@@ -156,8 +174,6 @@ define([
         var selfobj = this;
         var da = selfobj.multiselectOptions.setCheckedValue(e);
         selfobj.model.set(da);
-
-
       },
   
       render: function () {

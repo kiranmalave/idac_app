@@ -689,4 +689,150 @@ class SearchAdmin extends CI_Controller
 			$this->response->output($status, 200);
 		}
 	}
+
+	public function setprofilePic($memberID='') {  
+		//    print_r($memberID);exit;
+			$this->load->library('slim');
+			$images = $this->slim->getImages();
+	
+			if (!empty($images) && isset($images[0]['input']['name'])) {
+				$imagename = $images[0]['input']['name'];
+				} else {
+				echo 'No image name found.';
+			}
+			$imagename = 'profile_' . time(). ".jpg";
+			try {
+				$images = $this->slim->getImages();
+			}
+			catch (Exception $e) {
+	
+				$this->slim->outputJSON(array(
+					'status' => SlimStatus::FAILURE,
+					'message' => 'Unknown'
+				));
+				return;
+			}
+			// No image found under the supplied input name
+			if ($images === false) {
+	
+				$this->slim->outputJSON(array(
+					'status' => SlimStatus::FAILURE,
+					'message' => 'No data posted'
+				));
+				return;
+			}
+	
+			// Should always be one image (when posting async), so we'll use the first on in the array (if available)
+			$image = array_shift($images);
+	
+			if (!isset($image)) {
+	
+				$this->slim->outputJSON(array(
+					'status' => SlimStatus::FAILURE,
+					'message' => 'No images found'
+				));
+	
+				return;
+			}
+	
+			if (!isset($image['output']['data']) && !isset($image['input']['data'])) {
+	
+				$this->slim->outputJSON(array(
+					'status' => SlimStatus::FAILURE,
+					'message' => 'No image data'
+				));
+	
+				return;
+			}
+	
+			// if we've received output data save as file
+			if (isset($image['output']['data'])) {
+	
+				// get the name of the file
+				$name = $image['output']['name'];
+	
+				// get the crop data for the output image
+				$data = $image['output']['data'];
+				$output =$this->slim->saveFile($data, $name,$this->config->item("mediaPATH").'profilephoto/'.$memberID.'/profilePic/');
+			}
+	
+			if (isset($image['input']['data'])) {
+	
+				// get the name of the file
+				$name = $image['input']['name'];
+	
+				// get the crop data for the output image
+				$data = $image['input']['data'];
+				$input = $this->slim->saveFile($data, $name,$_SERVER['DOCUMENT_ROOT'].'/LMS/website/uploads/profilephoto/'.$memberID.'/profilePic/');
+	
+			}
+	
+			$response = array(
+				'status' => SlimStatus::SUCCESS,
+				'newFileName' => $imagename
+			);
+	
+			if (isset($output) && isset($input)) {
+	
+				$response['output'] = array(
+					'file' => $output['name'],
+					'path' => $output['path'],
+				);
+	
+				$response['input'] = array(
+					'file' => $input['name'],
+					'path' => $input['path']
+					
+				);
+			}
+			else {
+				$response['file'] = isset($output) ? $output['name'] : $input['name'];
+				$response['path'] = isset($output) ? $output['path'] : $input['path'];
+			}
+	
+			$updateDate = date("Y/m/d H:i:s");
+			$data = array("photo"=>$imagename);
+		   
+		   $isrename = rename($this->config->item("mediaPATH").'profilephoto/'.$memberID.'/profilePic/'.$response['file'],$this->config->item("mediaPATH").'profilephoto/'.$memberID.'/profilePic/' . $imagename);
+		   $where = array("adminID" => $memberID);
+		   $isupdate = $this->CommonModel->updateMasterDetails('admin',$data,$where);
+			/*if (isset($_SESSION['USER']['profile_pic']) && !empty($_SESSION['USER']['profile_pic'])) {
+				if ($_SESSION['USER']['profile_pic'] != 'default') {
+					
+					if(file_exists($_SERVER["DOCUMENT_ROOT"].'/uploads/profilePic/' . $_SESSION['USER']['profile_pic'])){
+						unlink($_SERVER["DOCUMENT_ROOT"].'/uploads/profilePic/' . $_SESSION['USER']['profile_pic']);
+					}
+				   
+				}
+			}*/
+		   $this->slim->outputJSON($response);
+		}
+		public function removeProfilePicFile($userID='') 
+		{
+			$where = array("adminID" => $userID);
+			$images = $this->CommonModel->getMasterDetails('admin','photo',$where);
+			$image = $images[0]->photo;
+	
+			$path = $this->config->item("mediaPATH").'profilephoto/'.$userID.'/profilePic/';
+			if (isset($image) && !empty($image)) {
+				if (file_exists($path . $image)) {
+					$formData = array();
+					$formData['adminID'] = $userID;
+					$formData['photo'] = '';
+					$iscreated = $this->CommonModel->updateMasterDetails("admin",$formData,array('adminID'=>$userID));
+					unlink($path . $image);
+					$status['msg'] = $this->systemmsg->getSucessCode(400);
+					$status['data'] = "";
+					$status['flag'] = 'S';
+					echo json_encode($status);
+					exit;
+				} else {
+					$status['msg'] = $this->systemmsg->getSucessCode(400);
+					$status['data'] = "";
+					$status['flag'] = 'S';
+					echo json_encode($status);
+					exit;
+				}
+			}
+		}
 }

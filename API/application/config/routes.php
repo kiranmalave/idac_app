@@ -65,6 +65,8 @@ $route['alerts'] = 'Dashboard/alerts';
 
 
 
+$route['changeProfilePic/(:num)'] = 'SearchAdmin/setprofilePic/$1';
+$route['delProfilePic/(:num)'] = "SearchAdmin/removeProfilePicFile/$1";
 
 $route['menuMasterList'] = 'MenuMaster/getMenuDetails';
 $route['menuMaster'] = 'MenuMaster/menuMaster';

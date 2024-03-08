@@ -2392,7 +2392,7 @@ label.label-style {
 
 .profile-sub-header .box-list ul li.active {
   color: #fff;
-  background-color: #ffc100
+  background: linear-gradient(198deg, #6365ad, #2f3284);
 }
 
 .profile-sub-header .box-list ul li.active a {
@@ -2430,7 +2430,7 @@ label.label-style {
 .profile-sub-header .box-list ul li:hover {
   text-decoration: none;
   color: #fff;
-  background-color: #ffc100
+  background: linear-gradient(198deg, #6365ad, #2f3284);;
 }
 
 .profile-sub-header .box-list ul li:hover a {

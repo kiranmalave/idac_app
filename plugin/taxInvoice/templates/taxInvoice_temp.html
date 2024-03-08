@@ -10,12 +10,27 @@
                 class="material-icons">add</i></button>
             <%}%>
         </div>
-        <div class="body">
+        <div class="noRec noCustRec" <% if(totalRec == 0){%>style="display: block;"<%}else{%>style="display: none;"<%}%>>
+          <div class="noCustRecDetails">
+            <div class="noCustRecPic">
+              <img src="images/noRecrds.png" alt="">
+            </div>
+            <div class="noCustRecText">
+              <h1>You haven’t added any <span> Invoices </span> here</h1>
+              <p>Click on add button to add the <span> Invoices </span></p>
+              <div class="buttonAdd">
+                <button type="button" class="btn btn-link waves-effect loadview nav-item addCust" data-view="singletaxInvoiceData" data-item="taxInvoiceSingleView">
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="body" id="invoiceListTable" style="display: none;">
           <div class="actionList">
             <!-- <div class="action-icons-div ml-1"> -->
             <%if(permission.delete=="yes" ) { %>
-              <span type="button" style="display: none;" class="changeStatus deleteAll" data-action="delete"><i
-                  class="material-icons" data-toggle="tooltip" data-placement="top" title="Delete"
+              <span type="button" style="display: none;" class="changeStatus deleteAll" data-action="delete"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Delete"
                   style="background-color: #F5BF00; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px;">delete</i></span>
               <% } %>
           </div>
@@ -53,8 +68,7 @@
             </div>
           </div>
           <div id="loadMember" data-index="1" data-currPage="1"></div>
-        </div>
-        <!-- paggination -->
+           <!-- paggination -->
         <div class="footer row">
           <div class="col-sm-5">
             <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
@@ -68,6 +82,7 @@
           </div>
         </div>
         <!-- paggination -->
+        </div>
       </div>
     </div>
   </div>
@@ -82,8 +97,7 @@
       </span>
     </li>
     <%if(permission.add=="yes" ) { %>
-      <li class="loadview nav-item" data-toggle="tooltip" data-placement="top" title="Add"
-        data-view="singletaxInvoiceData" data-item="taxInvoiceSingleView">
+      <li class="loadview nav-item" data-toggle="tooltip" data-placement="top" title="Add" data-view="singletaxInvoiceData" data-item="taxInvoiceSingleView">
         <span class="material-icons">add</span>
         <!-- <button type="button" class="btn btn-info loadview" data-target="#myModal" data-taskID="" data-show="singletaskData"data-toggle="modal">Add Task Details</button> -->
       </li>

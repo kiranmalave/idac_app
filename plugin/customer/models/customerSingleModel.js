@@ -1,4 +1,4 @@
-define([
+  define([
   'underscore',
   'backbone',
 ], function (_, Backbone) {
@@ -13,7 +13,7 @@ define([
       birth_date: null,
       note: null,
       email: null,
-      record_type: "individual",
+      record_type: "company",
       address: null,
       customer_image: null,
       billing_name: null,

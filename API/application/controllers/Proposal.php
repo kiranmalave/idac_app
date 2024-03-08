@@ -478,7 +478,7 @@ class Proposal extends CI_Controller {
 		$data= array();
 	 	$data['proposalData']= $proposalDetails;
         $pdfFilePath = $this->load->view("proposalpdf",$data,true);
-		// print_r($this->config->item( 'app_url' ));exit;
+		print_r($pdfFilePath);exit;
         //load mPDF library
         $this->load->library('MPDFCI');
 		$this->mpdfci->SetWatermarkImage($this->config->item( 'app_url' )."/images/idac_logo.svg",0.3,'F',array(17,50));

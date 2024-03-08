@@ -19,7 +19,7 @@ define([
 ], function ($, _, Backbone, datepickerBT, moment, Swal, projectSingleView, projectCollection, projectFilterOptionModel, customerCollection, proposalView, projectRowTemp, projectTemp, projectTempOther, projectRowTempOther, projectFilterTemp) {
 
   var projectView = Backbone.View.extend({
-
+    totalRec : 0,
     initialize: function (options) {
       this.toClose = "projectFilterView";
       var selfobj = this;
@@ -30,6 +30,7 @@ define([
       permission = ROLE[mname];
       //$("#"+mname).addClass("active");
       readyState = true;
+      this.totalRec = 0;
       this.render();
       filterOption = new projectFilterOptionModel();
       filterOption.set({ company: options.customerID });
@@ -42,6 +43,14 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
         setPagging(res.paginginfo, res.loadstate, res.msg);
+        selfobj.totalRec = res.paginginfo.totalRecords;
+        if(selfobj.totalRec == 0){
+          $(".noRec").show();
+          $("#projectDashboardView").hide();
+        }else{
+          $(".noRec").hide();
+          $("#projectDashboardView").show();
+        }
       });
       this.customerList = new customerCollection();
       this.customerList.fetch({
@@ -569,7 +578,7 @@ define([
     render: function () {
       $("#project").empty();
       var template = _.template(projectTempOther);
-      this.$el.html(template({ closeItem: this.toClose }));
+      this.$el.html(template({ closeItem: this.toClose, totalRec :this.totalRec }));
       $("#project").append(this.$el);
       // this.attachEvents();
       //$("#projects").show();

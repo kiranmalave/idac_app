@@ -9558,12 +9558,12 @@ body.swal2-height-auto {
 
 
 span.taskPriorityColor {
-  height: 10px;
-  width: 10px;
+  height: 11px;
+  width: 18px;
   display: block;
-  border-radius: 50%;
+  border-radius: 20%;
   position: relative;
-
+  margin-left: 30px;
   /* top: 13px; */
 
 }
@@ -9728,17 +9728,17 @@ span.taskPriorityColor {
   top: -16px;
 }
 
-.dropdown.bootstrap-select.form-control.dropval.ws-select.backgroundHide.hideOption.dropup~label.form-label.taskDate.tasktop {
+/* .dropdown.bootstrap-select.form-control.dropval.ws-select.backgroundHide.hideOption.dropup~label.form-label.taskDate.tasktop {
   top: -16px;
-}
+} */
 
-.dropdown.bootstrap-select.show-tick.form-control.dropval.ws-select.repeatChange.backgroundHide.hideOption~label.form-label.taskDate.tasktop {
+/* .dropdown.bootstrap-select.show-tick.form-control.dropval.ws-select.repeatChange.backgroundHide.hideOption~label.form-label.taskDate.tasktop {
   top: -16px !important;
-}
+} */
 /* .dropdown.bootstrap-select.show-tick.form-control.dropval.ws-select.repeatChange.backgroundHide.hideOption.dropup */
-.dropdown.bootstrap-select.form-control.dropval.ws-select.backgroundHide.dropup.focused+label.form-label.taskDate.tasktop {
+/* .dropdown.bootstrap-select.form-control.dropval.ws-select.backgroundHide.dropup.focused+label.form-label.taskDate.tasktop {
   top: -16px;
-}
+} */
 
 .nametooltip span.tooltiptxt a {
   font-size: 11px;
@@ -9813,6 +9813,8 @@ label.form-label.taskDate.tasktop.fortask {
 
 .proposalActoinCol {
   display: flex;
+  gap: 5px;
+  align-items: center;
 }
 
 .forActivty .activitySave .activityList ul li a {
@@ -9847,4 +9849,8 @@ label.form-label.taskDate.tasktop.fortask {
 .card.customModule .body.table .header.moduleSec {
   padding: 0;
   margin-bottom: 10px;
+}
+
+a.editHover:hover span.material-symbols-outlined {
+  color: #fff;
 }

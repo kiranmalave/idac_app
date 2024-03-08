@@ -10,7 +10,8 @@ define([
   '../../readFiles/views/readFilesView',
   '../models/userProfileModel',
   'text!../templates/userProfileTemp.html',
-], function ($, _, Backbone, validate, inputmask, moment, slim, locationpicker, readFilesView, userProfileModel, userProfileTemp) {
+  '../../userRole/collections/userRoleCollection',
+], function ($, _, Backbone, validate, inputmask, moment, slim, locationpicker, readFilesView, userProfileModel, userProfileTemp ,userRoleCollection) {
 
   var infoSingleView = Backbone.View.extend({
     model: userProfileModel,
@@ -20,6 +21,19 @@ define([
       $('#infoDetails').remove();
       $(".popupLoader").show();
       this.model = new userProfileModel();
+      
+      this.userRoleList = new userRoleCollection();
+      this.userRoleList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active" }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        selfobj.model.set("userRoleList", res.data);
+        selfobj.render();
+      });
+
       this.model.set({ adminID: $.cookie('authid') })
       this.model.fetch({
         headers: {
@@ -50,7 +64,6 @@ define([
       "change .fileAdded": "updateImage",
       "click #address": "showlocation",
       "click .loadMedia": "loadMedia",
-      "click .launchOneDrivePicker":"launchDrive",
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
@@ -74,24 +87,7 @@ define([
       reader.readAsDataURL(e.currentTarget.files[0]);
     },
 
-    launchDrive: function(e){
-      var odOptions = {
-        clientId: "5c7b36e3-0b5a-42fc-bc4a-c28ea5f90a0f",
-        action: "query",
-        multiSelect: false,
-        advanced: {
-          queryParameters: "select=id,name,size,file,folder,photo,@microsoft.graph.downloadUrl",
-          filter: "folder,.png" /* display folder and files with extension '.png' only */
-        },
-        success: function(files) {},
-        cancel: function() { /* cancel handler */ },
-        error: function(error) { /* error handler */ }
-      }
-      OneDrive.open(odOptions);
-    },
-
     chageIcon: function (e) {
-      // alert("hii");
       var currentval = $("#password").attr("type");
       if (currentval == "password") {
         this.model.set({ eyeIcon: "fa fa-eye", inputType: "text" })
@@ -284,16 +280,98 @@ define([
         selfobj.model.set({ "dateOfBirth": valuetxt });
         //alert(selfobj.model.get("dateOfBirth"));
       });
-      $('.slim').slim();
+      // Initialize Slim image cropper
+      var slim = $('.slim').slim();
+
+      // Listen for the Slim's onUpload event
+      slim.on('slim.upload', function (e, data) {
+        // Handle onUpload event here
+        console.log('Image has been uploaded.');
+        console.log('Uploaded data:', data); // Data contains information about the uploaded image
+      });
     },
 
     render: function () {
       var source = userProfileTemp;
       var template = _.template(source);
       console.log(this.model.attributes);
-      this.$el.html(template({ "model": this.model.attributes }));
+
+      this.$el.html(template({ "model": this.model.attributes ,"userRoleList": this.userRoleList.models }));
       $(".main_container").append(this.$el);
+      $('#profilepic').slim({
+        ratio: '1:1',
+        minSize: {
+          width: 100,
+          height: 100,
+        },
+        size: {
+          width: 100,
+          height: 100,
+        },
+        push: true,
+        rotateButton: true,
+        service: APIPATH + 'changeProfilePic/' + $.cookie('authid'),
+        download: false,
+
+        
+        willSave: function (data, ready) {
+          //alert('saving!');
+          ready(data);
+        },
+        didUpload: function (error, data, response) {
+          var expDate = new Date();
+          $(".overlap").css("display", "block");
+          var newimage = $("#profilepic").find('img').attr("src");
+          var fileName = response.newFileName
+          $.cookie('photo', fileName);
+          $.cookie('avtar', newimage, { path: COKI, expires: expDate });
+          $("#myAccountRight").css("background-image", "url('" + newimage + "')");
+        },
+        willTransform: function (data, ready) {
+          if ($("#profilepic").hasClass("pending")) {
+            $(".overlap").css("display", "block");
+          } else {
+            var expDate = new Date();
+            var newimage = $("#profilepic").find('img').attr("src");
+            $.cookie('avtar', newimage, { path: COKI, expires: expDate });
+            $("#myAccountRight").css("background-image", "url('" + newimage + "')");
+          }
+          ready(data);
+        },
+        willRemove: function (data, remove) {
+          remove();
+          var memberID = $.cookie('authid');
+          console.log(data);
+          $.ajax({
+            url: APIPATH + 'delProfilePic/' + memberID,
+            datatype: 'JSON',
+            beforeSend: function (request) {
+              request.setRequestHeader("token", $.cookie('_bb_key'));
+              request.setRequestHeader("SadminID", $.cookie('authid'));
+              request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+              request.setRequestHeader("Accept", 'application/json');
+            },
+            success: function (res) {
+              if (res.flag == "F")
+                alert(res.msg);
+
+              if (res.statusCode == 994) { app_router.navigate("bareback-logout", { trigger: true }); }
+            }
+          });
+          remove();
+        },
+        label: 'Click here to add new image or Drop your image here.',
+        buttonConfirmLabel: 'Ok',
+        meta: {
+          memberID: $.cookie('authid')
+        }
+      });
       $(".memberLocation").hide();
+      
+      if(this.model.get('adminID') != null)
+      {
+        $('.form-line').addClass('focused');
+      }
       this.initializeValidate();
       this.setValues();
       return this;

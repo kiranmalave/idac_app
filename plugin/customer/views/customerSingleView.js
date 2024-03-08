@@ -470,7 +470,7 @@ define([
           }else if(selfobj.loadFrom == "proposalSingleView"){
             scanDetails.refreshCust(selfobj.custID);
           }else if(selfobj.loadFrom == "dashboard"){
-            scanDetails.render();
+            scanDetails.refreshDashboard(selfobj.custID);
           }else{
             scanDetails.filterSearch(false, stage);
           }
