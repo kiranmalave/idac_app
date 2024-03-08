@@ -524,6 +524,12 @@ define([
           maxlength: 12,
         },
 
+        mobile_no:{
+          number: true,
+          minlength: 10,
+          maxlength: 10,
+        },
+
         gst_no:{
           minlength: 15,
           maxlength: 15,

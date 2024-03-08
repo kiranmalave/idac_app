@@ -470,6 +470,7 @@ define([
       let selfobj = this;
       var id = $(e.currentTarget).attr("data-id");
       var status = "customer";
+      var userID = ADMINID;
       Swal.fire({
         title: 'Are you sure you want to Mark as Customer?',
         showDenyButton: true,
@@ -482,7 +483,7 @@ define([
             $.ajax({
               url: APIPATH + 'customerMaster/typeStatus',
               method: 'POST',
-              data: { customerID: id, status: status },
+              data: { customerID: id, status: status, user: userID },
               datatype: 'JSON',
               beforeSend: function (request) {
                 request.setRequestHeader("token", $.cookie('_bb_key'));

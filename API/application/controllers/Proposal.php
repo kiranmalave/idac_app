@@ -220,7 +220,7 @@ class Proposal extends CI_Controller {
 
 						}else{
 							$inID = array("docCurrNo"=>($lastProposalDetails[0]->docCurrNo+1));
-							$isupdate = $this->CommonModel->updateMasterDetails("doc_prefix",$inID,array("docTypeID"=>"2"));
+							$isupdate = $this->CommonModel->updateMasterDetails("doc_prefix",$inID,array("docTypeID"=>"3"));
 							if(!$isupdate){
 								$status['msg'] = $this->systemmsg->getErrorCode(998);
 								$status['statusCode'] = 998;

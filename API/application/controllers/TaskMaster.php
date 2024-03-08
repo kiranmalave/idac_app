@@ -29,7 +29,7 @@ class TaskMaster extends CI_Controller
 		$this->load->library("ValidateData");
 		if(!$this->config->item('development'))
 		{
-			$this->load->library("notifications");
+			// $this->load->library("notifications");
 			$this->load->library("emails");
 			
 		}
@@ -323,7 +323,7 @@ class TaskMaster extends CI_Controller
 						'body' => $taskDetails['subject'],
 					);
 					if(!$this->config->item('development')){
-						$this->notifications->sendmessage($notification,$taskDetails['assignee']);
+						// $this->notifications->sendmessage($notification,$taskDetails['assignee']);
 					
 						// get user details to send email
 						$where = array("adminID" => $taskDetails['assignee']);
@@ -338,7 +338,7 @@ class TaskMaster extends CI_Controller
 							$this->emails->sendMailDetails("","",$tDetails[0]->email,'','',$assignedBy." assigned task-".$taskID." to you",);
 						}
 					}
-					$this->addTaskHistory($taskID, 'Task Created', 'Created', $taskDetails['created_by'],$taskDetails['customer_id']);
+					$this->addTaskHistory($taskID, 'Task Created', 'Task Created', $taskDetails['created_by'],$taskDetails['customer_id']);
 					if (isset($watchers_name) && !empty($watchers_name)) {
 						$saveFlag = $this->saveWatchersDetails($watchers_name, $taskID, $taskDetails);
 						// send notification to user
@@ -411,8 +411,9 @@ class TaskMaster extends CI_Controller
 							$notification = array();
 							if (!$this->config->item('development')) {
 								$where = array("adminID" =>$value);
+								
 								$tDetails = $this->CommonModel->getMasterDetails('admin', 'name,email', $where);
-	
+								
 								$assignByDetails = $this->CommonModel->getMasterDetails('admin', 'name,email', array("adminID"=> $taskDetails['modified_by']));
 								$assignedBy ="";
 								if(isset($assignByDetails)&& !empty($assignByDetails)){
@@ -433,13 +434,15 @@ class TaskMaster extends CI_Controller
 								$join[1]['key2'] ="category_id";
 								
 								$whereT["record_id ="] = "'".$task_id."'";
-								$whereT[" t.description ="] = "'update'";
-								$whereT[" t.is_notify ="] = "'n'";
+								$whereT["t.description ="] = "'update'";
+								$whereT["t.is_notify ="] = "'n'";
 	
 								$taskHistory = $this->CommonModel->GetMasterListDetails('t.*,c.categoryName AS oldName, ca.categoryName AS newName','history', $whereT ,'', '', $join, '');
-	
+								// print_r($whereT);exit;
 								foreach($taskHistory as $key => $value1) {
+									
 									if(!empty($value1->oldName) && !empty($value1->newName)){
+										
 										$messageDetails.= $assignedBy." Updated".$value1->col." <br> From <del>'".$value1->oldName."'</del> To '".$value1->newName."'<br> <br>";
 									}
 								}
@@ -449,8 +452,10 @@ class TaskMaster extends CI_Controller
 										'body' => $messageDetails,
 									);
 								}
+								
 								if(isset($notification) && !empty($notification)){
 									// $this->notifications->sendmessage($notification,$value);
+									
 									if(isset($tDetails)&& !empty($tDetails)){
 										$this->emails->sendMailDetails("","",$tDetails[0]->email,'','',"Task Updated:- ".$task_id, $messageDetails);
 									}

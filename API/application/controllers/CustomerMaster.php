@@ -550,6 +550,8 @@ class CustomerMaster extends CI_Controller
 		$setStatus = $this->input->post('status');
 		$where = array('customer_id' => $customerID);
 		$customerDetails['type'] = $setStatus;
+		$customerDetails['modified_date'] = date("Y/m/d H:i:s");
+		$customerDetails['modified_by'] = $this->input->post('user');
 		$iscreated = $this->CommonModel->updateMasterDetails('customer', $customerDetails, $where);
 		if (!$iscreated) {
 			$status['msg'] = $this->systemmsg->getErrorCode(998);
