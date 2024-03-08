@@ -63,7 +63,8 @@ $route['mLogin'] = 'Login/verifyUserMobile';
 $route['dashboardDetails'] = 'Dashboard/getDashboardCount';
 $route['alerts'] = 'Dashboard/alerts';
 
-
+// sendEmails
+$route['emailSend'] = 'systems/EmailSender/sendEmail';
 
 $route['changeProfilePic/(:num)'] = 'SearchAdmin/setprofilePic/$1';
 $route['delProfilePic/(:num)'] = "SearchAdmin/removeProfilePicFile/$1";

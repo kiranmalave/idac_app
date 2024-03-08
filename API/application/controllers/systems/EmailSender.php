@@ -25,10 +25,11 @@ class EmailSender extends CI_Controller
 		$this->load->database();
 		$this->load->model('CommonModel');
 		$this->load->library("response");
+        $this->load->library("emails");	
 		$this->load->library("ValidateData");
         if(!$this->config->item('development'))
 		{
-            $this->load->library("emails");	
+            
         }
     }
 
