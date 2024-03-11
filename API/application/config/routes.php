@@ -87,6 +87,9 @@ $route['themeOptionMaster/(:num)'] = 'ThemeOptionMaster/themeOptionMaster/$1';
 // $route['themeOptionMaster/status'] = 'ThemeOptionMaster/themeOptionChangeStatus';
 
 
+$route['getDefinations'] = 'systems/Application/getDefinations';
+
+$route['getTables'] = 'systems/Application/getTables';
 
 $route['admins'] = 'SearchAdmin/index';
 $route['admins/status'] = 'SearchAdmin/changeStatus';
@@ -109,12 +112,18 @@ $route['userRoleMaster/status'] = 'Masters/userRoleChangeStatus';
 // $route['customerList'] = 'Customer/customerList';
 // $route['customer/(:num)'] = 'Customer/customer/$1';
 
-$route['dynamicFormFieldList'] = 'DynamicFormField/formFieldList';
-$route['dynamicformfield'] = 'DynamicFormField/dynamicformfield';
-$route['dynamicformfield/(:num)'] = 'DynamicFormField/dynamicformfield/$1';
-$route['dynamicformfield/status'] = 'DynamicFormField/changeStatus';
-$route['dynamicFormDataList'] = 'DynamicFormField/getFormData';
-$route['linkedFormData'] = 'DynamicFormField/getLinkedFormData';
+$route['dynamicFormFieldList'] = 'systems/DynamicFormField/formFieldList';
+$route['dynamicformfield'] = 'systems/DynamicFormField/dynamicformfield';
+$route['dynamicformfield/(:num)'] = 'systems/DynamicFormField/dynamicformfield/$1';
+$route['dynamicformfield/status'] = 'systems/DynamicFormField/changeStatus';
+$route['dynamicFormDataList'] = 'systems/DynamicFormField/getFormData';
+$route['linkedFormData'] = 'systems/DynamicFormField/getLinkedFormData';
+$route['c_metadata'] = 'systems/DynamicFormField/updateColumnMetaDate';
+
+$route['saveDyData'] = 'systems/DynamicFormData/dynamicformData';
+$route['saveDyData/(:num)'] = 'systems/DynamicFormData/dynamicformData/$1';
+$route['getDyData'] = 'systems/DynamicFormData/getDatadList';
+$route['deleteFields/status'] = 'systems/DynamicFormData/changeStatus';
 
 $route['infoSettingsList'] = 'InfoSetting/index';
 $route['infoSettingsList/(:num)'] = 'InfoSetting/index/$1';

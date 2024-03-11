@@ -16,9 +16,6 @@
     <td class="">
       <%=taskDetails.attributes.task_id%>
     </td>
-    <td class="">
-      <span class="taskPriorityColor" style="background: <%=cssClass%>"></span>
-    </td>
     <td class="loadview textwrap taskOverFlow" data-task_id="<%=taskDetails.attributes.task_id%>"
       data-view="singletaskData" style="width:13%">
       <div class="nametooltip">
@@ -48,9 +45,11 @@
         <%=taskDetails.attributes.priority_slug%>
       </span>
     </td>
-
     <td class="">
-      <span <%if(taskDetails.attributes.status_color != ""){%>style="background: <%=taskDetails.attributes.status_color%>; color:white;  padding:4px 10px; "<%}%>>
+      <span class="taskPriorityColor" style="background: <%=cssClass%>"></span>
+    </td>
+    <td class="">
+      <span <%if(taskDetails.attributes.status_color != "" && taskDetails.attributes.status_color != null){%>style="background: <%=taskDetails.attributes.status_color%>; color:white;  padding:4px 10px; "<%}%>>
         <%=taskDetails.attributes.status_slug%>
       </span>
     </td>

@@ -123,6 +123,12 @@ class MenuMaster extends CI_Controller
 			$menuDetails['linked'] = $this->validatedata->validate('linked','Is Linked',true,'',array());
 			$menuDetails['is_custom'] = $this->validatedata->validate('is_custom','Is Custom',true,'',array());
 			$menuDetails['custom_module'] = $this->validatedata->validate('custom_module','Custom Module',true,'',array());
+			$menuDetails['plural_label'] = $this->validatedata->validate('plural_label','Plural Label',false,'',array());
+			$menuDetails['label'] = $this->validatedata->validate('label','Label',false,'',array());
+			$menuDetails['module_desc'] = $this->validatedata->validate('module_desc','Description',false,'',array());
+			$menuDetails['menuName'] = $this->validatedata->validate('menuName', 'Menu Name', false, '', array());
+			$menuDetails['menu_custom_link'] = $this->validatedata->validate('menu_custom_link','Custom Link',false,'',array());
+			$menuDetails['table_name'] = $this->validatedata->validate('table_name', 'Table Name', false, '', array());
 			//print $menuDetails['custom_module']; exit;
 			if ($menuDetails['isParent'] == "no") {
 				$menuDetails['parentID'] = $this->validatedata->validate('parentID', 'Parent ID', true, '', array());

@@ -621,4 +621,13 @@ class CommonModel extends CI_Model
 		$this->errorlogs->checkDBError($sqlerror, dirname(__FILE__), __LINE__, __METHOD__);
 		return $res;
 	}
+	public function getdata($sql,$other){
+		$query = $this->db->query($sql);
+		if (isset($other["resultType"]) && !empty($other["resultType"])) {
+			$result = $query->result_array();
+		} else {
+			$result = $query->result();
+		}
+		return $result;
+	}
 }

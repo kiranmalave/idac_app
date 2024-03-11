@@ -239,6 +239,11 @@ define([
           }else{
             selfobj.model.set("isRequired",selfobj.model.get("isRequired"));
           }
+          if(selfobj.model.get("isRequired") == 'no'){
+            selfobj.model.set("isNull",'FALSE');
+          }else{
+            selfobj.model.set("isNull",selfobj.model.get("isNull"));
+          }
           selfobj.render();
         }
       }, 1000);

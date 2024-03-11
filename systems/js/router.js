@@ -22,7 +22,7 @@ define([
   'plugin/theme/views/themeView',
   'plugin/pagesMaster/views/pagesMasterView',
   'plugin/pagesMaster/views/pagesMasterSingleDesign',
-  'plugin/dynamicForm/views/dynamicFormSingleView',
+  'plugin/dynamicForm/views/dynamicFormView',
   'plugin/admin/views/accessDetailsView',
   'plugin/pagesMenuMaster/views/pagesMenuMasterView',
   'plugin/themeOption/views/themeOptionView',
@@ -47,7 +47,7 @@ define([
   'text!../templates/appFull_temp.html',
   'text!../templates/sideNav_temp.html',
   'text!../templates/topNav_temp.html',
-], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, Swal, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormSingleView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, customerdashboardView, branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView,contactUsView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
+], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, Swal, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, customerdashboardView, branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView,contactUsView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
 
   var AppRouter = Backbone.Router.extend({
     routes: {
@@ -307,7 +307,7 @@ define([
     app_router.on('route:addCustomField', function (action) {
       var validate = preTemp();
       if (validate) {
-        new dynamicFormSingleView({ menuId: action });
+        new dynamicFormView({ menuId: action });
         //setsidbar();
       }
     });
