@@ -143,13 +143,13 @@ define([
     selectClient: function (e) {
       let selfobj = this;
       e.stopPropagation();
-      var client_id = $(e.currentTarget).val();
-      this.model.set({"client_id":client_id});
-      if (client_id != null) {
+      selfobj.customerID = $(e.currentTarget).val();
+      this.model.set({"client_id":selfobj.customerID});
+      if (selfobj.customerID != null) {
         this.projectList.fetch({
           headers: {
             'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-          }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active", company: client_id }
+          }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: "active", company: selfobj.customerID }
         }).done(function (res) {
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".popupLoader").hide();
@@ -199,7 +199,7 @@ define([
       this.projectList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status: 'active' }
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status: 'active',company: selfobj.customerID }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         selfobj.render();

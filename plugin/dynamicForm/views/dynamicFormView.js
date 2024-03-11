@@ -707,6 +707,9 @@ define([
           let colId = 'col' + (colIndex + 1);
           let fieldElement = $(col).find('.field_drag');
           let fieldID = fieldElement.data('fieldid');
+          let isFieldIdPresent = selfobj.dynamicFormListt.some(function (item) {
+            return item.attributes.fieldID == fieldID;
+          });
          
           let fieldLabel = fieldElement.data('fieldlabel');
           let fieldType = fieldElement.data('fieldtype');
@@ -718,9 +721,7 @@ define([
           let parentCategory = fieldElement.data('parentcategory');
          
           let colSize = $(col).data('colsize');
-          let isFieldIdPresent = selfobj.dynamicFormListt.some(function (item) {
-            return item.attributes.fieldID == fieldID;
-          });
+         
           if (isFieldIdPresent) {
               jsonForm[rowId][colId] = { fieldID: fieldID, fieldLabel: fieldLabel, colSize: colSize, fieldType: fieldType,"column_name":column_name,linkedWith:linkedWith,fieldOptions:fieldOptions,dateFormat:dateFormat,displayFormat:displayFormat,parentCategory:parentCategory };
               rowHasContent = true;
