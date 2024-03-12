@@ -7,8 +7,10 @@ class Datatables extends CI_Model
     public function __construct()
     {
         parent::__construct();
+        //$this->CI = &get_instance();
         $this->load->database();
         $this->load->dbforge(); // Load the dbforge library
+        $this->load->model('CommonModel');
     }
 
     // Create a new table based on field array
@@ -70,19 +72,49 @@ class Datatables extends CI_Model
 
     public function create_table($table_name, $fields = array())
     {
+        $sql = "SHOW TABLES LIKE '".$this->db->dbprefix.$table_name."'";
+        $query = $this->db->query($sql);
+		$rowcount = $query->num_rows();
+        if ($rowcount > 0) {
+            $this->db->trans_rollback();
+            $status['msg'] = $this->systemmsg->getErrorCode(287);
+            $status['statusCode'] = 200;
+            $status['data'] = array();
+            $status['flag'] = 'F';
+            $this->response->output($status, 200);
+        }
+
         if (empty($table_name)) {
-            $status['msg'] = $this->CI->systemmsg->getErrorCode(282);
+            $this->db->trans_rollback();
+            $status['msg'] = $this->systemmsg->getErrorCode(282);
             $status['statusCode'] = 994;
             $status['data'] = array();
             $status['flag'] = 'F';
-            $this->CI->response->output($status, 200);
+            $this->response->output($status, 200);
         }
+
+        //check is table exit
+
         $fields1 = array(
             'id' => array(
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => TRUE,
                 'auto_increment' => TRUE
+            ),
+            'created_by' => array(
+                'type' => 'INT',
+                'constraint' => 11,
+            ),
+            'created_date datetime default current_timestamp',
+            'modified_by' => array(
+                'type' => 'INT',
+                'constraint' => 11,
+                'default'=>null,
+            ),
+            'modified_date' => array(
+                'type' => 'DATETIME',
+                'default'=>null,
             ),
         );
         $this->dbforge->add_field($fields1);
@@ -95,30 +127,34 @@ class Datatables extends CI_Model
             // $this->dbforge->add_field("id INT(11) AUTO_INCREMENT");
             // $this->dbforge->add_key('id', TRUE);
 
-            foreach ($fields as $field_name => $field) {
-                if (empty($field_name) || !is_string($field_name)) {
-                    $status['msg'] = $this->CI->systemmsg->getErrorCode(283);
+            foreach ($fields as $field_name => $field){
+
+                if (empty($field_name) || !is_string($field_name)){
+                    $this->db->trans_rollback();
+                    $status['msg'] = $this->systemmsg->getErrorCode(283);
                     $status['statusCode'] = 994;
                     $status['data'] = array();
                     $status['flag'] = 'F';
+                    $this->response->output($status, 200);
                 }
-
                 if (!is_array($field) || empty($field['type']) || !is_string($field['type'])) {
+                    $this->db->trans_rollback();
                     //throw new Exception('Invalid field type for ' . $field_name . ', type must be a string.');
-                    $status['msg'] = $this->CI->systemmsg->getErrorCode(285);
+                    $status['msg'] = $this->systemmsg->getErrorCode(285);
                     $status['statusCode'] = 994;
                     $status['data'] = array();
                     $status['flag'] = 'F';
+                    $this->response->output($status, 200);
                 }
-
                 if (isset($field['constraint']) && (!is_numeric($field['constraint']) || $field['constraint'] <= 0)) {
+                    $this->db->trans_rollback();
                     //throw new Exception('Invalid constraint value for ' . $field_name . ', constraint must be a positive numeric value.');
-                    $status['msg'] = $this->CI->systemmsg->getErrorCode(286);
+                    $status['msg'] = $this->systemmsg->getErrorCode(286);
                     $status['statusCode'] = 994;
                     $status['data'] = array();
                     $status['flag'] = 'F';
+                    $this->response->output($status, 200);
                 }
-
                 // Add field as received if auto_increment is set to TRUE
                 if (isset($field['auto_increment']) && $field['auto_increment'] === TRUE) {
                     $this->dbforge->add_field("$field_name INT(11) AUTO_INCREMENT");
@@ -128,15 +164,34 @@ class Datatables extends CI_Model
                 }
             }
         }
-        // echo "<pre>";
-        // print_r($fields);
-        // //exit;
         $this->dbforge->create_table($table_name);
     }
 
     // Modify an existing table by adding a column
     public function add_column($table_name, $fields)
     {
+        $sql = "SHOW COLUMNS FROM ".$this->db->dbprefix.$table_name."";
+        $query = $this->db->query($sql);
+		//$rowcount = $query->get();
+        $result = $query->result();
+        $fCol =  array_column($result,"Field");
+        //print_r($fields);
+        $isexits = false;
+        foreach ($fields as $key => $value) {
+            //print$key."<br>";
+            if(in_array($key,$fCol)){
+                $isexits = true;
+            }
+        }
+        //var_dump($isexits);
+        if($isexits){
+            $this->db->trans_rollback();
+            $status['msg'] = $this->systemmsg->getErrorCode(288);
+            $status['statusCode'] = 200;
+            $status['data'] = array();
+            $status['flag'] = 'F';
+            $this->response->output($status, 200);
+        }
         $this->dbforge->add_column($table_name, $fields);
     }
 
@@ -153,6 +208,28 @@ class Datatables extends CI_Model
     // Modify column in a table
     public function modify_column($table_name, $fields)
     {
+        $isexits = false;
+        $key = array_keys($fields);
+        if(isset($fields[$key[0]]['name']) && $key[0] != $fields[$key[0]]['name']){
+            $sql = "SHOW COLUMNS FROM ".$this->db->dbprefix.$table_name."";
+            $query = $this->db->query($sql);
+            $result = $query->result();
+            $fCol =  array_column($result,"Field");
+            $isexits = false;
+            foreach ($fields as $key => $value) {
+                if(in_array($key[0],$fCol)){
+                    $isexits = true;
+                }
+            }
+            if($isexits){
+                $this->db->trans_rollback();
+                $status['msg'] = $this->systemmsg->getErrorCode(288);
+                $status['statusCode'] = 200;
+                $status['data'] = array();
+                $status['flag'] = 'F';
+                $this->response->output($status, 200);
+            }
+        }
         $this->dbforge->modify_column($table_name, $fields);
     }
 
@@ -184,6 +261,42 @@ LIMIT 1");
     public function delete_table($table_name)
     {
         $this->dbforge->drop_table($table_name, TRUE);
+    }
+    public function check_field_exists($table_name,$field_name)
+    {
+        if ($this->db->field_exists($field_name,$table_name)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function mapDynamicFeilds($module_name,$data){
+        
+        $customData = array();
+        // get module details
+        $where = array("menuLink"=>$module_name);
+        $menuDetails = $this->CommonModel->getMasterDetails("menu_master","",$where);
+        if(!isset($menuDetails) || empty($menuDetails)){
+            return array();
+        }
+        if(!isset($data) || empty($data)){
+            return array();
+        }
+        // get field from database
+        $wherec = array();
+        $wherec["menuID = "] = $menuDetails[0]->menuID;
+        $fieldDetails = $this->CommonModel->GetMasterListDetails($selectC = '', 'dynamic_fields', $wherec, '', '', array(),array());
+        foreach ($fieldDetails as $key => $value) {
+            if (array_key_exists($value->column_name,$data)) {
+                if($value->fieldType == "Datepicker"){
+                    $customData[$value->column_name] = dateFormat($data[$value->column_name]); 
+                }else{
+                    $customData[$value->column_name] = $data[$value->column_name]; 
+                }
+                
+            }
+        }
+        return $customData;
     }
 }
 
