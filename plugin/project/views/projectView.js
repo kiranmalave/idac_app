@@ -9,15 +9,22 @@ define([
   '../views/projectSingleView',
   '../collections/projectCollection',
   '../models/projectFilterOptionModel',
+  '../../core/views/configureColumnsView',
   "../../customer/collections/customerCollection",
+  '../../core/views/appSettings',
+  '../../dynamicForm/collections/dynamicFormDataCollection',
+  '../../menu/models/singleMenuModel',
   'text!../templates/projectRow.html',
   'text!../templates/project_temp.html',
   'text!../templates/project_temp_other.html',
   'text!../templates/projectRow_other.html',
   'text!../templates/projectFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, moment, Swal, projectSingleView, projectCollection, projectFilterOptionModel, customerCollection, projectRowTemp, projectTemp, projectTempOther, projectRowTempOther, projectFilterTemp) {
+], function ($, _, Backbone, datepickerBT, moment, Swal, projectSingleView, projectCollection, projectFilterOptionModel, configureColumnsView, customerCollection, appSettings, dynamicFormData, singleMenuModel, projectRowTemp, projectTemp, projectTempOther, projectRowTempOther, projectFilterTemp) {
 
   var projectView = Backbone.View.extend({
+    module_desc:'',
+    plural_label:'',
+    form_label:'',
     totalRec : '',
     initialize: function (options) {
       this.toClose = "projectFilterView";
@@ -34,30 +41,25 @@ define([
       //$("#"+mname).addClass("active");
       readyState = true;
       this.totalRec = 0;
-      this.render();
+      this.menuId = permission.menuID;
+      this.appSettings = new appSettings();
+      this.dynamicFormDatas = new dynamicFormData();
+      this.menuList = new singleMenuModel();
+      this.appSettings.getMenuList(this.menuId, function(plural_label,module_desc,form_label,result) {
+        selfobj.plural_label = plural_label;
+        selfobj.module_desc = module_desc;
+        selfobj.form_label = form_label;
+        readyState = true;
+        selfobj.getColumnData();
+        if(result.data[0] != undefined){
+          selfobj.tableName = result.data[0].table_name;
+        }
+     
+      });
       filterOption = new projectFilterOptionModel();
       if (this.coustomerID != ""){
         filterOption.set({ company: this.coustomerID });
       }
-      searchproject = new projectCollection();
-      searchproject.fetch({
-        headers: {
-          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
-      }).done(function (res) {
-
-        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".profile-loader").hide();
-        setPagging(res.paginginfo, res.loadstate, res.msg);
-        selfobj.totalRec = res.paginginfo.totalRecords;
-        if(selfobj.totalRec == 0){
-          $(".noRec").show();
-          $("#projectMainContainer").hide();
-        }else{
-            $(".noRec").hide();
-            $("#projectMainContainer").show();
-        }
-      });
 
       this.customerList = new customerCollection();
       this.customerList.fetch({
@@ -69,10 +71,43 @@ define([
         $(".popupLoader").hide();
         // selfobj.render();
       });
-      this.collection = searchproject;
+      this.collection = new projectCollection();
       this.collection.on('add', this.addOne, this);
       this.collection.on('reset', this.addAll, this);
-
+      this.render();
+    },
+    getColumnData: function(){
+      var selfobj = this;
+      this.dynamicFormDatas.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: 'post', data: { "pluginId": this.menuId }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          if (res.metadata && res.metadata.trim() != '') {
+              selfobj.metadata  = JSON.parse(res.metadata);
+          } 
+          if (res.c_metadata && res.c_metadata.trim() != '') {
+              selfobj.c_metadata  = JSON.parse(res.c_metadata);
+              selfobj.arrangedColumnList = selfobj.c_metadata;
+          }
+        selfobj.getModuleData();
+        selfobj.render();
+      });
+    },
+    getModuleData:function(){
+      var selfobj = this;
+      this.collection.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        setPagging(res.paginginfo, res.loadstate, res.msg);
+        selfobj.totalRec = res.paginginfo.totalRecords;
+        $(".profile-loader").hide();
+      });
+      selfobj.render();
     },
     events:
     {
@@ -90,6 +125,7 @@ define([
       "change .changeBox": "changeBox",
       "click .sortColumns": "sortColumn",
       "click .closeFilter": "closeFilter",
+      "click .arrangeColumns": "openColumnArrangeModal",
     },
     updateOtherDetails: function (e) {
       e.stopPropagation();
@@ -194,6 +230,28 @@ define([
       })
     },
 
+    openColumnArrangeModal: function (e) {
+      let selfobj = this;
+      var show = $(e.currentTarget).attr("data-action");
+      var stdColumn = [];
+      switch (show) {
+        case "arrangeColumns": {
+          var isOpen = $(".ws_ColumnConfigure").hasClass("open");
+          if (isOpen) {
+            $(".ws_ColumnConfigure").removeClass("open");
+            $(e.currentTarget).removeClass("BG-Color");
+            selfobj.getColumnData();
+            selfobj.filterSearch();
+            return;
+          } else {
+            new configureColumnsView({menuId: this.menuId,ViewObj: selfobj,stdColumn:stdColumn});
+            $(e.currentTarget).addClass("BG-Color");
+          }
+          break;
+        }
+      }
+    },
+
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
       $(".profile-loader").hide();
@@ -204,7 +262,7 @@ define([
       switch (show) {
         case "singleprojectData": {
           var project_id = $(e.currentTarget).attr("data-project_id");
-          var projectsingleView = new projectSingleView({ project_id: project_id, searchproject: this });
+          new projectSingleView({ project_id: project_id, searchproject: this });
           break;
         }
       }
@@ -254,6 +312,14 @@ define([
       var memberDetails = new singlememberDataModel();
     },
     addOne: function (objectModel) {
+      this.totalRec = this.collection.length;
+      if (this.totalRec == 0) {
+        $(".noCustRec").show();
+        $("#projectMainContainer").hide();
+      }else{
+        $(".noCustRec").hide();
+        $("#projectMainContainer").show();
+      }
       var template = _.template(projectRowTemp);
       $("#projectList").append(template({ projectDetails: objectModel }));
     },
@@ -389,7 +455,7 @@ define([
         rearrageOverlays();
       }
 
-      searchproject.reset();
+      this.collection.reset();
       var selfobj = this;
       readyState = true;
       filterOption.set({ curpage: 0 });
@@ -398,7 +464,7 @@ define([
       $element.attr("data-index", 1);
       $element.attr("data-currPage", 0);
 
-      searchproject.fetch({
+      this.collection.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, add: true, remove: false, merge: false, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
@@ -440,7 +506,7 @@ define([
       } else {
 
         $element.attr("data-index", cid);
-        searchproject.reset();
+        this.collection.reset();
         var index = $element.attr("data-index");
         var currPage = $element.attr("data-currPage");
 
@@ -448,7 +514,7 @@ define([
         var requestData = filterOption.attributes;
 
         $(".profile-loader").show();
-        searchproject.fetch({
+        this.collection.fetch({
           headers: {
             'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
           }, add: true, remove: false, merge: false, type: 'post', error: selfobj.onErrorHandler, data: requestData

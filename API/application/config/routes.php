@@ -69,6 +69,7 @@ $route['emailSend'] = 'systems/EmailSender/sendEmail';
 $route['changeProfilePic/(:num)'] = 'SearchAdmin/setprofilePic/$1';
 $route['delProfilePic/(:num)'] = "SearchAdmin/removeProfilePicFile/$1";
 
+$route['metadata'] = 'MenuMaster/saveMetaData';
 $route['menuMasterList'] = 'MenuMaster/getMenuDetails';
 $route['menuMaster'] = 'MenuMaster/menuMaster';
 $route['menuMaster/(:num)'] = 'MenuMaster/menuMaster/$1';

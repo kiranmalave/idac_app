@@ -83,7 +83,6 @@ define([
           }
           if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
           $(".popupLoader").hide();
-          // selfobj.dynamicFieldRenderobj.prepareForm();
           selfobj.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
           selfobj.render();
         });

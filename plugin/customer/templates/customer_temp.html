@@ -35,12 +35,39 @@
               </div>
             </div>
             <div class="leadRight text-right actionBtns topBtnDetails">
+
+              <!-- <div class="text-right actionBtns" id="arrangeColumns" style="right:0; top:10px;">
+                  <button type="button" class="btn bg-indigo arrangeColumns" data-action="arrangeColumns">Arrange columns</button>
+                </div> -->
+
+
+              <div class="addColumns">
+                <button type="button" class="arrangeColumns btn-bgColor" data-action="arrangeColumns" data-toggle="tooltip" data-placement="top" title="Configure Columns">
+                  <span><span class="material-icons">view_column</span><span class="material-icons">expand_more</span></span>
+                </button>
+                <div class="" id="customColumnConfigure"></div>
+              </div>
+
+              <form id="reports" method="POST" action="#">
+                <div class="donloadBtn" data-toggle="tooltip" data-placement="top" title="Download Data">
+                  <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top" title="Download Data">
+                    <span class="material-symbols-outlined">download</span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a href="javascript:void(0);" class="downloadReport" data-type="pdf">PDF</a></li>
+                    <li><a href="javascript:void(0);" class="downloadReport" data-type="excel">Excel</a></li>
+                  </ul>
+                </div>
+              </form>
+
               <%if(menuName=="leads" ){%>
                 <div class="btn-group btn-group-block gridmode float-right btnDetails" style="right:0">
-                  <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span class="material-icons" style="margin-top: 2px;">view_list</span></button>
-                  <button class="btn ws-btn-default ws-btn-grid grid_mode" value="grid"><span class="material-icons" style="margin-top: 2px;">grid_on</span></button>
+                  <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span
+                      class="material-icons" style="margin-top: 2px;">view_list</span></button>
+                  <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span class="material-icons"
+                      style="margin-top: 2px;">grid_on</span></button>
                 </div>
-              <%}%>
+                <%}%>
             </div>
           </div>
 

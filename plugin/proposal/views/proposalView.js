@@ -10,17 +10,20 @@ define([
   '../collections/proposalCollection',
   "../../customer/collections/customerCollection",
   "../../project/collections/projectCollection",
+  '../../core/views/configureColumnsView',
+  '../../core/views/appSettings',
+  '../../dynamicForm/collections/dynamicFormDataCollection',
+  '../../menu/models/singleMenuModel',
   '../models/proposalFilterOptionModel',
   'text!../templates/proposalRow.html',
   'text!../templates/proposal_temp.html',
   'text!../templates/proposalFilterOption_temp.html',
-], function ($, _, Backbone, datepickerBT, moment, Swal, proposalSingleView, proposalCollection, customerCollection, projectCollection, proposalFilterOptionModel, proposalRowTemp, proposalTemp, proposalFilterTemp) {
+], function ($, _, Backbone, datepickerBT, moment, Swal, proposalSingleView, proposalCollection, customerCollection, projectCollection, configureColumnsView, appSettings, dynamicFormData, singleMenuModel, proposalFilterOptionModel, proposalRowTemp, proposalTemp, proposalFilterTemp) {
 
   var proposalView = Backbone.View.extend({
     loadFrom: null,
     totalRec:0,
     initialize: function (options) {
-      console.log(options);
       this.loadFrom = options.loadFrom;
       this.customer_ID = options.customerID;
       this.projectID = options.projectID;
@@ -39,23 +42,28 @@ define([
         permission = ROLE['proposal'];
       }
       readyState = true;
-      this.render();
+
+      this.menuId = permission.menuID;
+      this.appSettings = new appSettings();
+      this.dynamicFormDatas = new dynamicFormData();
+      this.menuList = new singleMenuModel();
+      this.appSettings.getMenuList(this.menuId, function(plural_label,module_desc,form_label,result) {
+        selfobj.plural_label = plural_label;
+        selfobj.module_desc = module_desc;
+        selfobj.form_label = form_label;
+        readyState = true;
+        selfobj.getColumnData();
+        if(result.data[0] != undefined){
+          selfobj.tableName = result.data[0].table_name;
+        }
+     
+      });
+
+
       this.customerID = options.action;
       if(this.customerID != ""){
         filterOption.set({company:this.customerID});
       }
-      searchproposal = new proposalCollection();
-      searchproposal.fetch({
-        headers: {
-          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
-      }).done(function (res) {
-
-        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".profile-loader").hide();
-        selfobj.totalRec = res.paginginfo.totalRecords;
-        setPagging(res.paginginfo, res.loadstate, res.msg);
-      });
 
       this.customerList = new customerCollection();
       this.customerList.fetch({
@@ -81,14 +89,43 @@ define([
 
 
 
-      this.collection = searchproposal;
+      this.collection = new proposalCollection();
       this.collection.on('add', this.addOne, this);
       this.collection.on('reset', this.addAll, this);
-      /* $(".right_col").on("scroll",function(){
-             console.log("wait..");
-             selfobj.loadData();
-             
-         });*/
+      this.render();
+    },
+    getColumnData: function(){
+      var selfobj = this;
+      this.dynamicFormDatas.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: 'post', data: { "pluginId": this.menuId }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          if (res.metadata && res.metadata.trim() != '') {
+              selfobj.metadata  = JSON.parse(res.metadata);
+          } 
+          if (res.c_metadata && res.c_metadata.trim() != '') {
+              selfobj.c_metadata  = JSON.parse(res.c_metadata);
+              selfobj.arrangedColumnList = selfobj.c_metadata;
+          }
+        selfobj.getModuleData();
+        selfobj.render();
+      });
+    },
+    getModuleData:function(){
+      var selfobj = this;
+      this.collection.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        setPagging(res.paginginfo, res.loadstate, res.msg);
+        selfobj.totalRec = res.paginginfo.totalRecords;
+        $(".profile-loader").hide();
+      });
+      selfobj.render();
     },
     events:
     {
@@ -106,6 +143,7 @@ define([
       "click .showpage": "loadData",
       "change .changeBox": "changeBox",
       "click .sortColumns": "sortColumn",
+      "click .arrangeColumns": "openColumnArrangeModal",
     },
     updateOtherDetails: function (e) {
       var valuetxt = $(e.currentTarget).val();
@@ -136,6 +174,28 @@ define([
       }
     },
 
+    openColumnArrangeModal: function (e) {
+      let selfobj = this;
+      var show = $(e.currentTarget).attr("data-action");
+      var stdColumn = [];
+      switch (show) {
+        case "arrangeColumns": {
+          var isOpen = $(".ws_ColumnConfigure").hasClass("open");
+          if (isOpen) {
+            $(".ws_ColumnConfigure").removeClass("open");
+            $(e.currentTarget).removeClass("BG-Color");
+            selfobj.getColumnData();
+            selfobj.filterSearch();
+            return;
+          } else {
+            new configureColumnsView({menuId: this.menuId,ViewObj: selfobj,stdColumn:stdColumn});
+            $(e.currentTarget).addClass("BG-Color");
+          }
+          break;
+        }
+      }
+    },
+    
     settextSearch: function (e) {
       var usernametxt = $(e.currentTarget).val();
       filterOption.set({ textSearch: usernametxt });
@@ -228,7 +288,7 @@ define([
       switch (show) {
         case "singleproposalData": {
           var proposal_id = $(e.currentTarget).attr("data-proposal_id");
-          new proposalSingleView({ proposal_id: proposal_id, projectID:selfobj.projectID, customerID:selfobj.customer_ID, searchproposal: this });
+          new proposalSingleView({ proposal_id: proposal_id, projectID: selfobj.projectID, customerID: selfobj.customer_ID, searchproposal: this });
           break;
         }
       }
@@ -480,7 +540,7 @@ define([
         rearrageOverlays();
       }
 
-      searchproposal.reset();
+      this.collection.reset();
       var selfobj = this;
       readyState = true;
       filterOption.set({ curpage: 0 });
@@ -489,7 +549,7 @@ define([
       $element.attr("data-index", 1);
       $element.attr("data-currPage", 0);
 
-      searchproposal.fetch({
+      this.collection.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
         }, add: true, remove: false, merge: false, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
@@ -530,7 +590,7 @@ define([
       } else {
 
         $element.attr("data-index", cid);
-        searchproposal.reset();
+        this.collection.reset();
         var index = $element.attr("data-index");
         var currPage = $element.attr("data-currPage");
 
@@ -538,7 +598,7 @@ define([
         var requestData = filterOption.attributes;
 
         $(".profile-loader").show();
-        searchproposal.fetch({
+        this.collection.fetch({
           headers: {
             'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
           }, add: true, remove: false, merge: false, type: 'post', error: selfobj.onErrorHandler, data: requestData

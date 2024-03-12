@@ -123,8 +123,8 @@ define([
           selfobj.metadata = JSON.parse(res.metadata);
         }
         if (res.c_metadata && res.c_metadata.trim() != '') {
-          selfobj.c_metadata = JSON.parse(res.c_metadata);
-          selfobj.arrangedColumnList = selfobj.c_metadata;
+          // selfobj.c_metadata = JSON.parse(res.c_metadata);
+          selfobj.arrangedColumnList = res.c_metadata;
         }
         selfobj.getModuleData();
         selfobj.render();
@@ -1638,6 +1638,7 @@ define([
         column.fieldLabel = index !== -1 ? fieldName[index] : column.fieldLabel;
       });
 
+      console.log(typeof( selfobj.arrangedColumnList));
       this.$el.html(template({ totalRec: this.totalRec, menuName: this.mname, closeItem: this.toClose, pluralLable: this.plural_label, "moduleDesc": selfobj.module_desc, "arrangedColumnList": selfobj.arrangedColumnList, categoryList: selfobj.categoryList.models }));
       $(".app_playground").append(this.$el);
       $(".loder").hide();

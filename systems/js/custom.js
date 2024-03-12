@@ -3,15 +3,36 @@ $.fn.digits = function () {
     $(this).text($(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
   })
 }
+
+try {
+  $.validator.addMethod("onlyalpha", function (value, element) {
+    // allow any non-whitespace characters as the host part
+    return this.optional(element) || /^[a-zA-Z0-9_]*$/.test(value);
+  }, 'Please enter valid text.Only charactors and underscore allowed.');
+
+  $.validator.addMethod("alpha", function(value, element) {
+    return this.optional(element) || /^[a-zA-Z0-9\s]+$/.test(value);
+},'Please enter valid text.Only charactors,numbers and space allowed.');
+
+} catch (error) {
+  console.log("error menu active class" + error.message);
+}
+
+
 $(document).ready(function () {
-  // try{
-  //   $.validator.addMethod("onlyalpha", function(value, element) {
-  //     // allow any non-whitespace characters as the host part
-  //     return this.optional( element ) || /^[a-zA-Z0-9_]*$/.test( value );
-  //   }, 'Please enter valid text.Only charactors and underscore allowed.');
-  // }catch(error){
-  //   console.log("error menu active class"+error.message);
-  // }
+  try{
+    $.validator.addMethod("onlyalpha", function(value, element) {
+      // allow any non-whitespace characters as the host part
+      return this.optional( element ) || /^[a-zA-Z0-9_]*$/.test( value );
+    }, 'Please enter valid text.Only charactors and underscore allowed.');
+
+    $.validator.addMethod("alpha", function(value, element) {
+      return this.optional(element) || /^[a-zA-Z0-9\s]+$/.test(value);
+  },'Please enter valid text.Only charactors,numbers and space allowed.');
+  
+  }catch(error){
+    console.log("error menu active class"+error.message);
+  }
   setToolTip();
 
   $("body").on("focus", ".form-control", function () {
@@ -60,7 +81,7 @@ $(document).ready(function () {
     }
   });
 
-  $(document).on('change', 'input[type="checkbox"]', function (e) {
+  $(document).on('change', '#cAll', function (e) {
 
     if (!$(this).hasClass("checkall")) {
 
@@ -125,8 +146,6 @@ $(document).ready(function () {
     }
 
   });
-
-
   // handel all application tooltip setting
   //$('[data-toggle="tooltip"]').tooltip();
 
@@ -205,6 +224,7 @@ $(document).ready(function () {
   });
   $("body").on("click", ".closeTabRight", function (e) {
     e.preventDefault();
+    $("#subNavs li").remove();
     $(".overlay-main-container").removeClass("open");
     $(".side-menu li").each(function () {
       $(this).removeClass("active");
@@ -312,6 +332,8 @@ function handelClose(toClose) {
     $(".overlay-main-container").removeClass("open");
   } else {
     $("#subNavs").first(".nav-item").addClass("active");
+    // $("#subNavs").first(".nav-item").find(".nav-link").addClass("active");
+    // $('.tab-pane').css('display', 'block');
   }
   var ID = $("#subNavs .nav-item.active").attr("data-item");
   $(".side-menu li").each(function () {
@@ -323,19 +345,22 @@ function handelClose(toClose) {
   });
 }
 function showResponse(e, res, btnTxt) {
+  let rr = false;
   if (res.flag == "F") {
     showNotification("alert-danger", res.msg);
     $(e.currentTarget).html("<span>Error</span>");
     $(e.currentTarget).removeAttr("disabled");
+    
   } else {
-    showNotification("alert-success saveAlert", "Saved", null, null, null, null);
+    showNotification("alert-success", "Saved..", null, null, null, null);
     $(e.currentTarget).html("<span>Saved</span>");
-
+    rr = true;
   }
   setTimeout(function () {
     $(e.currentTarget).html("<span>" + btnTxt + "</span>");
     $(e.currentTarget).removeAttr("disabled");
-  }, 1000);
+  }, 500);
+  return rr;
 }
 //   if ($("input.flat")[0]) {
 //     $(document).ready(function () {
@@ -362,7 +387,7 @@ function showNotification(colorName, text, placementFrom, placementAlign, animat
       type: colorName,
       allow_dismiss: allowDismiss,
       newest_on_top: true,
-      timer: 4000,
+      timer: 100,
       placement: {
         from: placementFrom,
         align: placementAlign
@@ -371,8 +396,8 @@ function showNotification(colorName, text, placementFrom, placementAlign, animat
         enter: animateEnter,
         exit: animateExit
       },
-      template: '<div data-notify="container" class="bootstrap-notify-container alert alert-dismissible {0} ' + (allowDismiss ? "p-r-35" : "") + '" role="alert">' +
-        '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+      template: '<div data-notify="container" class="bootstrap-notify-container alert alert-dismissible {0} ' + (allowDismiss ? "p-r-30" : "") + '" role="alert">' +
+        '<button type="button" aria-hidden="true" class="close notifyClose" data-notify="dismiss">×</button>' +
         '<span data-notify="icon"></span> ' +
         '<span data-notify="title">{1}</span> ' +
         '<span data-notify="message">{2}</span>' +
@@ -384,7 +409,7 @@ function showNotification(colorName, text, placementFrom, placementAlign, animat
     });
 }
 
-getLocalData = function () {
+getLocalData = function (refresh = false) {
 
   //console.log("sdfsfsfdsdfsdffsd");
   if (typeof (Storage) == "undefined") {
@@ -394,8 +419,7 @@ getLocalData = function () {
   }
   localStorage.removeItem("roleDetails");
 
-
-  if (typeof (localStorage.roleDetails) == "undefined") {
+  if (typeof (localStorage.roleDetails) == "undefined" || refresh== true) {
     $.ajax({
       url: APIPATH + 'getUserPermission/',
       method: 'GET',
@@ -415,6 +439,7 @@ getLocalData = function () {
         }
         console.log(res.data);
         localStorage.setItem("roleDetails", JSON.stringify(res.data));
+        ROLE = JSON.parse(localStorage.roleDetails);
 
       }
     });
@@ -568,12 +593,12 @@ setPagging = function (paginginfo, loadstate, msg) {
     //$(".showPageDetails .pagination .next").show(); 
 
   }
+},
 
-}
 numberFormat = function (num, tonm) {
   var isn = $.isNumeric(num);
   if (isn) {
-    console.log(num);
+    // console.log(num);
     return Number.parseFloat(num).toFixed(tonm);
   } else {
     return 0.00;

@@ -31,7 +31,7 @@ define([
         this.multiselectOptions = new multiselectOptions();
         $(".modelbox").hide();
         scanDetails = options.searchproject;
-        
+        selfobj.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
         $(".popupLoader").show();
         var projectList = new projectCollection();
         projectList.fetch({
@@ -70,6 +70,7 @@ define([
             }
             if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
             $(".popupLoader").hide();
+            selfobj.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
             selfobj.render();
             selfobj.setOldValues();
           });
@@ -225,6 +226,7 @@ define([
                 let url = APIPATH + 'projUpload/' + selfobj.projID;
                 selfobj.uploadFileEl.elements.parameters.action = url;
                 selfobj.uploadFileEl.prepareUploads(selfobj.uploadFileEl.elements);
+                selfobj.dynamicFieldRenderobj.initialize({ ViewObj: selfobj, formJson: {} });
                 selfobj.render();
               } else {
                 let url = APIPATH + 'projUpload/' + selfobj.projID;
@@ -299,15 +301,15 @@ define([
           
         };
         var feildsrules = feilds;
-        // var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+        var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
   
-        // if (!_.isEmpty(dynamicRules)) {
-        //   var feildsrules = $.extend({}, feilds, dynamicRules);
-        //   // var feildsrules = {
-        //   //   ...feilds,
-        //   //   ...dynamicRules
-        //   //   };
-        // }
+        if (!_.isEmpty(dynamicRules)) {
+          var feildsrules = $.extend({}, feilds, dynamicRules);
+          // var feildsrules = {
+          //   ...feilds,
+          //   ...dynamicRules
+          //   };
+        }
         var messages = {
           project_name: "Please enter Project Name",
           client_id: "Please select Client",
@@ -354,7 +356,7 @@ define([
             $('.modal-backdrop').hide();
           }
         });
-
+        $("#dynamicFormFields").empty().append(selfobj.dynamicFieldRenderobj.getform());
         let docUrl = "";
         const attachment_file = this.model.get("attachment_file");
         const file_id = this.model.get("attachment_id");

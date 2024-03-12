@@ -27,6 +27,27 @@
                  <div class="body table" id="proposaList" style="display: none;">
                     <div class="header moduleSec">
                       <h2>Proposals</h2>
+                      <div class="text-right actionBtns" id="arrangeColumns">
+                        <!-- <button type="button" class="btn bg-indigo arrangeColumns" data-action="arrangeColumns">Arrange columns</button> -->
+                        <div class="addColumns">
+                          <button type="button" class="arrangeColumns btn-bgColor columntop" data-action="arrangeColumns" data-toggle="tooltip" data-placement="top" title="Configure Columns">
+                            <span><span class="material-icons">view_column</span><span class="material-icons">expand_more</span></span>
+                          </button>
+                          <div class="" id="customColumnConfigure"></div>
+                        </div>
+                        <form id="reports" method="POST" action="#">
+                          <div class="donloadBtn" data-toggle="tooltip"
+                              data-placement="top" title="Download Data">
+                              <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top" title="Download Data">
+                                  <span class="material-symbols-outlined">download</span>
+                              </button>
+                              <ul class="dropdown-menu">
+                                  <li><a href="javascript:void(0);" class="downloadReport" data-type="pdf">PDF</a></li>
+                                  <li><a href="javascript:void(0);" class="downloadReport" data-type="excel">Excel</a></li>
+                              </ul>
+                          </div>
+                        </form>
+                      </div>
                       <% if(loadFrom == "dashboard"){%>
                       <button type="button" class="ws-btn-default loadview editButton"  data-view="singleproposalData" data-item="proposalSingleView"  data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">add</i></button>
                     <%}%>
