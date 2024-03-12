@@ -13,13 +13,13 @@ define([
 ], function ($, _, Backbone, jqueryUI, RealTimeUpload, addNewFileView, readFilesCollection, addNewDIRModel, readFilesFilterOptionModel, readFilesTemp) {
 
   var readFilesView = Backbone.View.extend({
-
     initialize: function (options) {
       var selfobj = this;
       this.folderID = "";
       this.folderName = "";
       this.loadFrom = "";
       this.fPath = UPLOADS;
+      this.elementID = options.elementID;
       this.loadController = options.loadController;
       if (options.loadFrom != "" && options.loadFrom != undefined) {
         this.loadFrom = options.loadFrom;
@@ -31,14 +31,18 @@ define([
       $element.attr("data-index", 1);
       $element.attr("data-currPage", 0);
       this.addDIR = new addNewDIRModel();
-      var mname = Backbone.history.getFragment();
-      permission = ROLE[mname];
+      this.mname = Backbone.history.getFragment();
+      permission = ROLE[this.mname];
       readyState = true;
       this.filterOption = new readFilesFilterOptionModel();
-
       // if(typeof(options.folderName) != "undefined" && options.folderName !== null) {
       //   console.log(options.loadFrom);
       // }
+      if(this.mname == "media"){
+        this.filterOption.set({ cmp_type: "media" });  
+      }else if(this.mname == "gallery"){
+        this.filterOption.set({ cmp_type: "gallery" });  
+      }
       this.filterOption.set({ fPath: this.fPath });
       this.filterOption.set({ folderID: this.folderID });
       this.filterOption.set({ folderName: this.folderName });
@@ -106,7 +110,7 @@ define([
     },
     returnFile: function (e) {
       var url = $(e.currentTarget).attr("data-url");
-      this.loadController.getSelectedFile(url);
+      this.loadController.getSelectedFile(url, this.elementID);
     },
     createFolder: function (e) {
 
@@ -222,9 +226,9 @@ define([
         uploadButton: true,
         notification: true,
         autoUpload: true,
-        extension: ['png', 'svg','jpg', 'jpeg', 'gif', 'pdf', 'mp4', 'avi', 'mkv', 'mp3', 'ogg', 'wav', 'docx', 'doc', 'xls', 'xlsx'],
+        extension: ['png', 'jpg', 'jpeg', 'svg', 'gif', 'pdf', 'mp4', 'avi', 'mkv', 'mp3', 'ogg', 'wav', 'docx', 'doc', 'xls', 'xlsx'],
         thumbnails: true,
-        action: APIPATH + 'mediaUpload/' + selfobj.filterOption.get("folderID"),
+        action: APIPATH + 'mediaUpload/' + selfobj.filterOption.get("folderID") +"?cmsType="+selfobj.mname,
         element: 'fileupload',
         onSucess: function () {
           // alert("hello")
