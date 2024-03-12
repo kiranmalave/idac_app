@@ -948,7 +948,6 @@ define([
             }
           }
         }
-       
       }
       var filteredDynamicFormList = this.dynamicFormListt.filter((item) => !fieldIds.includes(parseInt(item.attributes.fieldID)));
       this.dynamicFormList = filteredDynamicFormList;

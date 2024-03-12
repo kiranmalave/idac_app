@@ -587,4 +587,28 @@ class MenuMaster extends CI_Controller
 			}
 		}
 	}
+
+	public function saveMetaData(){
+		$this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$menuId = $this->input->post("menuId");
+		$metadata = $this->input->post("htmlContent");
+		$arr = array("metadata" => $metadata);
+		$where = array("menuID" => $menuId);
+		$iscreated = $this->CommonModel->updateMasterDetails('menu_master', $arr, $where);
+		
+			if (!$iscreated) {
+				$status['msg'] = $this->systemmsg->getErrorCode(998);
+				$status['statusCode'] = 998;
+				$status['data'] = array();
+				$status['flag'] = 'F';
+				$this->response->output($status, 200);
+			} else {
+				$status['msg'] = $this->systemmsg->getSucessCode(400);
+				$status['statusCode'] = 400;
+				$status['data'] = array();
+				$status['flag'] = 'S';
+				$this->response->output($status, 200);
+			}
+		}
 }

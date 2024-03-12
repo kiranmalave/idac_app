@@ -114,7 +114,6 @@ define([
       var menusingleview = new readFilesView({ loadFrom: "addpage", loadController: this });
     },
     updateOtherDetails: function (e) {
-
       var valuetxt = $(e.currentTarget).val();
       var toID = $(e.currentTarget).attr("id");
       var newdetails = [];
@@ -128,12 +127,8 @@ define([
       $.each(setvalues, function (key, value) {
         var modval = selfobj.model.get(value);
         if (modval != null) {
-          console.log(setvalues);
-
           var modeVal = modval.split(",");
-
         } else { var modeVal = {}; }
-
         $(".item-container li." + value).each(function () {
           var currentval = $(this).attr("data-value");
           var selecterobj = $(this);
@@ -143,7 +138,6 @@ define([
             }
           });
         });
-
       });
       setTimeout(function () {
         if (e != undefined && e.type == "click") {
