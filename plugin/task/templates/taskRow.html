@@ -6,83 +6,96 @@
   cssClass="#ff5858" ; } else if (dueDate==currentDate){ cssClass="#fff8e2" ; } }else{ cssClass="#7acf54" ; } %>
 
 
-  <tr class="even pointer">
+  <tr class="even pointer ">
     <td class="a-center">
       <div class="listCheckbox">
-        <input id="cAll_<%= taskDetails.attributes.task_id %>" class="memberlistcheck chk-col-amber" data-task_id="<%= taskDetails.attributes.task_id %>" type="checkbox" />
+        <input id="cAll_<%= taskDetails.attributes.task_id %>" class="memberlistcheck chk-col-amber"
+          data-task_id="<%= taskDetails.attributes.task_id %>" type="checkbox" />
         <label for="cAll_<%= taskDetails.attributes.task_id %>">&nbsp;</label>
       </div>
     </td>
-    <td class="">
+    <!-- <td class="" style="padding-left: 22px !important; padding-top: 6px !important;">
       <%=taskDetails.attributes.task_id%>
-    </td>
-    <td class="loadview textwrap taskOverFlow" data-task_id="<%=taskDetails.attributes.task_id%>"
-      data-view="singletaskData" style="width:13%">
-      <div class="nametooltip">
-        <p class="mailtruncate">
+    </td> -->
+    <!-- <td class="" style="padding-left: 22px !important; padding-top: 6px !important;">
+      <span class="taskPriorityColor" style="background: <%=cssClass%>"></span>
+    </td> -->
+    <!-- <td class="loadview textwrap taskOverFlow eq-width" data-task_id="<%=taskDetails.attributes.task_id%>"
+      data-view="singletaskData" style="width:22% " >
+      <div class="" style="padding-left: 22px !important; padding-top: 6px !important;">
+        <p class="truncate-ellipsis">
           <a href="javascript:;">
             <%=taskDetails.attributes.subject%>
           </a>
         </p>
-        <span class="tooltiptxt">
-          <a href="javascript:;" style="z-index: 10; color: white">
-            <%=taskDetails.attributes.subject%>
-          </a>
-        </span>
       </div>
-    </td>
-    <td class="">
-      <div class="nametooltip">
-        <p class="mailtruncate">
-          <%=taskDetails.attributes.name%>
-        </p>
-        <span class="tooltiptxt">
-          <%=taskDetails.attributes.name%>
-        </span>
-    </td>
-    <td class="">
+    </td> -->
+
+    <!-- <td class="" style="padding-left: 22px !important; padding-top: 6px !important;">
+      <%=taskDetails.attributes.name%>
+    </td> -->
+
+    <!-- <td class="" style="padding-left: 22px !important; padding-top: 6px !important;">
       <span <%if(taskDetails.attributes.priority_color != ""){%>style="background: <%=taskDetails.attributes.priority_color%>; color:white;  padding:4px 10px; "<%}%>>
         <%=taskDetails.attributes.priority_slug%>
       </span>
-    </td>
-    <td class="">
-      <span class="taskPriorityColor" style="background: <%=cssClass%>"></span>
-    </td>
-    <td class="">
-      <span <%if(taskDetails.attributes.status_color != "" && taskDetails.attributes.status_color != null){%>style="background: <%=taskDetails.attributes.status_color%>; color:white;  padding:4px 10px; "<%}%>>
+    </td> -->
+
+    <!-- <td class="" style="padding-left: 22px !important; padding-top: 6px !important;">
+      <span <%if(taskDetails.attributes.status_color != ""){%>style="background: <%=taskDetails.attributes.status_color%>; color:white;  padding:4px 10px; "<%}%>>
         <%=taskDetails.attributes.status_slug%>
       </span>
-    </td>
+    </td> -->
 
-    <td class="">
+    <!-- <td class="" style="padding-left: 22px !important; padding-top: 6px !important;">
       <%=taskDetails.attributes.due_date%>
-    </td>
+    </td> -->
 
     <% _.each(arrangedColumnList, function(column) { %>
-      <td class="">
-        <div class="nametooltip description">
-          <!-- <p class="mailtruncate"> -->
+      <% if(column.column_name == 'subject') { %>
+        column_name : <%=column.column_name%>
+        <td class="loadview textwrap taskOverFlow eq-width" data-task_id="<%=taskDetails.attributes.task_id%>"
+          data-view="singletaskData" style="width:22% " >
+          <div class="" style="padding-left: 22px !important; padding-top: 6px !important;">
+            <p class="truncate-ellipsis">
+              <a href="javascript:;">
+                <%=taskDetails.attributes.subject%>
+              </a>
+            </p>
+          </div>
+        </td>
+      <% } else if(column.column_name == 'priority_slug') { %>
+        <td class="" style="padding-left: 22px !important; padding-top: 6px !important;">
+          <span <%if(taskDetails.attributes.priority_color != ""){%>style="background: <%=taskDetails.attributes.priority_color%>; color:white;  padding:4px 10px; "<%}%>>
+            <%=taskDetails.attributes.priority_slug%>
+          </span>
+        </td>
+      <% } else if(column.column_name == 'status_slug') { %>
+        <td class="" style="padding-left: 22px !important; padding-top: 6px !important;">
+          <span <%if(taskDetails.attributes.status_color != ""){%>style="background: <%=taskDetails.attributes.status_color%>; color:white;  padding:4px 10px; "<%}%>>
+            <%=taskDetails.attributes.status_slug%>
+          </span>
+        </td>
+      <% } else if(column.column_name == 'task_progress') { %>
+        <td class="" style="padding-left: 22px !important; padding-top: 6px !important;">
+          <span class="taskPriorityColor" style="background: <%=cssClass%>"></span>
+        </td>
+      <% } else { %>
+      <td class=""style="padding-left: 22px !important; padding-top: 6px !important;" >
+        <div class=" description">
           <% if (column.linkedWith !="" && column.linkedWith !=null && column.linkedWith !="undefined" ) { %>
             <%= taskDetails.attributes["" + column.linkedWith + "_" + column.column_name] %>
-              <% } else { %>
-                <%= taskDetails.attributes["" + column.column_name] %>
-                  <% } %>
-                    <!-- </p> -->
-                    <span class="tooltiptxt">
-                      <% if (column.linkedWith !="" && column.linkedWith !=null && column.linkedWith !="undefined" ) {
-                        %>
-                        <%= taskDetails.attributes["" + column.linkedWith + "_" + column.column_name] %>
-                          <% } else { %>
-                            <%= taskDetails.attributes["" + column.column_name]%>
-                              <% } %>
-                    </span>
+          <% } else { %>
+            <%= taskDetails.attributes["" + column.column_name] %>
+          <% } %>
         </div>
       </td>
+      <% } %>
       <% }); %>
-        <td>
-          <button type="button" class="ws-btn-default loadview" data-task_id="<%=taskDetails.attributes.task_id%>"
-            data-view="singletaskData" data-toggle="tooltip" data-placement="top" title="Edit">
-            <i class="material-icons">mode_edit</i>
-          </button>
-        </td>
+      <td>
+        <button type="button" class="ws-btn-default loadview" data-task_id="<%=taskDetails.attributes.task_id%>"
+          data-view="singletaskData" data-toggle="tooltip" data-placement="top" title="Edit" style="  margin-left: 20px;">
+          <i class="material-icons">mode_edit</i>
+        </button>
+      </td>
   </tr>

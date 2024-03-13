@@ -4,29 +4,23 @@ define([
     'backbone',
     'validate',
     'datepickerBT',
-    '../../dynamicForm/collections/dynamicFormDataCollection',
-    '../../dynamicForm/collections/dynamicFormCollection',
     '../../dynamicForm/collections/dynamicStdFieldsCollection',
     '../../menu/models/singleMenuModel',
     'text!../templates/configureColumnsTemp.html',
-  ], function ($, _, Backbone, validate, datepickerBT,dynamicFormData,dynamicFormCollection,dynamicStdFieldsCol,singleMenuModel,configureColumnsTemp) {
+  ], function ($, _, Backbone, validate, datepickerBT,dynamicStdFieldsCol,singleMenuModel,configureColumnsTemp) {
 
     var configureColumnsView = Backbone.View.extend({
         parentObj:null,
         initialize: function (options) {
             var selfobj = this;
-            this.collectedData = [];
             this.filteredList = [];
             this.menuId = options.menuId;
             this.parentObj = options.ViewObj;
             this.stdColumn = options.stdColumn;
             this.arrangedColumnList = [];
             $(".column-loader").show();
-            this.dynamicFormListt = new dynamicFormCollection();
             this.dynamicStdFieldsList = new dynamicStdFieldsCol();
-            this.collection = new dynamicFormData();
             this.menuList = new singleMenuModel();
-            selfobj.getModuleData();
             selfobj.getMenuList();
             selfobj.render();
         },
@@ -43,96 +37,24 @@ define([
             },
             error: selfobj.onErrorHandler
             }).done(function (result) {
+                // console.log("getMenuList....",result);
                 if (result.statusCode == 994) {
                     app_router.navigate("logout", { trigger: true });
                 }
                 if(result.data[0] != undefined){
                     selfobj.tableName = result.data[0].table_name;
-                
                 }
-                if(selfobj.dynamicStdFieldsList && selfobj.dynamicStdFieldsList != undefined){
-                    selfobj.dynamicStdFieldsList.fetch({
-                    headers: {
-                        'contentType': 'application/x-www-form-urlencoded',
-                        'SadminID': $.cookie('authid'),
-                        'token': $.cookie('_bb_key'),
-                        'Accept': 'application/json'
-                    },
-                    error: selfobj.onErrorHandler,
-                    type: 'post',
-                    data: { "table": "ab_" + selfobj.tableName }
-                    }).done(function (res) {
-                    if(selfobj.collectedData.data){
-                        const collectedDataFields = selfobj.collectedData.data.map(item => item.column_name);
-                        const filteredDynamicStdFieldsList = selfobj.dynamicStdFieldsList.filter(model => {
-                        const field = model.attributes.Field;
-                        return !collectedDataFields.includes(field);
-                        });
-                        var filteredList = filteredDynamicStdFieldsList.filter(item => {
-                        if(selfobj.stdColumn){
-                            const fieldInStdColumn = selfobj.stdColumn.includes(item.attributes.Field);
-                            return !fieldInStdColumn;
-                        }
-                        });
-
-                        filteredList.forEach(function(data) {
-                            const newField = {
-                            fieldType : data.attributes.Type, 
-                            fieldLabel: formatFieldLabel(data.attributes.Field),
-                            column_name: data.attributes.Field, 
-                            };
                 
-                            function formatFieldLabel(label) {
-                            return label.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
-                            }
-                            selfobj.filteredList.push(newField);
-                        });
-                    }
-                    if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-                    selfobj.render();
-                    $(".column-loader").hide();
-                    });
-                }
-            });
-        },
+                /********/
 
-        getModuleData: function(event){
-            var selfobj = this;
-            this.collection.fetch({
-            headers: {
-                'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-            }, error: selfobj.onErrorHandler, type: 'post', data: { "pluginId": this.menuId }
-            }).done(function (res) {
-                selfobj.collectedData = res;
-                if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-            
-                if (res.metadata && res.metadata != undefined && res.metadata.trim() !== '') {
-                    selfobj.metadata  = JSON.parse(res.metadata);
+                if (result.data[0].metadata && result.data[0].metadata != undefined && result.data[0].metadata.trim() !== '') {
+                    selfobj.metadata  = JSON.parse(result.data[0].metadata);
                 } 
-                if (res.c_metadata && res.c_metadata != undefined && res.c_metadata.trim() !== '') {
-                    selfobj.c_metadata  = JSON.parse(res.c_metadata);
+                if (result.data[0].c_metadata && result.data[0].c_metadata != undefined && result.data[0].c_metadata.trim() !== '') {
+                    selfobj.c_metadata  = JSON.parse(result.data[0].c_metadata);
                     selfobj.arrangedColumnList = selfobj.c_metadata;
                 }
-                if (res.metadata && res.metadata != undefined) {
-                // if (res.metadata && res.metadata != undefined && res.c_metadata && res.c_metadata != undefined) {
-                    // for (const rowKey in selfobj.metadata) {
-                    //   const row = selfobj.metadata[rowKey];
-                    //   for (const colKey in row) {
-                    //     const column = row[colKey];
-                    //     if (column.fieldID) {
-                    //       const cMetadataItem = selfobj.c_metadata.find(item => item.fieldID == column.fieldID);
-                    //       if (cMetadataItem) {
-                    //         Object.assign(cMetadataItem, column);
-                    //       }
-                    //     }
-                    //   }
-                    // }
-                    // selfobj.c_metadata = selfobj.c_metadata.filter(item => {
-                    //   return Object.values(selfobj.metadata).some(row => {
-                    //     return Object.values(row).some(col => col.fieldID == item.fieldID);
-                    //   });
-                    // });
-                    // selfobj.arrangedColumnList = selfobj.c_metadata;
+                if (result.data[0].metadata && result.data[0].metadata != undefined) {
                     var metadatas = selfobj.metadata;
                     if(metadatas != undefined){
                         const flatArray = Object.values(metadatas).flatMap(row => {
@@ -151,7 +73,56 @@ define([
                         selfobj.customColumnList = flatArray;
                     }
                 }
-                selfobj.render();
+
+                /********/
+
+                if(selfobj.dynamicStdFieldsList && selfobj.dynamicStdFieldsList != undefined){
+                    selfobj.dynamicStdFieldsList.fetch({
+                    headers: {
+                        'contentType': 'application/x-www-form-urlencoded',
+                        'SadminID': $.cookie('authid'),
+                        'token': $.cookie('_bb_key'),
+                        'Accept': 'application/json'
+                    },
+                    error: selfobj.onErrorHandler,
+                    type: 'post',
+                    data: { "table": "ab_" + selfobj.tableName }
+                    }).done(function (res) {
+                        // console.log("dynamicStdFieldsList....",res);
+                        // console.log("result.dynamicFields....", result.data.dynamicFields);
+                    if(result.data.dynamicFields){
+                        const collectedDataFields = result.data.dynamicFields.map(item => item.column_name);
+                        // console.log("collectedDataFields....",collectedDataFields);
+                        const filteredDynamicStdFieldsList = selfobj.dynamicStdFieldsList.filter(model => {
+                        const field = model.attributes.Field;
+                        return !collectedDataFields.includes(field);
+                        });
+                        // console.log("filteredDynamicStdFieldsList....",filteredDynamicStdFieldsList);
+                        // var filteredList = filteredDynamicStdFieldsList.filter(item => {
+                        // if(selfobj.stdColumn){
+                        //     const fieldInStdColumn = selfobj.stdColumn.includes(item.attributes.Field);
+                        //     return !fieldInStdColumn;
+                        // }
+                        // });
+                        // console.log("filteredList....",filteredList);
+                        filteredDynamicStdFieldsList.forEach(function(data) {
+                            const newField = {
+                            fieldType : data.attributes.Type, 
+                            fieldLabel: formatFieldLabel(data.attributes.Field),
+                            column_name: data.attributes.Field, 
+                            };
+                
+                            function formatFieldLabel(label) {
+                            return label.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+                            }
+                            selfobj.filteredList.push(newField);
+                        });
+                    }
+                    if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+                    selfobj.render();
+                    $(".column-loader").hide();
+                    });
+                }
             });
         },
 
