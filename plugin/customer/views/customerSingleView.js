@@ -180,10 +180,12 @@ define([
       }
       var newdetails = [];
       newdetails["" + toName] = valuetxt;
+      
       this.model.set(newdetails);
       if (this.model.get(toName) && Array.isArray(this.model.get(toName))) {
         this.model.set(toName, this.model.get(toName).join(","));
       }
+      console.log(this.model);
     },
 
     loadFile: function(e){

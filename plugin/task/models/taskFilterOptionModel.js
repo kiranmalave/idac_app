@@ -19,7 +19,7 @@ define([
       assignee: null,
       created_by: null,
       status: 'Active',
-      orderBy: null,
+      orderBy: "t.created_by",
       order: null,
     }
   });

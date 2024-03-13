@@ -20,7 +20,11 @@
               </div>
             </div>
             <% } %><br />
-              <input type="file" multiple class="btn btn-default btn__action" id="fileupload" />
+            <div class="col-md-12 ws-dragbox taskAttachDragBox">
+              <div class="ws-assignee-column">
+                 <input type="file" multiple class="btn btn-default btn__action" id="fileupload" />
+              </div>
+            </div>
         </div>
       </div>
 
@@ -56,10 +60,13 @@
                             <div class="thumbnail">
                               <div class="centered">
                                 <% let ff=model.attributes.media_key; let fName=ff.split("."); if (-1<$.inArray(
-                                  fName[2], [ 'mp4' ,'mov','avi','3gp' ] )) fName[2]='gif' ; %>
-                                  <img class="img-fluid fileImage img-thumbnail"
-                                    src="<%=pagemodel.fPath%>/<%=pagemodel.folderName %>/<%=fName[0]+'.'+fName[1]+'_tn.'+fName[2] %>"
+                                  fName[1], [ 'mp4' ,'mov','avi','3gp','pdf' ] )){ %>
+                                    <%=fName[1]%>
+                                    <%}else {  %>
+                                      <img class="img-fluid fileImage img-thumbnail"
+                                    src="<%=pagemodel.fPath%>/<%=pagemodel.folderName %>/<%=model.attributes.media_key%>"
                                     alt="">
+                                      <%} %>
                               </div>
                             </div>
                         </div>

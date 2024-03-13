@@ -14,6 +14,7 @@ define([
         folderName:"",
         fPath:UPLOADS,
         order:'ASC',
+        cmp_type:null,
     }
   });
   return pagesMenuMasterFilterOptionModel;

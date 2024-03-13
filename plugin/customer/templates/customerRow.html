@@ -1,158 +1,306 @@
 <tr class="even pointer bg-">
-  <%if(menuName=="customer" ){%>
   <td class="a-center">
     <div class="listCheckbox">
       <input id="cAll_<%= customerDetails.attributes.customer_id %>" class="memberlistcheck chk-col-amber" data-customer_id="<%= customerDetails.attributes.customer_id %>" type="checkbox">
       <label for="cAll_<%= customerDetails.attributes.customer_id %>">&nbsp;</label>
     </div>
   </td>
-  <td>
-    <div class="nametooltip centerAline">
-      <a target="_blank" href="#customerDashboard/<%= customerDetails.attributes.customer_id %>"><u><%=customerDetails.attributes.name%></u> <i class="material-icons">open_in_new</i></a>
+
+  <!-- <td class="" style="padding-left: 22px !important; padding-top: 6px !important;">
+    <div class="nametooltip">
+      <a target="_blank" href="#customerDashboard/<%= customerDetails.attributes.customer_id %>"><u> <%=customerDetails.attributes.name%> </u> <i class="material-icons">open_in_new</i></a>
+      <span class="tooltiptxt"><%=customerDetails.attributes.name%></span>
     </div>
     <div class="CustomerHoverButton">
-      <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-      <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip" data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
-      <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip" data-placement="top" title="Mail"> <i class="material-icons">mail</i> </button>
-      <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip" data-placement="top" title="History"> <i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%> </button>
-      <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip" data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
+      <button type="button" class="ws-btn-default loadview"
+        data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData"
+        data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i>
+      </button>
+      <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+        data-customer_id="<%=customerDetails.attributes.customer_id%>"
+        data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip"
+        data-placement="top" title="Note">
+        <i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%>
+      </button>
+      <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+        data-customer_id="<%=customerDetails.attributes.customer_id%>"
+        data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip"
+        data-placement="top" title="Mail">
+        <i class="material-icons">mail</i>
+      </button>
+      <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+        data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip"
+        data-placement="top" title="History">
+        <i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%>
+      </button>
+      <button type="button" class="ws-btn-default loadview"
+        data-customer_id="<%=customerDetails.attributes.customer_id%>"
+        data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip"
+        data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
+      <button type="button" class="ws-btn-default loadview"
+        data-customer_id="<%=customerDetails.attributes.customer_id%>"
+        data-email="<%=customerDetails.attributes.email%>" data-first_name="<%=customerDetails.attributes.name%>"
+        data-view="appointment" data-toggle="tooltip" data-placement="top" title="Appointment"><i
+          class="material-icons">date_range</i></button>
     </div>
-  </td>
-  <td>
-    <div class="nametooltip">
-      <p class="loadview mailtruncate" data-customer_id="<%=customerDetails.attributes.customer_id%>"
-       data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" style="cursor: pointer;">
-       <%=customerDetails.attributes.email%></p>
+  </td> -->
+    <!-- <td>
+      <div class="nametooltip">
+         <p class="loadview mailtruncate" data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" style="cursor: pointer;">
+          <%=customerDetails.attributes.email%></p>
 
-      <span class="loadview tooltiptxt" data-customer_id="<%=customerDetails.attributes.customer_id%>"
-       data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" style="cursor: pointer;">
-       <%=customerDetails.attributes.email%> </span>
-   </div>
-  <div class="CustomerHoverButton">
-    <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-    <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip" data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
-    <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip" data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
-    <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip" data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
-    <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip" data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
-  </div>
-
-  </td>
-  <td>
+         <span class="loadview tooltiptxt" data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" style="cursor: pointer;">
+          <%=customerDetails.attributes.email%> </span>
+      </div>
+      <div class="CustomerHoverButton">
+        <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-view="singleCustomerData" data-toggle="tooltip" data-placement="top" title="Edit"><i
+            class="material-icons">mode_edit</i></button>
+        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip" data-placement="top"
+          title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
+        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip" data-placement="top"
+          title="Mail"><i class="material-icons">mail</i></button>
+        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip"
+          data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
+        <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip" data-placement="top"
+          title="Task"><i class="material-icons">business_center</i></button>
+        <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-email="<%=customerDetails.attributes.email%>" data-first_name="<%=customerDetails.attributes.name%>"
+          data-view="appointment" data-toggle="tooltip" data-placement="top" title="Appointment"><i
+            class="material-icons">date_range</i></button>
+      </div>
+    </td> -->
+  <!-- <td>
     <%=customerDetails.attributes.mobile_no%>
       <div class="CustomerHoverButton">
-        <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip" data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
-        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip" data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
-        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip" data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
-        <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip" data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
+        <button type="button" class="ws-btn-default loadview"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData"
+          data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip"
+          data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
+        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip"
+          data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
+        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip"
+          data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
+        <button type="button" class="ws-btn-default loadview"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip"
+          data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
+        <button type="button" class="ws-btn-default loadview"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-email="<%=customerDetails.attributes.email%>" data-first_name="<%=customerDetails.attributes.name%>"
+          data-view="appointment" data-toggle="tooltip" data-placement="top" title="Appointment"><i
+            class="material-icons">date_range</i></button>
+      
       </div>
 
   </td>
   <td>
     <%=customerDetails.attributes.record_type%>
       <div class="CustomerHoverButton">
-        <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip" data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
-        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip" data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
-        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip" data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
-        <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip" data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
+        <button type="button" class="ws-btn-default loadview"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData"
+          data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip"
+          data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
+        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip"
+          data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
+        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip"
+          data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
+        <button type="button" class="ws-btn-default loadview"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip"
+          data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
+        <button type="button" class="ws-btn-default loadview"
+          data-customer_id="<%=customerDetails.attributes.customer_id%>"
+          data-email="<%=customerDetails.attributes.email%>" data-first_name="<%=customerDetails.attributes.name%>"
+          data-view="appointment" data-toggle="tooltip" data-placement="top" title="Appointment"><i
+            class="material-icons">date_range</i></button>
+      
       </div>
-  </td>
-  <td>
-    <div class="dropdown ws-btn-default">
-      <button class=" ws-btn-default loadview dropdown-toggle  " type="button" id="dropdownMenuButton"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="material-icons">more_vert</i>
-      </button>
-      <div class="dropdown-menu ws-select actionDropDrown" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>"
-          data-view="singleCustomerData">Edit</a>
-        <a class="dropdown-item" href="#projectpage/<%= customerDetails.attributes.customer_id %>">Project</a>
-        <a class="dropdown-item" href="#proposalpage/<%= customerDetails.attributes.customer_id %>">Proposal</a>
-      </div>
-    </div>
-    <% if(customerDetails.attributes.type=="lead" ){%>
-      <button type="button" class="btn bg-indigo markCust" data-id="<%=customerDetails.attributes.customer_id%>" style="margin-left:15px; margin-top:3px">Mark as Customer</button>
-    <%}%>
-  </td>
-  <%}else if(menuName=="leads"){%>
-    <td class="a-center">
-      <div class="listCheckbox">
-        <input id="cAll_<%= customerDetails.attributes.customer_id %>" class="memberlistcheck chk-col-amber" data-customer_id="<%= customerDetails.attributes.customer_id %>" type="checkbox">
-        <label for="cAll_<%= customerDetails.attributes.customer_id %>">&nbsp;</label>
-      </div>
-    </td>
+  </td> -->
+  <!-- <%if(menuName=="leads" ){%>
     <td>
-      <div class="nametooltip">
-        <a target="_blank" href="#customerDashboard/<%= customerDetails.attributes.customer_id %>"><u> <%=customerDetails.attributes.name%> </u> <i class="material-icons">open_in_new</i></a>
-        <span class="tooltiptxt">
-          <%=customerDetails.attributes.name%>
-        </span>
-      </div>
-      <div class="CustomerHoverButton">
-        <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip" data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
-        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip" data-placement="top" title="Mail">  <i class="material-icons">mail</i> </button>
-        <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip" data-placement="top" title="History"> <i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%> </button>
-        <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip" data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
-      </div>
-    </td>
-    <td>
-      <div class="nametooltip">
-        <p class="loadview mailtruncate" data-customer_id="<%=customerDetails.attributes.customer_id%>"
-         data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" style="cursor: pointer;">
-         <%=customerDetails.attributes.email%></p>
+      <%=customerDetails.attributes.stageName%>
+        <div class="CustomerHoverButton">
+          <button type="button" class="ws-btn-default loadview"
+            data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData"
+            data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+          <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+            data-customer_id="<%=customerDetails.attributes.customer_id%>"
+            data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip"
+            data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
 
-        <span class="loadview tooltiptxt" data-customer_id="<%=customerDetails.attributes.customer_id%>"
-         data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" style="cursor: pointer;">
-         <%=customerDetails.attributes.email%> </span>
-     </div>
-    </span>
-    <div class="CustomerHoverButton">
-      <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-      <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip" data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
-      <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip" data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
-      <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip" data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
-      <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip" data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
-    </div>
-  
-    </td>
-    <td>
-      <%=customerDetails.attributes.mobile_no%>
-        <div class="CustomerHoverButton">
-          <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-          <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip" data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
-          <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip" data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
-          <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip" data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
-          <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip" data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
+          <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+            data-customer_id="<%=customerDetails.attributes.customer_id%>"
+            data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip"
+            data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
+
+          <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+            data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip"
+            data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
+          <button type="button" class="ws-btn-default loadview"
+            data-customer_id="<%=customerDetails.attributes.customer_id%>"
+            data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip"
+            data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
+          <button type="button" class="ws-btn-default loadview"
+            data-customer_id="<%=customerDetails.attributes.customer_id%>"
+            data-email="<%=customerDetails.attributes.email%>" data-first_name="<%=customerDetails.attributes.name%>"
+            data-view="appointment" data-toggle="tooltip" data-placement="top" title="Appointment"><i
+              class="material-icons">date_range</i></button>
+       
         </div>
-  
+
     </td>
-    <td>
-      <%=customerDetails.attributes.record_type%>
-        <div class="CustomerHoverButton">
-          <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-          <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip" data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
-          <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip" data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
-          <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip" data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
-          <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip" data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
-        </div>
-    </td>
-    <td>
-      <%=customerDetails.attributes.lead_stage%>
-        <div class="CustomerHoverButton">
-          <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-          <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip" data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
-          <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip" data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
-          <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip" data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
-          <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip" data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
-        </div>
-    </td>
-    <td>
-      <button type="button" class="ws-btn-default loadview" data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-      <% if(customerDetails.attributes.type=="lead" ){%>
-        <button type="button" class="btn bg-indigo markCust" data-id="<%=customerDetails.attributes.customer_id%>" style="margin-left:15px; margin-top:3px">Mark as Customer</button>
-      <%}%>
-    </td>
-  <%}%>
+    <%}%> -->
+      <% _.each(arrangedColumnList, function(column) { %>
+        <% if(column.column_name == "name" ) { %>
+          <td class="" style="padding-left: 22px !important; padding-top: 6px !important;">
+            <div class="nametooltip">
+              <a target="_blank" href="#customerDashboard/<%= customerDetails.attributes.customer_id %>"><u> <%=customerDetails.attributes.name%> </u> <i class="material-icons">open_in_new</i></a>
+              <span class="tooltiptxt"><%=customerDetails.attributes.name%></span>
+            </div>
+            <div class="CustomerHoverButton">
+              <button type="button" class="ws-btn-default loadview"
+                data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData"
+                data-toggle="tooltip" data-placement="top" title="Edit"><i
+                  class="material-icons">mode_edit</i></button>
+              <button type="button" class="ws-btn-default loadview"
+                data-first_name="<%=customerDetails.attributes.name%>"
+                data-customer_id="<%=customerDetails.attributes.customer_id%>"
+                data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip"
+                data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
+              <button type="button" class="ws-btn-default loadview"
+                data-first_name="<%=customerDetails.attributes.name%>"
+                data-customer_id="<%=customerDetails.attributes.customer_id%>"
+                data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip"
+                data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
+              <button type="button" class="ws-btn-default loadview"
+                data-first_name="<%=customerDetails.attributes.name%>"
+                data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history"
+                data-toggle="tooltip" data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
+              <button type="button" class="ws-btn-default loadview"
+                data-customer_id="<%=customerDetails.attributes.customer_id%>"
+                data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip"
+                data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
+            </div>
+          </td>
+        <% } else if(column.column_name == "stages" ) { %>
+          <% if(menuName=="leads" ) { %>
+            <td>
+              <%=customerDetails.attributes.stages%>
+              <div class="CustomerHoverButton">
+                <button type="button" class="ws-btn-default loadview"
+                  data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData"
+                  data-toggle="tooltip" data-placement="top" title="Edit"><i
+                    class="material-icons">mode_edit</i></button>
+                <button type="button" class="ws-btn-default loadview"
+                  data-first_name="<%=customerDetails.attributes.name%>"
+                  data-customer_id="<%=customerDetails.attributes.customer_id%>"
+                  data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip"
+                  data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
+                <button type="button" class="ws-btn-default loadview"
+                  data-first_name="<%=customerDetails.attributes.name%>"
+                  data-customer_id="<%=customerDetails.attributes.customer_id%>"
+                  data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip"
+                  data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
+                <button type="button" class="ws-btn-default loadview"
+                  data-first_name="<%=customerDetails.attributes.name%>"
+                  data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history"
+                  data-toggle="tooltip" data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
+                <button type="button" class="ws-btn-default loadview"
+                  data-customer_id="<%=customerDetails.attributes.customer_id%>"
+                  data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip"
+                  data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
+              </div>
+            </td>
+          <% } %>
+        <% } else { %>
+          <td class="">
+            <% if(column.linkedWith !="" && column.linkedWith !=null && column.linkedWith !="undefined" ) { %>
+              <%=customerDetails.attributes[""+column.linkedWith+"_"+column.column_name]%>
+            <% }else { %>
+              <%=customerDetails.attributes[""+column.column_name]%>
+            <% } %>
+                <div class="CustomerHoverButton">
+                  <button type="button" class="ws-btn-default loadview"
+                    data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData"
+                    data-toggle="tooltip" data-placement="top" title="Edit"><i
+                      class="material-icons">mode_edit</i></button>
+                  <button type="button" class="ws-btn-default loadview"
+                    data-first_name="<%=customerDetails.attributes.name%>"
+                    data-customer_id="<%=customerDetails.attributes.customer_id%>"
+                    data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip"
+                    data-placement="top" title="Note"><i class="material-icons">assignment</i><%if(customerDetails.attributes.noteCount !=0 ){%><span><%=customerDetails.attributes.noteCount%></span><%}%></button>
+                  <button type="button" class="ws-btn-default loadview"
+                    data-first_name="<%=customerDetails.attributes.name%>"
+                    data-customer_id="<%=customerDetails.attributes.customer_id%>"
+                    data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip"
+                    data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
+                  <button type="button" class="ws-btn-default loadview"
+                    data-first_name="<%=customerDetails.attributes.name%>"
+                    data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history"
+                    data-toggle="tooltip" data-placement="top" title="History"><i class="material-icons">history</i><%if(customerDetails.attributes.upcomingCount != 0){%><span><%=customerDetails.attributes.upcomingCount%></span><%}%></button>
+                  <button type="button" class="ws-btn-default loadview"
+                    data-customer_id="<%=customerDetails.attributes.customer_id%>"
+                    data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip"
+                    data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
+                  <!-- <% if(customerDetails.attributes.type=="lead" ){%>
+                    <button type="button" class="btn bg-indigo markCust"
+                      data-id="<%=customerDetails.attributes.customer_id%>"
+                      style="margin-left:15px; margin-top:3px">Mark as Customer</button>
+                    <%}%> -->
+                </div>
+          </td>
+          <% } %>
+        <% }); %>
+
+          <td>
+            <button type="button" class="ws-btn-default loadview"
+              data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData"
+              data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
+              <% if(customerDetails.attributes.type=="lead" ){%>
+                <button type="button" class="btn bg-indigo markCust" data-id="<%=customerDetails.attributes.customer_id%>"
+                  style="margin-left:15px; margin-top:3px">Mark as Customer</button>
+                <%}%>
+            <!-- <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+              data-customer_id="<%=customerDetails.attributes.customer_id%>"
+              data-custNote="<%=customerDetails.attributes.note%>" data-view="notes" data-toggle="tooltip"
+              data-placement="top" title="Note"><i class="material-icons">assignment</i></button>
+            <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+              data-customer_id="<%=customerDetails.attributes.customer_id%>"
+              data-custMail="<%=customerDetails.attributes.email%>" data-view="mail" data-toggle="tooltip"
+              data-placement="top" title="Mail"><i class="material-icons">mail</i></button>
+            <button type="button" class="ws-btn-default loadview" data-first_name="<%=customerDetails.attributes.name%>"
+              data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="history" data-toggle="tooltip"
+              data-placement="top" title="History"><i class="material-icons">history</i></button>
+            <button type="button" class="ws-btn-default loadview"
+              data-customer_id="<%=customerDetails.attributes.customer_id%>"
+              data-first_name="<%=customerDetails.attributes.name%>" data-view="task" data-toggle="tooltip"
+              data-placement="top" title="Task"><i class="material-icons">business_center</i></button>
+            <button type="button" class="ws-btn-default loadview"
+              data-customer_id="<%=customerDetails.attributes.customer_id%>"
+              data-email="<%=customerDetails.attributes.email%>" data-first_name="<%=customerDetails.attributes.name%>"
+              data-view="appointment" data-toggle="tooltip" data-placement="top" title="Appointment"><i
+                class="material-icons">date_range</i></button> -->
+            <!-- <a class="ws-btn-default loadview" href="#pageCustomFields/<%=customerDetails.attributes.customerID%>"><i class="material-icons">extension</i></a>  -->
+          </td>
 </tr>
