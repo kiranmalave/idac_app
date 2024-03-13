@@ -6,8 +6,8 @@
       </div>
     </td>
     <!-- <td><%=proposalDetails.attributes.proposal_id%></td> -->
-    <td class="loadview" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData"><a href="javascript:;"><%=proposalDetails.attributes.proposal_number%></a></td>
-    <td class="loadview" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData">
+    <td class="loadview cursor" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData"><%=proposalDetails.attributes.proposal_number%></td>
+    <td class="loadview cursor" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData">
       <div class="nametooltip">
         <p class="mailtruncate">
           <%=proposalDetails.attributes.name%>
@@ -17,8 +17,8 @@
         </span>
       </div>
     </td>
-    <td class="loadview" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData"><%=proposalDetails.attributes.custName%></td>
-    <td class="loadview" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData"><%=proposalDetails.attributes.project_name%></td>
+    <td class="loadview cursor" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData"><%=proposalDetails.attributes.custName%></td>
+    <td class="loadview cursor" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData"><%=proposalDetails.attributes.project_name%></td>
     <td>
       <div class="proposalActoinCol">
         <button type="button" class="ws-btn-default loadview" data-proposal_id="<%=proposalDetails.attributes.proposal_id%>" data-view="singleproposalData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>

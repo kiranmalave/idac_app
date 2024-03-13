@@ -9854,3 +9854,7 @@ label.form-label.taskDate.tasktop.fortask {
 a.editHover:hover span.material-symbols-outlined {
   color: #fff;
 }
+
+.cursor{
+  cursor: pointer;
+}
