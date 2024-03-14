@@ -639,7 +639,7 @@ class TaskMaster extends CI_Controller
 			$cat = $this->input->post("category_id");
 
 			$fieldData = $this->datatables->mapDynamicFeilds("task",$this->input->post());
-			
+			$taskDetails = array_merge($fieldData, $taskDetails);
 			if ($method == "PUT") {
 				$taskDetails['status'] = "active";
 				$taskDetails['created_by'] = $this->input->post('SadminID');
