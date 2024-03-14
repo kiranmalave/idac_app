@@ -481,7 +481,7 @@ class Proposal extends CI_Controller {
 		print_r($pdfFilePath);exit;
         //load mPDF library
         $this->load->library('MPDFCI');
-		$this->mpdfci->SetWatermarkImage($this->config->item( 'app_url' )."/images/idac_logo.svg",0.3,'F',array(17,50));
+		$this->mpdfci->SetWatermarkImage($this->config->item( 'app_url' )."/images/idac_logo.png",0.3,'F',array(17,50));
         $this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
  	    $this->mpdfci->WriteHTML($pdfFilePath);
        	$this->mpdfci->Output();  
