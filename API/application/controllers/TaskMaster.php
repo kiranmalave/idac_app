@@ -38,216 +38,6 @@ class TaskMaster extends CI_Controller
 	}
 
 
-	// public function gettaskDetails()
-	// {
-	// 	$this->access->checkTokenKey();
-	// 	$this->response->decodeRequest();
-	// 	$isAll = $this->input->post('getAll');
-	// 	$textSearch = $this->input->post('textSearch');
-	// 	$curPage = $this->input->post('curpage');
-	// 	$ITIID = $this->input->post('task_id');
-	// 	$textval = $this->input->post('textval');
-	// 	$orderBy = $this->input->post('orderBy');
-	// 	$order = $this->input->post('order');
-	// 	$statuscode = $this->input->post('status');
-	// 	$filterSName = $this->input->post('filterSName');
-	// 	$startDate = $this->input->post('fromDate');
-	// 	$endDate = $this->input->post('toDate');
-	// 	$startDate2 = $this->input->post('fromDate2');
-	// 	$endDate2 = $this->input->post('toDate2');
-	// 	$assignee = $this->input->post('assignee');
-	// 	$task_priority =$this->input->post('task_priority');
-	// 	$task_status = $this->input->post('task_status');
-	// 	$customer =$this->input->post('customer_id');
-	// 	$createdBy = $this->input->post('created_by');
-	// 	$due_date = $this->input->post('due_date');
-	// 	// print_r($createdBy);exit;
-
-	// 	$customOrder = "CASE
-	// 		WHEN DATE(t.due_date) = CURDATE() THEN 1
-	// 		WHEN DATE(t.due_date) = CURDATE() + INTERVAL 1 DAY THEN 2
-	// 		ELSE 3
-	// 	END";
-
-	// 	$config = array();
-	// 	if (!isset($orderBy) || empty($orderBy)) {
-	// 		$orderBy = $customOrder . ", subject"; // You can add your default sorting field here
-	// 		$order = "ASC"; // Change this to "DESC" if you want descending order
-	// 	} else {
-	// 		$orderBy = $customOrder . ", " . $orderBy;
-	// 	}
-	// 	$other = array("orderBy" => $orderBy, "order" => $order);
-
-	// 	$config = $this->config->item('pagination');
-	// 	$wherec = $join = array();
-	// 	if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
-	// 		$textSearch = trim($textSearch);
-	// 		$wherec["$textSearch like  "] = "'%" . $textval . "%'";
-	// 	}
-
-	// 	if (isset($statuscode) && !empty($statuscode)) {
-	// 		$statusStr = str_replace(",", '","', $statuscode);
-	// 		$wherec["t.status"] = 'IN ("' . $statusStr . '")';
-	// 	}
-		
-	// 	if (isset($assignee) && !empty($assignee)) {
-	// 		$assigneeString = str_replace(",", '","', $assignee);
-	// 		$wherec["assignee "] = 'IN ("' . $assigneeString . '")';
-	// 	}
-
-	// 	if (isset($task_priority) && !empty($task_priority)) {
-	// 		$task_priorityString = str_replace(",", '","', $task_priority);
-	// 		$wherec["task_priority"] = 'IN ("' . $task_priorityString . '")';
-	// 	}
-
-
-	// 	if(isset($task_status) && !empty($task_status)){
-	// 		$task_statusString = str_replace(",", '","', $task_status);
-	// 		$wherec["task_status"] = 'IN ("' . $task_statusString . '")';
-	// 	}
-
-	// 	if(isset($customer) && !empty($customer)){
-	// 		$customerString = str_replace(",", '","', $customer);
-	// 		$wherec["customer_id"] = 'IN ("' . $customerString . '")';
-	// 	}
-		
-	// 	if(isset($createdBy) && !empty($createdBy)){
-	// 		$createdByString = str_replace(",", '","', $createdBy);
-	// 		$wherec["t.created_by"] = 'IN ("' . $createdByString . '")';
-	// 	}
-
-	// 	if(isset($startDate) && !empty($startDate)){
-	// 		$sDate = date("Y-m-d",strtotime($startDate));
-	// 		$wherec["start_date >="] = "'".$sDate."'";
-	// 	}
-	// 	if (isset($endDate) && !empty($endDate)) {
-	// 		$eDate = date("Y-m-d", strtotime($endDate));
-	// 		$wherec["start_date <="] = "'" . $eDate . "'";
-	// 	}
-	
-	// 	if(isset($startDate2) && !empty($startDate2)){
-	// 		$sDate = date("Y-m-d",strtotime($startDate2));
-	// 		$wherec["due_date >="] = "'".$sDate."'";
-	// 	}
-	// 	if(isset($endDate2) && !empty($endDate2)){
-	// 		$eDate = date("Y-m-d",strtotime($endDate2));
-	// 		$wherec["due_date <="] = "'".$eDate."'";
-	// 	}
-
-	// 	if(isset($due_date) && !empty($due_date)){
-	// 		$eDate = date("Y-m-d",strtotime($due_date));
-	// 		$wherec["due_date ="] = "'".$eDate."'";
-	// 	}
-
-	// 	$adminID = $this->input->post('SadminID');
-
-	// 	$join1=array();
-	// 	$join1[0]['type'] ="LEFT JOIN";
-	// 	$join1[0]['table']="user_extra_details";
-	// 	$join1[0]['alias'] ="u";
-	// 	$join1[0]['key1'] ="adminID";
-	// 	$join1[0]['key2'] ="adminID";
-
-	// 	$selectC1="*";//,r.regionName
-	// 	$wherec1=array("t.adminID ="=>$adminID);
-	// 	$taskDetailsList = $this->CommonModel->GetMasterListDetails($selectC1,'admin',$wherec1,'','',$join1,$other1=array());
-		
-	// 	if($taskDetailsList[0]->roleID!=1){
-	// 		$wherec["assignee = "] = "'".$this->input->post('SadminID')."'";
-	// 	}
-
-	// 	$join=array();
-		
-	// 	$join[0]['type'] ="LEFT JOIN";
-	// 	$join[0]['table']="admin";
-	// 	$join[0]['alias'] ="a";
-	// 	$join[0]['key1'] ="assignee";
-	// 	$join[0]['key2'] ="adminID";
-
-	// 	$join[1]['type'] ="LEFT JOIN";
-	// 	$join[1]['table']="categories";
-	// 	$join[1]['alias'] ="c";
-	// 	$join[1]['key1'] ="task_status";
-	// 	$join[1]['key2'] ="category_id";
-
-	// 	$join[2]['type'] ="LEFT JOIN";
-	// 	$join[2]['table']="categories";
-	// 	$join[2]['alias'] ="ca";
-	// 	$join[2]['key1'] ="task_priority";
-	// 	$join[2]['key2'] ="category_id";
-
-	// 	$join[3]['type'] ="LEFT JOIN";
-	// 	$join[3]['table']="project";
-	// 	$join[3]['alias'] ="p";
-	// 	$join[3]['key1'] ="project_id";
-	// 	$join[3]['key2'] ="project_id";
-
-	// 	$config["base_url"] = base_url() . "taskDetails";
-	// 	$config["total_rows"] = $this->CommonModel->getCountByParameter('task_id', 'tasks', $wherec, $other);
-	// 	$config["uri_segment"] = 2;
-	// 	$this->pagination->initialize($config);
-	// 	if (isset($curPage) && !empty($curPage)) {
-	// 		$curPage = $curPage;
-	// 		$page = $curPage * $config["per_page"];
-	// 	} else {
-	// 		$curPage = 0;
-	// 		$page = 0;
-	// 	}
-
-	// 	$selectC = "t.*, c.categoryName AS status_slug, c.cat_color AS status_color, ca.categoryName AS priority_slug, ca.cat_color AS priority_color, a.name, p.project_name AS projectName, p.project_number AS projectNumb";
-
-	// 	if ($isAll == "Y") {
-	// 		$join = array();
-	// 		$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, '', '', $join, $other);
-	// 	} else {
-	// 		$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, $config["per_page"], $page, $join, $other);
-	// 	}
-		
-	// 	$status['data'] = $taskDetails;
-	// 	$status['paginginfo']["curPage"] = $curPage;
-	// 	if ($curPage <= 1)
-	// 		$status['paginginfo']["prevPage"] = 0;
-	// 	else
-	// 		$status['paginginfo']["prevPage"] = $curPage - 1;
-
-	// 	$status['paginginfo']["pageLimit"] = $config["per_page"];
-	// 	$status['paginginfo']["nextpage"] =  $curPage + 1;
-	// 	$status['paginginfo']["totalRecords"] =  $config["total_rows"];
-	// 	$status['paginginfo']["start"] =  $page;
-	// 	$status['paginginfo']["end"] =  $page + $config["per_page"];
-	// 	$status['loadstate'] = true;
-		
-	// 	if(empty($taskDetails)){
-	// 		if ($config["total_rows"] <= $status['paginginfo']["end"]) {
-	// 			$status['msg'] = $this->systemmsg->getErrorCode(227);
-	// 			$status['statusCode'] = 400;
-	// 			$status['flag'] = 'S';
-	// 			$status['loadstate'] = false;
-	// 			$this->response->output($status, 200);
-	// 		}
-	// 	}else{
-	// 		if ($config["total_rows"] <= $status['paginginfo']["end"]) {
-	// 			$status['msg'] = $this->systemmsg->getErrorCode(232);
-	// 			$status['statusCode'] = 400;
-	// 			$status['flag'] = 'S';
-	// 			$status['loadstate'] = false;
-	// 			$this->response->output($status, 200);
-	// 		}
-	// 	}
-		
-	// 	if ($taskDetails) {
-	// 		$status['msg'] = "sucess";
-	// 		$status['statusCode'] = 400;
-	// 		$status['flag'] = 'S';
-	// 		$this->response->output($status, 200);
-	// 	} else {
-	// 		$status['msg'] = $this->systemmsg->getErrorCode(227);
-	// 		$status['statusCode'] = 227;
-	// 		$status['flag'] = 'F';
-	// 		$this->response->output($status, 200);
-	// 	}
-	// }
-
 	public function gettaskDetails()
 	{
 		$this->access->checkTokenKey();
@@ -271,88 +61,7 @@ class TaskMaster extends CI_Controller
 		$customer =$this->input->post('customer_id');
 		$createdBy = $this->input->post('created_by');
 		$due_date = $this->input->post('due_date');
-		$recordType = $this->input->post('record_type');
 		// print_r($createdBy);exit;
-
-		$config = $this->config->item('pagination');
-		$this->menuID = $this->input->post('menuId');
-		$wherec = $join = array();
-		if($isAll !="Y"){
-			
-			$this->filters->menuID = $this->menuID;
-			$this->filters->getMenuData();
-			$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
-			$this->menuDetails = $this->filters->menuDetails;
-			
-			$menuId = $this->input->post('menuId');
-			$postData = $_POST;
-			unset($postData['fromDate']);
-			unset($postData['fromDate2']);
-			unset($postData['toDate']);
-			unset($postData['toDate2']);
-			$whereData = $this->filters->prepareFilterData($postData);
-			// print_r($whereData);exit;
-			$wherec = $whereData["wherec"];
-			$other = $whereData["other"];
-			$join = $whereData["join"];
-			$selectC = $whereData["select"];
-			// unset($wherec);
-			// create join for created by and modified data details
-			$jkey = (count($join)+1);
-			$join[$jkey]['type'] ="LEFT JOIN";
-			$join[$jkey]['table']="admin";
-			$join[$jkey]['alias'] ="ad";
-			$join[$jkey]['key1'] ="created_by";
-			$join[$jkey]['key2'] ="adminID";
-			$jkey = (count($join)+1);
-			$join[$jkey]['type'] ="LEFT JOIN";
-			$join[$jkey]['table']="admin";
-			$join[$jkey]['alias'] ="am";
-			$join[$jkey]['key1'] ="modified_by";
-			$join[$jkey]['key2'] ="adminID";
-
-			if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
-				$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
-				$columnNames = [
-					"customer_id" => ["table" => "customer", "alias" => "cs", "column" => "name", "key2" => "customer_id"],
-					"assignee" => ["table" => "admin", "alias" => "a", "column" => "name", "key2" => "adminID"],
-					"task_status" => ["table" => "categories", "alias" => "ca", "column" => "categoryName", "key2" => "category_id"],
-					"task_priority" => ["table" => "categories", "alias" => "cat", "column" => "categoryName", "key2" => "category_id"],
-					"task_type" => ["table" => "categories", "alias" => "ct", "column" => "categoryName", "key2" => "category_id"],
-				];
-			
-				foreach ($columnNames as $columnName => $columnData) {
-					if (in_array($columnName, $colData)) {
-						$jkey = count($join) + 1;
-						$join[$jkey]['type'] = "LEFT JOIN";
-						$join[$jkey]['table'] = $columnData["table"];
-						$join[$jkey]['alias'] = $columnData["alias"];
-						$join[$jkey]['key1'] = $columnName;
-						$join[$jkey]['key2'] = $columnData["key2"];
-						$columnNameShow = $columnData["column"];
-						$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
-					}
-				}
-				// Remove the leading comma if $selectC is not empty
-				$selectC = ltrim($selectC, ',');
-				// print($selectC);exit;
-			}
-
-			if($selectC != ""){
-				$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
-			}else{
-				$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
-			}
-		}
-		// $config = array();
-		if (!isset($orderBy) || empty($orderBy)) {
-			$orderBy = "name";
-			$order = "ASC";
-		}
-
-		$other["orderBy"] = $orderBy;
-		$other["order"]= $order;
-		// $other = array("orderBy"=>$orderBy,"order"=>$order);
 
 		$customOrder = "CASE
 			WHEN DATE(t.due_date) = CURDATE() THEN 1
@@ -360,56 +69,52 @@ class TaskMaster extends CI_Controller
 			ELSE 3
 		END";
 
-		// $config = array();
+		$config = array();
 		if (!isset($orderBy) || empty($orderBy)) {
 			$orderBy = $customOrder . ", subject"; // You can add your default sorting field here
 			$order = "ASC"; // Change this to "DESC" if you want descending order
 		} else {
 			$orderBy = $customOrder . ", " . $orderBy;
 		}
-		//$other = array("orderBy" => $orderBy, "order" => $order);
+		$other = array("orderBy" => $orderBy, "order" => $order);
 
 		$config = $this->config->item('pagination');
+		$wherec = $join = array();
+		if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
+			$textSearch = trim($textSearch);
+			$wherec["$textSearch like  "] = "'%" . $textval . "%'";
+		}
+
+		if (isset($statuscode) && !empty($statuscode)) {
+			$statusStr = str_replace(",", '","', $statuscode);
+			$wherec["t.status"] = 'IN ("' . $statusStr . '")';
+		}
 		
-		// if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
-		// 	$textSearch = trim($textSearch);
-		// 	$wherec["$textSearch like  "] = "'%" . $textval . "%'";
-		// }
+		if (isset($assignee) && !empty($assignee)) {
+			$assigneeString = str_replace(",", '","', $assignee);
+			$wherec["assignee "] = 'IN ("' . $assigneeString . '")';
+		}
 
-		// if(isset($recordType) && !empty ($recordType)){
-		// 	$TypeStr = str_replace(",",'","',$recordType);
-		// 	$wherec["record_type"] = 'IN ("'.$TypeStr.'")';
-		// }
+		if (isset($task_priority) && !empty($task_priority)) {
+			$task_priorityString = str_replace(",", '","', $task_priority);
+			$wherec["task_priority"] = 'IN ("' . $task_priorityString . '")';
+		}
 
-		// if (isset($statuscode) && !empty($statuscode)) {
-		// 	$statusStr = str_replace(",", '","', $statuscode);
-		// 	$wherec["status"] = 'IN ("' . $statusStr . '")';
-		// }
+
+		if(isset($task_status) && !empty($task_status)){
+			$task_statusString = str_replace(",", '","', $task_status);
+			$wherec["task_status"] = 'IN ("' . $task_statusString . '")';
+		}
+
+		if(isset($customer) && !empty($customer)){
+			$customerString = str_replace(",", '","', $customer);
+			$wherec["customer_id"] = 'IN ("' . $customerString . '")';
+		}
 		
-		// if (isset($assignee) && !empty($assignee)) {
-		// 	$assigneeString = str_replace(",", '","', $assignee);
-		// 	$wherec["assignee "] = 'IN ("' . $assigneeString . '")';
-		// }
-
-		// if (isset($task_priority) && !empty($task_priority)) {
-		// 	$task_priorityString = str_replace(",", '","', $task_priority);
-		// 	$wherec["task_priority"] = 'IN ("' . $task_priorityString . '")';
-		// }
-
-		// if(isset($task_status) && !empty($task_status)){
-		// 	$task_statusString = str_replace(",", '","', $task_status);
-		// 	$wherec["task_status"] = 'IN ("' . $task_statusString . '")';
-		// }
-
-		// if(isset($customer) && !empty($customer)){
-		// 	$customerString = str_replace(",", '","', $customer);
-		// 	$wherec["customer_id"] = 'IN ("' . $customerString . '")';
-		// }
-		
-		// if(isset($createdBy) && !empty($createdBy)){
-		// 	$createdByString = str_replace(",", '","', $createdBy);
-		// 	$wherec["created_by"] = 'IN ("' . $createdByString . '")';
-		// }
+		if(isset($createdBy) && !empty($createdBy)){
+			$createdByString = str_replace(",", '","', $createdBy);
+			$wherec["t.created_by"] = 'IN ("' . $createdByString . '")';
+		}
 
 		if(isset($startDate) && !empty($startDate)){
 			$sDate = date("Y-m-d",strtotime($startDate));
@@ -428,24 +133,13 @@ class TaskMaster extends CI_Controller
 			$eDate = date("Y-m-d",strtotime($endDate2));
 			$wherec["due_date <="] = "'".$eDate."'";
 		}
-		// $whereOR = array();
+
 		if(isset($due_date) && !empty($due_date)){
 			$eDate = date("Y-m-d",strtotime($due_date));
 			$wherec["due_date ="] = "'".$eDate."'";
-			// $whereOR["start_date <="] = "'".$eDate."'";
-			// $whereOR["due_date >="] = "'".$eDate."'";
 		}
 
-		// $other = array("orderBy" => $orderBy, "order" => $order, "whereOR" => $whereOR );
-		
 		$adminID = $this->input->post('SadminID');
-		if ($isAll == "Y") {
-			// $join = $wherec = array();
-			if (isset($statuscode) && !empty($statuscode)) {
-				$statusStr = str_replace(",", '","', $statuscode);
-				$wherec["t.status"] = 'IN ("' . $statusStr . '")';
-			}
-		}
 
 		$join1=array();
 		$join1[0]['type'] ="LEFT JOIN";
@@ -458,9 +152,35 @@ class TaskMaster extends CI_Controller
 		$wherec1=array("t.adminID ="=>$adminID);
 		$taskDetailsList = $this->CommonModel->GetMasterListDetails($selectC1,'admin',$wherec1,'','',$join1,$other1=array());
 		
-		if($taskDetailsList[0]->roleOfUser!=101){
+		if($taskDetailsList[0]->roleID!=1){
 			$wherec["assignee = "] = "'".$this->input->post('SadminID')."'";
 		}
+
+		$join=array();
+		
+		$join[0]['type'] ="LEFT JOIN";
+		$join[0]['table']="admin";
+		$join[0]['alias'] ="a";
+		$join[0]['key1'] ="assignee";
+		$join[0]['key2'] ="adminID";
+
+		$join[1]['type'] ="LEFT JOIN";
+		$join[1]['table']="categories";
+		$join[1]['alias'] ="c";
+		$join[1]['key1'] ="task_status";
+		$join[1]['key2'] ="category_id";
+
+		$join[2]['type'] ="LEFT JOIN";
+		$join[2]['table']="categories";
+		$join[2]['alias'] ="ca";
+		$join[2]['key1'] ="task_priority";
+		$join[2]['key2'] ="category_id";
+
+		$join[3]['type'] ="LEFT JOIN";
+		$join[3]['table']="project";
+		$join[3]['alias'] ="p";
+		$join[3]['key1'] ="project_id";
+		$join[3]['key2'] ="project_id";
 
 		$config["base_url"] = base_url() . "taskDetails";
 		$config["total_rows"] = $this->CommonModel->getCountByParameter('task_id', 'tasks', $wherec, $other);
@@ -474,67 +194,14 @@ class TaskMaster extends CI_Controller
 			$page = 0;
 		}
 
-		// print_r("<pre>");
-		// print_r($wherec);exit();
-		//$join=array();
-		// $jkey = count($join)+1;
-		// $join[$jkey]['type'] ="LEFT JOIN";
-		// $join[$jkey]['table']="admin";
-		// $join[$jkey]['alias'] ="a";
-		// $join[$jkey]['key1'] ="assignee";
-		// $join[$jkey]['key2'] ="adminID";
-
-		// $join[$jkey]['type'] ="LEFT JOIN";
-		// $join[$jkey]['table']="categories";
-		// $join[$jkey]['alias'] ="c";
-		// $join[$jkey]['key1'] ="task_status";
-		// $join[$jkey]['key2'] ="category_id";
-
-		// $join[$jkey]['type'] ="LEFT JOIN";
-		// $join[$jkey]['table']="categories";
-		// $join[$jkey]['alias'] ="ca";
-		// $join[$jkey]['key1'] ="task_priority";
-		// $join[$jkey]['key2'] ="category_id";
-
-		// $selectC = "t.*, c.categoryName AS status_slug, ca.categoryName AS priority_slug, a.name";
-		// if ($isAll == "Y") {
-		// 	$join = array();
-		// 	$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, '', '', $join, $other);
-		// } else {
-		// 	$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, $config["per_page"], $page, $join, $other);
-		// }
+		$selectC = "t.*, c.categoryName AS status_slug, c.cat_color AS status_color, ca.categoryName AS priority_slug, ca.cat_color AS priority_color, a.name, p.project_name AS projectName, p.project_number AS projectNumb";
 
 		if ($isAll == "Y") {
-			$taskDetails = $this->CommonModel->GetMasterListDetails($selectC="task_id,name",'tasks',$wherec,'','',$join,$other);	
-		}else{
-			// $jkey = count($join)+1;
-			// $join[$jkey]['type'] ="LEFT JOIN";
-			// $join[$jkey]['table']="admin";
-			// $join[$jkey]['alias'] ="a";
-			// $join[$jkey]['key1'] ="assignee";
-			// $join[$jkey]['key2'] ="adminID";
-
-			// $jkey = count($join)+1;
-			// $join[$jkey]['type'] ="LEFT JOIN";
-			// $join[$jkey]['table']="categories";
-			// $join[$jkey]['alias'] ="c";
-			// $join[$jkey]['key1'] ="task_status";
-			// $join[$jkey]['key2'] ="category_id";
-
-			// $jkey = count($join)+1;
-			// $join[$jkey]['type'] ="LEFT JOIN";
-			// $join[$jkey]['table']="categories";
-			// $join[$jkey]['alias'] ="ca";
-			// $join[$jkey]['key1'] ="task_priority";
-			// $join[$jkey]['key2'] ="category_id";
-
-			// $selectC = "t.task_id,t.subject,t.due_date,c.categoryName AS status_slug, c.cat_color AS status_color, ca.categoryName AS priority_slug, ca.cat_color AS priority_color, a.name,".$selectC;
-			$selectC = "t.task_id,t.subject,t.due_date,".$selectC;
-			// print($selectC);exit;
-			// print_r($wherec);exit;
+			$join = array();
+			$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, '', '', $join, $other);
+		} else {
 			$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, $config["per_page"], $page, $join, $other);
 		}
-		//print $this->db->last_query();exit;
 		
 		$status['data'] = $taskDetails;
 		$status['paginginfo']["curPage"] = $curPage;
@@ -580,6 +247,339 @@ class TaskMaster extends CI_Controller
 			$this->response->output($status, 200);
 		}
 	}
+
+	// public function gettaskDetails()
+	// {
+	// 	$this->access->checkTokenKey();
+	// 	$this->response->decodeRequest();
+	// 	$isAll = $this->input->post('getAll');
+	// 	$textSearch = $this->input->post('textSearch');
+	// 	$curPage = $this->input->post('curpage');
+	// 	$ITIID = $this->input->post('task_id');
+	// 	$textval = $this->input->post('textval');
+	// 	$orderBy = $this->input->post('orderBy');
+	// 	$order = $this->input->post('order');
+	// 	$statuscode = $this->input->post('status');
+	// 	$filterSName = $this->input->post('filterSName');
+	// 	$startDate = $this->input->post('fromDate');
+	// 	$endDate = $this->input->post('toDate');
+	// 	$startDate2 = $this->input->post('fromDate2');
+	// 	$endDate2 = $this->input->post('toDate2');
+	// 	$assignee = $this->input->post('assignee');
+	// 	$task_priority =$this->input->post('task_priority');
+	// 	$task_status = $this->input->post('task_status');
+	// 	$customer =$this->input->post('customer_id');
+	// 	$createdBy = $this->input->post('created_by');
+	// 	$due_date = $this->input->post('due_date');
+	// 	$recordType = $this->input->post('record_type');
+	// 	// print_r($createdBy);exit;
+
+	// 	$config = $this->config->item('pagination');
+	// 	$this->menuID = $this->input->post('menuId');
+	// 	$wherec = $join = array();
+	// 	if($isAll !="Y"){
+			
+	// 		$this->filters->menuID = $this->menuID;
+	// 		$this->filters->getMenuData();
+	// 		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+	// 		$this->menuDetails = $this->filters->menuDetails;
+			
+	// 		$menuId = $this->input->post('menuId');
+	// 		$postData = $_POST;
+	// 		unset($postData['fromDate']);
+	// 		unset($postData['fromDate2']);
+	// 		unset($postData['toDate']);
+	// 		unset($postData['toDate2']);
+	// 		$whereData = $this->filters->prepareFilterData($postData);
+	// 		// print_r($whereData);exit;
+	// 		$wherec = $whereData["wherec"];
+	// 		$other = $whereData["other"];
+	// 		$join = $whereData["join"];
+	// 		$selectC = $whereData["select"];
+	// 		// unset($wherec);
+	// 		// create join for created by and modified data details
+	// 		$jkey = (count($join)+1);
+	// 		$join[$jkey]['type'] ="LEFT JOIN";
+	// 		$join[$jkey]['table']="admin";
+	// 		$join[$jkey]['alias'] ="ad";
+	// 		$join[$jkey]['key1'] ="created_by";
+	// 		$join[$jkey]['key2'] ="adminID";
+	// 		$jkey = (count($join)+1);
+	// 		$join[$jkey]['type'] ="LEFT JOIN";
+	// 		$join[$jkey]['table']="admin";
+	// 		$join[$jkey]['alias'] ="am";
+	// 		$join[$jkey]['key1'] ="modified_by";
+	// 		$join[$jkey]['key2'] ="adminID";
+
+	// 		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+	// 			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+	// 			$columnNames = [
+	// 				"customer_id" => ["table" => "customer", "alias" => "cs", "column" => "name", "key2" => "customer_id"],
+	// 				"assignee" => ["table" => "admin", "alias" => "a", "column" => "name", "key2" => "adminID"],
+	// 				"task_status" => ["table" => "categories", "alias" => "ca", "column" => "categoryName", "key2" => "category_id"],
+	// 				"task_priority" => ["table" => "categories", "alias" => "cat", "column" => "categoryName", "key2" => "category_id"],
+	// 				"task_type" => ["table" => "categories", "alias" => "ct", "column" => "categoryName", "key2" => "category_id"],
+	// 			];
+			
+	// 			foreach ($columnNames as $columnName => $columnData) {
+	// 				if (in_array($columnName, $colData)) {
+	// 					$jkey = count($join) + 1;
+	// 					$join[$jkey]['type'] = "LEFT JOIN";
+	// 					$join[$jkey]['table'] = $columnData["table"];
+	// 					$join[$jkey]['alias'] = $columnData["alias"];
+	// 					$join[$jkey]['key1'] = $columnName;
+	// 					$join[$jkey]['key2'] = $columnData["key2"];
+	// 					$columnNameShow = $columnData["column"];
+	// 					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+	// 				}
+	// 			}
+	// 			// Remove the leading comma if $selectC is not empty
+	// 			$selectC = ltrim($selectC, ',');
+	// 			// print($selectC);exit;
+	// 		}
+
+	// 		if($selectC != ""){
+	// 			$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+	// 		}else{
+	// 			$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+	// 		}
+	// 	}
+	// 	// $config = array();
+	// 	if (!isset($orderBy) || empty($orderBy)) {
+	// 		$orderBy = "name";
+	// 		$order = "ASC";
+	// 	}
+
+	// 	$other["orderBy"] = $orderBy;
+	// 	$other["order"]= $order;
+	// 	// $other = array("orderBy"=>$orderBy,"order"=>$order);
+
+	// 	$customOrder = "CASE
+	// 		WHEN DATE(t.due_date) = CURDATE() THEN 1
+	// 		WHEN DATE(t.due_date) = CURDATE() + INTERVAL 1 DAY THEN 2
+	// 		ELSE 3
+	// 	END";
+
+	// 	// $config = array();
+	// 	if (!isset($orderBy) || empty($orderBy)) {
+	// 		$orderBy = $customOrder . ", subject"; // You can add your default sorting field here
+	// 		$order = "ASC"; // Change this to "DESC" if you want descending order
+	// 	} else {
+	// 		$orderBy = $customOrder . ", " . $orderBy;
+	// 	}
+	// 	//$other = array("orderBy" => $orderBy, "order" => $order);
+
+	// 	$config = $this->config->item('pagination');
+		
+	// 	// if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
+	// 	// 	$textSearch = trim($textSearch);
+	// 	// 	$wherec["$textSearch like  "] = "'%" . $textval . "%'";
+	// 	// }
+
+	// 	// if(isset($recordType) && !empty ($recordType)){
+	// 	// 	$TypeStr = str_replace(",",'","',$recordType);
+	// 	// 	$wherec["record_type"] = 'IN ("'.$TypeStr.'")';
+	// 	// }
+
+	// 	// if (isset($statuscode) && !empty($statuscode)) {
+	// 	// 	$statusStr = str_replace(",", '","', $statuscode);
+	// 	// 	$wherec["status"] = 'IN ("' . $statusStr . '")';
+	// 	// }
+		
+	// 	// if (isset($assignee) && !empty($assignee)) {
+	// 	// 	$assigneeString = str_replace(",", '","', $assignee);
+	// 	// 	$wherec["assignee "] = 'IN ("' . $assigneeString . '")';
+	// 	// }
+
+	// 	// if (isset($task_priority) && !empty($task_priority)) {
+	// 	// 	$task_priorityString = str_replace(",", '","', $task_priority);
+	// 	// 	$wherec["task_priority"] = 'IN ("' . $task_priorityString . '")';
+	// 	// }
+
+	// 	// if(isset($task_status) && !empty($task_status)){
+	// 	// 	$task_statusString = str_replace(",", '","', $task_status);
+	// 	// 	$wherec["task_status"] = 'IN ("' . $task_statusString . '")';
+	// 	// }
+
+	// 	// if(isset($customer) && !empty($customer)){
+	// 	// 	$customerString = str_replace(",", '","', $customer);
+	// 	// 	$wherec["customer_id"] = 'IN ("' . $customerString . '")';
+	// 	// }
+		
+	// 	// if(isset($createdBy) && !empty($createdBy)){
+	// 	// 	$createdByString = str_replace(",", '","', $createdBy);
+	// 	// 	$wherec["created_by"] = 'IN ("' . $createdByString . '")';
+	// 	// }
+
+	// 	if(isset($startDate) && !empty($startDate)){
+	// 		$sDate = date("Y-m-d",strtotime($startDate));
+	// 		$wherec["start_date >="] = "'".$sDate."'";
+	// 	}
+	// 	if (isset($endDate) && !empty($endDate)) {
+	// 		$eDate = date("Y-m-d", strtotime($endDate));
+	// 		$wherec["start_date <="] = "'" . $eDate . "'";
+	// 	}
+	
+	// 	if(isset($startDate2) && !empty($startDate2)){
+	// 		$sDate = date("Y-m-d",strtotime($startDate2));
+	// 		$wherec["due_date >="] = "'".$sDate."'";
+	// 	}
+	// 	if(isset($endDate2) && !empty($endDate2)){
+	// 		$eDate = date("Y-m-d",strtotime($endDate2));
+	// 		$wherec["due_date <="] = "'".$eDate."'";
+	// 	}
+	// 	// $whereOR = array();
+	// 	if(isset($due_date) && !empty($due_date)){
+	// 		$eDate = date("Y-m-d",strtotime($due_date));
+	// 		$wherec["due_date ="] = "'".$eDate."'";
+	// 		// $whereOR["start_date <="] = "'".$eDate."'";
+	// 		// $whereOR["due_date >="] = "'".$eDate."'";
+	// 	}
+
+	// 	// $other = array("orderBy" => $orderBy, "order" => $order, "whereOR" => $whereOR );
+		
+	// 	$adminID = $this->input->post('SadminID');
+	// 	if ($isAll == "Y") {
+	// 		// $join = $wherec = array();
+	// 		if (isset($statuscode) && !empty($statuscode)) {
+	// 			$statusStr = str_replace(",", '","', $statuscode);
+	// 			$wherec["t.status"] = 'IN ("' . $statusStr . '")';
+	// 		}
+	// 	}
+
+	// 	$join1=array();
+	// 	$join1[0]['type'] ="LEFT JOIN";
+	// 	$join1[0]['table']="user_extra_details";
+	// 	$join1[0]['alias'] ="u";
+	// 	$join1[0]['key1'] ="adminID";
+	// 	$join1[0]['key2'] ="adminID";
+
+	// 	$selectC1="*";//,r.regionName
+	// 	$wherec1=array("t.adminID ="=>$adminID);
+	// 	$taskDetailsList = $this->CommonModel->GetMasterListDetails($selectC1,'admin',$wherec1,'','',$join1,$other1=array());
+		
+	// 	if($taskDetailsList[0]->roleOfUser!=101){
+	// 		$wherec["assignee = "] = "'".$this->input->post('SadminID')."'";
+	// 	}
+
+	// 	$config["base_url"] = base_url() . "taskDetails";
+	// 	$config["total_rows"] = $this->CommonModel->getCountByParameter('task_id', 'tasks', $wherec, $other);
+	// 	$config["uri_segment"] = 2;
+	// 	$this->pagination->initialize($config);
+	// 	if (isset($curPage) && !empty($curPage)) {
+	// 		$curPage = $curPage;
+	// 		$page = $curPage * $config["per_page"];
+	// 	} else {
+	// 		$curPage = 0;
+	// 		$page = 0;
+	// 	}
+
+	// 	// print_r("<pre>");
+	// 	// print_r($wherec);exit();
+	// 	//$join=array();
+	// 	// $jkey = count($join)+1;
+	// 	// $join[$jkey]['type'] ="LEFT JOIN";
+	// 	// $join[$jkey]['table']="admin";
+	// 	// $join[$jkey]['alias'] ="a";
+	// 	// $join[$jkey]['key1'] ="assignee";
+	// 	// $join[$jkey]['key2'] ="adminID";
+
+	// 	// $join[$jkey]['type'] ="LEFT JOIN";
+	// 	// $join[$jkey]['table']="categories";
+	// 	// $join[$jkey]['alias'] ="c";
+	// 	// $join[$jkey]['key1'] ="task_status";
+	// 	// $join[$jkey]['key2'] ="category_id";
+
+	// 	// $join[$jkey]['type'] ="LEFT JOIN";
+	// 	// $join[$jkey]['table']="categories";
+	// 	// $join[$jkey]['alias'] ="ca";
+	// 	// $join[$jkey]['key1'] ="task_priority";
+	// 	// $join[$jkey]['key2'] ="category_id";
+
+	// 	// $selectC = "t.*, c.categoryName AS status_slug, ca.categoryName AS priority_slug, a.name";
+	// 	// if ($isAll == "Y") {
+	// 	// 	$join = array();
+	// 	// 	$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, '', '', $join, $other);
+	// 	// } else {
+	// 	// 	$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, $config["per_page"], $page, $join, $other);
+	// 	// }
+
+	// 	if ($isAll == "Y") {
+	// 		$taskDetails = $this->CommonModel->GetMasterListDetails($selectC="task_id,name",'tasks',$wherec,'','',$join,$other);	
+	// 	}else{
+	// 		// $jkey = count($join)+1;
+	// 		// $join[$jkey]['type'] ="LEFT JOIN";
+	// 		// $join[$jkey]['table']="admin";
+	// 		// $join[$jkey]['alias'] ="a";
+	// 		// $join[$jkey]['key1'] ="assignee";
+	// 		// $join[$jkey]['key2'] ="adminID";
+
+	// 		// $jkey = count($join)+1;
+	// 		// $join[$jkey]['type'] ="LEFT JOIN";
+	// 		// $join[$jkey]['table']="categories";
+	// 		// $join[$jkey]['alias'] ="c";
+	// 		// $join[$jkey]['key1'] ="task_status";
+	// 		// $join[$jkey]['key2'] ="category_id";
+
+	// 		// $jkey = count($join)+1;
+	// 		// $join[$jkey]['type'] ="LEFT JOIN";
+	// 		// $join[$jkey]['table']="categories";
+	// 		// $join[$jkey]['alias'] ="ca";
+	// 		// $join[$jkey]['key1'] ="task_priority";
+	// 		// $join[$jkey]['key2'] ="category_id";
+
+	// 		// $selectC = "t.task_id,t.subject,t.due_date,c.categoryName AS status_slug, c.cat_color AS status_color, ca.categoryName AS priority_slug, ca.cat_color AS priority_color, a.name,".$selectC;
+	// 		$selectC = "t.task_id,t.subject,t.due_date,".$selectC;
+	// 		// print($selectC);exit;
+	// 		// print_r($wherec);exit;
+	// 		$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, $config["per_page"], $page, $join, $other);
+	// 	}
+	// 	//print $this->db->last_query();exit;
+		
+	// 	$status['data'] = $taskDetails;
+	// 	$status['paginginfo']["curPage"] = $curPage;
+	// 	if ($curPage <= 1)
+	// 		$status['paginginfo']["prevPage"] = 0;
+	// 	else
+	// 		$status['paginginfo']["prevPage"] = $curPage - 1;
+
+	// 	$status['paginginfo']["pageLimit"] = $config["per_page"];
+	// 	$status['paginginfo']["nextpage"] =  $curPage + 1;
+	// 	$status['paginginfo']["totalRecords"] =  $config["total_rows"];
+	// 	$status['paginginfo']["start"] =  $page;
+	// 	$status['paginginfo']["end"] =  $page + $config["per_page"];
+	// 	$status['loadstate'] = true;
+		
+	// 	if(empty($taskDetails)){
+	// 		if ($config["total_rows"] <= $status['paginginfo']["end"]) {
+	// 			$status['msg'] = $this->systemmsg->getErrorCode(227);
+	// 			$status['statusCode'] = 400;
+	// 			$status['flag'] = 'S';
+	// 			$status['loadstate'] = false;
+	// 			$this->response->output($status, 200);
+	// 		}
+	// 	}else{
+	// 		if ($config["total_rows"] <= $status['paginginfo']["end"]) {
+	// 			$status['msg'] = $this->systemmsg->getErrorCode(232);
+	// 			$status['statusCode'] = 400;
+	// 			$status['flag'] = 'S';
+	// 			$status['loadstate'] = false;
+	// 			$this->response->output($status, 200);
+	// 		}
+	// 	}
+		
+	// 	if ($taskDetails) {
+	// 		$status['msg'] = "sucess";
+	// 		$status['statusCode'] = 400;
+	// 		$status['flag'] = 'S';
+	// 		$this->response->output($status, 200);
+	// 	} else {
+	// 		$status['msg'] = $this->systemmsg->getErrorCode(227);
+	// 		$status['statusCode'] = 227;
+	// 		$status['flag'] = 'F';
+	// 		$this->response->output($status, 200);
+	// 	}
+	// }
 
 	public function taskMaster($task_id="")
 	{
