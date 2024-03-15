@@ -31,7 +31,12 @@ define([
     loadfrom: null,
     totalRec: 0,
     initialize: function (options) {
-      
+      this.startX = 0;
+      this.startWidth = 0;
+      this.$handle = null;
+      this.$table = null;
+      this.pressed = false;
+
       this.toClose = "taskFilterView";
       var selfobj = this;
       selfobj.arrangedColumnList = [];
@@ -185,8 +190,38 @@ define([
       "change .dropval": "singleFilterOptions",
       "click .arrangeColumns": "openColumnArrangeModal",
       "click .downloadReport": "downloadReport",
+      'mousedown .table-resizable .resize-bar': 'onMouseDown',
+      'mousemove .table-resizable th, .table-resizable td': 'onMouseMove',
+      'mouseup .table-resizable th, .table-resizable td': 'onMouseUp',
+      'dblclick .table-resizable thead': 'resetColumnWidth'
     },
 
+    onMouseDown: function (event) {
+      let index = $(event.target).parent().index();
+      this.$handle = this.$el.find('th').eq(index);
+      this.pressed = true;
+      this.startX = event.pageX;
+      this.startWidth = this.$handle.width();
+      this.$table = this.$handle.closest('.table-resizable').addClass('resizing');
+    },
+
+    onMouseMove: function (event) {
+      if (this.pressed) {
+        this.$handle.width(this.startWidth + (event.pageX - this.startX));
+      }
+    },
+
+    onMouseUp: function () {
+      if (this.pressed) {
+        this.$table.removeClass('resizing');
+        this.pressed = false;
+      }
+    },
+    resetColumnWidth: function () {
+      // Reset column sizes on double click
+      this.$el.find('th').css('width', '');
+    },
+    
     openSingleTemp: function(taskID){
       let selfobj = this;
       if(taskID != ""){

@@ -11,7 +11,7 @@
               <span type="button" style="display:none;" class="changeStatus deleteAll" data-action="delete" data-toggle="tooltip" data-placement="top" title="Delete"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Delete" style="background-color: #494b94; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px; color:#fff !important;">delete</i></span>
             <%}%>
           </div>
-          <table id=" clist" class="table bulk_action tableList table-hover">
+          <table id=" clist" class="table bulk_action tableList table-hover table-bordered table-resizable">
             <thead id="thead">
               <tr class="headings">
                 <th style="width:60px;">
@@ -20,15 +20,18 @@
                     <label for="cAll">&nbsp;</label>
                   </div>
                 </th>
-                <th class="column-title sortColumns order" data-value="" data-field="temp_name" >Template Name
+                <th class="column-title sortColumns order" data-value="" data-field="temp_name" style="padding-left: 20px !important;">Template Name
                   <span class="material-symbols-outlined sortarrow up">
                     north
                   </span>
                   <span class="material-symbols-outlined sortarrow down">
                     south
                   </span>
+                  <div class="resize-bar"></div>
                 </th>
-                <th class="column-title" style="width:60px;">Action</th>
+                <th class="column-title" style="width:60px;">Action
+                  <div class="resize-bar"></div>
+                </th>
               </tr>
             </thead>
             <tbody id="projectList"></tbody>

@@ -54,7 +54,7 @@
             <% } %>
           </div>
           <div class="customTableClass">
-          <table id="clist" class="table bulk_action tableList table-hover">
+          <table id="clist" class="table bulk_action tableList table-hover table-bordered table-resizable">
             <thead id="thead">
               <tr class="headings">
                 <th style="width: 60px;">
@@ -63,31 +63,34 @@
                     <label for="cAll">&nbsp;</label>
                   </div>
                 </th>
-                <th class="order sortColumns column-title" data-value="" data-field="project_number">Project Number
+                <th class="order sortColumns column-title" data-value="" data-field="project_number" style="padding-left: 20px !important;">Project Number
                   <span class="material-symbols-outlined sortarrow up">
                     north
                   </span>
                   <span class="material-symbols-outlined sortarrow down">
                     south
                   </span>
+                  <div class="resize-bar"></div>
                 </th>
-                <th class="order sortColumns column-title" data-value="" data-field="project_name">Project Name
+                <th class="order sortColumns column-title" data-value="" data-field="project_name" style="padding-left: 20px !important;">Project Name
                   <span class="material-symbols-outlined sortarrow up">
                     north
                   </span>
                   <span class="material-symbols-outlined sortarrow down">
                     south
                   </span>
+                  <div class="resize-bar"></div>
                 </th>
-                <th class="order sortColumns column-title" data-value="" data-field="company_name">Company Name
+                <th class="order sortColumns column-title" data-value="" data-field="company_name" style="padding-left: 20px !important;">Company Name
                   <span class="material-symbols-outlined sortarrow up">
                     north
                   </span>
                   <span class="material-symbols-outlined sortarrow down">
                     south
                   </span>
+                  <div class="resize-bar"></div>
                 </th>
-                <th class="column-title" style="width: 70px;">Action</th>
+                <th class="column-title" style="width: 70px;" style="padding-left: 20px !important;">Action</th>
               </tr>
             </thead>
             <tbody id="projectList">

@@ -2916,18 +2916,10 @@ a.editHover:hover {
   border-bottom: 1px solid #dee2e6;
 }
 
-.proposalTable thead#thead tr th {
-  border: none;
-}
-
 /* .proposalTable #proposalList tr {
   border-top: 1px solid #dee2e6;
   border-bottom: 1px solid #dee2e6;
 } */
-
-.proposalTable #proposalList tr td {
-  border: none;
-}
 
 #proposaldescription {
   height: auto;
@@ -3025,6 +3017,7 @@ section.content.dashBordTotal {
 
 .proposalActoinCol {
   gap: 5px;
+  display: flex;
 }
 
 .showWatch {

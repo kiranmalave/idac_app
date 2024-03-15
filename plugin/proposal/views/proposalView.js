@@ -24,6 +24,12 @@ define([
     loadFrom: null,
     totalRec:0,
     initialize: function (options) {
+      this.startX = 0;
+      this.startWidth = 0;
+      this.$handle = null;
+      this.$table = null;
+      this.pressed = false;
+
       this.loadFrom = options.loadFrom;
       this.customer_ID = options.customerID;
       this.projectID = options.projectID;
@@ -144,7 +150,38 @@ define([
       "change .changeBox": "changeBox",
       "click .sortColumns": "sortColumn",
       "click .arrangeColumns": "openColumnArrangeModal",
+      'mousedown .table-resizable .resize-bar': 'onMouseDown',
+      'mousemove .table-resizable th, .table-resizable td': 'onMouseMove',
+      'mouseup .table-resizable th, .table-resizable td': 'onMouseUp',
+      'dblclick .table-resizable thead': 'resetColumnWidth'
     },
+
+    onMouseDown: function (event) {
+      let index = $(event.target).parent().index();
+      this.$handle = this.$el.find('th').eq(index);
+      this.pressed = true;
+      this.startX = event.pageX;
+      this.startWidth = this.$handle.width();
+      this.$table = this.$handle.closest('.table-resizable').addClass('resizing');
+    },
+
+    onMouseMove: function (event) {
+      if (this.pressed) {
+        this.$handle.width(this.startWidth + (event.pageX - this.startX));
+      }
+    },
+
+    onMouseUp: function () {
+      if (this.pressed) {
+        this.$table.removeClass('resizing');
+        this.pressed = false;
+      }
+    },
+    resetColumnWidth: function () {
+      // Reset column sizes on double click
+      this.$el.find('th').css('width', '');
+    },
+
     updateOtherDetails: function (e) {
       var valuetxt = $(e.currentTarget).val();
       var toID = $(e.currentTarget).attr("id");
