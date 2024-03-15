@@ -248,7 +248,7 @@ define([
       });
 
       $('.color').minicolors({
-        format: "rgb",
+        format: "hex",
         opacity: true,
         change: function (value, opacity) {
           console.log($(this));

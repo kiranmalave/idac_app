@@ -89,7 +89,7 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
         $('body').find(".loder").hide();
-        selfobj.render();
+        selfobj.setStageColor();
       });
 
       selfobj.emailMasterList = new emailMasterCollection();
@@ -130,6 +130,54 @@ define([
         selfobj.render();
       });
     },
+
+    setStageColor: function(){   
+      var selfobj = this;  
+      var stageColor;
+      this.categoryList.models.forEach(function(element) {
+        element.attributes.sublist.forEach(function(list){
+          stageColor = setColor(list.cat_color);
+          list.cat_color_light = stageColor;
+          // list.font_color = selfobj.invertColor(list.cat_color,fZ);
+        })
+      });
+    },
+
+  //   invertColor: function(hex, bw) {
+  //     var selfobj = this;  
+  //     if (hex.indexOf('#') === 0) {
+  //         hex = hex.slice(1);
+  //     }
+  //     // convert 3-digit hex to 6-digits.
+  //     if (hex.length === 3) {
+  //         hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+  //     }
+  //     if (hex.length !== 6) {
+  //         // throw new Error('Invalid HEX color.');
+  //     }
+  //     var r = parseInt(hex.slice(0, 2), 16),
+  //         g = parseInt(hex.slice(2, 4), 16),
+  //         b = parseInt(hex.slice(4, 6), 16);
+  //     if (bw) {
+  //         // https://stackoverflow.com/a/3943023/112731
+  //         return (r * 0.299 + g * 0.587 + b * 0.114) > 186
+  //             ? '#000000'
+  //             : '#FFFFFF';
+  //     }
+  //     // invert color components
+  //     r = (255 - r).toString(16);
+  //     g = (255 - g).toString(16);
+  //     b = (255 - b).toString(16);
+  //     // pad each with zeros and return
+  //     // return "#" + selfobj.padZero(r) + selfobj.padZero(g) + selfobj.padZero(b);
+  //     return "#" + r + g + b;
+  // },
+
+  //  padZero: function(str, len) {
+  //   len = len || 2;
+  //   var zeros = new Array(len).join('0');
+  //   return (zeros + str).slice(-len);
+  // },
 
     getModuleData: function () {
       var selfobj = this;
@@ -216,28 +264,7 @@ define([
       // Clear filterOption
       filterOption.clear('type');
       console.log("filterOption", filterOption);
-    }, 
-
-    // downloadReport:function(e){
-    //   e.preventDefault();
-    //   let type = $(e.currentTarget).attr("data-type");
-    //   var newdetails = [];
-    //   newdetails["type"] = type;
-    //   filterOption.set(newdetails);
-    //   let from = $("#reports");
-    //   let dataInput = $("<input>")
-    //     .attr("type", "hidden")
-    //     .attr("name", "data")
-    //     .val(JSON.stringify(filterOption));
-    //   from.attr({
-    //     id: "receiptsData",
-    //     action: APIPATH + "customerReports",
-    //     method: "POST",
-    //     target: "_blank",
-    //   }).append(dataInput);
-    //   filterOption.clear('type');
-    //   from.submit();
-    // },
+    },
 
     sortColumn: function (e) {
       var order = $(e.currentTarget).attr("data-value");
