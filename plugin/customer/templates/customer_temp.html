@@ -13,7 +13,7 @@
                 <div class="noCustRecText">
                   <h1>You haven’t added any <span>
                       <%=pluralLable%>
-                    </span> here</h1>
+                    </span>here</h1>
                   <p>Click on add button to add the <span>
                       <%=pluralLable%>
                     </span></p>
@@ -46,18 +46,15 @@
 
 
               <div class="addColumns">
-                <button type="button" class="arrangeColumns btn-bgColor" data-action="arrangeColumns"
-                  data-toggle="tooltip" data-placement="top" title="Configure Columns">
-                  <span><span class="material-icons">view_column</span><span
-                      class="material-icons">expand_more</span></span>
+                <button type="button" class="arrangeColumns btn-bgColor" data-action="arrangeColumns" data-toggle="tooltip" data-placement="top" title="Configure Columns">
+                  <span><span class="material-icons">view_column</span><span class="material-icons">expand_more</span></span>
                 </button>
                 <div class="" id="customColumnConfigure"></div>
               </div>
               <% if(arrangedColumnList.length > 0){ %>
                 <form id="reports" method="POST" action="#">
                   <div class="donloadBtn" data-toggle="tooltip" data-placement="top" title="Download Data">
-                    <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown" aria-haspopup="true"
-                      aria-expanded="false" data-toggle="tooltip" data-placement="top" title="Download Data">
+                    <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top" title="Download Data">
                       <span class="material-symbols-outlined">download</span>
                     </button>
                     <ul class="dropdown-menu">

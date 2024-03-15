@@ -56,51 +56,57 @@
                           <span type="button" style="display:none;" class="changeStatus deleteAll" data-action="delete" data-toggle="tooltip" data-placement="top" title="Delete"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Delete" style="background-color: #494b94; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px; color:#fff !important;">delete</i></span>         
                     </div>
                     <div class="customTableClass">
-                      <table id="clist" class="table bulk_action tableList table-hover proposalTable">
-                      <thead id="thead">
-                        <tr class="headings">
-                          <th  style="width:60px;">
-                            <div class="listCheckbox">
-                                <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
-                                <label for="cAll">&nbsp;</label>
-                            </div>
-                          </th>
-                          <th class="column-title sortColumns order" data-value="" data-field="proposal_number">Proposal Number
-                            <span class="material-symbols-outlined sortarrow up">
-                              north
-                            </span>
-                            <span class="material-symbols-outlined sortarrow down">
-                              south
-                            </span>
-                          </th>
-                          <th class="order sortColumns column-title" data-value="" data-field="name">Name
+                      <table id="clist" class="table bulk_action tableList table-hover proposalTable table-bordered table-resizable">
+                        <thead id="thead">
+                          <tr class="headings">
+                            <th  style="width:60px;">
+                              <div class="listCheckbox">
+                                  <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
+                                  <label for="cAll">&nbsp;</label>
+                              </div>
+                            </th>
+                            <th class="column-title sortColumns order" data-value="" data-field="proposal_number" style="padding-left: 20px !important;">Proposal Number
                               <span class="material-symbols-outlined sortarrow up">
                                 north
                               </span>
                               <span class="material-symbols-outlined sortarrow down">
                                 south
                               </span>
-                          </th>
-                          <th class=" order sortColumns column-title" data-value="" data-field="company_name" >Client Name
-                              <span class="material-symbols-outlined sortarrow up">
-                                north
-                              </span>
-                              <span class="material-symbols-outlined sortarrow down">
-                                south
-                              </span>
-                          </th>
-                          <th class="order sortColumns column-title"  data-value="" data-field="project_name" >Project Name
-                              <span class="material-symbols-outlined sortarrow up">
-                                north
-                              </span>
-                              <span class="material-symbols-outlined sortarrow down">
-                                south
-                              </span>
-                          </th>
-                          
-                          <th class="column-title" style="width:129px;">Action</th>
-                        </tr>
-                      </thead>
+                              <div class="resize-bar"></div>
+                            </th>
+                            <th class="order sortColumns column-title" data-value="" data-field="name" style="padding-left: 20px !important;">Name
+                                <span class="material-symbols-outlined sortarrow up">
+                                  north
+                                </span>
+                                <span class="material-symbols-outlined sortarrow down">
+                                  south
+                                </span>
+                                <div class="resize-bar"></div>
+                            </th>
+                            <th class=" order sortColumns column-title" data-value="" data-field="company_name" style="padding-left: 20px !important;">Client Name
+                                <span class="material-symbols-outlined sortarrow up">
+                                  north
+                                </span>
+                                <span class="material-symbols-outlined sortarrow down">
+                                  south
+                                </span>
+                                <div class="resize-bar"></div>
+                            </th>
+                            <th class="order sortColumns column-title"  data-value="" data-field="project_name" style="padding-left: 20px !important;">Project Name
+                                <span class="material-symbols-outlined sortarrow up">
+                                  north
+                                </span>
+                                <span class="material-symbols-outlined sortarrow down">
+                                  south
+                                </span>
+                                <div class="resize-bar"></div>
+                            </th>
+                            
+                            <th class="column-title" style="width:129px;" style="padding-left: 20px !important;">Action
+                              <div class="resize-bar"></div>
+                            </th>
+                          </tr>
+                        </thead>
                       <tbody id="proposalList">
                       </tbody>
                       </table>
