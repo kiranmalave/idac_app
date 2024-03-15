@@ -224,49 +224,43 @@
               </div>
             </div>
             <div class="leadRight">
-
               <div class="btn-group btn-group-block gridmode float-right btnDetails">
-                <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span
-                    class="material-icons" style="margin-top: 2px;">view_list</span></button>
-                <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span class="material-icons"
-                    style="margin-top: 2px;">grid_on</span></button>
+                <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span class="material-icons" style="margin-top: 2px;">view_list</span></button>
+                <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span class="material-icons" style="margin-top: 2px;">grid_on</span></button>
               </div>
             </div>
           </div>
           <div class="greedLeadTotalBody lead-assignment">
             <div class="row kanban-view">
-              <%if(menuName=="leads" ){%>
+              <%if(menuName == "leads" ){%>
                 <% _.each(categoryList, function(parentCat) { %>
                   <% _.each(parentCat.attributes.sublist, function(category) { %>
-                    <div class="greedLeadTotal leadIndex" data-lead-id="<%=category.category_id%>">
+                    <div class="greedLeadTotal leadIndex" data-lead-id="<%=category.category_id%>" style="background-color: <%=category.cat_color_light%>;">
                       <div class="listgrid leadDrop" id="<%=category.category_id%>">
-                        <div class="totalCount">
-                          <h2>
-                            <%=category.categoryName%>
-                          </h2>
+                        <div style="background-color: <%=category.cat_color%>" class="totalCount">
+                          <h2 style="color:<%=category.font_color%>"><%=category.categoryName%></h2>
                         </div>
                       </div>
                     </div>
-                    <%})%>
-                      <%})%>
-                        <%}%>
-
-                          <div class="greedLeadTotal" data-lead-id="otherStage">
-                            <div class="listgrid" id="otherStage">
-                              <div class="totalCount">
-                                <h2>Other Stage</h2>
-                              </div>
-                            </div>
-                          </div>
+                  <%})%>
+                <%})%>
+              <%}%>
+              <div class="greedLeadTotal" data-lead-id="otherStage">
+                <div class="listgrid" id="otherStage">
+                  <div class="totalCount">
+                    <h2>Other Stage</h2>
+                  </div>
+                </div>
+              </div>
             </div>
             <!-- Slider -->
-            <div class="kanban-scroll-view">
-              <div class="kanban-scroll">
-                <div id="sc" class="kanban-scroll-active" style="margin-left: 1.43483px;"></div>
+              <div class="kanban-scroll-view">
+                <div class="kanban-scroll">
+                  <div id="sc" class="kanban-scroll-active" style="margin-left: 1.43483px;"></div>
+                </div>
+                <div id="" class="kanban-columns-thumbs">
+                </div>
               </div>
-              <div id="" class="kanban-columns-thumbs">
-              </div>
-            </div>
             <!-- Slider -->
           </div>
         </div>

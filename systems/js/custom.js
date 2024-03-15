@@ -171,6 +171,22 @@ $(document).ready(function () {
     }
   });
 
+  //use this fucntion to set background for Lead/Customer Kanban View
+  setColor = function(color){
+    var amount = 90;
+    var col =  '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+    console.log(color);  
+    var c;
+    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(col)){
+        c= col.substring(1).split('');
+        if(c.length== 3){
+            c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+        }
+        c= '0x'+c.join('');
+        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',0.1)';
+    }
+  }
+
   // use this function to prevent the multiple same overlay windows
   checkisoverlay = function (overlayName) {
     var tt = $("#" + overlayName).length;
