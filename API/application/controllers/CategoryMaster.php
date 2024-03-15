@@ -359,13 +359,13 @@ class CategoryMaster extends CI_Controller
 		$adminID = $this->input->post('SadminID');
 
 		$join = array();
-		$categoryDetails = $this->CommonModel->GetMasterListDetails($selectC = 'category_id,slug,categoryName,parent_id,is_parent', 'categories', $wherec, '', '', $join, $other);
+		$categoryDetails = $this->CommonModel->GetMasterListDetails($selectC = 'category_id,slug,categoryName,parent_id,is_parent,lead_index', 'categories', $wherec, '', '', $join, $other);
 		// print_r($categoryDetails);exit;
 		$wherec = array();
 		foreach ($categoryDetails as $key => $value) {
 			$wherec["t.parent_id"] = ' = "'.$value->category_id.'"';
 			$wherec["t.status"] = 'IN ("active")';
-			$subcategoryDetails = $this->CommonModel->GetMasterListDetails($selectC='category_id,slug,categoryName,parent_id,is_parent,cat_color','categories',$wherec,'','',$join,$other);
+			$subcategoryDetails = $this->CommonModel->GetMasterListDetails($selectC='category_id,slug,categoryName,parent_id,is_parent,lead_index,cat_color','categories',$wherec,'','',$join,$other);
 			$categoryDetails[$key]->sublist = $subcategoryDetails;
 		}
 
