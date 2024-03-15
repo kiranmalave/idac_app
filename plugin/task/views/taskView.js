@@ -529,31 +529,31 @@ define([
       }
       $("#taskList").append(template({ taskDetails: objectModel,arrangedColumnList:this.arrangedColumnList }));
 
-      var mailTruncateElements = document.querySelectorAll('.mailtruncate');
-       mailTruncateElements.forEach(function (element) {
-          var textWidth = element.offsetWidth;
-          var parentEle = element.parentElement;
+      // var mailTruncateElements = document.querySelectorAll('.mailtruncate');
+      //  mailTruncateElements.forEach(function (element) {
+      //     var textWidth = element.offsetWidth;
+      //     var parentEle = element.parentElement;
 
-        if (textWidth >= 150) {
-            parentEle.querySelector('.tooltiptxt').style.display = 'block';
-          }
-          else{
-            parentEle.querySelector('.tooltiptxt').style.display = 'none';
-          }
-      });
+      //   if (textWidth >= 150) {
+      //       parentEle.querySelector('.tooltiptxt').style.display = 'block';
+      //     }
+      //     else{
+      //       parentEle.querySelector('.tooltiptxt').style.display = 'none';
+      //     }
+      // });
 
-        var mailTruncateElements = document.querySelectorAll('.description');
-       mailTruncateElements.forEach(function (element) {
-          var textWidth = element.offsetWidth;
-          var parentEle = element.parentElement;
+      //   var mailTruncateElements = document.querySelectorAll('.description');
+      //  mailTruncateElements.forEach(function (element) {
+      //     var textWidth = element.offsetWidth;
+      //     var parentEle = element.parentElement;
 
-        if (textWidth >= 300) {
-            parentEle.querySelector('.tooltiptxt').style.display = 'block';
-          }
-          else{
-            parentEle.querySelector('.tooltiptxt').style.display = 'none';
-          }
-      });
+      //   if (textWidth >= 300) {
+      //       parentEle.querySelector('.tooltiptxt').style.display = 'block';
+      //     }
+      //     else{
+      //       parentEle.querySelector('.tooltiptxt').style.display = 'none';
+      //     }
+      // });
     },
 
     addAll: function () {
