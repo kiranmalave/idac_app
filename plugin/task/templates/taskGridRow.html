@@ -1,0 +1,36 @@
+<div class="leadCustomer" data-task_id="<%=taskDetails.attributes.task_id%>" >    
+    <div class="leadDetails" id="leadCard<%=taskDetails.attributes.task_id%>" >
+        <div class="leadDetailsCard taskCard loadview" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData">
+            <div class="leadDetailsCardTop">
+                <div class="namedetails">
+                    <div class="image">
+                        <div class="">
+                            <input type="radio" id="cAll_<%= taskDetails.attributes.task_id %>"  data-task_id="<%= taskDetails.attributes.task_id %>" class="radio-col-green showpoup" />
+                            <label for="cAll_<%= taskDetails.attributes.task_id %>">&nbsp;</label>
+                        </div>
+                    </div>
+                    <span><%=taskDetails.attributes.subject%></span>
+                </div>
+                 <div class="recordType taskRecord" style="background: <%=taskDetails.attributes.priorityColor%>;">
+                    <span style="color: white;"><%=taskDetails.attributes.task_priority%></span>
+                </div>
+              </div>
+            <div class="leadDetailsCardBody loadview">
+                <h5 class="loadview" data-task_id="<%=taskDetails.attributes.task_id%>"><span><i class="material-icons">person</i></span>
+                    <% if(taskDetails.attributes.customer_id != "" && taskDetails.attributes.customer_id != null){%>
+                        <strong><%=taskDetails.attributes.customer_id%></strong>
+                    <%} else {%>
+                        <strong>--</strong>
+                    <%}%>
+                </h5>
+                <p><span><i class="material-icons">calendar_today</i></span>
+                    <%if(taskDetails.attributes.due_date != "" && taskDetails.attributes.due_date != ""){%>
+                        <strong><%=taskDetails.attributes.due_date%></strong>   
+                    <%} else {%>
+                        <strong>--</strong>
+                    <%}%>
+                </p>
+            </div>
+        </div>
+    </div>
+ </div>

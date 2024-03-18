@@ -10267,3 +10267,105 @@ span.totalemail.email-displayed,
 /* .table-bordered {
   display: none;
 } */
+
+button.btn.ws-btn-default.ws-btn-grid.listView {
+  background: #f1f2f4;
+  width: 46px;
+}
+
+.listView::after {
+  display: inline-block;
+  margin-left: 0.255em;
+  vertical-align: .255em;
+  content: "";
+  border-top: .3em solid;
+  border-right: .3em solid transparent;
+  border-bottom: 0;
+  border-left: .3em solid transparent;
+  position: absolute;
+  right: 5px;
+  font-size: 16px;
+  top: 16px;
+}
+
+button.btn.ws-btn-default.ws-btn-grid.listView span.material-icons {
+  left: -6px;
+  position: relative;
+}
+
+ul.showListView li {
+  list-style-type: none;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+}
+
+ul.showListView {
+  display: flex;
+  position: absolute;
+  top: 44px;
+  background: #f3f4f5;
+  width: 157px;
+  box-shadow: 2px 2px 5px 1px #ccc;
+  flex-direction: column;
+}
+
+ul.showListView.forGrid {
+  display: flex;
+  position: absolute;
+  top: 44px;
+  background: #f3f4f5;
+  width: 157px;
+  box-shadow: 2px 2px 5px 1px #ccc;
+  flex-direction: column;
+  left: -80px;
+  z-index: 999;
+}
+
+ul.showListView li button.btn.ws-btn-default.ws-btn-grid.list_mode {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 9px;
+  gap: 9px;
+}
+
+ul.showListView li button.btn.ws-btn-default.ws-btn-grid.grid_mode {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 9px;
+  gap: 9px;
+}
+
+
+ul.showListView li button.btn.ws-btn-default.ws-btn-grid.modernlist_mode {
+  width: 100%;
+  justify-content: flex-start;
+  padding-left: 7px;
+  gap: 10px;
+}
+
+.namedetails {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.taskCard{
+  min-height: 100px !important;
+}
+
+.recordType.taskRecord {
+  padding: 5px;
+  border-radius: 2px;
+}
+
+.recordType.taskRecord span{
+  background: transparent;
+
+}

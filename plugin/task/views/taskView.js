@@ -19,10 +19,12 @@ define([
   '../../menu/models/singleMenuModel',
   '../../category/collections/slugCollection',
   'text!../templates/taskRow.html',
+  'text!../templates/taskGridRow.html',
+  'text!../templates/taskModernRow.html',
   'text!../templates/task_temp.html',
   'text!../templates/taskFilterOption_temp.html',
   'text!../../dynamicForm/templates/linkedDropdown.html',
-], function ($, _, Backbone, datepickerBT, moment, Swal , taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection,configureColumnsView,appSettings,dynamicFormData,singleMenuModel,slugCollection, taskRowTemp, taskTemp, taskFilterTemp,linkedDropdown) {
+], function ($, _, Backbone, datepickerBT, moment, Swal , taskSingleView, repeatTaskCustomView, historySingleView, taskCollection, taskFilterOptionModel, adminCollection, customerCollection,configureColumnsView,appSettings,dynamicFormData,singleMenuModel,slugCollection, taskRowTemp, taskGridRow, taskModernRow, taskTemp, taskFilterTemp,linkedDropdown) {
 
   var taskView = Backbone.View.extend({
     module_desc:'',
@@ -30,6 +32,8 @@ define([
     form_label:'',
     loadfrom: null,
     totalRec: 0,
+    View:'list',
+    listDataGrid: [],
     initialize: function (options) {
       this.startX = 0;
       this.startWidth = 0;
@@ -105,7 +109,7 @@ define([
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
-        selfobj.render();
+        selfobj.setStageColor();
       });
 
       this.customerList = new customerCollection();
@@ -170,6 +174,17 @@ define([
       });
       selfobj.render();
     },
+
+    setStageColor: function(){   
+      var selfobj = this;  
+      var stageColor;
+      this.categoryList.models.forEach(function(element) {
+        element.attributes.sublist.forEach(function(list){
+          stageColor = setColor(list.cat_color);
+          list.cat_color_light = stageColor;
+        })
+      });
+    },
    
     events:
     {
@@ -193,7 +208,230 @@ define([
       'mousedown .table-resizable .resize-bar': 'onMouseDown',
       'mousemove .table-resizable th, .table-resizable td': 'onMouseMove',
       'mouseup .table-resizable th, .table-resizable td': 'onMouseUp',
-      'dblclick .table-resizable thead': 'resetColumnWidth'
+      'dblclick .table-resizable thead': 'resetColumnWidth',
+      "click .list_mode": "gridMode",
+      "click .grid_mode": "gridMode",
+      "click .modernlist_mode": "gridMode",
+      "click .listView": "showList",
+    },
+
+    gridMode: function (e) {
+      let selfobj = this;
+      var View = $(e.currentTarget).val();
+
+      selfobj.viewListType = View;
+      console.log("View", View);
+      if (View == "traditionalList") {
+        $("#taskListView").show();
+        $("#taskGridView").hide();
+        $("#taskmodernlistview").hide()
+        $(".grid_mode").removeAttr("disabled")
+        selfobj.View = "list";
+        selfobj.resetSearch();
+        $(".showListView").toggle();
+      } else if (View == "modernlist") {
+        $("#taskmodernlistview").show()
+        $("#taskListView").hide();
+        $("#taskGridView").hide();
+        $(".grid_mode").removeAttr("disabled")
+        selfobj.View = "list";
+        selfobj.resetSearch();
+        $(".showListView").toggle();
+      } else if (View == "grid") {
+        $("#taskGridView").show();
+        $("#taskListView").hide();
+        $("#taskmodernlistview").hide()
+        $(".list_mode").removeAttr("disabled")
+        $(".grid_mode").attr('disabled', 'disabled');
+        selfobj.collection.reset();
+        selfobj.View = "grid";
+        selfobj.girdLazyLoad(listgridID = "", firstLoad = true);
+        selfobj.setupDropable();
+        selfobj.setupSortable();
+        selfobj.leadCanbanSlider();
+        $(".showListView").toggle();
+      }
+    },
+
+    addAllGrid: function (col_name) {
+      $("#customerList").empty();
+      let selfobj = this;
+      // $('#' + col_name).children().not(".totalCount").empty();
+      // $('#otherStage').children().not(".totalCount").empty();
+      selfobj.listDataGrid[col_name].models.forEach(element => {
+        selfobj.addOne(element);
+      });
+    },
+
+    girdLazyLoad: function (listgridID, firstLoad) {
+      let selfobj = this;
+      if (firstLoad) {
+        var currPage = '';//selfobj.paginginfo.nextpage;
+      } else {
+        var currPage = '';
+      }
+      if (currPage != undefined) {
+        filterOption.set({ curpage: currPage });
+      }
+      if (listgridID == "") {
+        $.each(this.categoryList.models, function (index, value) {
+          if(value.attributes.slug == "task_status"){
+            $.each(value.attributes.sublist, function (index2, value2) {
+              filterOption.set({ task_status: value2.category_id });
+              selfobj.listDataGrid[value2.category_id] = new taskCollection();
+              selfobj.listDataGrid[value2.category_id].fetch({
+                headers: {
+                  'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+                }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+              }).done(function (res) {
+                if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+                $(".profile-loader").hide();
+                selfobj.paginginfo = res.paginginfo;
+                selfobj.addAllGrid(value2.category_id);
+              });
+
+              $("#leadlistview").hide();
+            });
+          }
+        });
+        filterOption.set({ task_status: "other" });
+        selfobj.listDataGrid[0] = new taskCollection();
+        selfobj.listDataGrid[0].fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".profile-loader").hide();
+          selfobj.paginginfo = res.paginginfo;
+          selfobj.addAllGrid(0);
+        });
+      } else {
+        filterOption.set({ task_status: listgridID });
+        selfobj.listDataGrid[listgridID].fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".profile-loader").hide();
+          selfobj.paginginfo = res.paginginfo;
+        });
+        selfobj.listDataGrid[listgridID].on('add', this.addOne, this);
+        selfobj.listDataGrid[listgridID].on('reset', this.addAll, this);
+      }
+    },
+
+    setupSortable: function () {
+      var selfobj = this;
+      $(".leadCustomer").sortable({
+        connectWith: ".leadCustomer",
+        placeholder: "ui-state-highlight",
+        forcePlaceholderSize: true,
+        tolerance: 'pointer',
+        items: '>.leadDetailsCard',
+        change: function (event, ui) {
+        }
+      });
+
+      $(".row.kanban-view").sortable({
+        placeholder: "ui-state-highlight",
+        forcePlaceholderSize: true,
+        items: '>.leadIndex',
+        cursor: 'grabbing',
+        stop: function (event, ui) {
+          setTimeout(function () { selfobj.savePositions(); }, 100);
+        }
+      });
+    },
+
+    savePositions: function () {
+      var selfobj = this;
+      var action = "changePositions";
+      var serializedData = $(".row.kanban-view .leadIndex").map(function () {
+        return $(this).data("lead-id");
+      }).get();
+      $.ajax({
+        url: APIPATH + 'taskColumnUpdatePositions',
+        method: 'POST',
+        data: { action: action, menuIDs: serializedData },
+        datatype: 'JSON',
+        beforeSend: function (request) {
+          request.setRequestHeader("token", $.cookie('_bb_key'));
+          request.setRequestHeader("SadminID", $.cookie('authid'));
+          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+          request.setRequestHeader("Accept", 'application/json');
+        },
+        success: function (res) {
+          if (res.flag == "F")
+            alert(res.msg);
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        }
+      });
+    },
+
+    setupDragable: function () {
+      $(".leadCustomer").draggable({
+        revert: "invalid",
+        containment: "document",
+        helper: "clone",
+        cursor: "move",
+        zIndex: 1000,
+      });
+    },
+
+    setupDropable: function () {
+      let selfobj = this;
+      $("body").find(".leadDrop").droppable({
+        accept: ".leadCustomer",
+        over: function (event, ui) {
+          $(this).addClass("ui-state-highlight");
+        },
+        out: function (event, ui) {
+          $(this).removeClass("ui-state-highlight");
+        },
+        drop: function (event, ui) {
+          var taskStatusID = $(this).parent().find('.listgrid').attr('id');
+          var task_id = $(ui.draggable).attr('data-task_id');
+          $(this).append(ui.draggable);
+          $(this).removeClass("ui-state-highlight");
+          ui.draggable.removeClass("ui-draggable-dragging");
+          setTimeout(function () {
+            selfobj.updateTaskStatus(taskStatusID, task_id);
+          }, 500);
+        },
+      });
+    },
+
+    updateTaskStatus: function (taskStatusID, task_id) {
+      if (task_id != "" && task_id != "") {
+        $.ajax({
+          url: APIPATH + 'taskMaster/taskStatusUpdate',
+          method: 'POST',
+          data: { taskID: task_id, taskStatus: taskStatusID },
+          datatype: 'JSON',
+          beforeSend: function (request) {
+            request.setRequestHeader("token", $.cookie('_bb_key'));
+            request.setRequestHeader("SadminID", $.cookie('authid'));
+            request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+            request.setRequestHeader("Accept", 'application/json');
+          },
+          success: function (res) {
+            if (res.flag == "F")
+              alert(res.msg);
+
+            if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+            if (res.flag == "S") {
+
+            }
+          }
+        });
+      }
+    },
+
+    showList: function (e) {
+      $(".showListView").toggle();
+
     },
 
     onMouseDown: function (event) {
@@ -499,18 +737,9 @@ define([
 
     addOne: function (objectModel) {
       var selfobj = this;
-      this.totalRec = this.collection.length;
-      if (this.totalRec == 0) {
-        $(".noCustRec").show();
-        $("#tasklistview").hide();
-      }else{
-        $(".noCustRec").hide();
-        $("#tasklistview").show();
-      }
-      var template = _.template(taskRowTemp);
       var dueDateMoment = moment(objectModel.attributes.due_date);
       objectModel.attributes.newDate = objectModel.attributes.due_date;
-      
+
       if (objectModel.attributes.due_date != "0000-00-00" && objectModel.attributes.due_date != null) {
         objectModel.attributes.due_date = dueDateMoment.format("DD-MMM-YYYY");
         var today = moment();
@@ -523,19 +752,19 @@ define([
         } else {
           objectModel.attributes.date_status = dueDateMoment.format("MMMM Do, YYYY");
         }
-      }else{
+      } else {
         objectModel.attributes.due_date = ""
       }
 
-      if(selfobj.arrangedColumnList){
+      if (selfobj.arrangedColumnList) {
         selfobj.arrangedColumnList.forEach((column) => {
           if (column.fieldType == 'Datepicker' || column.fieldType == 'Date') {
             if (objectModel.attributes["" + column.column_name] != "0000-00-00") {
               var dueDateMoment = moment(objectModel.attributes["" + column.column_name]);
-              if(column.dateFormat != "" && column.dateFormat != null && column.dateFormat != "undefined"){
-                objectModel.attributes[""+column.column_name] = dueDateMoment.format(column.dateFormat);
-              }else{
-                objectModel.attributes[""+column.column_name] = dueDateMoment.format("DD-MM-YYYY");
+              if (column.dateFormat != "" && column.dateFormat != null && column.dateFormat != "undefined") {
+                objectModel.attributes["" + column.column_name] = dueDateMoment.format(column.dateFormat);
+              } else {
+                objectModel.attributes["" + column.column_name] = dueDateMoment.format("DD-MM-YYYY");
               }
             }
             else {
@@ -550,45 +779,36 @@ define([
             } else {
               objectModel.attributes["" + column.column_name] = "-";
             }
-          }  
+          }
 
-          if(column.column_name == 'created_by'){
+          if (column.column_name == 'created_by') {
             column.column_name = 'createdBy';
-          } else if (column.column_name == 'modified_by'){
+          } else if (column.column_name == 'modified_by') {
             column.column_name = 'modifiedBy';
-          }else{
+          } else {
             column.column_name = column.column_name;
-          } 
-  
+          }
+
         });
       }
-      $("#taskList").append(template({ taskDetails: objectModel,arrangedColumnList:this.arrangedColumnList }));
 
-      // var mailTruncateElements = document.querySelectorAll('.mailtruncate');
-      //  mailTruncateElements.forEach(function (element) {
-      //     var textWidth = element.offsetWidth;
-      //     var parentEle = element.parentElement;
 
-      //   if (textWidth >= 150) {
-      //       parentEle.querySelector('.tooltiptxt').style.display = 'block';
-      //     }
-      //     else{
-      //       parentEle.querySelector('.tooltiptxt').style.display = 'none';
-      //     }
-      // });
+      if (selfobj.View == "list") {
+        var template = _.template(taskRowTemp);
+        $("#taskList").append(template({ taskDetails: objectModel, arrangedColumnList: this.arrangedColumnList}));
+        var template2 = _.template(taskModernRow);
+        $("#taskModernList").append(template2({ taskDetails: objectModel, arrangedColumnList: this.arrangedColumnList }));
+      }else{
+        var template = _.template(taskGridRow);
+        if (objectModel.attributes.task_status != 0) {
+          $("#" + objectModel.attributes.task_status).append(template({ taskDetails: objectModel, taskLength: this.collection.length }));
+        } else {
+          $("#otherStage").append(template({ taskDetails: objectModel, taskLength: this.collection.length }));
+        }
+        selfobj.setupDragable();
+      }
+    
 
-      //   var mailTruncateElements = document.querySelectorAll('.description');
-      //  mailTruncateElements.forEach(function (element) {
-      //     var textWidth = element.offsetWidth;
-      //     var parentEle = element.parentElement;
-
-      //   if (textWidth >= 300) {
-      //       parentEle.querySelector('.tooltiptxt').style.display = 'block';
-      //     }
-      //     else{
-      //       parentEle.querySelector('.tooltiptxt').style.display = 'none';
-      //     }
-      // });
     },
 
     addAll: function () {
@@ -1236,17 +1456,97 @@ define([
       }
     },
 
+    leadCanbanSlider: function () {
+      this.categoryList.models.forEach((category) => {
+        this.totalColumns = category ? category.attributes.sublist ? category.attributes.sublist.length : [] : 0;
+      });
+      var offset = [0, 0];
+      // check how many colums we have
+      const countAll = this.totalColumns + 1;
+      // preview div bottom right
+      var divOverlay = document.querySelector(".kanban-scroll-active");
+      // inner view in preview scroll
+      var scrollView = document.querySelector(".kanban-columns-thumbs");
+      scrollView.innerHTML = "";
+      // main colum view with data
+      var kanban = document.querySelector(".kanban-view");
+
+      for (var i = 0; i < countAll; i++) {
+        const para = document.createElement("div");
+        para.classList.add("leadCol");
+        scrollView.appendChild(para);
+      }
+
+      var isDown = false;
+      calViewPortScroll();
+      window.addEventListener('resize', calViewPortScroll);
+
+      function calViewPortScroll() {
+        var viewPort = kanban ? parseInt(kanban.offsetWidth) * 100 / parseInt(kanban.scrollWidth) : '';
+        divOverlay.style.width = viewPort + "%";
+      }
+
+      document.addEventListener('mouseup', function () {
+        isDown = false;
+      }, true);
+
+      if (divOverlay) {
+        divOverlay.addEventListener('mousedown', function (e) {
+          isDown = true;
+          offset = [
+            divOverlay.offsetLeft - e.clientX,
+            divOverlay.offsetTop - e.clientY
+          ];
+        }, true);
+      }
+
+      if (kanban) {
+        kanban.addEventListener('scroll', function (e) {
+          if (!isDown) {
+            var wid = scrollView.offsetWidth - divOverlay.offsetWidth;
+            var CalPositionPer = (kanban.scrollLeft * 100 / kanban.scrollWidth);
+            var decideScroll = scrollView.offsetWidth * CalPositionPer / 100;
+            divOverlay.style.left = decideScroll + 'px';
+          }
+        });
+      }
+
+      if (divOverlay) {
+        divOverlay.addEventListener('mousemove', function (e) {
+          e.preventDefault();
+          var wid = scrollView.offsetWidth - divOverlay.offsetWidth;
+          if (isDown) {
+
+            if ((e.clientX + offset[0]) > 0 && (e.clientX + offset[0]) < wid) {
+              var CalPositionPer = (scrollView.offsetWidth * (e.clientX + offset[0]) / 100);
+              var decideScroll = kanban.scrollWidth * CalPositionPer / 100;
+              divOverlay.style.left = (e.clientX + offset[0]) + 'px';
+              kanban.scrollLeft = decideScroll;
+            }
+            if ((e.clientX + offset[0]) <= 0) {
+              kanban.scrollLeft = 0;
+            }
+          }
+        }, true);
+      }
+    },
+
     render: function () {
       let selfobj = this;
       var template = _.template(taskTemp);
       var colName = ['category_id', 'customer_id'];
       var fieldName = ['Category Name', 'Customer Name'];
+      selfobj.categoryList.models.forEach((cat) => {
+        cat.attributes.sublist.sort((a, b) => {
+          return parseInt(a.lead_index) - parseInt(b.lead_index);
+        });
+      });
       
       selfobj.arrangedColumnList.forEach((column) => {
           var index = colName.indexOf(column.column_name);
           column.fieldLabel = index !== -1 ? fieldName[index] : column.fieldLabel;
       });
-      this.$el.html(template({ closeItem: this.toClose,"pluralLable":selfobj.plural_label,"moduleDesc":selfobj.module_desc,"arrangedColumnList": selfobj.arrangedColumnList, menuName: this.mname, totalRec: this.totalRec}));
+      this.$el.html(template({ closeItem: this.toClose,"pluralLable":selfobj.plural_label,"moduleDesc":selfobj.module_desc,"arrangedColumnList": selfobj.arrangedColumnList, menuName: this.mname, totalRec: this.totalRec, categoryList: this.categoryList.models}));
       var numColumns = selfobj.arrangedColumnList ? selfobj.arrangedColumnList.length : 0;
       var defaultWidth = numColumns == 0 ? '100%' : 100 + (numColumns * 16) + '%';
       $("#clist").css("width", defaultWidth);
