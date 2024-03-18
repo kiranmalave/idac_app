@@ -1,8 +1,8 @@
 <div class="container-fluid">
   <div class="row clearfix">
     <div class="col-lg-12">
-      <div class="card customModule">
-        <div class="body table">
+      <div class="card customModule taskTable">
+        <div class="body table" id="taskListView">
           <div class="header moduleSec">
             <div>
               <h2>
@@ -16,31 +16,40 @@
               <div class="text-right actionBtns" id="arrangeColumns">
                 <!-- <button type="button" class="btn bg-indigo arrangeColumns" data-action="arrangeColumns">Arrange columns</button> -->
                 <div class="addColumns">
-                  <button type="button" class="arrangeColumns btn-bgColor columntop" data-action="arrangeColumns"
-                    data-toggle="tooltip" data-placement="top" title="Configure Columns">
-                    <span><span class="material-icons">view_column</span><span
-                        class="material-icons">expand_more</span></span>
+                  <button type="button" class="arrangeColumns btn-bgColor columntop" data-action="arrangeColumns" data-toggle="tooltip" data-placement="top" title="Configure Columns">
+                    <span><span class="material-icons">view_column</span><span class="material-icons">expand_more</span></span>
                   </button>
                   <div class="" id="customColumnConfigure"></div>
                 </div>
                 <% if(arrangedColumnList.length > 0){ %>
                   <form id="reports" method="POST" action="#">
-                    <div class="donloadBtn" data-toggle="tooltip"
-                        data-placement="top" title="Download Data">
-                        <button type="button" class="dropdown-toggle btn-bgColor"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                            data-toggle="tooltip" data-placement="top" title="Download Data">
+                    <div class="donloadBtn" data-toggle="tooltip" data-placement="top" title="Download Data">
+                        <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  data-toggle="tooltip" data-placement="top" title="Download Data">
                             <span class="material-symbols-outlined">download</span>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a href="javascript:void(0);" class="downloadReport"
-                                    data-type="pdf">PDF</a></li>
-                            <li><a href="javascript:void(0);" class="downloadReport"
-                                    data-type="excel">Excel</a></li>
+                            <li><a href="javascript:void(0);" class="downloadReport" data-type="pdf">PDF</a></li>
+                            <li><a href="javascript:void(0);" class="downloadReport" data-type="excel">Excel</a></li>
                         </ul>
                     </div>
                   </form>
                 <% } %>
+                <div class="btn-group btn-group-block gridmode float-right btnDetails lisTDetails" style="right:0">
+                  <button class="btn ws-btn-default ws-btn-grid listView">
+                    <span class="material-icons" style="margin-top: 2px;">view_list</span>
+                  </button>
+                  <ul class="showListView forGrid" style="display: none;">
+                    <li>
+                      <button class="btn ws-btn-default ws-btn-grid list_mode" value="traditionalList"><span class="material-icons" style="margin-top: 2px;">view_list</span> Traditional List</button>
+                    </li>
+                    <li>
+                      <button class="btn ws-btn-default ws-btn-grid modernlist_mode" value="modernlist"><span class="material-icons" style="margin-top: 2px;">view_list</span> Modern list</button>
+                    </li>
+                    <li>
+                      <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span class="material-icons" style="margin-top: 2px;">grid_on</span>Grid View</button>
+                    </li>
+                  </ul>
+                </div>
                 <% if (menuName=="task" ){%>
                   <div class="quickFlterDetails">
                     <select for="quick_filter" id="quick_filter" name="quick_filter" title="Quick Filter" class="form-control ws-select sortbydate QuickFlter">
@@ -49,8 +58,7 @@
                       <option value="yesterday">Yesterday's Task</option>
                     </select>
                   </div>
-                  <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval taskReset"
-                    value="Reset"/>
+                  <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval taskReset" value="Reset"/>
                   <%}%>
               </div>
             </div>
@@ -76,53 +84,6 @@
                         </div>
                         <div class="resize-bar"></div>
                       </th>
-                      <!-- <th class="order sortColumns column-title"  style="padding-left: 20px !important;">Task ID
-                        <div class="resize-bar"></div>
-                      </th>
-                      <th class="order sortColumns column-title"  style="padding-left: 20px !important;">Task Progress
-                        <div class="resize-bar"></div>
-                      </th>
-                      <th class="order sortColumns column-title" data-value="" data-field="subject" style="padding-left: 20px !important;">Task Name
-                        <span class="material-symbols-outlined sortarrow up">north</span>
-                        <span class="material-symbols-outlined sortarrow down">south</span>
-                        <div class="resize-bar"></div>
-                      </th>
-                      <th class="order sortColumns column-title" data-value="" data-field="name" style="padding-left: 20px !important;">Assignee
-                        <span class="material-symbols-outlined sortarrow up">
-                          north
-                        </span>
-                        <span class="material-symbols-outlined sortarrow down">
-                          south
-                        </span>
-                        <div class="resize-bar"></div>
-                      </th>
-                      <th class="order sortColumns column-title" data-value="" data-field="task_priority" style="padding-left: 20px !important;">Task Priority
-                        <span class="material-symbols-outlined sortarrow up">
-                          north
-                        </span>
-                        <span class="material-symbols-outlined sortarrow down">
-                          south
-                        </span>
-                        <div class="resize-bar"></div>
-                      </th>
-                      <th class="order sortColumns column-title" data-value="" data-field="task_status" style="padding-left: 20px !important;">Task Status
-                        <span class="material-symbols-outlined sortarrow up">
-                          north
-                        </span>
-                        <span class="material-symbols-outlined sortarrow down">
-                          south
-                        </span>
-                        <div class="resize-bar"></div>
-                      </th>
-                      <th class="order sortColumns column-title" data-value="" data-field="due_date" style="padding-left: 20px !important;">Due Date
-                        <span class="material-symbols-outlined sortarrow up">
-                          north
-                        </span>
-                        <span class="material-symbols-outlined sortarrow down">
-                          south
-                        </span>
-                        <div class="resize-bar"></div>
-                      </th> -->
                       <%}else if( menuName=="ticket" ){%>
                         <th>
                           <div class="listCheckbox">
@@ -174,7 +135,6 @@
                           </span>
                         </th>
                         <%}%>
-
                         <% _.each(arrangedColumnList, function(column) { %>
                           <th class="column-title sortColumns" data-field="<%= column.column_name %>" style="padding-left: 20px !important;">
                             <%= column.fieldLabel %>
@@ -183,7 +143,7 @@
                               <div class="resize-bar"></div>
                           </th>
                         <% }); %>
-                              <th class="column-title" style="padding-left: 20px !important;">Action</th>
+                          <th class="column-title" style="padding-left: 20px !important;">Action</th>
                   </tr>
                 </thead>
                 <tbody id="taskList">
@@ -208,14 +168,8 @@
             </div>
             <div id="loadMember" data-index="1" data-currTask="1"></div>
             <div class="footer row">
-
               <div class="col-sm-4" style="padding: 0;">
-
-                <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
-                    class="page-info f_txt"></span></div>
-
-
-
+                <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span class="page-info f_txt"></span></div>
               </div>
               <div class="col-sm-4">
                 <div class="profile-loader-msg text-center"></div>
@@ -239,6 +193,304 @@
           <% } %>
         </div>
 
+        <div class="body moderntable" id="taskmodernlistview" style="display: none;">
+          <div class="header moduleSec">
+            <div>
+              <h2>
+                <%=pluralLable%>
+              </h2>
+              <div class="moduleDesc">
+                <%=moduleDesc%>
+              </div>
+            </div>
+            <div class="text-right actionBtns topBtnDetails" id="arrangeColumns" style="top:-7px;right:-19px;">
+              <div class="text-right actionBtns" id="arrangeColumns">
+                <!-- <button type="button" class="btn bg-indigo arrangeColumns" data-action="arrangeColumns">Arrange columns</button> -->
+                <div class="addColumns">
+                  <button type="button" class="arrangeColumns btn-bgColor columntop" data-action="arrangeColumns" data-toggle="tooltip" data-placement="top" title="Configure Columns">
+                    <span><span class="material-icons">view_column</span><span class="material-icons">expand_more</span></span>
+                  </button>
+                  <div class="" id="customColumnConfigure"></div>
+                </div>
+                <form id="reports" method="POST" action="#">
+                  <div class="donloadBtn" data-toggle="tooltip" data-placement="top" title="Download Data">
+                    <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top" title="Download Data">
+                      <span class="material-symbols-outlined">download</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a href="javascript:void(0);" class="downloadReport" data-type="pdf">PDF</a></li>
+                      <li><a href="javascript:void(0);" class="downloadReport" data-type="excel">Excel</a></li>
+                    </ul>
+                  </div>
+                </form>
+                <div class="btn-group btn-group-block gridmode float-right btnDetails lisTDetails" style="right:0">
+                  <button class="btn ws-btn-default ws-btn-grid listView">
+                    <span class="material-icons" style="margin-top: 2px;">view_list</span>
+                  </button>
+                  <ul class="showListView forGrid" style="display: none;">
+                    <li>
+                      <button class="btn ws-btn-default ws-btn-grid list_mode" value="traditionalList"><span class="material-icons" style="margin-top: 2px;">view_list</span> Traditional List</button>
+                    </li>
+                    <li>
+                      <button class="btn ws-btn-default ws-btn-grid modernlist_mode" value="modernlist"><span class="material-icons" style="margin-top: 2px;">view_list</span> Modern list</button>
+                    </li>
+                    <li>
+                      <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span class="material-icons" style="margin-top: 2px;">grid_on</span>Grid View</button>
+                    </li>
+                  </ul>
+                </div>
+                <% if (menuName=="task" ){%>
+                  <div class="quickFlterDetails">
+                    <select for="quick_filter" id="quick_filter" name="quick_filter" title="Quick Filter" class="form-control ws-select sortbydate QuickFlter">
+                      <option value="today">Today's Task</option>
+                      <option value="tomorrow">Tomorrow's Task</option>
+                      <option value="yesterday">Yesterday's Task</option>
+                    </select>
+                  </div>
+                  <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval taskReset" value="Reset" />
+                  <%}%>
+              </div>
+            </div>
+          </div>
+          <div class="actionList">
+            <%if(permission.delete=="yes" ) { %>
+              <span type="button" style="display:none;" class="changeStatus deleteAll" data-action="delete" data-toggle="tooltip" data-placement="top" title="Delete"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Delete" style="background-color: #494b94; border-radius: 50%; padding: 2px 5px; color:#fff;">delete</i></span>
+            <% } %>
+          </div>
+          <div class="customTableClass forTask modernTable">
+            <table id="clist" class="table bulk_action tableList table-hover  table-resizable tableModern">
+              <thead id="thead" style="z-index: 8;">
+                <tr class="headings">
+                  <% if (menuName=="task" ){%>
+                    <th class="check-gap">
+                      <div class="listCheckbox">
+                        <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
+                        <label for="cAll">&nbsp;</label>
+                      </div>
+                      <div class="resize-bar"></div>
+                    </th>
+                    <th class="order sortColumns column-title table-bordered" style="padding-left: 20px !important;">
+                      Task ID
+                      <div class="resize-bar"></div>
+                    </th>
+                    <th class="order sortColumns column-title table-bordered" style="padding-left: 20px !important;">
+                      Task Progress
+                      <div class="resize-bar"></div>
+                    </th>
+                    <th class="order sortColumns column-title table-bordered" data-value="" data-field="subject" style="padding-left: 20px !important;">Task Name
+                      <span class="material-symbols-outlined sortarrow up">
+                        north
+                      </span>
+                      <span class="material-symbols-outlined sortarrow down">
+                        south
+                      </span>
+                      <div class="resize-bar"></div>
+                    </th>
+                    <th class="order sortColumns column-title table-bordered" data-value="" data-field="name" style="padding-left: 20px !important;">Assignee
+                      <span class="material-symbols-outlined sortarrow up">
+                        north
+                      </span>
+                      <span class="material-symbols-outlined sortarrow down">
+                        south
+                      </span>
+                      <div class="resize-bar"></div>
+                    </th>
+                    <th class="order sortColumns column-title table-bordered" data-value="" data-field="task_priority" style="padding-left: 20px !important;">Task Priority
+                      <span class="material-symbols-outlined sortarrow up">
+                        north
+                      </span>
+                      <span class="material-symbols-outlined sortarrow down">
+                        south
+                      </span>
+                      <div class="resize-bar"></div>
+                    </th>
+                    <th class="order sortColumns column-title table-bordered" data-value="" data-field="task_status" style="padding-left: 20px !important;">Task Status
+                      <span class="material-symbols-outlined sortarrow up">
+                        north
+                      </span>
+                      <span class="material-symbols-outlined sortarrow down">
+                        south
+                      </span>
+                      <div class="resize-bar"></div>
+                    </th>
+                    <th class="order sortColumns column-title table-bordered" data-value="" data-field="due_date" style="padding-left: 20px !important;">Due Date
+                      <span class="material-symbols-outlined sortarrow up">
+                        north
+                      </span>
+                      <span class="material-symbols-outlined sortarrow down">
+                        south
+                      </span>
+                      <div class="resize-bar"></div>
+                    </th>
+                    <%}else if( menuName=="ticket" ){%>
+                      <th>
+                        <div class="listCheckbox">
+                          <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
+                          <label for="cAll">&nbsp;</label>
+                        </div>
+                      </th>
+                      <th class="order sortColumns column-title">Ticket ID</th>
+                      <th class="order sortColumns column-title" data-value="" data-field="subject">Ticket Name
+                        <span class="material-symbols-outlined sortarrow up">
+                          north
+                        </span>
+                        <span class="material-symbols-outlined sortarrow down">
+                          south
+                        </span>
+                      </th>
+                      <th class="order sortColumns column-title" data-value="" data-field="name">Assignee
+                        <span class="material-symbols-outlined sortarrow up">
+                          north
+                        </span>
+                        <span class="material-symbols-outlined sortarrow down">
+                          south
+                        </span>
+                      </th>
+                      <th class="order sortColumns column-title" data-value="" data-field="task_priority">Ticket
+                        Priority
+                        <span class="material-symbols-outlined sortarrow up">
+                          north
+                        </span>
+                        <span class="material-symbols-outlined sortarrow down">
+                          south
+                        </span>
+                      </th>
+                      <th class="order sortColumns column-title" data-value="" data-field="task_status">Ticket Status
+                        <span class="material-symbols-outlined sortarrow up">
+                          north
+                        </span>
+                        <span class="material-symbols-outlined sortarrow down">
+                          south
+                        </span>
+                      </th>
+                      <th class="order sortColumns column-title" data-value="" data-field="due_date">Due Date
+                        <span class="material-symbols-outlined sortarrow up">
+                          north
+                        </span>
+                        <span class="material-symbols-outlined sortarrow down">
+                          south
+                        </span>
+                      </th>
+                      <%}%>
+                      <% _.each(arrangedColumnList, function(column) { %>
+                        <th class="column-title sortColumns" data-field="<%= column.column_name %>" style="padding-left: 20px !important;">
+                          <%= column.fieldLabel %>
+                          <span class="material-symbols-outlined sortarrow up">north</span>
+                          <span class="material-symbols-outlined sortarrow down">south</span>
+                          <div class="resize-bar"></div>
+                        </th>
+                      <% }); %>
+                      <th class="column-title" style="padding-left: 20px !important;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="taskModernList"></tbody>
+            </table>
+          </div>
+
+        <div class="profile-loader text-center table">
+          <div class="preloader table">
+            <!-- <div class="spinner-layer pl-amber">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
+              </div>
+              <div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+
+            </div> -->
+            <div class="loderGif table">
+              <img src="images/webloader.gif" alt="User" />
+            </div>
+          </div>
+        </div>
+
+        <div id="loadMember" data-index="1" data-currTask="1"></div>
+
+        <div class="footer row">
+
+          <div class="col-sm-4" style="padding: 0;">
+
+            <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
+                class="page-info f_txt"></span></div>
+
+
+
+          </div>
+          <div class="col-sm-4">
+            <div class="profile-loader-msg text-center"></div>
+          </div>
+
+          <div class="col-sm-4" style="padding: 0;">
+            <div class="showPageDetails dataTables_paginate paging_simple_numbers">
+              <ul class="pagination"></ul>
+            </div>
+          </div>
+        </div>
+        <!-- paggination -->
+        </div>
+
+        <div class="body greed" id="taskGridView" style="display: none;">
+          <div class="header moduleSec lead">
+            <div>
+              <h2>
+                <%=pluralLable%>
+              </h2>
+              <div class="moduleDesc">
+                <%=moduleDesc%>
+              </div>
+            </div>
+            <div class="btn-group btn-group-block gridmode float-right btnDetails lisTDetails" style="right:0">
+              <button class="btn ws-btn-default ws-btn-grid listView">
+                <span class="material-icons" style="margin-top: 2px;">view_list</span>
+              </button>
+              <ul class="showListView forGrid" style="display: none;">
+                <li>
+                  <button class="btn ws-btn-default ws-btn-grid list_mode" value="traditionalList"><span class="material-icons" style="margin-top: 2px;">view_list</span> Traditional List</button>
+                </li>
+                <li>
+                  <button class="btn ws-btn-default ws-btn-grid modernlist_mode" value="modernlist"><span class="material-icons" style="margin-top: 2px;">view_list</span> Modern list</button>
+                </li>
+                <li>
+                  <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span class="material-icons" style="margin-top: 2px;">grid_on</span>Grid View</button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="greedLeadTotalBody lead-assignment">
+            <div class="row kanban-view">
+                <% _.each(categoryList, function(parentCat) { %>
+                  <% if(parentCat.attributes.slug == "task_status"){%>
+                    <% _.each(parentCat.attributes.sublist, function(category) { %>
+                      <div class="greedLeadTotal leadIndex" data-lead-id="<%=category.category_id%>" style="background-color: <%=category.cat_color_light%>;">
+                        <div class="listgrid leadDrop" id="<%=category.category_id%>">
+                          <div style="background-color: <%=category.cat_color%>" class="totalCount">
+                            <h2 style="color:<%=category.font_color%>"><%=category.categoryName%></h2>
+                          </div>
+                        </div>
+                      </div>
+                    <%})%>
+                  <%}%>
+                <%})%>
+              <div class="greedLeadTotal" data-lead-id="otherStage">
+                <div class="listgrid" id="otherStage">
+                  <div class="totalCount">
+                    <h2>Other Stage</h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Slider -->
+              <div class="kanban-scroll-view">
+                <div class="kanban-scroll">
+                  <div id="sc" class="kanban-scroll-active" style="margin-left: 1.43483px;"></div>
+                </div>
+                <div id="" class="kanban-columns-thumbs">
+                </div>
+              </div>
+            <!-- Slider -->
+          </div>
+        </div>
       </div>
     </div>
   </div>

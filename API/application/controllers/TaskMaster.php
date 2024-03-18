@@ -316,7 +316,7 @@ class TaskMaster extends CI_Controller
 				$columnNames = [
 					"customer_id" => ["table" => "customer", "alias" => "cs", "column" => "name", "key2" => "customer_id"],
 					"assignee" => ["table" => "admin", "alias" => "a", "column" => "name", "key2" => "adminID"],
-					"task_status" => ["table" => "categories", "alias" => "ca", "column" => "categoryName", "key2" => "category_id"],
+					// "task_status" => ["table" => "categories", "alias" => "ca", "column" => "categoryName", "key2" => "category_id"],
 					"task_priority" => ["table" => "categories", "alias" => "cat", "column" => "categoryName", "key2" => "category_id"],
 					"task_type" => ["table" => "categories", "alias" => "ct", "column" => "categoryName", "key2" => "category_id"],
 				];
@@ -463,7 +463,7 @@ class TaskMaster extends CI_Controller
 		}
 
 		$config["base_url"] = base_url() . "taskDetails";
-		$config["total_rows"] = $this->CommonModel->getCountByParameter('task_id', 'tasks', $wherec, $other);
+		$config["total_rows"] = $this->CommonModel->getCountByParameter('t.task_id', 'tasks', $wherec, $other);
 		$config["uri_segment"] = 2;
 		$this->pagination->initialize($config);
 		if (isset($curPage) && !empty($curPage)) {
@@ -529,12 +529,12 @@ class TaskMaster extends CI_Controller
 			// $join[$jkey]['key2'] ="category_id";
 
 			// $selectC = "t.task_id,t.subject,t.due_date,c.categoryName AS status_slug, c.cat_color AS status_color, ca.categoryName AS priority_slug, ca.cat_color AS priority_color, a.name,".$selectC;
-			$selectC = "t.task_id,t.subject,t.due_date,".$selectC;
+			$selectC = "t.task_id,t.subject,t.due_date,t.task_status,t.task_priority, cat.cat_color as priorityColor,".$selectC;
 			// print($selectC);exit;
 			// print_r($wherec);exit;
 			$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, $config["per_page"], $page, $join, $other);
 		}
-		//print $this->db->last_query();exit;
+		// print $this->db->last_query();exit;
 		
 		$status['data'] = $taskDetails;
 		$status['paginginfo']["curPage"] = $curPage;

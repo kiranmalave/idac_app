@@ -122,6 +122,7 @@ define([
               $.cookie('roleID', res.data.roleID, { path: COKI, expires: expDate });
               var bbauth = $.cookie('bbauth');
               ADMINNAME = $.cookie('name');
+              console.log(ADMINNAME);
               INITIALS = selfobj.getInitials(ADMINNAME);
               PROFILEIMG = $.cookie('photo');
               ADMINID = $.cookie('authid');
