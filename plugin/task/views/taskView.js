@@ -405,6 +405,7 @@ define([
     },
 
     updateTaskStatus: function (taskStatusID, task_id) {
+      let selfobj = this;
       if (task_id != "" && task_id != "") {
         $.ajax({
           url: APIPATH + 'taskMaster/taskStatusUpdate',
@@ -423,7 +424,7 @@ define([
 
             if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
             if (res.flag == "S") {
-
+              selfobj.stageColumnUpdate(taskStatusID);
             }
           }
         });
@@ -704,7 +705,7 @@ define([
     
     resetSearch: function () {
       filterOption.clear().set(filterOption.defaults);
-
+      let selfobj = this;
       if (this.mname == "task") {
         filterOption.set({ record_type: "task" });
       } else if (this.mname == "ticket") {
@@ -719,7 +720,12 @@ define([
       $(".form-line").removeClass("focused");
       $("#textSearch").val("select");
       this.filterCount = null;
-      this.filterSearch(false);
+      if(selfobj.View == "list"){
+        this.filterSearch(false);
+      }else{
+        filterOption.set({ "menuId": this.menuId });
+        selfobj.stageColumnUpdate(stage);
+      }
       $('.taskfilbtn').removeClass('active');
       $("#clist").find(".up").removeClass("active");
       $("#clist").find(".down").removeClass("active");
@@ -843,6 +849,7 @@ define([
           }
         });
         selfobj.updateTaskStatus(selectedStatusId, task_id);
+        $(e.currentTarget).closest(".leadCustomer").remove();
       }else{
         var inputOptionsPromise = new Promise(function (resolve) {
             setTimeout(function () {
@@ -879,6 +886,7 @@ define([
           if (result.isConfirmed) {
             if (Status) {}
             selfobj.updateTaskStatus(selectedStatusId, task_id);
+            $(e.currentTarget).closest(".leadCustomer").remove();
           } else if (result.isDismissed) return;
         })
       }
@@ -1060,11 +1068,34 @@ define([
       }
     },
 
-    filterSearch: function (isClose = false) {
+    stageColumnUpdate: function (stage) {
+      let selfobj = this;
+      filterOption.set({ task_status: stage });
+      selfobj.listDataGrid[stage] = new taskCollection();
+      selfobj.listDataGrid[stage].fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".profile-loader").hide();
+        selfobj.paginginfo = res.paginginfo;
+        selfobj.addAllGrid(stage);
+      });
+      $('#' + stage).children().not(".totalCount").remove();
+    },
+
+    filterSearch: function (isClose = false, status) {
       if (isClose && typeof isClose != 'object') {
         $('.' + this.toClose).remove();
         rearrageOverlays();
       }
+
+      if (this.View == "grid") {
+        this.stageColumnUpdate(status);
+        return;
+      }
+
       this.collection.reset();
       var selfobj = this;
       readyState = true;

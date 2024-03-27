@@ -5,7 +5,7 @@
                 <div class="namedetails">
                     <div class="image">
                         <div class="">
-                            <input type="checkbox" id="<%= taskDetails.attributes.task_id %>" data-task_id="<%= taskDetails.attributes.task_id %>" data-task_statusID="<%= taskDetails.attributes.task_statusID %>" class="filled-in chk-col-light-blue setTaskStatus" />
+                            <input type="checkbox" id="<%= taskDetails.attributes.task_id %>" data-task_id="<%= taskDetails.attributes.task_id %>" data-task_statusID="<%= taskDetails.attributes.task_statusID %>" class="filled-in chk-col-light-blue setTaskStatus" <%if(taskDetails.attributes.task_status == "Completed"){%>checked<%}%> />
                             <label for="<%= taskDetails.attributes.task_id %>">&nbsp;</label>
                         </div>
                     </div>
