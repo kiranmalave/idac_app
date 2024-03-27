@@ -564,6 +564,7 @@ define([
       var task_id = this.model.get("task_id");
       var inputStr = $('#subject').val();
       let capitalizedString = inputStr.charAt(0).toUpperCase() + inputStr.slice(1);
+      var status = this.model.get('task_status');
       this.model.set({"subject": capitalizedString});
       if (this.menuName == "ticket") {
         this.model.set({ "record_type": "ticket" });
@@ -595,8 +596,8 @@ define([
             showResponse(e, res, "Save & New");
           } else {
             showResponse(e, res, "Save");
-          }
-          selfobj.scanDetails.filterSearch();
+          } 
+          selfobj.scanDetails.filterSearch(false, status);
           if (res.flag == "S") {
             if (isNew == "new") {
               selfobj.model.clear().set(selfobj.model.defaults);
