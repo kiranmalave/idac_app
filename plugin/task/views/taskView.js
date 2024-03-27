@@ -213,6 +213,7 @@ define([
       "click .grid_mode": "gridMode",
       "click .modernlist_mode": "gridMode",
       "click .listView": "showList",
+      "change .setTaskStatus": "setTaskStatus",
     },
 
     gridMode: function (e) {
@@ -800,10 +801,13 @@ define([
         $("#taskModernList").append(template2({ taskDetails: objectModel, arrangedColumnList: this.arrangedColumnList }));
       }else{
         var template = _.template(taskGridRow);
-        if (objectModel.attributes.task_status != 0) {
-          $("#" + objectModel.attributes.task_status).append(template({ taskDetails: objectModel, taskLength: this.collection.length }));
+        if(objectModel.attributes.assignee){
+          var initial = selfobj.getInitials(objectModel.attributes.assignee);
+        }
+        if (objectModel.attributes.task_statusID != 0) {
+          $("#" + objectModel.attributes.task_statusID).append(template({ taskDetails: objectModel, taskLength: this.collection.length , assigneeInitial: initial ? initial : '',}));
         } else {
-          $("#otherStage").append(template({ taskDetails: objectModel, taskLength: this.collection.length }));
+          $("#otherStatus").append(template({ taskDetails: objectModel, taskLength: this.collection.length, assigneeInitial: initial ? initial : '', }));
         }
         selfobj.setupDragable();
       }
@@ -811,9 +815,73 @@ define([
 
     },
 
+    getInitials:function (name) {
+      if(name){
+        const words = name.split(' ');
+        const initials = words.map(word => word.charAt(0));
+        return initials.join('').toUpperCase();
+      }
+    },
+
     addAll: function () {
       $("#taskList").empty();
       this.collection.forEach(this.addOne, this);
+    },
+
+    setTaskStatus :function(e){
+      var selfobj = this;
+      var selectedStatusId = '';
+      var task_id = $(e.currentTarget).attr('data-task_id');
+      if($(e.currentTarget).is(':checked')){
+         selfobj.categoryList.models.forEach(function(element) {
+          if(element.attributes.categoryName == 'Task Status') {
+            element.attributes.sublist.forEach(function(list){
+              if(list.categoryName == 'Completed'){
+                selectedStatusId = list.category_id;
+              }
+            })
+          }
+        });
+        selfobj.updateTaskStatus(selectedStatusId, task_id);
+      }else{
+        var inputOptionsPromise = new Promise(function (resolve) {
+            setTimeout(function () {
+                let inputOptions = {};
+                selfobj.categoryList.models.forEach(function(element) {
+                  if(element.attributes.categoryName == 'Task Status') {
+                    element.attributes.sublist.forEach(function(list, index){
+                      inputOptions[list.category_id] = list.categoryName;
+                    })
+                  }
+                });
+                resolve(inputOptions);
+            }, 100);
+        });
+        const { value: Status } = Swal.fire({
+          title: "Change Status",
+          text: "Please select the Task Status:",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Change',
+          animation: "slide-from-top",
+          inputPlaceholder: "Select Status",
+          input: 'select',
+          inputOptions: inputOptionsPromise,
+          inputValidator: (value) => {
+            selectedStatusId = value;
+            if (!value) {
+              return 'Please select the Status!'
+            }
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            if (Status) {}
+            selfobj.updateTaskStatus(selectedStatusId, task_id);
+          } else if (result.isDismissed) return;
+        })
+      }
     },
 
     filterRender: function (e) {

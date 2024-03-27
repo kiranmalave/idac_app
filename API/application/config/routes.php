@@ -230,6 +230,7 @@ $route['taskMaster/saveWatchersDetails'] = 'taskMaster/saveWatchersDetails';
 $route['taskMaster/removeWatchers'] = 'taskMaster/removeWatchers';
 $route['taskMaster/removeAttachment'] = 'taskMaster/removeAttachment';
 $route['taskComment'] = 'taskMaster/taskCommentMaster';
+$route['taskMaster/taskStatusUpdate'] = 'taskMaster/taskStatusUpdate';
 $route['taskUpload'] = 'taskMaster/taskUpload';
 $route['taskUpload/(:num)'] = 'taskMaster/taskUpload/$1';
 // $route['taskComment/(:num)'] = 'taskMaster/taskCommentMaster/$1';
