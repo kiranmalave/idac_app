@@ -136,10 +136,12 @@
                         </th>
                         <%}%>
                         <% _.each(arrangedColumnList, function(column) { %>
-                          <th class="column-title sortColumns" data-field="<%= column.column_name %>" style="padding-left: 20px !important;">
+                          <th class="column-title" data-field="<%= column.column_name %>" style="padding-left: 20px !important;">
                             <%= column.fieldLabel %>
+                            <span class="sortColumns" data-field="<%= column.column_name %>" data-value="">
                               <span class="material-symbols-outlined sortarrow up">north</span>
                               <span class="material-symbols-outlined sortarrow down">south</span>
+                            </span>
                               <div class="resize-bar"></div>
                           </th>
                         <% }); %>
@@ -258,7 +260,7 @@
             <% } %>
           </div>
           <div class="customTableClass forTask modernTable">
-            <table id="clist" class="table bulk_action tableList table-hover  table-resizable tableModern">
+            <table id="clist" class="table bulk_action tableList table-hover table-resizable tableModern">
               <thead id="thead" style="z-index: 8;">
                 <tr class="headings">
                   <% if (menuName=="task" ){%>
@@ -269,7 +271,7 @@
                       </div>
                       <div class="resize-bar"></div>
                     </th>
-                    <th class="order sortColumns column-title table-bordered" style="padding-left: 20px !important;">
+                    <!-- <th class="order sortColumns column-title table-bordered" style="padding-left: 20px !important;">
                       Task ID
                       <div class="resize-bar"></div>
                     </th>
@@ -285,8 +287,8 @@
                         south
                       </span>
                       <div class="resize-bar"></div>
-                    </th>
-                    <th class="order sortColumns column-title table-bordered" data-value="" data-field="name" style="padding-left: 20px !important;">Assignee
+                    </th> -->
+                    <!-- <th class="order sortColumns column-title table-bordered" data-value="" data-field="name" style="padding-left: 20px !important;">Assignee
                       <span class="material-symbols-outlined sortarrow up">
                         north
                       </span>
@@ -294,8 +296,8 @@
                         south
                       </span>
                       <div class="resize-bar"></div>
-                    </th>
-                    <th class="order sortColumns column-title table-bordered" data-value="" data-field="task_priority" style="padding-left: 20px !important;">Task Priority
+                    </th> -->
+                    <!-- <th class="order sortColumns column-title table-bordered" data-value="" data-field="task_priority" style="padding-left: 20px !important;">Task Priority
                       <span class="material-symbols-outlined sortarrow up">
                         north
                       </span>
@@ -312,8 +314,8 @@
                         south
                       </span>
                       <div class="resize-bar"></div>
-                    </th>
-                    <th class="order sortColumns column-title table-bordered" data-value="" data-field="due_date" style="padding-left: 20px !important;">Due Date
+                    </th> -->
+                    <!-- <th class="order sortColumns column-title table-bordered" data-value="" data-field="due_date" style="padding-left: 20px !important;">Due Date
                       <span class="material-symbols-outlined sortarrow up">
                         north
                       </span>
@@ -321,7 +323,7 @@
                         south
                       </span>
                       <div class="resize-bar"></div>
-                    </th>
+                    </th> -->
                     <%}else if( menuName=="ticket" ){%>
                       <th>
                         <div class="listCheckbox">
@@ -373,10 +375,12 @@
                       </th>
                       <%}%>
                       <% _.each(arrangedColumnList, function(column) { %>
-                        <th class="column-title sortColumns" data-field="<%= column.column_name %>" style="padding-left: 20px !important;">
+                        <th class="order column-title table-bordered" data-field="<%= column.column_name %>" style="padding-left: 20px !important;">
                           <%= column.fieldLabel %>
-                          <span class="material-symbols-outlined sortarrow up">north</span>
-                          <span class="material-symbols-outlined sortarrow down">south</span>
+                          <span class="sortColumns" data-field="<%= column.column_name %>" data-value="">
+                            <span class="material-symbols-outlined sortarrow up">north</span>
+                            <span class="material-symbols-outlined sortarrow down">south</span>
+                          </span>
                           <div class="resize-bar"></div>
                         </th>
                       <% }); %>
@@ -472,10 +476,10 @@
                     <%})%>
                   <%}%>
                 <%})%>
-              <div class="greedLeadTotal" data-lead-id="otherStage">
-                <div class="listgrid" id="otherStage">
+              <div class="greedLeadTotal" data-lead-id="otherStatus">
+                <div class="listgrid" id="otherStatus">
                   <div class="totalCount">
-                    <h2>Other Stage</h2>
+                    <h2>Other Status</h2>
                   </div>
                 </div>
               </div>

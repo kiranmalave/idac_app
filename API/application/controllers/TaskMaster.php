@@ -316,9 +316,11 @@ class TaskMaster extends CI_Controller
 				$columnNames = [
 					"customer_id" => ["table" => "customer", "alias" => "cs", "column" => "name", "key2" => "customer_id"],
 					"assignee" => ["table" => "admin", "alias" => "a", "column" => "name", "key2" => "adminID"],
-					// "task_status" => ["table" => "categories", "alias" => "ca", "column" => "categoryName", "key2" => "category_id"],
+					"task_status" => ["table" => "categories", "alias" => "ca", "column" => "categoryName", "key2" => "category_id"],
 					"task_priority" => ["table" => "categories", "alias" => "cat", "column" => "categoryName", "key2" => "category_id"],
 					"task_type" => ["table" => "categories", "alias" => "ct", "column" => "categoryName", "key2" => "category_id"],
+					"task_progress" => ["table" => "categories", "alias" => "cp", "column" => "categoryName", "key2" => "category_id"],
+
 				];
 			
 				foreach ($columnNames as $columnName => $columnData) {
@@ -331,6 +333,15 @@ class TaskMaster extends CI_Controller
 						$join[$jkey]['key2'] = $columnData["key2"];
 						$columnNameShow = $columnData["column"];
 						$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+						if($columnName == 'task_priority'){
+							$selectC = "cat.cat_color as priorityColor,".$selectC;
+						}
+						if($columnName == 'task_status'){
+							$selectC = "ca.cat_color as status_color,".$selectC;
+						}
+						if($columnName == 'task_progress'){
+							$selectC = "cp.categoryName AS status_slug,".$selectC;
+						}
 					}
 				}
 				// Remove the leading comma if $selectC is not empty
@@ -529,7 +540,30 @@ class TaskMaster extends CI_Controller
 			// $join[$jkey]['key2'] ="category_id";
 
 			// $selectC = "t.task_id,t.subject,t.due_date,c.categoryName AS status_slug, c.cat_color AS status_color, ca.categoryName AS priority_slug, ca.cat_color AS priority_color, a.name,".$selectC;
-			$selectC = "t.task_id,t.subject,t.due_date,t.task_status,t.task_priority, cat.cat_color as priorityColor,".$selectC;
+			// $selectC = "t.task_id,t.subject,t.due_date,t.task_status,t.task_priority, cat.cat_color as priorityColor,".$selectC;
+			$jkey = count($join)+1;
+			$join[$jkey]['type'] ="LEFT JOIN";
+			$join[$jkey]['table']="categories";
+			$join[$jkey]['alias'] ="css";
+			$join[$jkey]['key1'] ="task_status";
+			$join[$jkey]['key2'] ="category_id";
+			$selectC = "css.category_id AS task_statusID,".$selectC;
+
+			$jkey = count($join)+1;
+			$join[$jkey]['type'] ="LEFT JOIN";
+			$join[$jkey]['table']="customer";
+			$join[$jkey]['alias'] ="ci";
+			$join[$jkey]['key1'] ="customer_id";
+			$join[$jkey]['key2'] ="customer_id";
+			$selectC = "ci.customer_image AS customer_image,".$selectC;
+
+			$jkey = count($join)+1;
+			$join[$jkey]['type'] ="LEFT JOIN";
+			$join[$jkey]['table']="admin";
+			$join[$jkey]['alias'] ="ap";
+			$join[$jkey]['key1'] ="assignee";
+			$join[$jkey]['key2'] ="adminID";
+			$selectC = "ap.photo AS assigneePhoto,ap.adminID AS assigneeID,".$selectC;
 			// print($selectC);exit;
 			// print_r($wherec);exit;
 			$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, $config["per_page"], $page, $join, $other);
@@ -2273,5 +2307,27 @@ class TaskMaster extends CI_Controller
 			'extraData' => $extraData,
 		);
 		$this->realtimeupload->init($settings);
+	}
+
+	public function taskStatusUpdate()
+	{
+		$taskStatus = $this->input->post('taskStatus');
+		$taskID = $this->input->post('taskID');
+		$where = array('task_id' => $taskID);
+		$taskDetails['task_status'] = $taskStatus;
+		$iscreated = $this->CommonModel->updateMasterDetails('tasks', $taskDetails, $where);
+		if (!$iscreated) {
+			$status['msg'] = $this->systemmsg->getErrorCode(998);
+			$status['statusCode'] = 998;
+			$status['data'] = array();
+			$status['flag'] = 'F';
+			$this->response->output($status, 200);
+		} else {
+			$status['msg'] = $this->systemmsg->getSucessCode(400);
+			$status['statusCode'] = 400;
+			$status['data'] = array();
+			$status['flag'] = 'S';
+			$this->response->output($status, 200);
+		}
 	}
 }

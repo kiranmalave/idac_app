@@ -725,22 +725,7 @@ define([
 
           break;
         }
-        case "appointment": {
-          var customer_id = $(e.currentTarget).attr("data-customer_id");
-          var cust_name = $(e.currentTarget).attr("data-first_name");
-          var cust_mail = $(e.currentTarget).attr("data-email");
-          new appointmentSingleView({ customer_id: customer_id, customerName: cust_name, cust_mail: cust_mail, loadFrom: "customer", searchappointment: this })
-          $('body').find(".loder");
-          break;
-        }
-        case "notificationView": {
-          new notificationView({ menuID: this.menuId, searchreceipt: this, module_name: this.module_name });
-          $('body').find(".loder");
-          break;
-        }
       }
-
-
     },
 
     resetSearch: function (stage) {
@@ -832,7 +817,7 @@ define([
       });
       if (selfobj.View == "list") {
         var template = _.template(customerRowTemp);
-        $("#customerList").append(template({ customerDetails: objectModel, arrangedColumnList: this.arrangedColumnList, menuName: this.mname }));
+        $("#customerList").append(template({ customerDetails: objectModel, arrangedColumnList: this.arrangedColumnList, menuName: this.mname, menuID: this.menuId }));
       } else {
         var template = _.template(leadGridRow);
         objectModel.set({"lastActivityTime" : selfobj.timeselectOptions.displayRelativeTime(objectModel.attributes.last_activity_date)});

@@ -10369,3 +10369,152 @@ ul.showListView li button.btn.ws-btn-default.ws-btn-grid.modernlist_mode {
   background: transparent;
 
 }
+
+.modernTable th.check-gap {
+  background: #F7F7F7;
+}
+
+.taskCard .image label {
+  margin-bottom: 0px;
+}
+
+.taskCard .taskSubject{
+  white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: fit-content;
+}
+
+.taskCard img.logoImgCls{
+  width: 40px;
+  height: 40px;
+  border-radius: 50px;
+}
+
+.taskCard img.assigneePhoto{
+  margin-left: auto;
+}
+
+.taskCard [type="checkbox"].filled-in+label:after{
+  border-radius: 10px;
+  width: 20px;
+  height: 20px;
+}
+
+.forModerntask {
+  background: #F7F7F7;
+}
+
+.customTableClass tbody tr.even.pointer.forModerntask td.a-center {
+  position: sticky;
+  left: 0;
+  background: #F7F7F7;
+  z-index: 1;
+}
+
+.tableModern {
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.namedetails {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0px;
+}
+
+.namedetails .initial_name {
+  height: 30px;
+  width: 30px;
+  background: #FC5AD8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 12px;
+  color: #fff;
+  flex: 0 0 30px;
+}
+
+.customTableClass tbody tr.even.pointer.forModerntask td.a-center {
+  position: sticky;
+  left: 0;
+  background: #f7f7f7;
+  z-index: 1;
+}
+
+.customTableClass tbody tr.even.pointer.forModerntask td.a-center .listCheckbox [type="checkbox"]+label:before,
+[type="checkbox"]:not(.filled-in)+label:after {
+  border-radius: 3px;
+  /* #B5B5BE; */
+
+}
+
+.taskmodern {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: auto;
+  margin-top: 4px;
+}
+
+.customTableClass tbody tr.even.pointer.forModerntask td.a-center {
+  background: #f7f7f7;
+}
+
+.customTableClass tbody tr:hover.even.pointer.forModerntask td.a-center {
+  background-color: rgb(0 0 0 / 0%);
+  box-shadow: -10px 6px 12px 0px rgb(0 0 0 / 0%);
+}
+
+.customTableClass tbody tr.even.pointer.forModerntask:hover {
+  box-shadow: 2px 6px 11px 0px rgba(0, 0, 0, 0.09);
+}
+
+
+.customTableClass.forTask.modernTable .tableModern thead#thead tr.headings th.check-gap .listCheckbox {
+  top: 6px;
+  left: 0px;
+}
+
+
+.customTableClass.forTask.modernTable .tableModern thead#thead tr.headings th.check-gap .listCheckbox[type="checkbox"]+label:before {
+  border-radius: 3px !important;
+}
+
+.customTableClass.forTask.modernTable .tableModern thead#thead tr.headings th {
+  padding: 11px 2px !important;
+}
+
+.customTableClass.forTask.modernTable th[scope="row"],
+.customTableClass.customTableClass.forTask.modernTable #thead tr {
+  position: sticky;
+  top: -1px;
+  left: 0px;
+  background: #F7F7F7;
+  z-index: 9;
+}
+
+.customTableClass.forTask.modernTable .tableModern thead#thead tr.headings th.check-gap .listCheckbox [type="checkbox"]+label:before,
+.customTableClass.forTask.modernTable .tableModern thead#thead tr.headings th.check-gap .listCheckbox [type="checkbox"]:not(.filled-in)+label:after {
+  border-radius: 3px !important;
+}
+
+.customTableClass.forTask.modernTable .tableModern thead#thead tr.headings th {
+  font-weight: 700 !important;
+}
+
+.taskCard{
+  min-height: 100px !important;
+}
+
+.recordType.taskRecord {
+  padding: 3px 5px;
+  border-radius: 2px;
+}
+
+.recordType.taskRecord span{
+  background: transparent;
+
+}

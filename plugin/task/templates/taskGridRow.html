@@ -1,34 +1,46 @@
 <div class="leadCustomer" data-task_id="<%=taskDetails.attributes.task_id%>" >    
     <div class="leadDetails" id="leadCard<%=taskDetails.attributes.task_id%>" >
-        <div class="leadDetailsCard taskCard loadview" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData">
+        <div class="leadDetailsCard taskCard">
             <div class="leadDetailsCardTop">
                 <div class="namedetails">
                     <div class="image">
                         <div class="">
-                            <input type="radio" id="cAll_<%= taskDetails.attributes.task_id %>"  data-task_id="<%= taskDetails.attributes.task_id %>" class="radio-col-green showpoup" />
-                            <label for="cAll_<%= taskDetails.attributes.task_id %>">&nbsp;</label>
+                            <input type="checkbox" id="<%= taskDetails.attributes.task_id %>" data-task_id="<%= taskDetails.attributes.task_id %>" data-task_statusID="<%= taskDetails.attributes.task_statusID %>" class="filled-in chk-col-light-blue setTaskStatus" />
+                            <label for="<%= taskDetails.attributes.task_id %>">&nbsp;</label>
                         </div>
                     </div>
-                    <span><%=taskDetails.attributes.subject%></span>
+                    <span class="taskSubject loadview" data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData"><%=taskDetails.attributes.subject%></span>
                 </div>
                  <div class="recordType taskRecord" style="background: <%=taskDetails.attributes.priorityColor%>;">
                     <span style="color: white;"><%=taskDetails.attributes.task_priority%></span>
                 </div>
-              </div>
-            <div class="leadDetailsCardBody loadview">
-                <h5 class="loadview" data-task_id="<%=taskDetails.attributes.task_id%>"><span><i class="material-icons">person</i></span>
-                    <% if(taskDetails.attributes.customer_id != "" && taskDetails.attributes.customer_id != null){%>
-                        <strong><%=taskDetails.attributes.customer_id%></strong>
+            </div>
+            <div class="leadDetailsCardBody loadview"  data-task_id="<%=taskDetails.attributes.task_id%>" data-view="singletaskData">
+                <h5 class="">
+                    <% if(taskDetails.attributes.customer_image){%>
+                        <img src="<%=taskDetails.attributes.customer_image%>" class="logoImgCls"></img>
                     <%} else {%>
-                        <strong>--</strong>
+                        <img src="<%=APPPATH%>images/site/defaultImage.jpg" class="logoImgCls"></img>
+                    <%}%>
+                    <% if(taskDetails.attributes.customer_id != "" && taskDetails.attributes.customer_id != null){%>
+                        <span><%=taskDetails.attributes.customer_id%></span>
+                    <%} else {%>
+                        <span>--</span>
                     <%}%>
                 </h5>
-                <p><span><i class="material-icons">calendar_today</i></span>
+                <p>
+                    <span><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Due date">calendar_today</i></span>
                     <%if(taskDetails.attributes.due_date != "" && taskDetails.attributes.due_date != ""){%>
-                        <strong><%=taskDetails.attributes.due_date%></strong>   
+                        <span><%=taskDetails.attributes.due_date%></span>   
                     <%} else {%>
-                        <strong>--</strong>
+                        <span>--</span>
                     <%}%>
+                    <% if(taskDetails.attributes.assigneePhoto) { %>
+                        <img class="logoImgCls assigneePhoto" src="<%=PROFILEPHOTOUPLOAD%><%=taskDetails.attributes.assigneeID%>/profilePic/<%=taskDetails.attributes.assigneePhoto%>" data-toggle="tooltip" data-placement="top" title="Assignee">
+                    <% } else { %>
+                        <!-- <img class="logoImgCls assigneePhoto" src="<%=IMAGES%>/avatar-default.png"> -->
+                        <span class="logoImgCls" data-toggle="tooltip" data-placement="top" title="Assignee"><%=assigneeInitial%></span>
+                    <% } %>
                 </p>
             </div>
         </div>
