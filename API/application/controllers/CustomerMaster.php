@@ -368,7 +368,7 @@ class CustomerMaster extends CI_Controller
 					$status['flag'] = 'F';
 					$this->response->output($status, 200);
 				} else {
-					$notificationlist = $this->CommonModel->getNotificationList('customer','add');
+					// $notificationlist = $this->CommonModel->getNotificationList('customer','add');
 					if(isset($notificationlist) && !empty($notificationlist)){
 						foreach ($notificationlist as $key => $value) 
 						{
