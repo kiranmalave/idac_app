@@ -1117,13 +1117,13 @@ table td,
 }
 
 
-#thead {
+/* #thead {
   position: sticky;
   top: 51px;
   background: #fff;
   padding: 10px 10px;
   z-index: 9;
-}
+} */
 
 .sortarrow {
   font-size: 15px;
@@ -1906,9 +1906,7 @@ label.label-style {
   width: 40px;
 }
 
-.material-icons {
-  color: #5f6368 !important;
-}
+
 
 .ws-appointment-main-container .list-row .rept-time {
   display: flex;

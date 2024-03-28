@@ -10,28 +10,31 @@ define([
 ], function ($, _, Backbone, mail_temp, sendEmailModel, infosettingsModel, emailsTemplateList) {
   var mailView = Backbone.View.extend({
     model: '',
-    emailMasterList :'',  
-    enteredEmailsArray : [],
-    totalEmailIDs:'',
-    ccArray  : [],
-    bccArray : [],
-    toField : true,
-    ccField : true,
-    BccField : true,
-    editor : {},
-    toClose:'sendEmailView',
+    emailMasterList: '',
+    enteredEmailsArray: [],
+    totalEmailIDs: '',
+    ccArray: [],
+    bccArray: [],
+    toField: true,
+    ccField: true,
+    BccField: true,
+    editor: {},
+    toClose: 'sendEmailView',
     initialize: function (options) {
       var selfobj = this;
+      // $(".customMail").removeChild(); 
       this.enteredEmailsArray = [];
       this.bccArray = [];
       this.ccArray = [];
       this.model = new sendEmailModel();
       this.infoSettingModel = new infosettingsModel();
       selfobj.emailMasterList = new emailsTemplateList();
+      $(".maxActive").hide();
+      $(".buttonDetails.BCC").hide();
       selfobj.emailMasterList.fetch({
-       headers: {
-         'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-       }, error: selfobj.onErrorHandler, data: { getAll: 'Y',status:'active'}
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, data: { getAll: 'Y', status: 'active' }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
@@ -48,16 +51,19 @@ define([
         $(".popupLoader").hide();
         selfobj.render();
       });
-      
+      this.model.attributes.toField = [];
       $('#toField').val('');
-      if(options.customer_mail != ''){
+      if (options.customer_mail != '') {
         this.enteredEmailsArray.push(options.customer_mail);
-        $('#toField').val(options.customer_mail);
+        // var htmlToAppend = '<span class="tm-tag-eml"><span>' + options.customer_mail + '</span> <a class="removeMail" data-rem-type= "to" data-to-remove = ' + options.customer_mail + ' >x</a></span>';
+        // $(htmlToAppend).insertBefore('#toField');
+        this.model.attributes.toField.push(options.customer_mail);
+        // $('#toField').val(options.customer_mail);
       }
-      if(options.customer_mail != ''){
+      if (options.customer_mail != '') {
         this.customerEmail = options.customer_mail;
-      }else{
-        this.customerEmail ="";
+      } else {
+        this.customerEmail = "";
       }
       selfobj.render();
     },
@@ -76,10 +82,21 @@ define([
       "click .selectBcc": "setToBcc",
       "click .setFocus": "getFocus",
       "click .removeMail": "removeMail",
+      "click .closeFull": "closeFull",
+      "click .minimize": "minimize",
+      "click .close": "mailHide",
+      "click .openFull": "maximize",
+      // "click .minimize": "minimize",
+      "click .openFull": "maximize",
+      "click .ccBtn": "openComposeMail",
+      "click .bccBtn": "displayList",
+      "change #fileInputValue": "fileInput",
+      "click .removeAttachment": "removeAttachment",
+      
     },
 
     attachEvents: function () {
-      
+
       this.$el.off("change", ".textchange", this.updateOtherDetails);
       this.$el.on("change", ".textchange", this.updateOtherDetails.bind(this));
       this.$el.off("click", ".sendEmail", this.sendEmail);
@@ -96,6 +113,8 @@ define([
       this.$el.on('click', '.selectMail', this.setTosendEmail.bind(this));
       this.$el.off('click', '.selectCc', this.setToCc);
       this.$el.on('click', '.selectCc', this.setToCc.bind(this));
+      this.$el.off('click', '.minimize', this.minimize);
+      this.$el.on('click', '.minimize', this.minimize.bind(this));
       this.$el.off('click', '.selectBcc', this.setToBcc);
       this.$el.on('click', '.selectBcc', this.setToBcc.bind(this));
       this.$el.off('click', '.removeMail', this.removeMail);
@@ -104,27 +123,108 @@ define([
       this.$el.on('click', '.setFocus', this.getFocus.bind(this));
       this.$el.off("change", ".textchange", this.updateOtherDetails);
       this.$el.on("change", ".textchange", this.updateOtherDetails.bind(this));
+      this.$el.off('click', '.close', this.mailHide);
+      this.$el.on('click', '.close', this.mailHide.bind(this));
+      this.$el.off('click', '.openFull', this.maximize);
+      this.$el.on('click', '.openFull', this.maximize.bind(this));
+      this.$el.off('click', '.closeFull', this.closeFull);
+      this.$el.on('click', '.closeFull', this.closeFull.bind(this));
+      this.$el.off('click', '.ccBtn', this.openComposeMail);
+      this.$el.on('click', '.ccBtn', this.openComposeMail.bind(this));
+      this.$el.off('click', '.bccBtn', this.displayList);
+      this.$el.on('click', '.bccBtn', this.displayList.bind(this));
+      this.$el.off('change', '#fileInputValue', this.fileInput);
+      this.$el.on('change', '#fileInputValue', this.fileInput.bind(this));
+      this.$el.off('click', '.removeAttachment', this.removeAttachment);
+      this.$el.on('click', '.removeAttachment', this.removeAttachment.bind(this));
     },
+    
+    fileInput: function (event) {
+      const selectedFile = event.target.files[0];
+      const fileSizeKB = selectedFile.size / 1024;
+      textContent = selectedFile.name + ' (' + fileSizeKB.toFixed(2) + ' KB)';
+      // Create a download link
+      const downloadLink = $('<a>')
+        .attr('href', URL.createObjectURL(selectedFile))
+        .attr('download', selectedFile.name)
+        .text(textContent);
+      // Append the download link to the uploadedFilesList
+      $(".uploadedFilesList").append(
+        $('<div class="uploadedFile">').append(
+          $('<span>').append(downloadLink),
+          $('<button type="button" class="btn removeAttachment">')
+            .append('<i class="material-icons"> clear</i>')
+        )
+      );
+      // Remove any existing click event handler before attaching a new one
+      downloadLink.off('click').on('click', function(event) {
+        event.stopPropagation(); // Prevent other click events from triggering
+        // Perform the download
+        $(this).get(0).click();
+      });
+    },
+    
+    removeAttachment: function(e){
+      e.stopImmediatePropagation();
+      let section = $(e.currentTarget).closest(".uploadedFile");
+      section.remove();
+    },
+
+    openComposeMail: function (e) {
+      $('.Cc').addClass('active');
+      $(e.currentTarget).addClass('activeCc');
+      $(".buttonDetails").hide();
+      $(".buttonDetails.BCC").show();
+    },
+
+
+    displayList: function (e) {
+      $('.Bcc').addClass('active');
+      $(e.currentTarget).addClass('activebcc');
+    },
+
+    mailHide: function (e) {
+      $(".customMail").hide();
+      $(".customMailMinimize").hide();
+      $(".opercityBg").hide();
+      var ele = document.querySelector(".customMail");
+      ele.classList.remove("maxActive");
+      $('.openFull').remove('maxActive');
+    },
+
+    maximize: function () {
+      $(".opercityBg").show();
+      $(".customMail").show();
+      $(".customMailMinimize").hide();
+      $('.customMail').addClass('maxActive');
+      $('.openFull').remove('maxActive');
+      $(".closeFull").show();
+      $('.openFull').remove('maxActiveRemove');
+    },
+
     updateTemplateDetails: function (e) {
+      // e.stopPropagation();
       var selfobj = this;
-      let emailCnt="";
-      if(e != undefined){
+      let emailCnt = "";
+      if (e != undefined) {
         var selfobj = this;
         var valuetxt = $(e.currentTarget).val();
         var toID = $(e.currentTarget).attr("id");
-        let cost =  $("<div>");
-    
+        let cost = $("<div>");
         var newdetails = [];
         newdetails["" + toID] = valuetxt;
         filterOption.set(newdetails);
         var emailItem = selfobj.emailMasterList.models.find((item) => {
-          return item && item.attributes && item.attributes.tempID == valuetxt;
+          return item && item.attributes.tempID == valuetxt;
         });
         emailCnt = emailItem ? emailItem.attributes.emailContent : undefined;
-        console.log("emailCnt", emailCnt);
+        emailTempName = emailItem ? emailItem.attributes.tempName : undefined;
       }
-      if(emailCnt!=""){
+      if (emailCnt != "") {
         $("#mail_description").empty().append(emailCnt);
+        selfobj.model.set({ 'mail_description': emailCnt });
+        $("#subject").val(emailTempName);
+        selfobj.model.set({ 'subject': emailTempName });
       }
       var __toolbarOptions = [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -136,12 +236,12 @@ define([
         ['clean'],
         ['image']                              // remove formatting button
       ];
-      
+
       selfobj.editor = new Quill($("#mail_description").get(0), {
-          modules: {
+        modules: {
           imageResize: {
             displaySize: true,
-          
+
           },
           toolbar: {
             container: __toolbarOptions,
@@ -152,7 +252,7 @@ define([
         },
         theme: 'snow'
       });
-    
+
       function imageHandler() {
         var range = this.quill.getSelection();
         var value = prompt('please copy paste the image url here.');
@@ -161,7 +261,7 @@ define([
         }
       }
       // editor.setHTML('hello ');
-      
+
       selfobj.editor.on('text-change', function (delta, oldDelta, source) {
         if (source == 'api') {
           console.log("An API call triggered this change.");
@@ -169,170 +269,194 @@ define([
           var delta = selfobj.editor.getContents();
           var text = selfobj.editor.getText();
           var justHtml = selfobj.editor.root.innerHTML;
-          selfobj.model.set({'mail_body':justHtml});
+          selfobj.model.set({ 'mail_body': justHtml });
         }
       });
       // $("#mail_description").addClass("Hellod");
       // $("#mail_description").html(emailCnt);
-      console.log($("#mail_description"));
     },
 
-    hideToField: function(type) {
-      
+    hideToField: function (type) {
+
       var selfobj = this;
-     if(type== "showAll"){
+      if (type == "showAll") {
         $(".email-displayed").remove();
-        $(".tm-input").children("span").css({"display":"inline"});
+        $(".tm-input").children("span").css({ "display": "inline-block" });
         $("#toField").show();
-      }else{
-        let emailLength =0;
-        if(selfobj.model.attributes.toField != undefined){
+      } else {
+        let emailLength = 0;
+        if (selfobj.model.attributes.toField != undefined) {
           emailLength = selfobj.model.attributes.toField.length;
+        } else {
+          emailLength = 0;
         }
-        if(emailLength > 1){
-          $(".tm-input").children("span").css({"display":"none"});
-          let totalEmail = '<span class="totalemail email-displayed">'+(emailLength-1)+'</span>';
-          $(".tm-input").append (totalEmail);
-          $(".tm-input").children(':first-child').css({"display":"inline"});
+        if (emailLength > 1) {
+          $(".tm-input").children("span").css({ "display": "none" });
+          let totalEmail = '<span class="totalemail email-displayed">' + (emailLength - 1) + ' more </span>';
+          $(".tm-input").append(totalEmail);
+          $(".tm-input").children(':first-child').css({ "display": "inline-block" });
           $("#toField").hide();
+        } else {
+          $('.totalemail.email-displayed').hide();
         }
-    }
+      }
     },
 
-    hideCC: function(type) {
-      
+    hideCC: function (type) {
+
       var selfobj = this;
-     if(type== "showAll"){
+      if (type == "showAll") {
         $(".email-displayedCC").remove();
-        $(".tm-input-cc").children("span").css({"display":"inline"});
+        $(".tm-input-cc").children("span").css({ "display": "inline-block" });
         $("#cc").show();
-      }else{
-        let emailLength =0;
-        if(selfobj.model.attributes.cc != undefined){
+      } else {
+        let emailLength = 0;
+        if (selfobj.model.attributes.cc != undefined) {
           emailLength = selfobj.model.attributes.cc.length;
+        } else {
+          emailLength = 0;
         }
-        if(emailLength > 1){
-          $(".tm-input-cc").children("span").css({"display":"none"});
-          let totalEmail = '<span class="totalemailCC email-displayedCC">'+(emailLength-1)+'</span>';
-          $(".tm-input-cc").append (totalEmail);
-          $(".tm-input-cc").children(':first-child').css({"display":"inline"});
+
+        if (emailLength > 1) {
+          $(".email-displayedCC").remove();
+          $(".tm-input-cc").children("span").css({ "display": "none" });
+          let totalEmail = '<span class="totalemailCC email-displayedCC">' + (emailLength - 1) + ' more </span>';
+          $(".tm-input-cc").append(totalEmail);
+          $(".tm-input-cc").children(':first-child').css({ "display": "inline-block" });
           $("#cc").hide();
+        } else {
+          $('.totalemailCC.email-displayedCC').hide();
         }
-    }
+      }
     },
 
-    hideBcc: function(type) {
+    hideBcc: function (type) {
       var selfobj = this;
-     if(type== "showAll"){
+      if (type == "showAll") {
         $(".email-displayedBcc").remove();
-        $(".tm-input-bcc").children("span").css({"display":"inline"});
+        $(".tm-input-bcc").children("span").css({ "display": "inline-block" });
         $("#bcc").show();
-      }else{
-        let emailLength =0;
-        if(selfobj.model.attributes.bcc != undefined){
+      } else {
+        let emailLength = 0;
+        if (selfobj.model.attributes.bcc != undefined) {
           emailLength = selfobj.model.attributes.bcc.length;
+        } else {
+          emailLength = 0;
         }
-        if(emailLength > 1){
-          $(".tm-input-bcc").children("span").css({"display":"none"});
-          let totalEmail = '<span class="displayedBcc email-displayedBcc">'+(emailLength-1)+'</span>';
-          $(".tm-input-bcc").append (totalEmail);
-          $(".tm-input-bcc").children(':first-child').css({"display":"inline"});
+        if (emailLength > 1) {
+          $(".email-displayedBcc").remove()
+          $(".tm-input-bcc").children("span").css({ "display": "none" });
+          let totalEmail = '<span class="displayedBcc email-displayedBcc">' + (emailLength - 1) + ' more </span>';
+          $(".tm-input-bcc").append(totalEmail);
+          $(".tm-input-bcc").children(':first-child').css({ "display": "inline-block" });
           $("#bcc").hide();
+        } else {
+          $('.displayedBcc.email-displayedBcc').hide();
         }
-    }
+      }
     },
     updateOtherDetails: function (e) {
       var selfobj = this;
       var valuetxt = $(e.currentTarget).val();
       var toID = $(e.currentTarget).attr('id');
-      console.log("toID",toID);
       var newdetails = [];
-      
-      if(toID != 'toField' && toID != 'cc' && toID != 'bcc'){
-        newdetails["" + toID] = valuetxt;  
+
+      if (toID != 'toField' && toID != 'cc' && toID != 'bcc') {
+        newdetails["" + toID] = valuetxt;
         this.model.set(newdetails);
-      }else
-      {
+      } else {
         switch (toID) {
           case 'toField':
             this.toField = true;
             this.ccField = false;
             this.BccField = false;
-              if(validateEmail(valuetxt))
-              {
-                if(this.enteredEmailsArray.indexOf(valuetxt) == -1){
-                  var htmlToAppend = '<span class="tm-tag-eml"><span>' + valuetxt + '</span> <a data-rem-type = "to" class= "removeMail" data-to-remove = '+valuetxt+' >x</a></span>';
-                  this.enteredEmailsArray.push(valuetxt);
-                  this.model.set('toField',this.enteredEmailsArray);
-                  $(htmlToAppend).insertBefore('#toField');
-                  
-                }
-                $(e.currentTarget).val('')
+            if (validateEmail(valuetxt)) {
+              if (this.enteredEmailsArray.indexOf(valuetxt) == -1) {
+                var htmlToAppend = '<span class="tm-tag-eml"><span>' + valuetxt + '</span> <a data-rem-type = "to" class= "removeMail" data-to-remove = ' + valuetxt + ' >x</a></span>';
+                this.enteredEmailsArray.push(valuetxt);
+                this.model.set('toField', this.enteredEmailsArray);
+                $(htmlToAppend).insertBefore('#toField');
+
               }
+              $(e.currentTarget).val('')
+            }
             break;
 
-            case 'cc':
-              this.toField = false;
-              this.ccField = true;
-              this.BccField = false;
-              if(validateEmail(valuetxt))
-              {
-                if(this.ccArray.indexOf(valuetxt) == -1){
-                  var htmlToAppend = '<span class="tm-tag-cc"><span>' + valuetxt + '</span> <a data-rem-type = "cc" class= "removeMail" data-to-remove = '+valuetxt+' >x</a></span>';
-                  this.ccArray.push(valuetxt);
-                  this.model.set('cc',this.ccArray);
-                  $(htmlToAppend).insertBefore('#cc');
-                 
-                }
-                $(e.currentTarget).val('')
+          case 'cc':
+            this.toField = false;
+            this.ccField = true;
+            this.BccField = false;
+            if (validateEmail(valuetxt)) {
+              if (this.ccArray.indexOf(valuetxt) == -1) {
+                var htmlToAppend = '<span class="tm-tag-cc"><span>' + valuetxt + '</span> <a data-rem-type = "cc" class= "removeMail" data-to-remove = ' + valuetxt + ' >x</a></span>';
+                this.ccArray.push(valuetxt);
+                this.model.set('cc', this.ccArray);
+                $(htmlToAppend).insertBefore('#cc');
+
               }
+              $(e.currentTarget).val('')
+            }
             break;
 
-            case 'bcc':
-              this.toField = true;
-              this.ccField = false;
-              this.BccField = true;
-              if(validateEmail(valuetxt))
-              {
-                if(this.bccArray.indexOf(valuetxt) == -1){
-                  var htmlToAppend = '<span class="tm-tag-bcc"><span>' + valuetxt + '</span> <a data-rem-type = "bcc" class= "removeMail" data-to-remove = '+valuetxt+' >x</a></span>';
-                  this.bccArray.push(valuetxt);
-                  this.model.set('bcc',this.bccArray);
-                  $(htmlToAppend).insertBefore('#bcc');
-                  
-                }
-                
+          case 'bcc':
+            this.toField = true;
+            this.ccField = false;
+            this.BccField = true;
+            if (validateEmail(valuetxt)) {
+              if (this.bccArray.indexOf(valuetxt) == -1) {
+                var htmlToAppend = '<span class="tm-tag-bcc"><span>' + valuetxt + '</span> <a data-rem-type = "bcc" class= "removeMail" data-to-remove = ' + valuetxt + ' >x</a></span>';
+                this.bccArray.push(valuetxt);
+                this.model.set('bcc', this.bccArray);
+                $(htmlToAppend).insertBefore('#bcc');
+
               }
+
+            }
             break;
           default:
             break;
         }
       }
-      console.log(this.model);
       function validateEmail(email) {
         var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
       }
     },
 
-    getFocus : function(e)
-    {
+    getFocus: function (e) {
       e.stopPropagation();
       var el = $(e.currentTarget).find('input');
+      var id = $(el).attr('id');
       $(el).focus();
-      this.hideToField("showAll");
-      this.hideCC("showAll");
-      this.hideBcc("showAll");
-      
+
+      switch (id) {
+        case "cc":
+          this.hideCC("showAll");
+          this.hideToField("hide");
+          this.hideBcc("hide");
+          break;
+        case "bcc":
+          this.hideCC("hide");
+          this.hideToField("hide");
+          this.hideBcc("showAll");
+          break;
+        case "toField":
+          this.hideCC("hide");
+          this.hideToField("showAll");
+          this.hideBcc("hide");
+          break;
+
+        default:
+          break;
+      }
     },
 
-    getCustomerEmailsList : function(e) {
-      var selfobj = this ;
-      // console.log(this.model.attributes.appointment_guest);
+    getCustomerEmailsList: function (e) {
+      var selfobj = this;
       var email = $(e.currentTarget).val();
       var inputLength = email.length;
-      $(e.currentTarget).width(inputLength * 10);
-
+      $(e.currentTarget).width(inputLength * 12);
+      $(".toSend").show();
       var dropdownContainer = $(".toSend");
       if (email != "") {
         $.ajax({
@@ -348,15 +472,24 @@ define([
             request.setRequestHeader("Accept", 'application/json');
           },
           success: function (res) {
-            // console.log("heer");
             $(".textLoader").hide();
             dropdownContainer.empty();
             if (res.msg === "sucess" && res.data.length > 0) {
-              result = [] ;
+              result = [];
+              // $.each(res.data, function (index, value) {
+
+              //   dropdownContainer.append('<div class="dropdown-item selectMail" style="background-color: #ffffff;" data-adminID=>' + value.email + '</div>');
+              // });
               $.each(res.data, function (index, value) {
-                
-                dropdownContainer.append('<div class="dropdown-item selectMail" style="background-color: #ffffff;" data-adminID=>' + value.email + '</div>');
+                if (selfobj.enteredEmailsArray.indexOf(value.email) === -1) {
+                  dropdownContainer.append('<div class="dropdown-item selectMail" style="background-color: #ffffff;" data-adminID=>' + value.email + '</div>');
+                } else {
+                  dropdownContainer.append('<div class="dropdown-item selectMail disableTO" style="background-color: #ffffff;" data-adminID=>' + value.email + '</div>');
+                }
+
+
               });
+
               dropdownContainer.show();
             } else {
               dropdownContainer.hide();
@@ -365,53 +498,87 @@ define([
         });
 
         $("#toField").on("keyup", function (event) {
-          
+
           if (event.keyCode === 13) {
-            
+
             var enteredEmail = $(this).val();
-           
+
             if (enteredEmail) {
-                if (validateEmail(enteredEmail)) { 
-                  var htmlToAppend = '<span class="tm-tag-eml"><span>' + enteredEmail + '</span> <a data-rem-type = "to" class= "removeMail" data-to-remove = '+enteredEmail+' >x</a></span>';
-                    // $(".tm-input").append(htmlToAppend);
-                    $("#toFeild").val('');
-                    if(selfobj.enteredEmailsArray.indexOf(enteredEmail) == -1){
-                      selfobj.enteredEmailsArray.push(enteredEmail);
-                      $(htmlToAppend).insertBefore('#toField');
-                      selfobj.model.set({ "toField": selfobj.enteredEmailsArray });
-                    }
-                  $(this).val("");
-                  $(".toSend").hide();
-                } else {
-                  // $('#toFeild').next('.error-message').text(errorMessage).addClass('error');
-                  
+              if (validateEmail(enteredEmail)) {
+                var htmlToAppend = '<span class="tm-tag-eml"><span>' + enteredEmail + '</span> <a data-rem-type = "to" class= "removeMail" data-to-remove = ' + enteredEmail + ' >x</a></span>';
+                // $(".tm-input").append(htmlToAppend);
+                $("#toFeild").val('');
+                if (selfobj.enteredEmailsArray.indexOf(enteredEmail) == -1) {
+                  selfobj.enteredEmailsArray.push(enteredEmail);
+                  $(htmlToAppend).insertBefore('#toField');
+                  selfobj.model.set({ "toField": selfobj.enteredEmailsArray });
                 }
-            
+                $(this).val("");
+                $(".toSend").hide();
+              } else {
+                // $('#toFeild').next('.error-message').text(errorMessage).addClass('error');
+
+              }
             }
+          } else {
+            var enteredEmail = $(this).val();
+
+            var length = $('.tm-input span').length;
+            if (length == 0) {
+              if (enteredEmail.length == 0) {
+                selfobj.enteredEmailsArray.pop(enteredEmail);
+                selfobj.model.attributes.toField.pop(enteredEmail);
+              }
+
+            }
+
+
           }
-          // console.log(selfobj.model);
-          //console.log("Length of selfobj.model:", selfobj.model.attributes.toField.length);
-          
-        }); 
+   
+        });
+
+        $("#toField").on("change", function (event) {
+         
+        });
+
+        // $("#toField").on("keyup", function (event) {
+        //   var enteredEmail = $(this).val();
+        //   if (event.keyCode == 8) {
+        //     var length = $('.tm-input span').length;
+        //     if (length == 0) {
+        //       if (enteredEmail.length == 0) {
+        //         selfobj.enteredEmailsArray.pop(enteredEmail);
+        //       }
+        //     }
+        //   }
+
+        // });
+
         function validateEmail(email) {
           var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           return re.test(email);
         }
-      }else
-      {
+      } else {
         dropdownContainer.hide();
       }
     },
+    minimize: function () {
+      $(".customMail").hide();
+      $(".customMailMinimize").show();
+      $(".opercityBg").hide();
+      $('.openFull').addClass('maxActiveRemove');
+      var ele = document.querySelector(".customMail");
+      ele.classList.remove("maxActive");
+    },
 
-    setCc : function(e)
-    {
-        selfobj = this;
-        var email = $(e.currentTarget).val();
-        var inputLength = email.length;
-        $(e.currentTarget).width(inputLength * 10);
-
-        var dropdownContainer = $(".toCc");
-        if (email != "") {
+    setCc: function (e) {
+      selfobj = this;
+      var email = $(e.currentTarget).val();
+      var inputLength = email.length;
+      $(e.currentTarget).width(inputLength * 10);
+      $(".toCc").hide();
+      var dropdownContainer = $(".toCc");
+      if (email != "") {
         $.ajax({
           url: APIPATH + 'getCustomerEmailList',
           method: 'POST',
@@ -425,14 +592,18 @@ define([
             request.setRequestHeader("Accept", 'application/json');
           },
           success: function (res) {
-            // console.log("heer");
             $(".textLoader").hide();
             dropdownContainer.empty();
             if (res.msg === "sucess" && res.data.length > 0) {
-              result = [] ;
+              result = [];
               $.each(res.data, function (index, value) {
-                
-                dropdownContainer.append('<div class="dropdown-item selectCc" style="background-color: #ffffff;" data-adminID=>' + value.email + '</div>');
+                if (selfobj.ccArray.indexOf(value.email) === -1) {
+                  dropdownContainer.append('<div class="dropdown-item selectCc" style="background-color: #ffffff;" data-adminID=>' + value.email + '</div>');
+                } else {
+                  dropdownContainer.append('<div class="dropdown-item selectCc disableCC" style="background-color: #ffffff;" data-adminID=>' + value.email + '</div>');
+                }
+
+
               });
               dropdownContainer.show();
             } else {
@@ -446,15 +617,12 @@ define([
           var enteredEmail = $(this).val();
           if (enteredEmail) {
             if (validateEmail(enteredEmail)) {
-              var htmlToAppend = '<span class="tm-tag-cc"><span>' + enteredEmail + '</span> <a data-rem-type= "cc"  class= "removeMail" data-to-remove = '+enteredEmail+' >x</a></span>';
+              var htmlToAppend = '<span class="tm-tag-cc"><span>' + enteredEmail + '</span> <a data-rem-type= "cc"  class= "removeMail" data-to-remove = ' + enteredEmail + ' >x</a></span>';
               // $(".tm-input-cc").append(htmlToAppend);
-              
+
               $("#cc").val('');
-              // console.log(enteredEmail);
-              console.log(selfobj.ccArray);
-              if(selfobj.ccArray.indexOf(enteredEmail)=== -1){
+              if (selfobj.ccArray.indexOf(enteredEmail) === -1) {
                 selfobj.ccArray.push(enteredEmail);
-                console.log(selfobj.ccArray);
                 $(htmlToAppend).insertBefore('#cc');
                 selfobj.model.set({ "cc": selfobj.ccArray });
               }
@@ -464,16 +632,15 @@ define([
             }
           }
         }
-        dropdownContainer.hide();
-        
-      }); 
+        // dropdownContainer.hide();
+
+      });
       function validateEmail(email) {
         var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
       }
     },
-    setBcc : function(e)
-    {
+    setBcc: function (e) {
       selfobj = this;
 
       var email = $(e.currentTarget).val();
@@ -482,48 +649,52 @@ define([
 
       var dropdownContainer = $(".toBcc");
       if (email != "") {
-      $.ajax({
-        url: APIPATH + 'getCustomerEmailList',
-        method: 'POST',
-        data: { text: email },
-        datatype: 'JSON',
-        beforeSend: function (request) {
-          $(".textLoader").show();
-          request.setRequestHeader("token", $.cookie('_bb_key'));
-          request.setRequestHeader("SadminID", $.cookie('authid'));
-          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
-          request.setRequestHeader("Accept", 'application/json');
-        },
-        success: function (res) {
-          // console.log("heer");
-          $(".textLoader").hide();
-          dropdownContainer.empty();
-          if (res.msg === "sucess" && res.data.length > 0) {
-            result = [] ;
-            $.each(res.data, function (index, value) {
-              
-              dropdownContainer.append('<div class="dropdown-item selectBcc" style="background-color: #ffffff;" data-adminID=>' + value.email + '</div>');
-            });
-            dropdownContainer.show();
-          } else {
-            dropdownContainer.hide();
+        $.ajax({
+          url: APIPATH + 'getCustomerEmailList',
+          method: 'POST',
+          data: { text: email },
+          datatype: 'JSON',
+          beforeSend: function (request) {
+            $(".textLoader").show();
+            request.setRequestHeader("token", $.cookie('_bb_key'));
+            request.setRequestHeader("SadminID", $.cookie('authid'));
+            request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+            request.setRequestHeader("Accept", 'application/json');
+          },
+          success: function (res) {
+            $(".textLoader").hide();
+            dropdownContainer.empty();
+            if (res.msg === "sucess" && res.data.length > 0) {
+              result = [];
+
+
+              $.each(res.data, function (index, value) {
+                if (selfobj.bccArray.indexOf(value.email) === -1) {
+                  dropdownContainer.append('<div class="dropdown-item selectBcc" style="background-color: #ffffff;" data-adminID=>' + value.email + '</div>');
+                } else {
+                  dropdownContainer.append('<div class="dropdown-item selectBcc disableCC" style="background-color: #ffffff;" data-adminID=>' + value.email + '</div>');
+                }
+              });
+
+              dropdownContainer.show();
+            } else {
+              dropdownContainer.hide();
+            }
           }
-        }
-      });
-    }
+        });
+      }
 
       $("#bcc").on("keyup", function (event) {
         if (event.keyCode === 13) {
           var enteredEmail = $(this).val();
           if (enteredEmail) {
             if (validateEmail(enteredEmail)) {
-              var htmlToAppend = '<span class="tm-tag-bcc"><span>' + enteredEmail + '</span> <a class= "removeMail" data-rem-type= "bcc" data-to-remove = '+enteredEmail+' >x</a></span>';
+              var htmlToAppend = '<span class="tm-tag-bcc"><span>' + enteredEmail + '</span> <a class= "removeMail" data-rem-type= "bcc" data-to-remove = ' + enteredEmail + ' >x</a></span>';
               // $(".tm-input-bcc").append(htmlToAppend);
               // $(htmlToAppend).insertBefore('#bcc');
               $("#bcc").val('');
-              // console.log(enteredEmail);
-              if(selfobj.bccArray.indexOf(enteredEmail) === -1){
-                selfobj.bccArray.push(enteredEmail);  
+              if (selfobj.bccArray.indexOf(enteredEmail) === -1) {
+                selfobj.bccArray.push(enteredEmail);
                 $(htmlToAppend).insertBefore('#bcc');
                 selfobj.model.set({ "bcc": selfobj.bccArray });
               }
@@ -533,9 +704,8 @@ define([
             }
           }
         }
-        dropdownContainer.hide();
-        console.log(selfobj.model);
-      }); 
+        // dropdownContainer.hide();
+      });
       function validateEmail(email) {
         var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
@@ -543,53 +713,47 @@ define([
     },
 
     setTosendEmail: function (e) {
-   
       let selfobj = this;
-      console.log("selfobj model:", selfobj.model);
-      console.log("Length of model:", selfobj.model.attributes);
       // if(selfobj.model.attributes.toField){
       //   this.totalEmailIDs = selfobj.model.attributes.toField.length;
-        
+
       // }else{
       //   this.totalEmailIDs = '';
       // }
-      
+
       var email = $(e.currentTarget).text();
-      var htmlToAppend = '<span class="tm-tag-eml"><span>' + email + '</span> <a class="removeMail" data-rem-type= "to" data-to-remove = '+email+' >x</a></span>';     
+      var htmlToAppend = '<span class="tm-tag-eml"><span>' + email + '</span> <a class="removeMail" data-rem-type= "to" data-to-remove = ' + email + ' >x</a></span>';
       // var totlaEmail = '<span class="totalemail">' + totalEmailIDs + 'more</span>';
       $(".toSend").hide();
-      if(selfobj.enteredEmailsArray.indexOf(email)=== -1){
+      if (selfobj.enteredEmailsArray.indexOf(email) === -1) {
         selfobj.enteredEmailsArray.push(email);
-        $(htmlToAppend).insertBefore('#toField');   
+        $(htmlToAppend).insertBefore('#toField');
         // $(totlaEmail).insertBefore('#toField');   
-        console.log(selfobj.enteredEmailsArray.length);
-        selfobj.model.set({ "toField": selfobj.enteredEmailsArray });  
+        selfobj.model.set({ "toField": selfobj.enteredEmailsArray });
       }
       $("#toField").val('');
-     
+
     },
 
     setToCc: function (e) {
       let selfobj = this;
       var email = $(e.currentTarget).text();
-      var htmlToAppend = '<span class="tm-tag-cc"><span>' + email + '</span> <a class="removeMail" data-rem-type= "cc" data-to-remove = '+email+' >x</a></span>';
+      var htmlToAppend = '<span class="tm-tag-cc"><span>' + email + '</span> <a class="removeMail" data-rem-type= "cc" data-to-remove = ' + email + ' >x</a></span>';
 
       $(".toCc").hide();
-      if(selfobj.ccArray.indexOf(email)=== -1){
+      if (selfobj.ccArray.indexOf(email) === -1) {
         selfobj.ccArray.push(email);
-        $(htmlToAppend).insertBefore('#cc');   
-        selfobj.model.set({ "cc": selfobj.ccArray });  
+        $(htmlToAppend).insertBefore('#cc');
+        selfobj.model.set({ "cc": selfobj.ccArray });
       }
       $("#cc").val('');
-      console.log(selfobj.ccArray);
     },
-    
+
     setToBcc: function (e) {
       let selfobj = this;
       var email = $(e.currentTarget).text();
-      console.log('emials',email);
-      var htmlToAppend = '<span class="tm-tag-bcc"><span>' + email + '</span> <a class="removeMail" data-rem-type= "bcc" data-to-remove = '+email+' >x</a></span>';
-      if(selfobj.bccArray.indexOf(email)=== -1){
+      var htmlToAppend = '<span class="tm-tag-bcc"><span>' + email + '</span> <a class="removeMail" data-rem-type= "bcc" data-to-remove = ' + email + ' >x</a></span>';
+      if (selfobj.bccArray.indexOf(email) === -1) {
         $(htmlToAppend).insertBefore('#bcc');
         selfobj.bccArray.push(email);
         selfobj.model.set({ "bcc": selfobj.bccArray });
@@ -598,96 +762,84 @@ define([
       $("#bcc").val('');
     },
 
-    removeMail : function (e) {
+    removeMail: function (e) {
       var selfobj = this;
-      var emailSpan =  $(e.currentTarget).attr('data-to-remove');
-      var remType =  $(e.currentTarget).attr('data-rem-type');
-      console.log(remType);
+      var emailSpan = $(e.currentTarget).attr('data-to-remove');
+      var remType = $(e.currentTarget).attr('data-rem-type');
       switch (remType) {
         case 'to':
-            $(e.currentTarget).closest('.tm-tag-eml').remove();
-            selfobj.model.attributes.toField = selfobj.model.attributes.toField.filter(function(emails)
-            {
-              return emails !== emailSpan;
-            });
-            selfobj.enteredEmailsArray = selfobj.enteredEmailsArray.filter(function(emails)
-            {
-              return emails !== emailSpan;
-            });
-            console.log(selfobj.enteredEmailsArray);
-
+          $(e.currentTarget).closest('.tm-tag-eml').remove();
+          selfobj.model.attributes.toField = selfobj.model.attributes.toField.filter(function (emails) {
+            return emails !== emailSpan;
+          });
+          selfobj.enteredEmailsArray = selfobj.enteredEmailsArray.filter(function (emails) {
+            return emails !== emailSpan;
+          });
+        
           break;
-      
+
         case 'cc':
           $(e.currentTarget).closest('.tm-tag-cc').remove();
-          selfobj.model.attributes.cc = selfobj.model.attributes.cc.filter(function(emails)
-          {
+          selfobj.model.attributes.cc = selfobj.model.attributes.cc.filter(function (emails) {
             return emails !== emailSpan;
           });
-          selfobj.ccArray = selfobj.ccArray.filter(function(emails)
-          {
+          selfobj.ccArray = selfobj.ccArray.filter(function (emails) {
             return emails !== emailSpan;
           });
-          console.log(selfobj.ccArray);
-
-        break;
+       
+          break;
 
         case 'bcc':
           $(e.currentTarget).closest('.tm-tag-bcc').remove();
-          selfobj.model.attributes.bcc = selfobj.model.attributes.bcc.filter(function(emails)
-          {
+          selfobj.model.attributes.bcc = selfobj.model.attributes.bcc.filter(function (emails) {
             return emails !== emailSpan;
           });
-          selfobj.bcc = selfobj.bcc.filter(function(emails)
-          {
+          selfobj.bcc = selfobj.bcc.filter(function (emails) {
             return emails !== emailSpan;
           });
-          console.log(selfobj.bccArray);
-        break;
-    
+          break;
+
         default:
           break;
       }
-      console.log('removed : ',this.model); 
-   },
+    },
 
 
-   initializeValidate: function () {
-    var selfobj = this;
-    var feilds = {
-      toField: {
-        required: true,
-      },
-      subject: {
-        required: true,
-      },
-     
-    };
-    var feildsrules = feilds;
-    var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
+    initializeValidate: function () {
+      var selfobj = this;
+      var feilds = {
+        toField: {
+          required: true,
+        },
+        subject: {
+          required: true,
+        },
 
-    if (!_.isEmpty(dynamicRules)) {
+      };
+      var feildsrules = feilds;
+      var dynamicRules = selfobj.dynamicFieldRenderobj.getValidationRule();
 
-      var feildsrules = $.extend({}, feilds, dynamicRules);
-      // var feildsrules = {
-      // ...feilds,
-      // ...dynamicRules
-      // };
-    }
-    var messages = {
-      toField: "Please enter recievers email",
-      subject: "Please Enter subject ",
-   
-    };
-    $("#sendmail").validate({
-      rules: feildsrules,
-      messages: messages
-    });
-  },
+      if (!_.isEmpty(dynamicRules)) {
+
+        var feildsrules = $.extend({}, feilds, dynamicRules);
+        // var feildsrules = {
+        // ...feilds,
+        // ...dynamicRules
+        // };
+      }
+      var messages = {
+        toField: "Please enter recievers email",
+        subject: "Please Enter subject ",
+
+      };
+      $("#sendmail").validate({
+        rules: feildsrules,
+        messages: messages
+      });
+    },
     sendEmail: function (e) {
       e.preventDefault();
       let selfobj = this;
-      console.log("sending mail ...");
       var methodt = "POST";
       $(e.currentTarget).html("<span>Sending..</span>");
       $(e.currentTarget).attr("disabled", "disabled");
@@ -701,40 +853,55 @@ define([
           $(e.currentTarget).html("<span>Sent</span>");
           selfobj.model.clear();
           $(".customMail").hide();
-          console.log("model cleared -",selfobj.model); 
-        }else
-        {
-          showResponse(e,res,"Send");
+        } else {
+          showResponse(e, res, "Send");
           $(e.currentTarget).attr("disabled", "");
         }
-      });      
+      });
     },
+
+
+    closeFull: function () {
+      var ele = document.querySelector(".customMail");
+      ele.classList.remove("maxActive");
+      $(".closeFull").hide();
+      $(".opercityBg").hide();
+      $(".maxActive").hide();
+      // var element = document.querySelector(".openFull");
+      // element.classList.remove("maxActive");
+    },
+
 
     render: function () {
       var selfobj = this;
       var source = mail_temp;
       var template = _.template(source);
-      this.$el.html(template({"emailMasterList": selfobj.emailMasterList.models, cutomerMail: this.customerEmail, infoSetting: this.infoSettingModel.attributes}));
+      this.$el.html(template({ "emailMasterList": selfobj.emailMasterList.models, cutomerMail: this.customerEmail, infoSetting: this.infoSettingModel.attributes }));
+
       $('#customMail').empty();
       $("#customMail").append(this.$el);
-      
+
       var truncateElements = document.querySelectorAll('.truncate');
-      truncateElements.forEach(function(element) {
-      var maxLength = 60;
-          var text = element.textContent;
-          if (text.length > maxLength) {
-              element.textContent = text.substring(0, maxLength) + '...';
-          }
+      truncateElements.forEach(function (element) {
+        var maxLength = 60;
+
+        var text = element.textContent;
+        if (text.length > maxLength) {
+          element.textContent = text.substring(0, maxLength) + '...';
+        }
       });
-      $(window).click(function() {
-        selfobj .hideToField("hide");
-        selfobj .hideCC("hide");
-        selfobj .hideBcc("hide");
+      $(window).click(function () {
+        selfobj.hideToField("hide");
+        selfobj.hideCC("hide");
+        selfobj.hideBcc("hide");
       });
       selfobj.updateTemplateDetails();
+      // $(".ws-select").selectpicker();
+      // $(".ws-select").selectpicker("refresh");
+      $('body').off('change', '.getTemplate');
       selfobj.attachEvents();
       return this;
-     
+
     },
     onDelete: function () {
       this.remove();

@@ -8,11 +8,16 @@ define([
     '../../task/views/taskSingleView',
     'text!../templates/customerActivityRow_temp.html',
     'text!../templates/customerActivity_temp.html',
-], function ($, _, Backbone, timeselectOptions, customerActivityModel, taskSingleView, customerActivityRow_temp, customerActivity_temp) {
+    '../../menu/collections/menuCollection',
+], function ($, _, Backbone, timeselectOptions, customerActivityModel, taskSingleView, customerActivityRow_temp, customerActivity_temp,menuCollection) {
 
     var customerView = Backbone.View.extend({
+        fileObj : {},
+        view: 'upcoming',
         initialize: function (options) {
+            fileObj = this;
             var selfobj = this;
+            this.taskMenuID ;
             $(".profile-loader").show();
             this.custName = options.customerName;
             this.render();
@@ -23,6 +28,22 @@ define([
             this.collection.on('reset', this.addAll, this);
             this.getHistory("upcoming");
             // this.getMenuList();
+            this.menuList = new menuCollection();
+            this.menuList.fetch({
+                headers: {
+                'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+                }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y' }
+            }).done(function (res) {
+                console.log("res",res);
+                res.data.forEach(function (menu) {
+                   if(menu.menuLink == 'task'){
+                    selfobj.taskMenuID = menu.menuID;
+                   }
+                  });
+                if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+                $(".popupLoader").hide();
+                $(".profile-loader").hide();
+            });
         },
 
         getHistory: function (historyType) {
@@ -56,6 +77,7 @@ define([
         loadView: function (e) {
             let selfobj = this;
             let show = $(e.currentTarget).attr("data-page");
+            selfobj.view = show;
             switch (show) {
                 case "past": {
                     $(e.currentTarget).addClass('activeAcrive');
@@ -69,12 +91,6 @@ define([
                     selfobj.getHistory("upcoming");
                     break;
                 }
-                case "task":{
-                    var taskID = $(e.currentTarget).attr("data-id");
-                    alert(taskID);
-                    new taskSingleView({ task_id:taskID });
-                    break;
-                }
             }
         },
 
@@ -84,10 +100,10 @@ define([
 
         addOne: function (objectModel) {
             let selfobj = this;
-            objectModel.set({ "timeString": selfobj.timeselectOptions.displayRelativeTime(objectModel.attributes.timestamp) });
+            objectModel.set({ "timeString": selfobj.timeselectOptions.displayRelativeTime(objectModel.attributes.activity_date) });
             console.log(objectModel);
             var template = _.template(customerActivityRow_temp);
-            $("#activityRow").append(template({ activityDetails: objectModel }));
+            $("#activityRow").append(template({ activityDetails: objectModel , view: selfobj.view}));
         },
         addAll: function () {
             $("#activityRow").empty();

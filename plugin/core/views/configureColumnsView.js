@@ -98,14 +98,15 @@ define([
                         return !collectedDataFields.includes(field);
                         });
                         // console.log("filteredDynamicStdFieldsList....",filteredDynamicStdFieldsList);
-                        // var filteredList = filteredDynamicStdFieldsList.filter(item => {
-                        // if(selfobj.stdColumn){
-                        //     const fieldInStdColumn = selfobj.stdColumn.includes(item.attributes.Field);
-                        //     return !fieldInStdColumn;
-                        // }
-                        // });
+                        var filteredList = filteredDynamicStdFieldsList.filter(item => {
+                        if(selfobj.stdColumn){
+                            const fieldInStdColumn = selfobj.stdColumn.includes(item.attributes.Field);
+                            return !fieldInStdColumn;
+                        }
+                        });
                         // console.log("filteredList....",filteredList);
-                        filteredDynamicStdFieldsList.forEach(function(data) {
+                        // filteredDynamicStdFieldsList.forEach(function(data) {
+                        filteredList.forEach(function(data) {
                             const newField = {
                             fieldType : data.attributes.Type, 
                             fieldLabel: formatFieldLabel(data.attributes.Field),
@@ -310,6 +311,31 @@ define([
                 data.fieldType = data.fieldType;
             }
         },
+
+        searchField: function (e) {
+            var searchValue = $(e.currentTarget).val();
+            if (searchValue !== undefined) {
+                searchValue = searchValue.toLowerCase();
+            } else {
+                return;
+            }
+            var searchValue = $(e.currentTarget).val().toLowerCase();
+            $('.fieldRows').each(function () {
+                var fieldLabel = $(this).data("fieldlabel");
+                if (fieldLabel !== undefined && fieldLabel.toLowerCase().includes(searchValue)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+                if ($('.fieldRows:visible').length === 0) {
+                    $('.defaultMessage').show();
+                    $("#allColumns-heading").hide();
+                } else {
+                    $('.defaultMessage').hide();
+                    $("#allColumns-heading").show();
+                }
+            });
+        },
       
         render: function () {
             var selfobj = this;  
@@ -364,6 +390,9 @@ define([
             this.setOldValues();
             this.attachEvents();
             selfobj.setupSortable();
+            $('#fieldSearch').on('input', function (e) {
+                selfobj.searchField(e);
+              });
             setToolTip();
             return this;
         },

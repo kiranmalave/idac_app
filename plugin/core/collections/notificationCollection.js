@@ -1,18 +1,17 @@
 define([
   'underscore',
   'backbone',
-  '../models/customerModel'
-], function(_, Backbone,customerModel){
+  '../models/notificationModel'
+], function(_, Backbone,notificationModel){
 
-  var customerCollection = Backbone.Collection.extend({
-    customer_id:null,
-      model: customerModel,
-      loadstate: true,
+  var notificationCollection = Backbone.Collection.extend({
+      notification_id:null,
+      model: notificationModel,
       initialize : function(){
 
       },
       url : function() {
-        return APIPATH+'customerMasterList';
+        return APIPATH+'notificationMasterList';
       },
       parse : function(response){
         this.pageinfo = response.paginginfo;
@@ -25,6 +24,6 @@ define([
       }
   });
 
-  return customerCollection;
+  return notificationCollection;
 
 });

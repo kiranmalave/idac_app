@@ -6,6 +6,7 @@ define([
   'inputmask',
   'datepickerBT',
   'moment',
+  'timepicker',
   '../collections/dynamicFormDataCollection',
   '../../menu/collections/menuCollection',
   '../../category/collections/slugCollection',
@@ -28,7 +29,7 @@ define([
   'text!../templates/linkedRadio.html',
   'text!../templates/linkedCheckbox.html',
 
-], function ($, _, Backbone, validate, inputmask, datepickerBT,moment, dynamicFormData,menuCollection,slugCollection,categorySingleView,textbox_temp,textarea_temp,numeric_temp,password_temp,datepicker_temp,timepicker_temp,dropdown_temp,radio_temp,checkbox_temp,range_temp,file_temp,email_temp,mobileNo_temp,website_temp,linkedDropdown,linkedRadio,linkedCheckbox) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT,moment, timepicker, dynamicFormData,menuCollection,slugCollection,categorySingleView,textbox_temp,textarea_temp,numeric_temp,password_temp,datepicker_temp,timepicker_temp,dropdown_temp,radio_temp,checkbox_temp,range_temp,file_temp,email_temp,mobileNo_temp,website_temp,linkedDropdown,linkedRadio,linkedCheckbox) {
   var dynamicFieldRender = Backbone.View.extend({
     metadata : {},
     formobj : [],

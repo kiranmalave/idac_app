@@ -5,13 +5,12 @@ define([
   'backbone',
   'Swal',
   'moment',
-  'timepicker',
   "../../core/views/timeselectOptions",
   '../collections/customerNotesCollection',
   '../models/customerNoteSingleModel',
   'text!../templates/customerNotesRow_temp.html',
   'text!../templates/customerNotes_temp.html',
-], function ($, _, Backbone, Swal, moment, timepicker, timeselectOptions, customerNotesCollection, customerNoteSingleModel, customerNotesRow_temp, customerNotesTemp) {
+], function ($, _, Backbone, Swal, moment, timeselectOptions, customerNotesCollection, customerNoteSingleModel, customerNotesRow_temp, customerNotesTemp) {
 
   var customerView = Backbone.View.extend({
     editor:null,
@@ -76,6 +75,8 @@ define([
       selfobj.model.clear().set(selfobj.model.defaults);
       $('.pointer').removeClass('active');
       $(e.currentTarget).addClass('activeNew');
+      $('#reminder_date').val('');
+      $(".form-line").removeClass("focused");
     },
 
     addOne: function (objectModel) {
@@ -96,13 +97,17 @@ define([
       $('.newNote').removeClass('activeNew');
       this.model.set({ "note_id": id });
       var reminderDate = $(e.currentTarget).attr('data-time');
-      var dateTimeArray = reminderDate.split(' ');
-      var datePart = moment(dateTimeArray[0]).format("DD-MM-YYYY");
-      var timePart = moment(reminderDate).format("h:mm a");
-      selfobj.model.set({"reminder_date":dateTimeArray[0]});
-      selfobj.model.set({"reminder_time":dateTimeArray[1]});
-      $('#reminder_date').val(datePart);
-      $('#reminder_time').val(timePart);
+      if(reminderDate){
+        var dateTimeArray = reminderDate.split(' ');
+        var datePart = moment(dateTimeArray[0]).format("DD-MM-YYYY");
+        var timePart = moment(reminderDate).format("h:mm a");
+        selfobj.model.set({"reminder_date":dateTimeArray[0]});
+        $('#reminder_date').val(datePart);
+      }else{
+        $('#reminder_date').val('');
+      }
+     
+      console.log("selfobj.model editnote",selfobj.model);
       var desc = $.trim($(e.currentTarget).find('.editNoteDesc').html());
       var title = $.trim($(e.currentTarget).find('.editnotestHeading').text());
       $("#title").val(title);
@@ -144,8 +149,6 @@ define([
               if (res.flag == "S") {
                 selfobj.model.clear().set(selfobj.model.defaults);
                 $("#title").val("");
-                $("#reminder_date").val("");
-                $("#reminder_time").val("");
                 selfobj.editor.root.innerHTML = "";
                 selfobj.collection.reset();
                 selfobj.getNotesDetails();
@@ -297,33 +300,23 @@ define([
       // this.initializeValidate();
       $(".profile-loader").hide();
 
-      $("#reminder_date").datepickerBT({
+      $('#reminder_date').datepickerBT({
         format: "dd-mm-yyyy",
         todayBtn: "linked",
         clearBtn: true,
         todayHighlight: true,
-        startDate: new Date(),
         numberOfMonths: 1,
         autoclose: true,
-      }).on('changeDate', function (selected) {
+        startDate: new Date(),
+      }).on('changeDate', function (ev) {
         $('#reminder_date').change();
-        var valuetxt = $("#reminder_date").val();
-        selfobj.model.set({ reminder_date: valuetxt });
-      });
-
-      $('#reminder_time').timepicker({
-        timeFormat: 'hh:mm a',
-        interval: 15,
-        startTime: '00:00',
-        dynamic: false,
-        dropdown: true,
-        scrollbar: true,
-        change: function (e) {
-          var st = $("#reminder_time").val();
-          var tempsTime = moment(st, "hh:mm a").format("HH:mm:ss");
-          selfobj.model.set({ reminder_time: tempsTime });
-          console.log(tempsTime);
-        },
+        var valuetxt = $(this).val();
+        console.log("valuetxt",valuetxt);
+        var toID = $(this).attr("id");
+        var newdetails = [];
+        newdetails["" + toID] = valuetxt;
+        selfobj.model.set({ newdetails });
+        console.log("selfobj.model",selfobj.model);
       });
 
       var __toolbarOptions = [
