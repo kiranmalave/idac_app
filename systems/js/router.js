@@ -319,10 +319,10 @@ define([
         //setsidbar();
       }
     });
-    app_router.on('route:customerdashboardView', function (action) {
+    app_router.on('route:customerdashboardView', function (action, menuID) {
       var validate = preTemp();
       if (validate) {
-        new customerdashboardView({ action: action });
+        new customerdashboardView({ action: action, menuId: menuID });
         //setsidbar();
       }
     });

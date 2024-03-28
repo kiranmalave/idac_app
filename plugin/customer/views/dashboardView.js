@@ -7,6 +7,7 @@ define([
     'moment',
     "../../core/views/multiselectOptions",
     "../../core/views/timeselectOptions",
+    '../../project/views/projectViewOther',
     '../models/dashboardModel',
     '../views/customerSingleView',
     '../models/customerSingleModel',
@@ -15,7 +16,7 @@ define([
     '../../taxInvoice/views/taxInvoiceView',
     'text!../templates/dashboard_temp.html',
 
-  ], function ($, _, Backbone, custom, Swal, moment, multiselectOptions, timeselectOptions, dashboardModel, customerSingleView, customerSingleModel, historyCollection, taskViewDashbord, taxInvoiceView, dashBoard_temp ) {
+  ], function ($, _, Backbone, custom, Swal, moment, multiselectOptions, timeselectOptions, projectViewOther, dashboardModel, customerSingleView, customerSingleModel, historyCollection, taskViewDashbord, taxInvoiceView, dashBoard_temp ) {
   
     var dashboardView = Backbone.View.extend({
       model: dashboardModel,

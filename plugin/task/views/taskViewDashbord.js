@@ -33,10 +33,12 @@ define([
         $(".profile-loader").show();
         var mname = Backbone.history.getFragment();
         permission = ROLE['task'];
+        this.menuId = permission.menuID;
         readyState = true;
         this.render();
         filterOption = new taskFilterOptionModel();
         filterOption.set({ customer_id: customer_id });
+        filterOption.set({ "menuId": this.menuId });
         searchtask = new taskCollection();
         this.adminList = new adminCollection();
         this.adminList.fetch({
