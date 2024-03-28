@@ -887,7 +887,9 @@ define([
             if (Status) {}
             selfobj.updateTaskStatus(selectedStatusId, task_id);
             $(e.currentTarget).closest(".leadCustomer").remove();
-          } else if (result.isDismissed) return;
+          } else{
+            $(e.currentTarget).prop('checked', true);
+          }
         })
       }
     },

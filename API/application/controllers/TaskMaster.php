@@ -470,7 +470,7 @@ class TaskMaster extends CI_Controller
 		$taskDetailsList = $this->CommonModel->GetMasterListDetails($selectC1,'admin',$wherec1,'','',$join1,$other1=array());
 		
 		if($taskDetailsList[0]->roleOfUser!=101){
-			$wherec["assignee = "] = "'".$this->input->post('SadminID')."'";
+			$wherec["t.assignee = "] = "'".$this->input->post('SadminID')."'";
 		}
 
 		$config["base_url"] = base_url() . "taskDetails";
