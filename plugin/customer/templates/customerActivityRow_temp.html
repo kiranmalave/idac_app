@@ -1,78 +1,106 @@
 <div class="activityList">
     <ul>
-        <!-- <h5>Today</h5> -->
         <li>
-            <div class="activityLeft">
-                <div class="activityListIcon">
-                    
-                        <% if(activityDetails.attributes.record_type =='task'){ %>
-                            <i class="material-icons">business_center</i>
-                        <%}%>
-                        <%if(activityDetails.attributes.record_type =='notes'){ %>
-                            <i class="material-icons">assignment</i>
-                        <%}%>
-                        <% if(activityDetails.attributes.record_type =='email'){ %>
-                            <i class="material-icons">mail</i>
-                        <%}%> 
-                        <% if(activityDetails.attributes.record_type =='appointment'){ %>
-                            <i class="material-icons">date_range</i>
-                        <%}%>
-                        <% if(activityDetails.attributes.record_type =='customer'){ %>
-                            <i class="material-icons">person</i>
-                        <%}%>
-                        <% if(activityDetails.attributes.record_type =='lead'){ %>
-                            <i class="material-icons">person</i>
-                        <%}%>   
-                        <% if(activityDetails.attributes.record_type =='reciept'){ %>
-                            <i class="material-icons">receipt</i>
-                        <%}%> 
-                        <% if(activityDetails.attributes.record_type =='invoice'){ %>
-                            <i class="material-icons">attach_money</i>
-                        <%}%>           
-                </div>
-            </div>
-            <a href="<%=APPPATH%><%if(activityDetails.attributes.record_type == 'task'){%>#task/<%}else if(activityDetails.attributes.record_type == 'appointment'){%>#appointment/<%}%><%=activityDetails.attributes.record_id%>" target="_blank">
-                <div class="activityRight loadView" >
-                    <div class="activitytop">
-                        <div class="heading">
+            <div class="activityCls">
+                <div class="activityLeft">
+                    <div class="activityListIcon">
+                        
                             <% if(activityDetails.attributes.record_type =='task'){ %>
-                                <h4>Task <%if(activityDetails.attributes.start_date){%><small>Start On: <%=activityDetails.attributes.start_date%></small><%}%></h4>
+                                <i class="material-icons">business_center</i>
                             <%}%>
-                            <% if(activityDetails.attributes.record_type =='notes'){ %>
-                                <h4>Notes <%if(activityDetails.attributes.start_date){%><small>Reminder On: <%=activityDetails.attributes.start_date%></small><%}%></h4>
+                            <%if(activityDetails.attributes.record_type =='notes'){ %>
+                                <i class="material-icons">assignment</i>
                             <%}%>
                             <% if(activityDetails.attributes.record_type =='email'){ %>
-                                <h4>Email</h4>
-                            <%}%>
+                                <i class="material-icons">mail</i>
+                            <%}%> 
                             <% if(activityDetails.attributes.record_type =='appointment'){ %>
-                                <h4>Appointment <%if(activityDetails.attributes.start_date){%><small>Start On: <%=activityDetails.attributes.start_date%></small><%}%></h4>
+                                <i class="material-icons">date_range</i>
                             <%}%>
                             <% if(activityDetails.attributes.record_type =='customer'){ %>
-                                <h4>Customer</h4>
-                            <%}%>
-                            <% if(activityDetails.attributes.record_type =='lead'){ %>
-                                <h4>Lead</h4>
-                            <%}%>
+                                <i class="material-icons">person</i>
+                            <%}%>   
                             <% if(activityDetails.attributes.record_type =='reciept'){ %>
-                                <h4>Receipt</h4>
-                            <%}%>
-                            <% if(activityDetails.attributes.record_type =='invoice'){ %>
-                                <h4>Invoice</h4>
-                            <%}%>
-                        </div>
-                        <div class="Time">
-                            <p>
-                                <%=activityDetails.attributes.timeString%>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="details">
-                        <p>
-                            <%=activityDetails.attributes.description%>
-                        </p>
+                                <i class="material-icons">receipt</i>
+                            <%}%>   
+                            <% if(activityDetails.attributes.record_type =='lead'){ %>
+                                <i class="material-icons">person</i>
+                            <%}%>         
                     </div>
                 </div>
-            </a>
+
+                <%if(activityDetails.attributes.record_type != 'lead' && activityDetails.attributes.record_type != 'customer' && activityDetails.attributes.record_type != 'notes' ){%>
+                    <a href="<%=APPPATH%><%if(activityDetails.attributes.record_type == 'task'){%>#task/<%=activityDetails.attributes.task_id%><%}else if(activityDetails.attributes.record_type == 'appointment'){%>#appointment/<%=activityDetails.attributes.appointmentID%><%}%><%=activityDetails.attributes.record_id%>" target="_blank" style="width: 100%;">
+                        <div class="activityRight loadView" >
+                            <div class="activitytop">
+                                    <div class="heading">
+                                        <% if(activityDetails.attributes.record_type =='task'){ %>
+                                            <h4>Task <%if(activityDetails.attributes.start_date){%><small>Start On: <%=activityDetails.attributes.start_date%></small><%}%></h4>
+                                        <%}%>
+                                        <% if(activityDetails.attributes.record_type =='notes'){ %>
+                                            <h4>Notes <%if(activityDetails.attributes.start_date){%><small>Reminder On: <%=activityDetails.attributes.start_date%></small><%}%></h4>
+                                        <%}%>
+                                        <% if(activityDetails.attributes.record_type =='email'){ %>
+                                            <h4>Email</h4>
+                                        <%}%>
+                                        <% if(activityDetails.attributes.record_type =='appointment'){ %>
+                                            <h4>Appointment <%if(activityDetails.attributes.start_date){%><small>Start On: <%=activityDetails.attributes.start_date%></small><%}%></h4>
+                                        <%}%>
+                                        <% if(activityDetails.attributes.record_type =='customer'){ %>
+                                            <h4>Customer</h4>
+                                        <%}%>
+                                        <% if(activityDetails.attributes.record_type =='reciept'){ %>
+                                            <h4>Receipt</h4>
+                                        <%}%>
+                                        <% if(activityDetails.attributes.record_type =='lead'){ %>
+                                            <h4>Lead</h4>
+                                        <%}%>
+                                    </div>
+                                <div class="Time" >
+                                    <p><%=activityDetails.attributes.timeString%></p>
+                                </div>
+                            </div>
+                            <div class="details">
+                                <p><%=activityDetails.attributes.description%> <%if(view != "upcoming"){%> <%if(activityDetails.attributes.record_type == "task"){%>By: <%=activityDetails.attributes.createdName%> Task ID: <%=activityDetails.attributes.record_id%><%}else if(activityDetails.attributes.record_type == "appointment"){%> Appoitment ID: <%=activityDetails.attributes.record_id%><%}%><%}else{%>Created By: <%=activityDetails.attributes.createdName%><%}%></p>
+                            </div>
+                        </div>
+                    </a>
+                <%}else{%>
+                    <div class="activityRight loadView" >
+                        <div class="activitytop">
+                                <div class="heading">
+                                    <% if(activityDetails.attributes.record_type =='task'){ %>
+                                        <h4>Task <%if(activityDetails.attributes.start_date){%><small>Start On: <%=activityDetails.attributes.start_date%></small><%}%></h4>
+                                    <%}%>
+                                    <% if(activityDetails.attributes.record_type =='notes'){ %>
+                                        <h4>Notes <%if(activityDetails.attributes.start_date){%><small>Reminder On: <%=activityDetails.attributes.start_date%></small><%}%></h4>
+                                    <%}%>
+                                    <% if(activityDetails.attributes.record_type =='email'){ %>
+                                        <h4>Email</h4>
+                                    <%}%>
+                                    <% if(activityDetails.attributes.record_type =='appointment'){ %>
+                                        <h4>Appointment <%if(activityDetails.attributes.start_date){%><small>Start On: <%=activityDetails.attributes.start_date%></small><%}%></h4>
+                                    <%}%>
+                                    <% if(activityDetails.attributes.record_type =='customer'){ %>
+                                        <h4>Customer</h4>
+                                    <%}%>
+                                    <% if(activityDetails.attributes.record_type =='reciept'){ %>
+                                        <h4>Receipt</h4>
+                                    <%}%>
+                                    <% if(activityDetails.attributes.record_type =='lead'){ %>
+                                        <h4>Lead</h4>
+                                    <%}%>
+                                </div>
+                            <div class="Time">
+                                <p><%=activityDetails.attributes.timeString%></p>
+                            </div>
+                        </div>
+                        <div class="details">
+                            <p><%=activityDetails.attributes.description%> <%if(view != "upcoming"){%> <%if(activityDetails.attributes.record_type == "task"){%>By: <%=activityDetails.attributes.createdName%> Task ID: <%=activityDetails.attributes.record_id%><%}else if(activityDetails.attributes.record_type == "appointment"){%> Appoitment ID: <%=activityDetails.attributes.record_id%><%}%><%}else{%>Created By: <%=activityDetails.attributes.createdName%><%}%></p>
+                        </div>
+                    </div>
+                <%}%>
+            </div>
         </li>
     </ul>
 </div>

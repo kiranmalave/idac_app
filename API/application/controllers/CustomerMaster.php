@@ -24,11 +24,18 @@ class CustomerMaster extends CI_Controller
 		parent::__construct();
 		$this->load->database();
 		$this->load->model('CommonModel');
+		// $this->load->model('TraineeModel');
 		$this->load->library("pagination");
 		$this->load->library("response");
 		$this->load->library("ValidateData");
 		$this->load->library("Datatables");
 		$this->load->library("Filters");
+		if(!$this->config->item('development'))
+		{
+			$this->load->library("emails");
+			// $this->load->library("EmailsNotifications");
+			// $this->load->library("NotificationTrigger");
+		}
 	}
 
 
@@ -36,46 +43,144 @@ class CustomerMaster extends CI_Controller
 	{
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
-		$method = $this->input->method(TRUE);
-		$this->access->checkTokenKey();
-		$this->response->decodeRequest();
-		$t = $this->input->post('textSearch');
-		$t = $t ?? '';
-		$textSearch = trim($t);
 		$isAll = $this->input->post('getAll');
+		$textSearch = $this->input->post('textSearch');
 		$curPage = $this->input->post('curpage');
+		$ITIID = $this->input->post('customer_id');
 		$textval = $this->input->post('textval');
 		$orderBy = $this->input->post('orderBy');
 		$order = $this->input->post('order');
-		$company = $this->input->post('company');
 		$statuscode = $this->input->post('status');
-		$type = $this->input->post('type');
+		$filterSName = $this->input->post('filterSName');
+		$startDate = $this->input->post('birthDateStart');
+		$endDate = $this->input->post('birthDateEnd');
+		$createdStartDate = $this->input->post('createdDateStart');
+		$createdEndDate = $this->input->post('createdDateEnd');
+		$record_type = $this->input->post('record_type');
+		$custType = $this->input->post('type'); 
 		$stages = $this->input->post('stages');
-
-		$config = array();
-		if (!isset($orderBy) || empty($orderBy)) {
-			$orderBy = "created_date";
-			$order = "DESC";
-		}
-		$other = array("orderBy" => $orderBy, "order" => $order);
-
+		
 		$config = $this->config->item('pagination');
+		$this->menuID = $this->input->post('menuId');
 		$wherec = $join = array();
-		if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
-			$wherec["$textSearch like  "] = "'" . $textval . "%'";
+		
+		if($isAll !="Y"){
+			$this->filters->menuID = $this->menuID;
+			$this->filters->getMenuData();
+			$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+			$this->menuDetails = $this->filters->menuDetails;
+			$menuId = $this->input->post('menuId');
+			$postData = $_POST;
+			unset($postData['birthDateStart']);
+			unset($postData['birthDateEnd']);
+			unset($postData['createdDateStart']);
+			unset($postData['createdDateEnd']);
+			$whereData = $this->filters->prepareFilterData($postData);
+			// print_r($whereData);exit;
+			$wherec = $whereData["wherec"];
+			$other = $whereData["other"];
+			$join = $whereData["join"];
+			$selectC = $whereData["select"];
+			// create join for created by and modified data details
+			$jkey = (count($join)+1);
+			$join[$jkey]['type'] ="LEFT JOIN";
+			$join[$jkey]['table']="admin";
+			$join[$jkey]['alias'] ="ad";
+			$join[$jkey]['key1'] ="created_by";
+			$join[$jkey]['key2'] ="adminID";
+			$jkey = (count($join)+1);
+			$join[$jkey]['type'] ="LEFT JOIN";
+			$join[$jkey]['table']="admin";
+			$join[$jkey]['alias'] ="am";
+			$join[$jkey]['key1'] ="modified_by";
+			$join[$jkey]['key2'] ="adminID";
+
+			if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+				$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+			
+				$columnNames = [
+					"country_id" => ["table" => "country", "alias" => "cn", "column" => "country_name", "key2" => "country_id"],
+					"state_id" => ["table" => "states", "alias" => "st", "column" => "state_name", "key2" => "state_id"],
+					"city_id" => ["table" => "cities", "alias" => "ci", "column" => "city_name", "key2" => "city_id"],
+					"lead_source" => ["table" => "categories", "alias" => "cl", "column" => "categoryName", "key2" => "category_id"],
+					"stages" => ["table" => "categories", "alias" => "c", "column" => "categoryName", "key2" => "category_id"],
+					"assignee" => ["table" => "admin", "alias" => "aa", "column" => "name", "key2" => "adminID"],
+				];
+			
+				foreach ($columnNames as $columnName => $columnData) {
+					if (in_array($columnName, $colData)) {
+						$jkey = count($join) + 1;
+						$join[$jkey]['type'] = "LEFT JOIN";
+						$join[$jkey]['table'] = $columnData["table"];
+						$join[$jkey]['alias'] = $columnData["alias"];
+						$join[$jkey]['key1'] = $columnName;
+						$join[$jkey]['key2'] = $columnData["key2"];
+						$columnNameShow = $columnData["column"];
+						$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+					}
+				}
+				// Remove the leading comma if $selectC is not empty
+				$selectC = ltrim($selectC, ',');
+				// print($selectC);exit;
+			}
+			
+			if($selectC != ""){
+				$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+			}else{
+				$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+			}
+			
+		}
+		
+		// $config = array();
+		if (!isset($orderBy) || empty($orderBy)) {
+			$orderBy = "name";
+			$order = "ASC";
 		}
 
-		if (isset($statuscode) && !empty($statuscode)) {
-			$statusStr = str_replace(",", '","', $statuscode);
-			$wherec["t.status"] = 'IN ("' . $statusStr . '")';
+		$other["orderBy"] = $orderBy;
+		$other["order"]= $order;
+		
+		// $config = $this->config->item('pagination');
+		// $wherec = $join = array();
+
+		// if(isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)){			
+		// 	$textSearch = trim($textSearch);
+		// 	$wherec["$textSearch like  "] = "'".$textval."%'";
+		// }
+
+		// if(isset($record_type) || !empty($record_type)){
+		// 	$wherec["record_type ="] = "'".$record_type."'";
+		// }
+
+		// if(isset($custType) && !empty ($custType)){
+		// 	$TypeStr = str_replace(",",'","',$custType);
+		// 	$wherec["t.type"] = 'IN ("'.$TypeStr.'")';
+		// }
+
+		// if (isset($statuscode) && !empty($statuscode)) {
+		// 	$statusStr = str_replace(",", '","', $statuscode);
+		// 	$wherec["t.status"] = 'IN ("' . $statusStr . '")';
+		// }
+		
+		if(isset($startDate) && !empty($startDate)){
+			$sDate = date("Y-m-d",strtotime($startDate));
+			$wherec["birth_date >="] = "'".$sDate."'";
 		}
 
-		if (isset($company) && !empty($company)) {
-			$wherec["company_name like"] = "'" . $company . "%'";
+		if(isset($endDate) && !empty($endDate)){
+			$eDate = date("Y-m-d",strtotime($endDate));
+			$wherec["birth_date <="] = "'".$eDate."'";
 		}
 
-		if (isset($type) && !empty($type)) {
-			$wherec["type ="] = "'" . $type . "'";
+		if(isset($createdStartDate) && !empty($createdStartDate)){
+			$sDate = date("Y-m-d",strtotime($createdStartDate));
+			$wherec["t.created_date >="] = "'".$sDate."'";
+		}
+
+		if(isset($createdEndDate) && !empty($createdEndDate)){
+			$eDate = date("Y-m-d",strtotime($createdEndDate));
+			$wherec["t.created_date <="] = "'".$eDate."'";
 		}
 
 		if(isset($stages) && !empty($stages)){
@@ -86,9 +191,22 @@ class CustomerMaster extends CI_Controller
 			}
 			
 		}
+		$adminID = $this->input->post('SadminID');
+		if ($isAll == "Y") {
+			
+			// $join = $wherec = array();
+			if (isset($statuscode) && !empty($statuscode)) {
+				$statusStr = str_replace(",", '","', $statuscode);
+				$wherec["t.status"] = 'IN ("' . $statusStr . '")';
+			}
 
-		$config["base_url"] = base_url() . "customer	Details";
-		$config["total_rows"] = $this->CommonModel->getCountByParameter('customer_id', 'customer', $wherec);
+			if (isset($custType) && !empty($custType)) {
+				$statusStr = str_replace(",", '","', $custType);
+				$wherec["t.type"] = 'IN ("' . $statusStr . '")';
+			}
+		}
+		$config["base_url"] = base_url() . "customerDetails";
+		$config["total_rows"] = $this->CommonModel->getCountByParameter('t.customer_id', 'customer', $wherec, $other);
 		$config["uri_segment"] = 2;
 		$this->pagination->initialize($config);
 		if (isset($curPage) && !empty($curPage)) {
@@ -98,19 +216,22 @@ class CustomerMaster extends CI_Controller
 			$curPage = 0;
 			$page = 0;
 		}
-		// print_r($wherec);exit;
+		
 		if ($isAll == "Y") {
-			$customerDetails = $this->CommonModel->GetMasterListDetails($selectC = '', 'customer', $wherec, '', '', $join, $other);
-		} else {
-			$join = array();
-			$join[0]['type'] ="LEFT JOIN";
-			$join[0]['table']="categories";
-			$join[0]['alias'] ="c";
-			$join[0]['key1'] ="stages";
-			$join[0]['key2'] ="category_id";
-			$customerDetails = $this->CommonModel->GetMasterListDetails($selectC = 't.*, c.categoryName AS lead_stage', 'customer', $wherec, $config["per_page"], $page, $join, $other);
+			$customerDetails = $this->CommonModel->GetMasterListDetails($selectC="customer_id,name,state_id,pan_number,address,email,mobile_no",'customer',$wherec,'','',$join,$other);	
+		}else{
+			$jkey = count($join)+1;
+			$join[$jkey]['type'] ="LEFT JOIN";
+			$join[$jkey]['table']="categories";
+			$join[$jkey]['alias'] ="css";
+			$join[$jkey]['key1'] ="stages";
+			$join[$jkey]['key2'] ="category_id";
+			// $selectC = "t.customer_id,t.name,t.email,t.mobile_no,t.record_type,t.type,t.stages,t.state_id,c.categoryName AS stageName, t.customer_image, t.last_activity_date, t.last_activity_type, ".$selectC;
+			// print_r($selectC);exit;
+			$selectC = "css.category_id AS stageID,t.customer_image,t.type,t.salutation,t.created_date,t.last_activity_date, t.last_activity_type, ".$selectC;
+			$customerDetails = $this->CommonModel->GetMasterListDetails($selectC, 'customer', $wherec, $config["per_page"], $page, $join, $other);
+			// print $this->db->last_query();	
 		}
-
 		foreach ($customerDetails as $key => $value) {
 			$wherec = array();
 			$wherec["t.record_id"] = ' = "' . $value->customer_id . '"';
@@ -170,244 +291,8 @@ class CustomerMaster extends CI_Controller
 		}
 	}
 
-	// public function getcustomerDetails()
-	// {
-	// 	$this->access->checkTokenKey();
-	// 	$this->response->decodeRequest();
-	// 	$isAll = $this->input->post('getAll');
-	// 	$textSearch = $this->input->post('textSearch');
-	// 	$curPage = $this->input->post('curpage');
-	// 	$ITIID = $this->input->post('customer_id');
-	// 	$textval = $this->input->post('textval');
-	// 	$orderBy = $this->input->post('orderBy');
-	// 	$order = $this->input->post('order');
-	// 	$statuscode = $this->input->post('status');
-	// 	$filterSName = $this->input->post('filterSName');
-	// 	$startDate = $this->input->post('birthDateStart');
-	// 	$endDate = $this->input->post('birthDateEnd');
-	// 	$record_type = $this->input->post('record_type');
-	// 	$custType = $this->input->post('type'); 
-	// 	$stages = $this->input->post('stages');
-		
-	// 	$config = $this->config->item('pagination');
-	// 	$this->menuID = $this->input->post('menuId');
-	// 	$wherec = $join = array();
-		
-	// 	if($isAll !="Y"){
-	// 		$this->filters->menuID = $this->menuID;
-	// 		$this->filters->getMenuData();
-	// 		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
-	// 		$this->menuDetails = $this->filters->menuDetails;
-	// 		$menuId = $this->input->post('menuId');
-	// 		$postData = $_POST;
-	// 		unset($postData['birthDateStart']);
-	// 		unset($postData['birthDateEnd']);
-	// 		$whereData = $this->filters->prepareFilterData($postData);
-	// 		// print_r($whereData);exit;
-	// 		$wherec = $whereData["wherec"];
-	// 		$other = $whereData["other"];
-	// 		$join = $whereData["join"];
-	// 		$selectC = $whereData["select"];
-	// 		// create join for created by and modified data details
-	// 		$jkey = (count($join)+1);
-	// 		$join[$jkey]['type'] ="LEFT JOIN";
-	// 		$join[$jkey]['table']="admin";
-	// 		$join[$jkey]['alias'] ="ad";
-	// 		$join[$jkey]['key1'] ="created_by";
-	// 		$join[$jkey]['key2'] ="adminID";
-	// 		$jkey = (count($join)+1);
-	// 		$join[$jkey]['type'] ="LEFT JOIN";
-	// 		$join[$jkey]['table']="admin";
-	// 		$join[$jkey]['alias'] ="am";
-	// 		$join[$jkey]['key1'] ="modified_by";
-	// 		$join[$jkey]['key2'] ="adminID";
-
-	// 		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
-	// 			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
-			
-	// 			$columnNames = [
-	// 				"country_id" => ["table" => "country", "alias" => "cn", "column" => "country_name", "key2" => "country_id"],
-	// 				"state_id" => ["table" => "states", "alias" => "st", "column" => "state_name", "key2" => "state_id"],
-	// 				"city_id" => ["table" => "cities", "alias" => "ci", "column" => "city_name", "key2" => "city_id"],
-	// 				"lead_source" => ["table" => "categories", "alias" => "cl", "column" => "categoryName", "key2" => "category_id"],
-	// 				"stages" => ["table" => "categories", "alias" => "c", "column" => "categoryName", "key2" => "category_id"],
-	// 			];
-			
-	// 			foreach ($columnNames as $columnName => $columnData) {
-	// 				if (in_array($columnName, $colData)) {
-	// 					$jkey = count($join) + 1;
-	// 					$join[$jkey]['type'] = "LEFT JOIN";
-	// 					$join[$jkey]['table'] = $columnData["table"];
-	// 					$join[$jkey]['alias'] = $columnData["alias"];
-	// 					$join[$jkey]['key1'] = $columnName;
-	// 					$join[$jkey]['key2'] = $columnData["key2"];
-	// 					$columnNameShow = $columnData["column"];
-	// 					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
-	// 				}
-	// 			}
-	// 			// Remove the leading comma if $selectC is not empty
-	// 			$selectC = ltrim($selectC, ',');
-	// 			// print($selectC);exit;
-	// 		}
-			
-	// 		if($selectC != ""){
-	// 			$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
-	// 		}else{
-	// 			$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
-	// 		}
-			
-	// 	}
-		
-	// 	// $config = array();
-	// 	if (!isset($orderBy) || empty($orderBy)) {
-	// 		$orderBy = "name";
-	// 		$order = "ASC";
-	// 	}
-
-	// 	$other["orderBy"] = $orderBy;
-	// 	$other["order"]= $order;
-		
-	// 	// $config = $this->config->item('pagination');
-	// 	// $wherec = $join = array();
-
-	// 	// if(isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)){			
-	// 	// 	$textSearch = trim($textSearch);
-	// 	// 	$wherec["$textSearch like  "] = "'".$textval."%'";
-	// 	// }
-
-	// 	// if(isset($record_type) || !empty($record_type)){
-	// 	// 	$wherec["record_type ="] = "'".$record_type."'";
-	// 	// }
-
-	// 	// if(isset($custType) && !empty ($custType)){
-	// 	// 	$TypeStr = str_replace(",",'","',$custType);
-	// 	// 	$wherec["t.type"] = 'IN ("'.$TypeStr.'")';
-	// 	// }
-
-	// 	// if (isset($statuscode) && !empty($statuscode)) {
-	// 	// 	$statusStr = str_replace(",", '","', $statuscode);
-	// 	// 	$wherec["t.status"] = 'IN ("' . $statusStr . '")';
-	// 	// }
-		
-	// 	if(isset($startDate) && !empty($startDate)){
-	// 		$sDate = date("Y-m-d",strtotime($startDate));
-	// 		$wherec["birth_date >="] = "'".$sDate."'";
-	// 	}
-
-	// 	if(isset($endDate) && !empty($endDate)){
-	// 		$eDate = date("Y-m-d",strtotime($endDate));
-	// 		$wherec["birth_date <="] = "'".$eDate."'";
-	// 	}
-
-	// 	if(isset($stages) && !empty($stages)){
-	// 		if($stages =="other"){
-	// 			$wherec["t.stages ="] = "'0'";	
-	// 		}else{
-	// 			$wherec["t.stages ="] = "'".$stages."'";
-	// 		}
-			
-	// 	}
-	// 	$adminID = $this->input->post('SadminID');
-	// 	if ($isAll == "Y") {
-			
-	// 		// $join = $wherec = array();
-	// 		if (isset($statuscode) && !empty($statuscode)) {
-	// 			$statusStr = str_replace(",", '","', $statuscode);
-	// 			$wherec["t.status"] = 'IN ("' . $statusStr . '")';
-	// 		}
-
-	// 		if (isset($custType) && !empty($custType)) {
-	// 			$statusStr = str_replace(",", '","', $custType);
-	// 			$wherec["t.type"] = 'IN ("' . $statusStr . '")';
-	// 		}
-	// 	}
-	// 	$config["base_url"] = base_url() . "customerDetails";
-	// 	$config["total_rows"] = $this->CommonModel->getCountByParameter('customer_id', 'customer', $wherec, $other);
-	// 	$config["uri_segment"] = 2;
-	// 	$this->pagination->initialize($config);
-	// 	if (isset($curPage) && !empty($curPage)) {
-	// 		$curPage = $curPage;
-	// 		$page = $curPage * $config["per_page"];
-	// 	} else {
-	// 		$curPage = 0;
-	// 		$page = 0;
-	// 	}
-		
-	// 	if ($isAll == "Y") {
-	// 		$customerDetails = $this->CommonModel->GetMasterListDetails($selectC="customer_id,name,state_id,pan_number,address,email,mobile_no",'customer',$wherec,'','',$join,$other);	
-	// 	}else{
-	// 		// $jkey = count($join)+1;
-	// 		// $join[$jkey]['type'] ="LEFT JOIN";
-	// 		// $join[$jkey]['table']="categories";
-	// 		// $join[$jkey]['alias'] ="c";
-	// 		// $join[$jkey]['key1'] ="stages";
-	// 		// $join[$jkey]['key2'] ="category_id";
-	// 		// $selectC = "t.customer_id,t.name,t.email,t.mobile_no,t.record_type,t.type,t.stages,t.state_id,c.categoryName AS stageName, t.customer_image, t.last_activity_date, t.last_activity_type, ".$selectC;
-	// 		$selectC = "t.customer_id,t.name,t.email,t.mobile_no,t.record_type,t.type,t.stages,t.state_id,t.customer_image, t.last_activity_date, t.last_activity_type, ".$selectC;
-	// 		$customerDetails = $this->CommonModel->GetMasterListDetails($selectC, 'customer', $wherec, $config["per_page"], $page, $join, $other);
-	// 	}
-	// 	foreach ($customerDetails as $key => $value) {
-	// 		$wherec = array();
-	// 		$wherec["t.record_id"] = ' = "' . $value->customer_id . '"';
-	// 		$customerNoteCount = $this->CommonModel->getCountByParameter('note_id', 'notes', $wherec, '');
-	// 		$customerDetails[$key]->noteCount = $customerNoteCount;
-			
-	// 		$whereTask = array();
-	// 		$whereTask["start_date >="] = "'".date('Y-m-d')."'";
-	// 		$whereTask["customer_id = "] = $value->customer_id;
-	// 		$customerTaskUpcoming = $this->CommonModel->getCountByParameter('task_id', 'tasks', $whereTask, '');
-
-	// 		$whereAppoint = array();
-	// 		$whereAppoint["start_date >="] = "'".date('Y-m-d')."'";
-	// 		$whereAppoint["customer_ID = "] = $value->customer_id;
-	// 		$customerAppUpcoming = $this->CommonModel->getCountByParameter('appointmentID', 'appointment', $whereAppoint, '');
-
-	// 		$whereNotes = array();
-	// 		$whereNotes["reminder_date >="] = "'".date('Y-m-d')."'";
-	// 		$whereNotes["record_id = "] = $value->customer_id;
-	// 		$customerNoteUpcoming = $this->CommonModel->getCountByParameter('note_id', 'notes', $whereNotes, '');
-			
-	// 		$result = $customerTaskUpcoming + $customerAppUpcoming + $customerNoteUpcoming;
-	// 		$customerDetails[$key]->upcomingCount = $result;
-
-	// 	}
-
-	// 	$status['data'] = $customerDetails;
-	// 	$status['paginginfo']["curPage"] = $curPage;
-	// 	if ($curPage <= 1)
-	// 		$status['paginginfo']["prevPage"] = 0;
-	// 	else
-	// 		$status['paginginfo']["prevPage"] = $curPage - 1;
-
-	// 	$status['paginginfo']["pageLimit"] = $config["per_page"];
-	// 	$status['paginginfo']["nextpage"] =  $curPage + 1;
-	// 	$status['paginginfo']["totalRecords"] =  $config["total_rows"];
-	// 	$status['paginginfo']["start"] =  $page;
-	// 	$status['paginginfo']["end"] =  $page + $config["per_page"];
-	// 	$status['loadstate'] = true;
-	// 	if ($config["total_rows"] <= $status['paginginfo']["end"]) {
-	// 		$status['msg'] = $this->systemmsg->getErrorCode(232);
-	// 		$status['statusCode'] = 400;
-	// 		$status['flag'] = 'S';
-	// 		$status['loadstate'] = false;
-	// 		$this->response->output($status, 200);
-	// 	}
-	// 	if ($customerDetails) {
-	// 		$status['msg'] = "sucess";
-	// 		$status['statusCode'] = 400;
-	// 		$status['flag'] = 'S';
-	// 		$this->response->output($status, 200);
-	// 	} else {
-	// 		$status['msg'] = $this->systemmsg->getErrorCode(227);
-	// 		$status['statusCode'] = 227;
-	// 		$status['flag'] = 'F';
-	// 		$this->response->output($status, 200);
-	// 	}
-	// }
-
 	public function customerMaster($customer_id = "")
 	{
-
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$method = $this->input->method(TRUE);
@@ -415,11 +300,10 @@ class CustomerMaster extends CI_Controller
 		if ($method == "POST" || $method == "PUT") {
 			$customerDetails = array();
 			$updateDate = date("Y/m/d H:i:s");
+			// $customerDetails['regiNoYSF'] = $this->validatedata->validate('regiNoYSF','regiNoYSF',true,'',array());
 			$customerDetails['customer_id'] = $this->validatedata->validate('customer_id', 'Customer ID', false, '', array());
 			$customerDetails['salutation'] = $this->validatedata->validate('salutation', 'Salutation', false, '', array());
 			$customerDetails['name'] = $this->validatedata->validate('name', 'Name', false, '', array());
-			$customerDetails['company_name'] = $this->validatedata->validate('company_name', 'Comapany Name', false, '', array());
-			$customerDetails['person_name'] = $this->validatedata->validate('person_name', 'Perso Name', false, '', array());
 			$customerDetails['email'] = $this->validatedata->validate('email', 'Email', false, '', array());
 			$customerDetails['mobile_no'] = $this->validatedata->validate('mobile_no', 'Mobile', false, '', array());
 			$customerDetails['birth_date'] = $this->validatedata->validate('birth_date', 'Birth Date', false, '', array());
@@ -429,7 +313,7 @@ class CustomerMaster extends CI_Controller
 			$customerDetails['customer_image'] = $this->validatedata->validate('customer_image','Customer Image',false,'',array());
 			$customerDetails['billing_name'] = $this->validatedata->validate('billing_name', 'Billing Address', false, '', array());
 			$customerDetails['billing_address'] = $this->validatedata->validate('billing_address', 'Company Name', false, '', array());
-			$customerDetails['branch_id'] = $this->validatedata->validate('branch_id', 'Branch Id	', false, '', array());
+			$customerDetails['branch_id	'] = $this->validatedata->validate('branch_id	', 'Branch Id	', false, '', array());
 			$customerDetails['gst_no'] = $this->validatedata->validate('gst_no', ' Gst No', false, '', array());
 			$customerDetails['adhar_number'] = $this->validatedata->validate('adhar_number', ' adhar Number', false, '', array());
 			$customerDetails['pan_number'] = $this->validatedata->validate('pan_number', ' Pan Number', false, '', array());
@@ -444,8 +328,9 @@ class CustomerMaster extends CI_Controller
 			$customerDetails['zipcode'] = $this->validatedata->validate('zipcode', 'zipcode', false, '', array());
 			$customerDetails['office_land_line'] = $this->validatedata->validate('office_land_line', 'office_land_line', false, '', array());
 			$customerDetails['lead_source'] = $this->validatedata->validate('lead_source', 'lead source', false, '', array());
-			
-			
+			$customerDetails['mailing_address'] = $this->validatedata->validate('mailing_address', 'Mailing Address', false, '', array());
+			$customerDetails['assignee'] = $this->validatedata->validate('assignee', 'Assignee', false, '', array());
+
 			if($customerDetails['type'] =="lead"){
 				$fieldData = $this->datatables->mapDynamicFeilds("leads",$this->input->post());
 				$customerDetails = array_merge($fieldData, $customerDetails);
@@ -453,7 +338,7 @@ class CustomerMaster extends CI_Controller
 				$fieldData = $this->datatables->mapDynamicFeilds("customer",$this->input->post());
 				$customerDetails = array_merge($fieldData, $customerDetails);	
 			}
-
+			
 			if (isset($customerDetails['birth_date']) && !empty($customerDetails['birth_date']) && $customerDetails['birth_date'] != "0000-00-00") {
 				$customerDetails['birth_date'] = str_replace("/", "-", $customerDetails['birth_date']);
 				$customerDetails['birth_date'] = date("Y-m-d", strtotime($customerDetails['birth_date']));
@@ -483,6 +368,23 @@ class CustomerMaster extends CI_Controller
 					$status['flag'] = 'F';
 					$this->response->output($status, 200);
 				} else {
+					$notificationlist = $this->CommonModel->getNotificationList('customer','add');
+					if(isset($notificationlist) && !empty($notificationlist)){
+						foreach ($notificationlist as $key => $value) 
+						{
+							$datatosend= array();
+							$datatosend['details']= $customerDetails;
+							$datatosend['user_type'] = $value->user_type;
+							$datatosend['email_customer'] = $customerDetails['email'];
+							$datatosend['notificationID'] = $value->notification_id;
+							$datatosend['sys_user_id'] = $value->sys_user_id;
+							$datatosend['template_id'] = $value->template_id;
+							// if(!$this->config->item('development')){
+							// 	$this->notificationtrigger->sendEmailNotification('customer','add',$datatosend);
+							// }
+						}
+					}
+
 					$custID = $this->db->insert_id();
 					$status['lastID'] = $custID;
 					$status['msg'] = $this->systemmsg->getSucessCode(400);
@@ -511,6 +413,10 @@ class CustomerMaster extends CI_Controller
 					$status['flag'] = 'F';
 					$this->response->output($status, 200);
 				} else {
+					// if(!$this->config->item('development'))
+					// {
+					// 	$this->notificationtrigger->prepareNotification('update','customer','customer_id',$customer_id);
+					// }
 					$status['lastID'] = $customer_id;
 					$status['msg'] = $this->systemmsg->getSucessCode(400);
 					$status['statusCode'] = 400;
@@ -552,10 +458,21 @@ class CustomerMaster extends CI_Controller
 				$status['flag'] = 'S';
 				$this->response->output($status,200);
 			}
+			$wherec["customer_id ="] = "'".$customer_id."'";
 
 			$whereAttachment = array(
 				"customer_id" => $customer_id
 			);
+
+			$join[0]['type'] ="LEFT JOIN";
+			$join[0]['table']="admin";
+			$join[0]['alias'] ="ad";
+			$join[0]['key1'] ="assignee";
+			$join[0]['key2'] ="adminID";
+
+			$selectC = "ad.name";
+
+			$assignee = $this->CommonModel->GetMasterListDetails($selectC, 'customer', $wherec, '', '', $join, '');
 
 			$this->menuID = $this->input->post('menuId');
 			$this->filters->menuID = $this->menuID;
@@ -584,6 +501,10 @@ class CustomerMaster extends CI_Controller
 					$attachmentID = array_column($custAttachments,'attachment_id');
 					$customerDetails[0]->attachment_file = $attachment;
 					$customerDetails[0]->attachment_id = $attachmentID;
+				}
+				if(!empty($assignee)){
+					$assigneeName = array_column($assignee,'name');
+					$customerDetails[0]->assigneeName = $assigneeName;
 				}
 				$status['data'] = $customerDetails;
 				$status['statusCode'] = 200;
@@ -686,7 +607,7 @@ class CustomerMaster extends CI_Controller
 			$customerNote['note_desc'] = $this->validatedata->validate('note_desc', 'Customer Note', false, '', array());
 			$customerNote['title'] = $this->validatedata->validate('title', 'Title', false, '', array());
 			$customerNote['reminder_date'] = $this->validatedata->validate('reminder_date', 'Reminder Date', false, '', array());
-			$reminder_time = $this->validatedata->validate('reminder_date', 'Reminder Date', false, '', array());
+			$reminder_time = $this->validatedata->validate('reminder_time', 'Reminder Time', false, '', array());
 			
 			if (isset($customerNote['reminder_date']) && !empty($customerNote['reminder_date']) && $customerNote['reminder_date'] != "0000-00-00") {
 				$customerNote['reminder_date'] = str_replace("/", "-", $customerNote['reminder_date']);
@@ -820,8 +741,6 @@ class CustomerMaster extends CI_Controller
 		$setStatus = $this->input->post('status');
 		$where = array('customer_id' => $customerID);
 		$customerDetails['type'] = $setStatus;
-		$customerDetails['modified_date'] = date("Y/m/d H:i:s");
-		$customerDetails['modified_by'] = $this->input->post('user');
 		$iscreated = $this->CommonModel->updateMasterDetails('customer', $customerDetails, $where);
 		if (!$iscreated) {
 			$status['msg'] = $this->systemmsg->getErrorCode(998);
@@ -861,14 +780,22 @@ class CustomerMaster extends CI_Controller
 				$wherec["parent_record_id ="] = "'".$customer."'";
 			}
 			$adminID = $this->input->post('SadminID');
+			$join = array();
+			$join[0]['type'] ="LEFT JOIN";
+			$join[0]['table']="admin";
+			$join[0]['alias'] ="am";
+			$join[0]['key1'] ="user_id";
+			$join[0]['key2'] ="adminID";
+
 
 			if ($isAll == "Y") {
 				$join = array();
-				$customerActivityDetails = $this->CommonModel->GetMasterListDetails($selectC='*','history',$wherec,'','','', $other);	
+				$customerActivityDetails = $this->CommonModel->GetMasterListDetails($selectC='t.*, am.name As createdName','history',$wherec,'','',$join, $other);	
 			}else{
-				$selectC = "*";
-				$customerActivityDetails = $this->CommonModel->GetMasterListDetails($selectC, 'history', $wherec, '', '', '', $other);
+				$selectC = "t.*, am.name As createdName";
+				$customerActivityDetails = $this->CommonModel->GetMasterListDetails($selectC, 'history', $wherec, '', '', $join, $other);
 			}
+			// print_r($customerActivityDetails);exit;
 			$status['data'] = $customerActivityDetails;
 			if ($customerActivityDetails) {
 				$status['msg'] = "sucess";
@@ -882,49 +809,58 @@ class CustomerMaster extends CI_Controller
 				$this->response->output($status, 200);
 			}
 		}else if($historyType=="upcoming"){
+			$join = array();
+			$join[0]['type'] ="LEFT JOIN";
+			$join[0]['table']="admin";
+			$join[0]['alias'] ="am";
+			$join[0]['key1'] ="created_by";
+			$join[0]['key2'] ="adminID";
+
 			$whereTask = array();
 			$whereTask["start_date >="] = "'".date('Y-m-d')."'";
 			$whereTask["customer_id = "] = $customer;
-			$customerTaskUpcoming = $this->CommonModel->GetMasterListDetails("*", 'tasks', $whereTask, '', '', '', '');
+			$customerTaskUpcoming = $this->CommonModel->GetMasterListDetails("t.*, am.name As createdName", 'tasks', $whereTask, '', '', $join, '');
 
 			$whereAppoint = array();
 			$whereAppoint["start_date >="] = "'".date('Y-m-d')."'";
 			$whereAppoint["customer_ID = "] = $customer;
-			$customerAppUpcoming = $this->CommonModel->GetMasterListDetails("*", 'appointment', $whereAppoint, '', '', '', '');
+			$customerAppUpcoming = $this->CommonModel->GetMasterListDetails("t.*, am.name As createdName", 'appointment', $whereAppoint, '', '', $join, '');
 
 			$whereNotes = array();
 			$whereNotes["reminder_date >="] = "'".date('Y-m-d')."'";
 			$whereNotes["record_id = "] = $customer;
-			$customerNoteUpcoming = $this->CommonModel->GetMasterListDetails("*", 'notes', $whereNotes, '', '', '', '');
-
-			// print_r($customerTaskUpcoming);exit;
+			$customerNoteUpcoming = $this->CommonModel->GetMasterListDetails("t.*, am.name As createdName", 'notes', $whereNotes, '', '', $join, '');
 			$upcomingActivity = array();
 			foreach ($customerTaskUpcoming as $key => $value) {
 				$record = new stdClass();
 				$record->record_type = "task";
-				$record->record_id = $value->task_id;
 				$record->description =$value->subject;
-				$record->timestamp =$value->created_date;
+				$record->task_id =$value->task_id;
+				$record->activity_date =$value->created_date;
 				$record->start_date =$value->start_date;
+				$record->createdName =$value->createdName;
 				$upcomingActivity[]=$record;
 			}
 			foreach ($customerAppUpcoming as $key => $value) {
 				$record = new stdClass();
 				$record->record_type = "appointment";
 				$record->description =$value->title;
-				$record->timestamp =$value->created_date;
+				$record->appointmentID = $value->appointmentID;
+				$record->activity_date =$value->created_date;
 				$record->start_date =$value->start_date;
+				$record->createdName =$value->createdName;
 				$upcomingActivity[]=$record;
 			}
 			foreach ($customerNoteUpcoming as $key => $value){
 				$record = new stdClass();
 				$record->record_type = "notes";
 				$record->description =$value->title;
-				$record->timestamp =$value->created_date;
+				$record->activity_date =$value->created_date;
 				$record->start_date =$value->reminder_date;
+				$record->createdName =$value->createdName;
 				$upcomingActivity[]=$record;
 			}
-			array_multisort(array_map('strtotime',array_column($upcomingActivity,'timestamp')),
+			array_multisort(array_map('strtotime',array_column($upcomingActivity,'activity_date')),
 					SORT_ASC, 
 					$upcomingActivity);
 			if ($upcomingActivity) {
@@ -959,7 +895,6 @@ class CustomerMaster extends CI_Controller
 		}
 		
 	}
-
 	public function getCustomerEmailList()
 	{
 		// print('here');exit;
@@ -971,9 +906,10 @@ class CustomerMaster extends CI_Controller
 		$wherec = array();
 		if (isset($text) && !empty($text)) {
 			$wherec["email like  "] = "'%" . $text . "%'";
+			$wherec["status ="] = "'active'";
 		}
-		//print_r($wherec);
-		$updateAns = $this->CommonModel->GetMasterListDetails("customer_id,email", "customer", $wherec);
+		// print_r($wherec);
+		$updateAns = $this->CommonModel->GetMasterListDetails("customer_id,email,status", "customer", $wherec);
 		// print_r($updateAns);
 		// foreach ($updateAns as $hsl)
 		// {
@@ -1084,29 +1020,17 @@ class CustomerMaster extends CI_Controller
 		$this->realtimeupload->init($settings);
 	}
 
-	public function removeAttachment()
+	public function notesEmailReminder()
 	{
-		$this->access->checkTokenKey();
-		$this->response->decodeRequest();
-		$action = $this->input->post("status");
-			if(trim($action) == "delete"){
-				$fileID = $this->input->post("fileID");
-				$custID= $this->input->post("custID");
-				$wherec["customer_id ="] = $custID;
-				$wherec["attachment_id ="] = $fileID;
-				$changestatus = $this->CommonModel->deleteMasterDetails('customer_attachment',$wherec);
-			if($changestatus){
-				$status['data'] = array();
-				$status['statusCode'] = 200;
-				$status['flag'] = 'S';
-				$this->response->output($status, 200);
-			} else {
-				$status['data'] = array();
-				$status['msg'] = $this->systemmsg->getErrorCode(996);
-				$status['statusCode'] = 996;
-				$status['flag'] = 'F';
-				$this->response->output($status, 200);
-			}
-		}	
+		$where = array();
+		$where["reminder_date ="] = "'".date('Y-m-d')."'";
+		$reminderNotes = $this->CommonModel->GetMasterListDetails("*", 'notes', $where, '', '', '', '');
+		foreach ($reminderNotes as $key => $value) {
+			$whereCust["customer_id ="] = "'".$value->record_id."'";
+			$customer_email = $this->CommonModel->GetMasterListDetails("email", 'customer', $whereCust, '', '', '', '');
+			$this->emails->sendMailDetails('','',$customer_email[0]->email,'','','Note Reminder: '.$value->title, $value->note_desc);
+		}
+		// print_r($customer_email);
+		
 	}
 }

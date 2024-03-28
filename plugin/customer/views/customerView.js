@@ -28,8 +28,11 @@ define([
   'text!../templates/leadGridRow.html',
   'text!../templates/customer_temp.html',
   'text!../templates/customerFilterOption_temp.html',
-  'text!../../dynamicForm/templates/linkedDropdown.html'
-], function ($, _, Backbone, datepickerBT, moment, Swal, customerSingleView, customerNotesView, mailView, customerActivityView, taskSingleView, customerCollection, customerNotesCollection, customerFilterOptionModel, customerModel, customerNoteModel, appSettings, columnArrangeModalView, configureColumnsView, dynamicFormData, singleMenuModel, slugCollection, emailMasterCollection, timeselectOptions, customerRowTemp, leadGridRow, customerTemp, customerFilterTemp, linkedDropdown) {
+  'text!../../dynamicForm/templates/linkedDropdown.html',
+  '../../core/views/notificationView',
+  '../views/escalationView',
+  "../../admin/collections/adminCollection",
+], function ($, _, Backbone, datepickerBT, moment, Swal, customerSingleView, customerNotesView, mailView, customerActivityView, taskSingleView, customerCollection, customerNotesCollection, customerFilterOptionModel, customerModel, customerNoteModel, appSettings, columnArrangeModalView, configureColumnsView, dynamicFormData, singleMenuModel, slugCollection, emailMasterCollection, timeselectOptions, customerRowTemp, leadGridRow, customerTemp, customerFilterTemp, linkedDropdown, notificationView,escalationView,adminCollection,) {
   var customerView = Backbone.View.extend({
     plural_label: '',
     module_desc: '',
@@ -39,12 +42,21 @@ define([
     paginginfo: [],
     totalRec: 0,
     View: 'list',
-    module_name: 'leads',
+    module_name: 'customer',
+    isdataupdated:false,
     customerModel: customerModel,
+    filteredSearch : false,
+    
     initialize: function (options) {
+      this.startX = 0;
+      this.startWidth = 0;  
+      this.$handle = null;
+      this.$table = null;
+      this.pressed = false;
       this.toClose = "customerFilterView";
       var selfobj = this;
-      selfobj.arrangedColumnList = [];
+      this.filteredData = [];
+      this.arrangedColumnList = [];
       this.filteredFields = [];
       this.totalColumns = 0;
       $(".profile-loader").show();
@@ -53,10 +65,11 @@ define([
       $(".opercityBg").hide();
       $(".loder").show();
       $('.customMail').remove('maxActive');
+      $(".maxActive").hide();
       this.mname = Backbone.history.getFragment();
       permission = ROLE[this.mname];
       this.paginginfo = [],
-      this.menuId = permission.menuID;
+        this.menuId = permission.menuID;
       this.appSettings = new appSettings();
       this.dynamicFormDatas = new dynamicFormData();
       this.timeselectOptions = new timeselectOptions();
@@ -80,6 +93,7 @@ define([
       } else if (this.mname == "customer") {
         filterOption.set({ type: "customer" });
       }
+
       this.categoryList = new slugCollection();
       this.categoryList.fetch({
         headers: {
@@ -101,6 +115,16 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
         selfobj.render();
+      });
+
+      this.adminList = new adminCollection();
+      this.adminList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y' }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".profile-loader").hide();
       });
 
       filterOption.set({ "menuId": this.menuId });
@@ -126,58 +150,25 @@ define([
           selfobj.c_metadata = JSON.parse(res.c_metadata);
           selfobj.arrangedColumnList = selfobj.c_metadata;
         }
+
+        var columnss = [];
+        if(selfobj.metadata){
+          for (const rowKey in selfobj.metadata) {
+            const row = selfobj.metadata[rowKey];
+            for (const colKey in row) {
+              const column = row[colKey];
+              if (column.column_name) {
+                columnss.push(column.column_name);
+              }
+            }
+          }
+          const resDataFieldNames = res.data.map(item => item.column_name);
+          selfobj.filteredData = resDataFieldNames.filter(fieldName => !columnss.includes(fieldName));
+        }
         selfobj.getModuleData();
         selfobj.render();
       });
     },
-
-    setStageColor: function(){   
-      var selfobj = this;  
-      var stageColor;
-      this.categoryList.models.forEach(function(element) {
-        element.attributes.sublist.forEach(function(list){
-          stageColor = setColor(list.cat_color);
-          list.cat_color_light = stageColor;
-          // list.font_color = selfobj.invertColor(list.cat_color,fZ);
-        })
-      });
-    },
-
-  //   invertColor: function(hex, bw) {
-  //     var selfobj = this;  
-  //     if (hex.indexOf('#') === 0) {
-  //         hex = hex.slice(1);
-  //     }
-  //     // convert 3-digit hex to 6-digits.
-  //     if (hex.length === 3) {
-  //         hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-  //     }
-  //     if (hex.length !== 6) {
-  //         // throw new Error('Invalid HEX color.');
-  //     }
-  //     var r = parseInt(hex.slice(0, 2), 16),
-  //         g = parseInt(hex.slice(2, 4), 16),
-  //         b = parseInt(hex.slice(4, 6), 16);
-  //     if (bw) {
-  //         // https://stackoverflow.com/a/3943023/112731
-  //         return (r * 0.299 + g * 0.587 + b * 0.114) > 186
-  //             ? '#000000'
-  //             : '#FFFFFF';
-  //     }
-  //     // invert color components
-  //     r = (255 - r).toString(16);
-  //     g = (255 - g).toString(16);
-  //     b = (255 - b).toString(16);
-  //     // pad each with zeros and return
-  //     // return "#" + selfobj.padZero(r) + selfobj.padZero(g) + selfobj.padZero(b);
-  //     return "#" + r + g + b;
-  // },
-
-  //  padZero: function(str, len) {
-  //   len = len || 2;
-  //   var zeros = new Array(len).join('0');
-  //   return (zeros + str).slice(-len);
-  // },
 
     getModuleData: function () {
       var selfobj = this;
@@ -195,13 +186,57 @@ define([
 
     },
 
+    setStageColor: function(){   
+      var selfobj = this;  
+      var stageColor;
+      this.categoryList.models.forEach(function(element) {
+        element.attributes.sublist.forEach(function(list){
+          stageColor = setColor(list.cat_color);
+          list.font_color = selfobj.invertHex(list.cat_color);
+          list.cat_color_light = stageColor;
+        })
+      });
+    },
+    
+    invertHex: function(hex) {
+      if (!hex || hex === "") {
+        return '#000000'; // Return black for null or empty input
+      }
+      // Remove the '#' character if it exists
+      hex = hex.replace('#', '');
+      
+      // Convert hex to RGB
+      var r = parseInt(hex.substring(0, 2), 16);
+      var g = parseInt(hex.substring(2, 4), 16);
+      var b = parseInt(hex.substring(4, 6), 16);
+      
+      // Calculate brightness
+      var brightness = (r * 0.299) + (g * 0.587) + (b * 0.114);
+      
+      // Determine which color to use based on brightness
+      var invertedColor;
+      if (brightness > 128) {
+          invertedColor = '#000000'; // Use black for light colors
+      } else {
+          invertedColor = '#FFFFFF'; // Use white for dark colors
+      }
+      
+      return invertedColor;
+  },
+  
+  // Example usage
+  // var hexColor = "#ff0000"; // Red color
+  // var invertedColor = invertHex(hexColor);
+  // console.log("Inverted color:", invertedColor);
+  
+
     events:
     {
       "blur #textval": "setFreeText",
       "change .range": "setRange",
       "change #textSearch": "settextSearch",
       "click .multiOptionSel": "multioption",
-      "click .filterSearch": "filterSearch",
+      "click .filterSearch": "filteredSearch",
       "click #filterOption": "filterRender",
       "click .resetval": "resetSearch",
       "click .loadview": "loadSubView",
@@ -211,19 +246,63 @@ define([
       "change .changeBox": "changeBox",
       "click .arrangeColumns": "openColumnArrangeModal",
       "click .markCust": "markCutomer",
-      "click .ccBtn": "openComposeMail",
-      "click .bccBtn": "displayList",
+      // "click .ccBtn": "openComposeMail",
+      // "click .bccBtn": "displayList",
       "click .close": "mailHide",
       "click .minimize": "minimize",
       "click .openFull": "maximize",
       "click .showMax": "showmax",
-      "click .closeFull": "closeFull",
       "click .list_mode": "gridMode",
       "click .grid_mode": "gridMode",
       "click .changeStatusGrid": "changeStatusGrid",
       "click .sortColumns": "sortColumn",
       "change .dropval": "singleFilterOptions",
       "click .downloadReport": "downloadReport",
+      'mousedown .table-resizable .resize-bar': 'onMouseDown',
+      'mousemove .table-resizable th, .table-resizable td': 'onMouseMove',
+      'mouseup .table-resizable th, .table-resizable td': 'onMouseUp',
+      'dblclick .table-resizable thead': 'resetColumnWidth',
+      "input .countryChange": "getCountry",
+      "click .selectCountry": "setCountry",
+      "input .stateChange": "getState",
+      "click .selectState": "setState",
+      "input .cityChange": "getCity",
+      "click .selectCity": "setCity",
+      "mouseover .customerRow" :"handleMouseHover",
+      "mouseleave .customerRow" :"handleMouseLeave",
+    },
+
+    filteredSearch:function(e){
+      var selfobj = this;
+      selfobj.filteredSearch = true;
+      selfobj.filterSearch();
+
+    },
+    
+    onMouseDown: function (event) {
+      let index = $(event.target).parent().index();
+      this.$handle = this.$el.find('th').eq(index);
+      this.pressed = true;
+      this.startX = event.pageX;
+      this.startWidth = this.$handle.width();
+      this.$table = this.$handle.closest('.table-resizable').addClass('resizing');
+    },
+
+    onMouseMove: function (event) {
+      if (this.pressed) {
+        this.$handle.width(this.startWidth + (event.pageX - this.startX));
+      }
+    },
+
+    onMouseUp: function () {
+      if (this.pressed) {
+        this.$table.removeClass('resizing');
+        this.pressed = false;
+      }
+    },
+    resetColumnWidth: function () {
+      // Reset column sizes on double click
+      this.$el.find('th').css('width', '');
     },
 
     downloadReport: function (e) {
@@ -234,37 +313,57 @@ define([
       filterOption.set(newdetails);
       let form = $("#reports");
       form.attr({
-          action: APIPATH + "customerReports",
-          method: "POST",
-          target: "_blank",
+        action: APIPATH + "customerReports",
+        method: "POST",
+        target: "_blank",
       });
-      
+
       // Update or add hidden input for data
       let dataInput = form.find("input[name='data']");
       if (dataInput.length === 0) {
-          dataInput = $("<input>")
-              .attr("type", "hidden")
-              .attr("name", "data")
-              .appendTo(form);
+        dataInput = $("<input>")
+          .attr("type", "hidden")
+          .attr("name", "data")
+          .appendTo(form);
       }
-  
+
       // Update the value of the input field
       dataInput.val(JSON.stringify(filterOption));
-     
+
       // Submit the form
       form.submit();
-  
+
       // Reset form attributes after submission
       form.attr({
-          action: "#",
-          method: "POST",
-          target: "",
+        action: "#",
+        method: "POST",
+        target: "",
       });
-  
+
       // Clear filterOption
       filterOption.clear('type');
-      console.log("filterOption", filterOption);
     },
+
+    // downloadReport:function(e){
+    //   e.preventDefault();
+    //   let type = $(e.currentTarget).attr("data-type");
+    //   var newdetails = [];
+    //   newdetails["type"] = type;
+    //   filterOption.set(newdetails);
+    //   let from = $("#reports");
+    //   let dataInput = $("<input>")
+    //     .attr("type", "hidden")
+    //     .attr("name", "data")
+    //     .val(JSON.stringify(filterOption));
+    //   from.attr({
+    //     id: "receiptsData",
+    //     action: APIPATH + "customerReports",
+    //     method: "POST",
+    //     target: "_blank",
+    //   }).append(dataInput);
+    //   filterOption.clear('type');
+    //   from.submit();
+    // },
 
     sortColumn: function (e) {
       var order = $(e.currentTarget).attr("data-value");
@@ -291,15 +390,7 @@ define([
       selfobj.filterSearch();
     },
 
-    openComposeMail: function (e) {
-      $('.Cc').addClass('active');
-      $(e.currentTarget).addClass('activeCc');
-    },
-
-    displayList: function (e) {
-      $('.Bcc').addClass('active');
-      $(e.currentTarget).addClass('activebcc');
-    },
+   
 
     mailHide: function (e) {
       $(".customMail").hide();
@@ -317,6 +408,7 @@ define([
       $('.openFull').addClass('maxActiveRemove');
       var ele = document.querySelector(".customMail");
       ele.classList.remove("maxActive");
+      $(".maxActive").hide();
     },
 
     maximize: function () {
@@ -356,59 +448,60 @@ define([
     },
 
     girdLazyLoad: function (listgridID, firstLoad) {
+      
       let selfobj = this;
-      if (firstLoad) {
-        var currPage = selfobj.paginginfo.nextpage;
-      } else {
-        var currPage = '';
-      }
-      if (currPage != undefined) {
-        filterOption.set({ curpage: currPage });
-      }
       if (listgridID == "") {
-        $.each(this.categoryList.models, function (index, value) {
-          $.each(value.attributes.sublist, function (index2, value2) {
-            filterOption.set({ stages: value2.category_id });
-            selfobj.listDataGrid[value2.category_id] = new customerCollection();
-            selfobj.listDataGrid[value2.category_id].fetch({
-              headers: {
-                'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-              }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
-            }).done(function (res) {
-              if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-              $(".profile-loader").hide();
-              selfobj.paginginfo = res.paginginfo;
-              selfobj.addAllGrid(value2.category_id);
-            });
+        if(selfobj.isdataupdated || selfobj.listDataGrid.length == 0){
 
-            $("#leadlistview").hide();
+          $.each(this.categoryList.models, function (index, value) {
+            $.each(value.attributes.sublist, function (index2, value2) {
+              filterOption.set({ stages: value2.category_id });
+              selfobj.listDataGrid[value2.category_id] = new customerCollection();
+              selfobj.listDataGrid[value2.category_id].fetch({
+                headers: {
+                  'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+                }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+              }).done(function (res) {
+                if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+                $(".profile-loader").hide();
+                selfobj.paginginfo = res.paginginfo;
+                selfobj.addAllGrid(value2.category_id);
+              });
+              
+              $("#leadlistview").hide();
+            });
           });
-        });
-        filterOption.set({ stages: "other" });
-        selfobj.listDataGrid[0] = new customerCollection();
-        selfobj.listDataGrid[0].fetch({
-          headers: {
-            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-          }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
-        }).done(function (res) {
-          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          $(".profile-loader").hide();
-          selfobj.paginginfo = res.paginginfo;
-          selfobj.addAllGrid(0);
-        });
+          
+          filterOption.set({ stages: "other" });
+          selfobj.listDataGrid[0] = new customerCollection();
+          selfobj.listDataGrid[0].fetch({
+            headers: {
+              'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+            }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+          }).done(function (res) {
+            if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+            $(".profile-loader").hide();
+            selfobj.paginginfo = res.paginginfo;
+            selfobj.addAllGrid(0);
+          });
+          selfobj.isdataupdated = false;
+        }
       } else {
         filterOption.set({ stages: listgridID });
-        selfobj.listDataGrid[listgridID].fetch({
-          headers: {
-            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-          }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
-        }).done(function (res) {
-          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          $(".profile-loader").hide();
-          selfobj.paginginfo = res.paginginfo;
-        });
-        selfobj.listDataGrid[listgridID].on('add', this.addOne, this);
-        selfobj.listDataGrid[listgridID].on('reset', this.addAll, this);
+        filterOption.set({ curpage: selfobj.listDataGrid[listgridID].pageinfo.nextpage });
+        if(selfobj.listDataGrid[listgridID].loadstate){
+          selfobj.listDataGrid[listgridID].fetch({
+            headers: {
+              'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+            }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+          }).done(function (res) {
+            if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+            $(".profile-loader").hide();
+            selfobj.paginginfo = res.paginginfo;
+          });
+          selfobj.listDataGrid[listgridID].on('add', this.addOne, this);
+          selfobj.listDataGrid[listgridID].on('reset', this.addAll, this);
+        }
       }
     },
 
@@ -429,21 +522,19 @@ define([
       $('#' + stage).children().not(".totalCount").remove();
     },
 
+    getInitials:function (name) {
+      const words = name.split(' ');
+      const initials = words.map(word => word.charAt(0));
+      return initials.join('').toUpperCase();
+    },
+
     showmax: function () {
       $(".customMail").show();
       $(".customMailMinimize").hide();
       var ele = document.querySelector(".openFull");
       ele.classList.remove("maxActive");
       $('.openFull').remove('maxActiveRemove');
-    },
-
-    closeFull: function () {
-      var ele = document.querySelector(".customMail");
-      ele.classList.remove("maxActive");
-      $(".closeFull").hide();
-      $(".opercityBg").hide();
-      var element = document.querySelector(".openFull");
-      element.classList.remove("maxActive");
+      $(".maxActive").hide();
     },
 
     updateOtherDetails: function (e) {
@@ -457,7 +548,13 @@ define([
     openColumnArrangeModal: function (e) {
       let selfobj = this;
       var show = $(e.currentTarget).attr("data-action");
-      var stdColumn = ['customer_id','company_name', 'name', 'email', 'mobile_no', 'record_type'];
+      // var stdColumn = ['customer_id','customer_name','company_name', 'name', 'email', 'mobile_no', 'record_type'];
+      if(selfobj.mname == 'leads'){
+        var stdColumn = ['customer_id','salutation','customer_image', 'latitude', 'longitude','customer_name'];
+      }else{
+        var stdColumn = ['customer_id','salutation','customer_image', 'latitude', 'longitude','customer_name','lead_source','stages'];
+      }
+     
       switch (show) {
         case "arrangeColumns": {
           var isOpen = $(".ws_ColumnConfigure").hasClass("open");
@@ -468,7 +565,7 @@ define([
             selfobj.filterSearch();
             return;
           } else {
-            new configureColumnsView({ menuId: this.menuId, ViewObj: selfobj, stdColumn: stdColumn });
+            new configureColumnsView({ menuId: this.menuId, ViewObj: selfobj, stdColumn: stdColumn,menuName: selfobj.mname, });
             $(e.currentTarget).addClass("BG-Color");
           }
           break;
@@ -497,7 +594,6 @@ define([
       let selfobj = this;
       var id = $(e.currentTarget).attr("data-id");
       var status = "customer";
-      var userID = ADMINID;
       Swal.fire({
         title: 'Are you sure you want to Mark as Customer?',
         showDenyButton: true,
@@ -510,7 +606,7 @@ define([
             $.ajax({
               url: APIPATH + 'customerMaster/typeStatus',
               method: 'POST',
-              data: { customerID: id, status: status, user: userID },
+              data: { customerID: id, status: status },
               datatype: 'JSON',
               beforeSend: function (request) {
                 request.setRequestHeader("token", $.cookie('_bb_key'));
@@ -589,11 +685,11 @@ define([
 
               if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
               if (res.flag == "S") {
-                selfobj.filterSearch();
+
+                selfobj.initialize(); 
+
               }
-              setTimeout(function () {
-                $(e.currentTarget).html(status);
-              }, 3000);
+              selfobj.isdataupdated = true;
 
             }
           });
@@ -683,7 +779,7 @@ define([
       switch (show) {
         case "singleCustomerData": {
           var customer_id = $(e.currentTarget).attr("data-customer_id");
-          new customerSingleView({ customer_id: customer_id, menuId: this.menuId, searchCustomer: this, menuName: this.mname, form_label: selfobj.form_label });
+          new customerSingleView({ customer_id: customer_id, menuId: this.menuId, searchCustomer: this, menuName: this.mname, form_label: selfobj.form_label, loadfrom: "customer" });
 
           $('body').find(".loder");
           $(".profile-loader").hide();
@@ -695,7 +791,7 @@ define([
           var customer_id = $(e.currentTarget).attr("data-customer_id");
           var cust_name = $(e.currentTarget).attr("data-first_name");
           var stage_id = $(e.currentTarget).attr("data-stageid");
-          new customerNotesView({ customer_id: customer_id, customerName: cust_name, stageID:stage_id, searchCustomer: this });
+          new customerNotesView({ customer_id: customer_id, customerName: cust_name, stageID: stage_id, searchCustomer: this });
           $('body').find(".loder");
           break;
         }
@@ -721,11 +817,32 @@ define([
           $('body').find(".loder");
           var customer_id = $(e.currentTarget).attr("data-customer_id");
           var cust_name = $(e.currentTarget).attr("data-first_name");
-          new taskSingleView({ customer_id: customer_id, customerName: cust_name, loadFrom: "customer", searchtask: this });
-
+          new taskSingleView({ customer_id: customer_id, customerName: cust_name, loadFrom: "customer", searchtask: this, menuName:'task' });
+          break;
+        }
+        case "appointment": {
+          var customer_id = $(e.currentTarget).attr("data-customer_id");
+          var cust_name = $(e.currentTarget).attr("data-first_name");
+          var cust_mail = $(e.currentTarget).attr("data-email");
+          new appointmentSingleView({ customer_id: customer_id, customerName: cust_name, cust_mail: cust_mail, loadFrom: "customer", searchappointment: this })
+          $('body').find(".loder");
+          break;
+        }
+        case "notificationView": {
+          var categoryList = [];
+          new notificationView({ menuID: this.menuId, searchreceipt: this, module_name: this.module_name,categoryList:categoryList,filteredData : selfobj.filteredData });
+          $('body').find(".loder");
+          break;
+        }
+        case "escalationView": {
+          var categoryList = [];
+          new escalationView({ menuID: this.menuId, searchEscalation: this, module_name: this.module_name});
+          $('body').find(".loder");
           break;
         }
       }
+
+
     },
 
     resetSearch: function (stage) {
@@ -745,9 +862,9 @@ define([
       $(".form-line").removeClass("focused");
       $(".hidetextval").hide();
       $('#textSearch option[value=customer_id]').attr('selected', 'selected');
-      if(selfobj.View == "list"){
+      if (selfobj.View == "list") {
         this.filterSearch(false);
-      }else{
+      } else {
         filterOption.set({ "menuId": this.menuId });
         selfobj.stageColumnUpdate(stage);
       }
@@ -771,27 +888,26 @@ define([
       if (selfobj.View == "list") {
         this.totalRec = this.collection.length;
         if (this.totalRec == 0) {
-          $(".noCustRec").show();
+          $(".noCustAdded").show();
           $("#leadlistview").hide();
         } else {
           if (selfobj.View == "list") {
-            $(".noCustRec").hide();
+            $(".noCustAdded").hide();
             $("#leadlistview").show();
           }
         }
       } else {
-        $(".noCustRec").hide();
+        $(".noCustAdded").hide();
         $("#leadlistview").hide();
       }
-      console.log(typeof(selfobj.arrangedColumnList));
       selfobj.arrangedColumnList.forEach((column) => {
         if (column.fieldType == 'Datepicker' || column.fieldType == 'Date') {
-          if (objectModel.attributes["" + column.column_name] != "0000-00-00") {
+          if (objectModel.attributes["" + column.column_name] != "0000-00-00" && objectModel.attributes["" + column.column_name] != null) {
             var dueDateMoment = moment(objectModel.attributes["" + column.column_name]);
-            if(column.dateFormat != "" && column.dateFormat != null && column.dateFormat != "undefined"){
-              objectModel.attributes[""+column.column_name] = dueDateMoment.format(column.dateFormat);
-            }else{
-              objectModel.attributes[""+column.column_name] = dueDateMoment.format("DD-MM-YYYY");
+            if (column.dateFormat != "" && column.dateFormat != null && column.dateFormat != "undefined") {
+              objectModel.attributes["" + column.column_name] = dueDateMoment.format(column.dateFormat);
+            } else {
+              objectModel.attributes["" + column.column_name] = dueDateMoment.format("DD-MM-YYYY");
             }
           }
           else {
@@ -814,48 +930,42 @@ define([
         } else {
           column.column_name = column.column_name;
         }
+        if(objectModel.attributes["" + column.column_name] == "" || objectModel.attributes["" + column.column_name] == null || objectModel.attributes["" + column.column_name] == undefined){
+          objectModel.attributes["" + column.column_name] = "-";
+        }
       });
       if (selfobj.View == "list") {
         var template = _.template(customerRowTemp);
+        objectModel.set({ "initial": selfobj.getInitials(objectModel.attributes.name) });
+        objectModel.set({ "initialColor": selfobj.getColorByInitials(objectModel.attributes.initial) });
         $("#customerList").append(template({ customerDetails: objectModel, arrangedColumnList: this.arrangedColumnList, menuName: this.mname, menuID: this.menuId }));
       } else {
         var template = _.template(leadGridRow);
-        objectModel.set({"lastActivityTime" : selfobj.timeselectOptions.displayRelativeTime(objectModel.attributes.last_activity_date)});
-        if (objectModel.attributes.stages != 0) {
-          $("#" + objectModel.attributes.stages).append(template({ customerDetails: objectModel, customerLength: this.collection.length }));
+        objectModel.set({ "lastActivityTime": selfobj.timeselectOptions.displayRelativeTime(objectModel.attributes.last_activity_date) });
+        objectModel.set({ "initial": selfobj.getInitials(objectModel.attributes.name) });
+        objectModel.set({ "initialColor": selfobj.getColorByInitials(objectModel.attributes.initial) });
+        if (objectModel.attributes.stageID != 0 && objectModel.attributes.stageID != null) {
+          $("#" + objectModel.attributes.stageID).append(template({ customerDetails: objectModel, customerLength: this.collection.length }));
         } else {
           $("#otherStage").append(template({ customerDetails: objectModel, customerLength: this.collection.length }));
         }
         selfobj.setupDragable();
       }
-
-      var mailTruncateElements = document.querySelectorAll('.mailtruncate');
-      mailTruncateElements.forEach(function (element) {
-        var textWidth = element.offsetWidth;
-        var parentEle = element.parentElement;
-
-        if (textWidth >= 100) {
-          parentEle.querySelector('.tooltiptxt').style.display = 'block';
-        }
-        else {
-          parentEle.querySelector('.tooltiptxt').style.display = 'none';
-        }
-      });
     },
 
     addAll: function () {
       $("#customerList").empty();
       this.collection.forEach(this.addOne, this);
     },
+
     addAllGrid: function (col_name) {
-      $("#customerList").empty();
+      $("#"+col_name).children().not('.totalCount').remove();
       let selfobj = this;
-      // $('#' + col_name).children().not(".totalCount").empty();
-      // $('#otherStage').children().not(".totalCount").empty();
       selfobj.listDataGrid[col_name].models.forEach(element => {
         selfobj.addOne(element);
       });
     },
+    
     filterRender: function (e) {
       var selfobj = this;
       var isexits = checkisoverlay(this.toClose);
@@ -875,6 +985,16 @@ define([
             }
           }
         }
+
+        selfobj.categories = new slugCollection();
+          selfobj.categories.fetch({
+            headers: {
+              'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+            }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y', slug: 'lead_stages,lead_source' }
+          }).done(function (res) {
+            if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+            $(".popupLoader").hide();
+          });
 
         extractedFields.forEach(function (column) {
           if (column.linkedWith != null && column.linkedWith != "" && column.linkedWith != 'undefined' && column.parentCategory != 'undefined' && column.parentCategory != "" && column.parentCategory != null) {
@@ -910,6 +1030,9 @@ define([
         setTimeout(function () {
           var templateData = {
             filteredFields: selfobj.filteredFields || [],
+            "categoryList": selfobj.categories.models,
+            "menuName": selfobj.mname,
+            "adminList": selfobj.adminList.models || [],
           };
           cont.html(template(templateData));
           $(".ws-select").selectpicker();
@@ -1096,14 +1219,24 @@ define([
         }
 
         selfobj.totalRec = res.paginginfo.totalRecords;
-        // if (selfobj.totalRec == 0) {
-        //   $('#leadlistview').hide();
-        //   $('.noCustRec').show();
-        // } else {
-        //   $('#leadlistview').show();
-        //   $('.noCustRec').hide();
-        // }
+      
+        if (selfobj.totalRec == 0) {
+          $('#leadlistview').hide();
+          if(selfobj.filteredSearch == true){
+            $('.noDataFound').show();
+          }else{
+            $('.noCustAdded').show();
+          }
+        } else {
+          $('#leadlistview').show();
+          if(selfobj.filteredSearch == true){
+            $('.noDataFound').hide();
+          }else{
+            $('.noCustAdded').hide();
+          }
+        }
         selfobj.setValues();
+
       });
 
       if (appliedFilterCount > 0) {
@@ -1208,6 +1341,45 @@ define([
           $("#birthDateStart").val("");
         }
       });
+
+      startDate = $('#createdDateStart').datepickerBT({
+        format: "dd-mm-yyyy",
+        todayBtn: "linked",
+        clearBtn: true,
+        todayHighlight: true,
+        StartDate: new Date(),
+        numberOfMonths: 1,
+        autoclose: true,
+      }).on('changeDate', function (ev) {
+        $('#createdDateStart').change();
+        var valuetxt = $("#createdDateStart").val();
+        var temp = moment(valuetxt, 'DD-MM-YYYY').valueOf();
+        filterOption.set({ createdDateStart: valuetxt });
+        var valuetxt = $("#createdDateEnd").val();
+        var temp2 = moment(valuetxt, 'DD-MM-YYYY').valueOf();
+        if (temp > temp2) {
+          $("#createdDateEnd").val("");
+        }
+      });
+      endDate = $('#createdDateEnd').datepickerBT({
+        format: "dd-mm-yyyy",
+        todayBtn: "linked",
+        clearBtn: true,
+        todayHighlight: true,
+        numberOfMonths: 1,
+        autoclose: true,
+      }).on('changeDate', function (ev) {
+        $('#createdDateEnd').change();
+        var valuetxt = $("#createdDateEnd").val();
+        var temp = moment(valuetxt, 'DD-MM-YYYY').valueOf();
+        filterOption.set({ createdDateEnd: valuetxt });
+        var valuetxt = $("#createdDateStart").val();
+        var temp2 = moment(valuetxt, 'DD-MM-YYYY').valueOf();
+        if (temp2 > temp) {
+          $("#createdDateStart").val("");
+        }
+      });
+
       if (selfobj.filteredFields) {
         selfobj.filteredFields.forEach(function (column) {
           $('#' + column.column_name + '-startDate').datepickerBT({
@@ -1633,6 +1805,210 @@ define([
       }
     },
 
+    getCountry: function (e) {
+      var name = $(e.currentTarget).val();
+      var dropdownContainer = $("#countryDropdown");
+      var table = "country";
+      var where = "country_name";
+      var list = "country_id, country_name";
+      $.ajax({
+        url: APIPATH + 'getList/',
+        method: 'POST',
+        data: { text: name, tableName: table, wherec: where, list: list },
+        datatype: 'JSON',
+        beforeSend: function (request) {
+          $(".textLoader").show();
+          request.setRequestHeader("token", $.cookie('_bb_key'));
+          request.setRequestHeader("SadminID", $.cookie('authid'));
+          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+          request.setRequestHeader("Accept", 'application/json');
+        },
+        success: function (res) {
+          $(".textLoader").hide();
+          dropdownContainer.empty();
+          if (res.msg === "sucess" && res.data.length > 0) {
+            $.each(res.data, function (index, value) {
+              dropdownContainer.append('<div class="dropdown-item selectCountry" style="background-color: #ffffff;" data-countryID=' + value.country_id + '>' + value.country_name + '</div>');
+            });
+            dropdownContainer.show();
+          }
+        }
+      });
+    },
+
+    setCountry: function (e) {
+      let selfobj = this;
+      var Name = $(e.currentTarget).text();
+      var countryID = $(e.currentTarget).attr('data-countryID');
+      $('.countryChange').val(Name);
+      $("#countryDropdown").hide();
+      let newdetails = [];
+      newdetails["" + 'country_id'] = countryID;
+      filterOption.set(newdetails);
+    },
+
+    getState: function (e) {
+      var name = $(e.currentTarget).val();
+      var dropdownContainer = $("#stateDropdown");
+      var table = "states";
+      var where = "state_name";
+      var list = "state_id, state_name";
+      $.ajax({
+        url: APIPATH + 'getList/',
+        method: 'POST',
+        data: { text: name, tableName: table, wherec: where, list: list },
+        datatype: 'JSON',
+        beforeSend: function (request) {
+          $(".textLoader").show();
+          request.setRequestHeader("token", $.cookie('_bb_key'));
+          request.setRequestHeader("SadminID", $.cookie('authid'));
+          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+          request.setRequestHeader("Accept", 'application/json');
+        },
+        success: function (res) {
+          $(".textLoader").hide();
+          dropdownContainer.empty();
+          if (res.msg === "sucess" && res.data.length > 0) {
+            $.each(res.data, function (index, value) {
+              dropdownContainer.append('<div class="dropdown-item selectState" style="background-color: #ffffff;" data-stateID=' + value.state_id + '>' + value.state_name + '</div>');
+            });
+            dropdownContainer.show();
+          }
+        }
+      });
+    },
+
+    setState: function (e) {
+      let selfobj = this;
+      var Name = $(e.currentTarget).text();
+      var stateID = $(e.currentTarget).attr('data-stateID');
+      $('.stateChange').val(Name);
+      $("#stateDropdown").hide();
+      let newdetails = [];
+      newdetails["" + 'state_id'] = stateID;
+      filterOption.set(newdetails);
+    },
+
+    getCity: function (e) {
+      var name = $(e.currentTarget).val();
+      var dropdownContainer = $("#cityDropdown");
+      var table = "cities";
+      var where = "city_name";
+      var list = "city_id, city_name";
+      $.ajax({
+        url: APIPATH + 'getList/',
+        method: 'POST',
+        data: { text: name, tableName: table, wherec: where, list: list },
+        datatype: 'JSON',
+        beforeSend: function (request) {
+          $(".textLoader").show();
+          request.setRequestHeader("token", $.cookie('_bb_key'));
+          request.setRequestHeader("SadminID", $.cookie('authid'));
+          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+          request.setRequestHeader("Accept", 'application/json');
+        },
+        success: function (res) {
+          $(".textLoader").hide();
+          dropdownContainer.empty();
+          if (res.msg === "sucess" && res.data.length > 0) {
+            $.each(res.data, function (index, value) {
+              dropdownContainer.append('<div class="dropdown-item selectCity" style="background-color: #ffffff;" data-cityID=' + value.city_id + '>' + value.city_name + '</div>');
+            });
+            dropdownContainer.show();
+          }
+        }
+      });
+    },
+
+    setCity: function (e) {
+      let selfobj = this;
+      var Name = $(e.currentTarget).text();
+      var cityID = $(e.currentTarget).attr('data-cityID');
+      $('.cityChange').val(Name);
+      $("#cityDropdown").hide();
+      let newdetails = [];
+      newdetails["" + 'city_id'] = cityID;
+      filterOption.set(newdetails);
+    },
+
+    handleMouseHover: function(event) {
+      const customerRow = $(event.currentTarget);
+      const customerId = customerRow.data('customerid');
+      const button = customerRow.find(".CustomerHoverButton");
+      const checkboxTd = customerRow.find('td.a-center');
+      const actionColumn = customerRow.find('td.actionColumn');
+      if ($(event.target).closest(checkboxTd).length === 0 && $(event.target).closest(actionColumn).length === 0 ) {
+          if (button.length > 0) {
+              if (!button.is(":hover")) {
+                  button.css({
+                      display: "block",
+                      left: event.clientX + "px",
+                      top: event.clientY + "px"
+                  });
+              }
+          }
+      }
+    },
+  
+  handleMouseLeave: function(event) {
+      const customerRow = $(event.currentTarget);
+      const customerId = customerRow.data('customerid');
+      const relatedTarget = $(event.relatedTarget);
+      if (!relatedTarget.hasClass("customerRow")) {
+          customerRow.find(".CustomerHoverButton").css("display", "none");
+      }
+  },
+
+   getColorByInitials:function(initials) {
+    console.log("getColorByInitials",initials);
+    const colors = [
+      // "rgb(252, 231, 246)",
+      // "rgb(227, 251, 204)",
+      // "rgb(253, 234, 215)",
+      // "rgb(221, 214, 254)",
+      // "rgb(239, 248, 255)",
+      // "rgb(209, 224, 255)",
+      // "rgb(207, 249, 254)",
+      // "rgb(252, 231, 246)",
+      "#fce7f6", // Original color
+      "#f8d6e7", // Similar tone, different hue
+      "#d6f8e7", // Similar tone, different hue
+      "#e7d7fd", // Similar tone, different hue
+      "#f1f9dd", // Similar tone, different hue
+      "#d6e6ff", // Similar tone, different hue
+      "#d3f8fd", // Similar tone, different hue
+      "#fce7f6", // Original color
+      "#f8d6e7", // Similar tone, different hue
+      "#d6f8e7", // Similar tone, different hue
+      "#e7d7fd", // Similar tone, different hue
+      "#f1f9dd", // Similar tone, different hue
+      "#d6e6ff", // Similar tone, different hue
+      "#d3f8fd", // Similar tone, different hue
+      "#fce7f6", // Original color
+      "#f8d6e7", // Similar tone, different hue
+      "#d6f8e7", // Similar tone, different hue
+      "#e7d7fd", // Similar tone, different hue
+      "#f1f9dd", // Similar tone, different hue
+      "#d6e6ff", // Similar tone, different hue
+      "#d3f8fd", // Similar tone, different hue
+      "#fce7f6", // Original color
+      "#f8d6e7", // Similar tone, different hue
+      "#d6f8e7", // Similar tone, different hue
+      "#e7d7fd", // Similar tone, different hue
+      "#f1f9dd", // Similar tone, different hue
+      "#d6e6ff", // Similar tone, different hue
+      "#d3f8fd", // Similar tone, different hue
+    ];
+    
+    let sum = 0;
+    for (let i = 0; i < initials.length; i++) {
+        sum += initials.charCodeAt(i);
+    }
+    const index = sum % colors.length;
+    console.log("index",index);
+    return colors[index];
+  },
+  
     render: function () {
       var selfobj = this;
       var template = _.template(customerTemp);
@@ -1651,8 +2027,10 @@ define([
         column.fieldLabel = index !== -1 ? fieldName[index] : column.fieldLabel;
       });
 
-      console.log(typeof( selfobj.arrangedColumnList));
       this.$el.html(template({ totalRec: this.totalRec, menuName: this.mname, closeItem: this.toClose, pluralLable: this.plural_label, "moduleDesc": selfobj.module_desc, "arrangedColumnList": selfobj.arrangedColumnList, categoryList: selfobj.categoryList.models }));
+      var numColumns = selfobj.arrangedColumnList ? selfobj.arrangedColumnList.length : 0;
+      var defaultWidth = numColumns <= 5 ? '100%' : (numColumns * 20) + '%';
+      $("#clist").css("width", defaultWidth);
       $(".app_playground").append(this.$el);
       $(".loder").hide();
       setToolTip();

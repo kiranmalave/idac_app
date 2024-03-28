@@ -7,8 +7,8 @@ define([
   'datepickerBT',
   'moment',
   'RealTimeUpload',
-  'Swal',
   '../../category/views/categorySingleView',
+  '../../core/views/appSettings',
   '../../core/views/multiselectOptions',
   '../../dynamicForm/views/dynamicFieldRender',
   "../../category/collections/slugCollection",
@@ -18,20 +18,33 @@ define([
   '../models/customerSingleModel',
   '../../readFiles/views/readFilesView',
   'text!../templates/customerSingle_temp.html',
-], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, RealTimeUpload, Swal, categorySingleView, multiselectOptions, dynamicFieldRender, slugCollection, countryCollection, stateCollection, cityCollection, customerSingleModel, readFilesView, customertemp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, moment, RealTimeUpload, categorySingleView, appSettings, multiselectOptions, dynamicFieldRender, slugCollection, countryCollection, stateCollection, cityCollection, customerSingleModel, readFilesView, customertemp) {
   var customerSingleView = Backbone.View.extend({
     model: customerSingleModel,
     form_label: '',
     custID:'',
     initialize: function (options) {
       this.toClose = "customerSingleView";
+      // this.pluginName = "customerList";
       this.menuName = options.menuName;
       this.menuId = options.menuId;
       this.loadFrom = options.loadfrom;
+      
       this.model = new customerSingleModel();
+      this.adminID = ADMINID;
+      this.adminName = ADMINNAME;
       var selfobj = this;
       selfobj.model.set({ menuId: options.menuId });
       this.form_label = options.form_label;
+      if(options.loadfrom == "dashboard"){
+        this.appSettings = new appSettings();
+        this.appSettings.getMenuList(this.menuId, function (plural_label, module_desc, form_label, result) {
+          selfobj.plural_label = plural_label;
+          selfobj.module_desc = module_desc;
+          selfobj.form_label = form_label;
+          readyState = true;
+        });
+      }
       this.multiselectOptions = new multiselectOptions();
       $(".modelbox").hide();
       scanDetails = options.searchCustomer;
@@ -39,6 +52,7 @@ define([
       $(".profile-loader").show();
       this.stateList = new stateCollection();
       this.cityList = new cityCollection();
+      selfobj.setAssignee();
       $("#state_id").attr("disabled", true);
       $("#city_id").prop("disabled", true);
       this.categoryList = new slugCollection();
@@ -67,7 +81,7 @@ define([
       });
       
       selfobj.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
-      this.custID = options.customer_id;
+      
       if (options.customer_id != "" && options.customer_id != undefined) {
         this.model.set({ customer_id: options.customer_id });
         this.model.fetch({
@@ -113,6 +127,7 @@ define([
           selfobj.render();
           selfobj.setOldValues();
         });
+        
       }
     },
 
@@ -131,7 +146,8 @@ define([
       "change .stateChange": "setState",
       "click .loadFile" : "loadFile",
       "click .hideUpload" : "hideUpload",
-      "click .deleteAttachment": "deleteAttachment",
+      "change .assignChange": "getassignee",
+      "input .selectAssignee": "setAssignee",
     },
     attachEvents: function () {
       // Detach previous event bindings
@@ -161,8 +177,10 @@ define([
       this.$el.on('click', '.loadFile', this.loadFile.bind(this));
       this.$el.off('click', '.hideUpload', this.hideUpload);
       this.$el.on('click', '.hideUpload', this.hideUpload.bind(this));
-      this.$el.off('click', '.deleteAttachment', this.deleteAttachment);
-      this.$el.on('click', '.deleteAttachment', this.deleteAttachment.bind(this));
+      this.$el.off('input', '.assignChange', this.getassignee);
+      this.$el.on('input', '.assignChange', this.getassignee.bind(this));
+      this.$el.off('click', '.selectAssignee', this.setAssignee);
+      this.$el.on('click', '.selectAssignee', this.setAssignee.bind(this));
     },
 
     onErrorHandler: function (collection, response, options) {
@@ -174,29 +192,18 @@ define([
 
     updateOtherDetails: function (e) {
       var valuetxt = $(e.currentTarget).val();
-      var toName = $(e.currentTarget).attr("id");
-      if(valuetxt == "add_lead"){
-        new categorySingleView({ searchCategory: this, loadfrom: "cutomer" , form_label:"Categories"});
+      if (valuetxt == "addLeadSource") {
+        new categorySingleView({ searchCategory: this, loadfrom: "customerSingleView", form_label: "Category" });
       }
+      var toName = $(e.currentTarget).attr("id");
       var newdetails = [];
       newdetails["" + toName] = valuetxt;
-      
       this.model.set(newdetails);
       if (this.model.get(toName) && Array.isArray(this.model.get(toName))) {
         this.model.set(toName, this.model.get(toName).join(","));
       }
-      console.log(this.model);
     },
 
-    loadFile: function(e){
-      $('.upload').show();
-      $('.dotborder').hide();
-    },
-    hideUpload: function (e) {
-      $(".upload").hide();
-      $('.dotborder').show();
-    },
-    
     refreshCat: function () {
       let selfobj = this;
       this.categoryList.fetch({
@@ -207,6 +214,15 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         selfobj.render();
       });
+    },
+
+    loadFile: function(e){
+      $('.upload').show();
+      $('.dotborder').hide();
+    },
+    hideUpload: function (e) {
+      $(".upload").hide();
+      $('.dotborder').show();
     },
 
     updatemultiSelDetails: function (e) {
@@ -232,7 +248,8 @@ define([
 
     setCountry: function (e) {
       e.stopPropagation();
-      $('#state_id').val("");
+      // $('#state_id').removeAttr("disabled");
+      // // $('#state_id').selectpicker('refresh');
       let selfobj = this;
       var country_id = $(e.currentTarget).val();
       this.model.set({ country_id: country_id });
@@ -260,7 +277,9 @@ define([
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
+       
         selfobj.render();
+        // $(".profile-loader").hide();
       });
     },
 
@@ -298,57 +317,6 @@ define([
     //   var da = selfobj.multiselectOptions.setCheckedValue(e);
     //   selfobj.model.set(da);
     // },
-
-    deleteAttachment: function (e) {
-      let file_id = $(e.currentTarget).attr("data-file_id");
-      let customer_id = this.model.get("customer_id");
-      let div = document.getElementById('removeIMG');
-      let status = "delete";
-      let selfobj = this;
-      Swal.fire({
-        title: "Delete Task ",
-        text: "Do you want to delete Attachment ?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Delete',
-        animation: "slide-from-top",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          if (file_id != null) {
-            $.ajax({
-              url: APIPATH + 'customer/removeAttachment',
-              method: 'POST',
-              data: { fileID: file_id, status: status, custID: customer_id },
-              datatype: 'JSON',
-              beforeSend: function (request) {
-                request.setRequestHeader("token", $.cookie('_bb_key'));
-                request.setRequestHeader("SadminID", $.cookie('authid'));
-                request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
-                request.setRequestHeader("Accept", 'application/json');
-              },
-              success: function (res) {
-                if (res.flag == "F")
-                  alert(res.msg);
-                if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-                if (res.flag == "S") {
-                  $('#' + file_id + 'removeDiv').remove();
-                  selfobj.model.set({ "attachment_file": "" });
-                }
-    
-              }
-            });
-          } else {
-            div.remove();
-            selfobj.model.set({ "attachment_file": "" });
-          }
-        }else{
-
-        }
-      });
-    },
-
     setValues: function (e) {
       setvalues = ["status", "record_type", "order"];
       var selfobj = this;
@@ -447,6 +415,15 @@ define([
       if ($("#customerDetails").valid()) {
         $(e.currentTarget).html("<span>Saving..</span>");
         $(e.currentTarget).attr("disabled", "disabled");
+        if(this.model.get("customer_id")  == '' || this.model.get("customer_id")  == null || this.model.get("customer_id")  == undefined){
+          if((this.model.get("mobile_no") == '' || this.model.get("mobile_no") == null || this.model.get("mobile_no") == undefined) && (this.model.get("email") == '' || this.model.get("email") == null || this.model.get("email") == undefined)){
+            alert("Mobile No.& Email Address Not Found. Please note that without a registered mobile no. & email address certain notifications and triggers cannot be activated.");
+          } else if(this.model.get("mobile_no") == '' || this.model.get("mobile_no") == null || this.model.get("mobile_no") == undefined){
+            alert("Mobile No. Not Found. Please note that without a registered mobile no. certain notifications and triggers cannot be activated.");
+          } else if(this.model.get("email") == '' || this.model.get("email") == null || this.model.get("email") == undefined){
+            alert("Email Address Not Found. Please note that without a registered email address, certain notifications and triggers cannot be activated.");
+          }
+        }
         this.model.save({}, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
@@ -469,8 +446,6 @@ define([
             scanDetails.render();
           }else  if(selfobj.loadFrom == "ReceiptSingleView") {
             scanDetails.refreshCust();
-          }else if(selfobj.loadFrom == "proposalSingleView"){
-            scanDetails.refreshCust(selfobj.custID);
           }else if(selfobj.loadFrom == "dashboard"){
             scanDetails.refreshDashboard(selfobj.custID);
           }else{
@@ -507,7 +482,7 @@ define([
 
         office_land_line: {
           number: true,
-          minlength: 8,
+          minlength: 10,
           maxlength: 10
         },
 
@@ -524,12 +499,6 @@ define([
           number: true,
           minlength: 12,
           maxlength: 12,
-        },
-
-        mobile_no:{
-          number: true,
-          minlength: 10,
-          maxlength: 10,
         },
 
         gst_no:{
@@ -551,9 +520,9 @@ define([
       }
 
       var messages = {
-        name: "Please Enter Name",
-        gst_no: "Please Enter valid number",
-        office_land_line: "Please Enter valid number",
+        name: "Please enter Name",
+        gst_no: "Please enter valid number",
+        office_land_line: "Please enter valid number",
         email: "Please Enter valid Email",
         pan_number: "Please Enter valid PAN",
         adhar_number: "Please Enter valid Aadhar Number",
@@ -589,6 +558,7 @@ define([
       var autocomplete = new google.maps.places.Autocomplete(input);
       autocomplete.addListener('place_changed', function () {
         var place = autocomplete.getPlace();
+        console.log(place);
         if (place == "") {
           selfobj.model.set({ "address": input.value() });
         } else {
@@ -601,9 +571,59 @@ define([
       $(".ws-select").selectpicker('refresh');
     },
 
+    getassignee: function (e) {
+      var name = $(e.currentTarget).val();
+      var dropdownContainer = $("#assigneeDropdown");
+      var table = "admin";
+      var where = "name";
+      var list = "adminID, name";
+      $.ajax({
+        url: APIPATH + 'getAssigneeList/',
+        method: 'POST',
+        data: { text: name, tableName: table, wherec: where, list: list },
+        datatype: 'JSON',
+        beforeSend: function (request) {
+          $(".textLoader").show();
+          request.setRequestHeader("token", $.cookie('_bb_key'));
+          request.setRequestHeader("SadminID", $.cookie('authid'));
+          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+          request.setRequestHeader("Accept", 'application/json');
+        },
+        success: function (res) {
+          $(".textLoader").hide();
+          dropdownContainer.empty();
+          if (res.msg === "sucess" && res.data.length > 0) {
+            $.each(res.data, function (index, value) {
+              dropdownContainer.append('<div class="dropdown-item selectAssignee" style="background-color: #ffffff;" data-assigneeID=' + value.adminID + '>' + value.name + '</div>');
+            });
+            dropdownContainer.show();
+          }else{
+              dropdownContainer.append('<div class="dropdown-item addNewRecord" data-view = "asignee" style="background-color: #5D60A6; color:#ffffff;" > Add New Assignee </div>');
+              dropdownContainer.show();
+          }
+        }
+      });
+    },
+
+    setAssignee: function (e) {
+      let selfobj = this;
+    //  console.log(e.currentTarget); 
+     let custID = selfobj.model.get('customer_id');
+      if(custID == "" || custID == null || custID == undefined){
+        var Name = selfobj.adminName;
+        var adminID = selfobj.adminID;
+        selfobj.model.set({ "assignee": adminID, "assigneeName": Name });
+        selfobj.loadFrom = "";
+      }else{ 
+        var Name = $(e.currentTarget).text();
+        var assigneeID = $(e.currentTarget).attr('data-assigneeID');
+        $('.assignChange').val(Name);
+        $("#assigneeDropdown").hide();
+        selfobj.model.set({ "assignee": assigneeID });
+      }
+    },
+
     render: function () {
-      //var isexits = checkisoverlay(this.toClose);
-      //if(!isexits){
       var selfobj = this;
       var source = customertemp;
       var template = _.template(source);
@@ -660,12 +680,12 @@ define([
           const file_ids = file_id[i];
           if (ftext[1] === "xls" || ftext[1] === "xlsx") {
             modifiedFName = "excel.png";
-            docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + '/' + modifiedFName + "' alt=''><div class='buttonShow visableAttach'><span class='attachView'><a href='" + UPLOADS + "/customer/" + selfobj.custID + '/' + fName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class='deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
+            docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + '/' + modifiedFName + "' alt=''><div class='buttonShow visableAttach'><span class='attachView'><a href='" + UPLOADS + "/task/" + selfobj.taskID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class='deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
           } else if (ftext[1] === "pdf") {
             modifiedFName = "pdf.png";
-            docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + '/' + modifiedFName + "' alt=''/><div class='buttonShow visableAttach'> <span class='attachView'><a href='" + UPLOADS + "/customer/" + selfobj.custID + '/' + fName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class=' deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
+            docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + '/' + modifiedFName + "' alt=''/><div class='buttonShow visableAttach'> <span class='attachView'><a href='" + UPLOADS + "/task/" + selfobj.taskID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class=' deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
           } else {
-            docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + "/customer/" + selfobj.custID + '/' + modifiedFName + "' alt=''/><div class='buttonShow visableAttach'> <span class='attachView'><a href='" + UPLOADS + "/customer/" + selfobj.custID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class=' deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
+            docUrl += "<div id='"+ file_ids +"removeDiv' class='attachedPic' data-show='singleFile'><div class='thumbnail'><div class='centered removeAttach'><img id='removeIMG' class='img-fluid fileImage img-thumbnail' src='" + UPLOADS + "/task/" + selfobj.taskID + '/' + modifiedFName + "' alt=''/><div class='buttonShow visableAttach'> <span class='attachView'><a href='" + UPLOADS + "/task/" + selfobj.taskID + '/' + modifiedFName + "' target='_blank'><span class='material-icons'>visibility</span></a></span><span class=' deleteAttach deleteAttachment' data-file_id='" + file_ids + "'><span class='material-icons'>delete</span></span></div></div></div></div>";
           }
         }
         document.getElementById("attachedDoc").innerHTML += docUrl;

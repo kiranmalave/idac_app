@@ -13,13 +13,12 @@ define([
       var diffInMinutes = now.diff(time, 'minutes');
       var diffInHours = now.diff(time, 'hours');
       var diffInDays = now.diff(time, 'days');
-
       if (diffInSeconds < 60) {
-        return 'just now';
+        return 'Just Now';
       } else if (diffInMinutes < 60) {
-        return diffInMinutes + ' min ago';
+        return diffInMinutes + (diffInMinutes === 1 ? ' min ago' : ' mins ago');
       } else if (diffInHours < 24) {
-        return diffInHours + ' hrs ago';
+        return diffInHours + (diffInHours === 1 ? ' hr ago' : ' hrs ago');
       } else if (diffInDays === 1) {
         return 'Yesterday';
       } else if (diffInDays < 30) {

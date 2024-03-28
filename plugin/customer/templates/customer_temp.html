@@ -1,11 +1,9 @@
 <div class="container-fluid">
-
   <div class="row clearfix">
     <div class="col-lg-12">
       <div class="card customerTable">
-        <div class="noCustRec" <% if(totalRec==0){%>
-          <%}else{%>style="display: none;"<%}%>>
-
+        <div class="noCustRec noCustAdded" <% if(totalRec == 0 ){ %>
+          <% } else { %> style="display: none;" <% } %> >
               <div class="noCustRecDetails">
                 <div class="noCustRecPic">
                   <img src="images/noRecrds.png" alt="">
@@ -13,21 +11,31 @@
                 <div class="noCustRecText">
                   <h1>You haven’t added any <span>
                       <%=pluralLable%>
-                    </span>here</h1>
-                  <p>Click on add button to add the <span>
-                      <%=pluralLable%>
-                    </span></p>
-                  <div class="buttonAdd">
-                    <button type="button" class="btn btn-link waves-effect loadview nav-item addCust"
-                      data-view="singleCustomerData" data-item="customerSingleView">
-                      <!-- <span class="material-icons">add</span> -->
-                      Add
-                    </button>
+                    </span> here</h1>
+                    <div class="addRecords">Click here
+                      <div class="buttonAdd">
+                          <button type="button" class="ws-btn-default loadview"
+                              data-view="singleCustomerData" data-item="customerSingleView"
+                              data-toggle="tooltip" data-placement="top" title="Add <%=pluralLable%>">
+                              <i class="material-icons">add</i>
+                          </button>
+                      </div>
+                      to add the <%=pluralLable%>
                   </div>
                 </div>
-              </div>
-
+             </div>
+      </div>
+        <div class="noCustRec noDataFound" style="display: none;">
+          <div class="noCustRecDetails">
+            <div class="noCustRecPic">
+              <img src="images/noSearchData.jpeg" alt="">
+            </div>
+            <div class="noCustRecText">
+              <h1>No Records Found Matching Your Search</h1>
+            </div>
+          </div>
         </div>
+      <!-- </div> -->
         <div class="body table" id="leadlistview" style="display: none;">
           <div class="header moduleSec lead">
             <div>
@@ -46,15 +54,19 @@
 
 
               <div class="addColumns">
-                <button type="button" class="arrangeColumns btn-bgColor" data-action="arrangeColumns" data-toggle="tooltip" data-placement="top" title="Configure Columns">
-                  <span><span class="material-icons">view_column</span><span class="material-icons">expand_more</span></span>
+                <button type="button" class="arrangeColumns btn-bgColor" data-action="arrangeColumns"
+                  data-toggle="tooltip" data-placement="top" title="Configure Columns">
+                  <span><span class="material-icons">view_column</span><span
+                      class="material-icons">expand_more</span></span>
                 </button>
                 <div class="" id="customColumnConfigure"></div>
               </div>
-              <% if(arrangedColumnList.length > 0){ %>
+              <% if(arrangedColumnList.length> 0){ %>
                 <form id="reports" method="POST" action="#">
                   <div class="donloadBtn" data-toggle="tooltip" data-placement="top" title="Download Data">
-                    <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top" title="Download Data">
+                    <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top"
+                      title="Download Data">
                       <span class="material-symbols-outlined">download</span>
                     </button>
                     <ul class="dropdown-menu">
@@ -63,15 +75,15 @@
                     </ul>
                   </div>
                 </form>
-              <% } %>
-              <%if(menuName=="leads" ){%>
-                <div class="btn-group btn-group-block gridmode float-right btnDetails" style="right:0">
-                  <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span
-                      class="material-icons" style="margin-top: 2px;">view_list</span></button>
-                  <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span class="material-icons"
-                      style="margin-top: 2px;">grid_on</span></button>
-                </div>
-                <%}%>
+                <% } %>
+                  <%if(menuName=="leads" ){%>
+                    <div class="btn-group btn-group-block gridmode float-right btnDetails" style="right:0">
+                      <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span
+                          class="material-icons" style="margin-top: 2px;">view_list</span></button>
+                      <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span
+                          class="material-icons" style="margin-top: 2px;">grid_on</span></button>
+                    </div>
+                    <%}%>
             </div>
 
           </div>
@@ -92,19 +104,21 @@
               </div>
             </div>
           </div>
-          <% if(arrangedColumnList.length > 0){ %>
-          <div class="customerListTable customTableClass">
-            <table id="clist" class="table bulk_action tableList table-hover">
-              <thead id="thead">
-                <tr class="headings">
-                  <th class="check-gap">
-                    <div class="listCheckbox">
-                      <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
-                      <label for="cAll">&nbsp;</label>
-                    </div>
-                  </th>
-                  <!-- <th class="column-title">Customer ID</th> -->
-                  <!-- <th class="order sortColumns column-title" data-value="" data-field="Name">
+          <% if(arrangedColumnList.length> 0){ %>
+            <div class="customTableClass"><!--customerListTable-->
+              <table id="clist" class="table jambo_table bulk_action tableList table-hover table-bordered table-resizable tablewidth">
+              <!-- <table id="clist" class="table bulk_action tableList table-hover table-bordered table-resizable" style="width: 150%;"> -->
+                <!-- <table id="clist" class="table bulk_action tableList table-hover"> -->
+                <thead id="thead">
+                  <tr class="headings">
+                    <th class="check-gap">
+                      <div class="listCheckbox">
+                        <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
+                        <label for="cAll">&nbsp;</label>
+                      </div>
+                    </th>
+                    <!-- <th class="column-title">Customer ID</th> -->
+                    <!-- <th class="order sortColumns column-title" data-value="" data-field="Name">
                     Name
                     <span class="material-symbols-outlined sortarrow up">
                       north
@@ -113,7 +127,7 @@
                       south
                     </span>
                   </th> -->
-                  <!-- <th class="order sortColumns column-title" data-value="" data-field="email">
+                    <!-- <th class="order sortColumns column-title" data-value="" data-field="email">
                     Email
                     <span class="material-symbols-outlined sortarrow up">
                       north
@@ -122,7 +136,7 @@
                       south
                     </span>
                   </th> -->
-                  <!-- <th class="order sortColumns column-title" data-value="" data-field="mobile_no">Mobile Number
+                    <!-- <th class="order sortColumns column-title" data-value="" data-field="mobile_no">Mobile Number
                     <span class="material-symbols-outlined sortarrow up">
                       north
                     </span>
@@ -130,7 +144,7 @@
                       south
                     </span>
                   </th> -->
-                  <!-- <th class="order sortColumns column-title" data-value="" data-field="record_type">Record Type
+                    <!-- <th class="order sortColumns column-title" data-value="" data-field="record_type">Record Type
                     <span class="material-symbols-outlined sortarrow up">
                       north
                     </span>
@@ -138,8 +152,8 @@
                       south
                     </span>
                   </th> -->
-                  <%if(menuName=="leads" ){%>
-                    <!-- <th class="order sortColumns column-title" data-value="" data-field="stages">Lead Stage
+                    <!-- <%if(menuName=="leads" ){%> -->
+                      <!-- <th class="order sortColumns column-title" data-value="" data-field="stages">Lead Stage
                       <span class="material-symbols-outlined sortarrow up">
                         north
                       </span>
@@ -147,8 +161,8 @@
                         south
                       </span>
                     </th> -->
-                    <%}%>
-                      <!-- <% _.each(arrangedColumnList, function(column) { %>             
+                      <!-- <%}%> -->
+                        <!-- <% _.each(arrangedColumnList, function(column) { %>             
                     <th class="order sortColumns column-title" data-value="" data-field="whatappnumber" ><%= column.fieldLabel %>
                       <span class="material-symbols-outlined sortarrow up">
                         north
@@ -158,60 +172,66 @@
                       </span>
                     </th>   
                     <% }); %> -->
-                      <% _.each(arrangedColumnList, function(column) { %>
-                        <% if(column.column_name == "stages" ) { %>
-                          <% if(menuName=="leads" ) { %>
-                          <th class="order sortColumns column-title" data-value="" data-field="stages">Lead Stage
-                            <span class="material-symbols-outlined sortarrow up">
-                              north
-                            </span>
-                            <span class="material-symbols-outlined sortarrow down">
-                              south
-                            </span>
-                          </th>
-                          <% } %>
-                        <% } else { %>
-                          <th class="column-title sortColumns" data-field="<%= column.column_name %>">
-                            <%= column.fieldLabel %>
-                              <span class="material-symbols-outlined sortarrow up">north</span>
-                              <span class="material-symbols-outlined sortarrow down">south</span>
-                          </th>
-                        <% } %>
-                        <% }); %>
-                          <th class="column-title">Action</th>
-                </tr>
-              </thead>
-              <tbody id="customerList"></tbody>
-            </table>
-
-          </div>
-          <div class="footer row">
-
-            <div class="col-sm-4" style="padding: 0;">
-
-              <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
-                  class="page-info f_txt"></span></div>
+                        <% _.each(arrangedColumnList, function(column) { %>
+                          <% if(column.column_name=="stages" ) { %>
+                            <% if(menuName=="leads" ) { %>
+                              <th class="order sortColumns column-title text-capitalize drag-line" data-value=""
+                                data-field="stages">Lead Stage
+                                <span class="material-symbols-outlined sortarrow up">
+                                  north
+                                </span>
+                                <span class="material-symbols-outlined sortarrow down">
+                                  south
+                                </span>
+                                <div class="resize-bar"></div>
+                              </th>
+                              <% } %>
+                              <% } else { %>
+                              <th class="column-title text-capitalize drag-line"
+                                data-field="<%= column.column_name %>">
+                                <%= column.fieldLabel %>
+                                <span class="sortColumns" data-field="<%= column.column_name %>">
+                                  <span class="material-symbols-outlined sortarrow up">north</span>
+                                  <span class="material-symbols-outlined sortarrow down">south</span>
+                                </span>
+                                  <div class="resize-bar"></div>
+                              </th>
+                              <% } %>
+                            <% }); %>
+                                <th class="column-title">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="customerList"></tbody>
+              </table>
 
             </div>
-            <div class="col-sm-4">
-              <div class="profile-loader-msg text-center"></div>
-            </div>
+            <div class="footer row">
 
-            <div class="col-sm-4" style="padding: 0;">
-              <div class="showPageDetails dataTables_paginate paging_simple_numbers">
-                <ul class="pagination"></ul>
+              <div class="col-sm-4" style="padding: 0;">
+
+                <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
+                    class="page-info f_txt"></span></div>
+
+              </div>
+              <div class="col-sm-4">
+                <div class="profile-loader-msg text-center"></div>
+              </div>
+
+              <div class="col-sm-4" style="padding: 0;">
+                <div class="showPageDetails dataTables_paginate paging_simple_numbers">
+                  <ul class="pagination"></ul>
+                </div>
               </div>
             </div>
-          </div>
-          <% } else if(arrangedColumnList.length == 0){ %>
-            <div class="m-20">
+            <% } else if(arrangedColumnList.length==0){ %>
+              <div class="m-20">
                 <h4 class="d-flex-center no-fields-msg">No Fields Arranged To Display</h4>
                 <div class="addFields d-flex-center">
-                    <span class="">Click on <strong>"Configure Columns"</strong> to arrange and
-                        display the fields</span>
+                  <span class="">Click on <strong>"Configure Columns"</strong> to arrange and
+                    display the fields</span>
                 </div>
-            </div>
-          <% } %>
+              </div>
+              <% } %>
         </div>
         <div class="body greed" id="leadgridview" style="display: none;">
           <div class="header moduleSec lead">
@@ -225,42 +245,47 @@
             </div>
             <div class="leadRight">
               <div class="btn-group btn-group-block gridmode float-right btnDetails">
-                <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span class="material-icons" style="margin-top: 2px;">view_list</span></button>
-                <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span class="material-icons" style="margin-top: 2px;">grid_on</span></button>
+                <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span
+                    class="material-icons" style="margin-top: 2px;">view_list</span></button>
+                <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span class="material-icons"
+                    style="margin-top: 2px;">grid_on</span></button>
               </div>
             </div>
           </div>
           <div class="greedLeadTotalBody lead-assignment">
             <div class="row kanban-view">
-              <%if(menuName == "leads" ){%>
+              <%if(menuName=="leads" ){%>
                 <% _.each(categoryList, function(parentCat) { %>
                   <% _.each(parentCat.attributes.sublist, function(category) { %>
-                    <div class="greedLeadTotal leadIndex" data-lead-id="<%=category.category_id%>" style="background-color: <%=category.cat_color_light%>;">
+                    <div class="greedLeadTotal leadIndex" data-lead-id="<%=category.category_id%>"
+                      style="background-color: <%=category.cat_color_light%>;">
                       <div class="listgrid leadDrop" id="<%=category.category_id%>">
                         <div style="background-color: <%=category.cat_color%>" class="totalCount">
-                          <h2 style="color:<%=category.font_color%>"><%=category.categoryName%></h2>
+                          <h2 style="color:<%=category.font_color%>">
+                            <%=category.categoryName%>
+                          </h2>
                         </div>
                       </div>
                     </div>
-                  <%})%>
-                <%})%>
-              <%}%>
-              <div class="greedLeadTotal" data-lead-id="otherStage">
-                <div class="listgrid" id="otherStage">
-                  <div class="totalCount">
-                    <h2>Other Stage</h2>
-                  </div>
-                </div>
-              </div>
+                    <%})%>
+                      <%})%>
+                        <%}%>
+                          <div class="greedLeadTotal" data-lead-id="otherStage">
+                            <div class="listgrid" id="otherStage">
+                              <div class="totalCount">
+                                <h2>Other Stage</h2>
+                              </div>
+                            </div>
+                          </div>
             </div>
             <!-- Slider -->
-              <div class="kanban-scroll-view">
-                <div class="kanban-scroll">
-                  <div id="sc" class="kanban-scroll-active" style="margin-left: 1.43483px;"></div>
-                </div>
-                <div id="" class="kanban-columns-thumbs">
-                </div>
+            <div class="kanban-scroll-view">
+              <div class="kanban-scroll">
+                <div id="sc" class="kanban-scroll-active" style="margin-left: 1.43483px;"></div>
               </div>
+              <div id="" class="kanban-columns-thumbs">
+              </div>
+            </div>
             <!-- Slider -->
           </div>
         </div>
@@ -283,11 +308,16 @@
         </li>
         <% } %>
 
-          <li class="loadview nav-item" data-view="notificationView" data-item="notificationView" data-toggle="tooltip"
+          <!-- <li class="loadview nav-item" data-view="notificationView" data-item="notificationView" data-toggle="tooltip"
             data-placement="top" title="Notify">
             <span class="material-icons">settings</span>
           </li>
-
+          <%if(menuName=="leads" ){%>
+            <li class="loadview nav-item" data-view="escalationView" data-item="escalationView" data-toggle="tooltip"
+              data-placement="top" title="Escalation">
+              <span class="material-icons">notification_important</span>
+            </li>
+            <% } %> -->
     </ul>
   </div>
 
@@ -336,17 +366,17 @@
           maximize
         </i>
       </button>
-  
+
       <button type="button" class="btn  openFull">
         <img src="images/open_blank.svg" alt="" />
       </button>
-  
+
       <button type="button" class="btn  close">
         <i class="material-icons">
           clear
         </i>
       </button>
-  
+
     </div>
   </div>
 

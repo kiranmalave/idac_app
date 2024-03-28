@@ -1,0 +1,289 @@
+
+<div class="tab-pane in active">
+    <form id="notificationDetails" name="notificationDetails" action="#" style="display: none;">        
+        <div class="row ws-appointment-main-container">
+            <div class="icon-left ">
+            </div>
+            <div class="col-md-12 ">
+                <div class="list-row">
+                    <div class="right-layout">
+                        <!-- <label class="text-muted">Create Notification</label> -->
+                        <div id="tab1" class="tab-contents active-tab">
+                            <div class="row">
+                                <div class="clearfix">&nbsp;</div> 
+                                <div class="col-md-12">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <input id="name" type="text" class="form-control txtchange" name="name" value="<%=model.name%>">
+                                            <label for="name" class="form-label">Notification Name</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <select for="user_type" id="user_type" name="user_type" title="Which user you want to notify" class="form-control dropval  ws-select  show-tick repeatChange">
+                                                <option class="addNew" value="">Select User Type </option>    
+                                                <option class="" <%if(model.user_type=='system_user'){%>selected<%}%> value="system_user">System User</option>
+                                                <option class="" <%if(model.user_type=='customer'){%>selected<%}%>  value="customer">Customer</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 sys-user-div " <%if(model.user_type!='system_user'){%>style="display: none;"<%}%> >
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <select for="sys_user_id" id="sys_user_id" multiple name="sys_user_id" title="Which system user you want to notify" class="form-control dropval  ws-select  show-tick repeatChange" style="display: none;">
+                                                <option class="addNew" value="">Select System User Type </option>  
+                                                <option class="" <%if(model.sys_user_id== 'all'){%> selected <%}%> value="all">All System User </option>  
+                                                <%_.each(adminList,function(admin){%>
+                                                    <option  <%if(model.sys_user_id== admin.attributes.adminID){%> selected <%}%> value="<%=admin.attributes.adminID%>"><%=admin.attributes.name%></option>
+                                                <%});%>
+                                                
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div id="tab2" class="tab-contents">
+                            <div class="row">
+                                <div class="col-md-12 notificationCheck">
+                                    <span class="heading">How you want to notify</span>
+                                    
+                                        <div class="row" style=" margin-top: 12px;">
+                                            <div class="col-md-3">
+                                                <!-- <div class="row">
+                                                    <input id="notification_type" class="chk-col-amber" value = "Email" type="checkbox">
+                                                    <lable class="lableNotification">Email</lable>
+                                                </div> -->
+                                                <div class="form-group">
+                                                    <!-- <input id="notification_type" class="chk-col-amber" value = "Email" type="checkbox">
+                                                    <label for="checkbox">Emails</label> -->
+                                                    <input type="checkbox" class="notification_type" id="checkbox" value = "Email" name="checkbox" <%if(model.notification_type== 'email' || model.notification_type== 'both' ){%> checked  <%}%>>
+                                                    <label for="checkbox">Emails</label>
+                                                </div>
+                                               
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="row">
+                                                    <!-- <input id="notification_type" class="chk-col-amber" value = "SMS" type="checkbox">
+                                                     <lable class="lableNotification">SMS</lable> -->
+                                                     <input type="checkbox" class="notification_type" id="checkbox1" name="checkbox1" value = "SMS" <%if(model.notification_type== 'sms' || model.notification_type== 'both' ){%> checked  <%}%> >
+                                                    <label for="checkbox1">SMS</label>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="row">
+                                                     <!-- <input id="notification_type" class="chk-col-amber" value = "Both" type="checkbox">
+                                                    <label class="lableNotification">Both</label> -->
+                                                    <input type="checkbox" class="notification_type" id="checkbox2" name="checkbox2" value = "Both" <%if(model.notification_type== 'both' ){%> checked  <%}%> >
+                                                    <label for="checkbox2">Both</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="col-md-12 Templatedetails">
+                                    <span class="heading">Select Template</span>
+                                    <div class="row">
+                                       
+                                        <div class="col-md-4">
+                                            <div class="form-group form-float">
+                                                <div class="form-line">
+                                                    <select for="template_id" id="template_id" name="template_id" data-live-search="true" title="Email Template" class="form-control ws-select show-tick dropval getTemplate repeatChange">
+                                                        <option class="" value="">Select Email Tamplate</option>    
+                                                        <option class="addNew" value="addEmailTemp">Add Email Tamplate</option>   
+                                                        <%_.each(emailTemps,function(temp){%>
+                                                            <option <%if(model.template_id == temp.attributes.tempID){%>selected<%}%>  value="<%=temp.attributes.tempID%>"><%=temp.attributes.tempName%></option>
+                                                        <%});%>
+                                                    </select>
+                                                </div>
+                                                <div class="clearfix">&nbsp;</div> 
+
+                                                <div class="column-field-div" >
+                                                    <div class="panel-body">
+                                                      <ul id="sortable">
+                                                        <%_.each(columnlist,function(column){%>
+                                                          <li class="ui-state-default drag-drop-item column-field-val"><%=column.Field%></li>
+                                                        <% })%>
+                                                      </ul>
+
+                                                    </div>
+                                                </div>
+
+                                                <!-- <div class="form-float form-group ">
+                                                    <div class="form-line">
+                                                        <select for="replace-col-name" id="replace-col-name" name="replace-col-name" title="Select Values " class="form-control dropval  ws-select show-tick repeatChange">
+                                                            <option class="addNew" value=""> Select Module Fields</option>
+                                                            <%_.each(columnlist,function(column){%>
+                                                                <option value="<%=column.Field%>"><% let columnfield = column.Field.replace(/_/g, " "); let upl = columnfield.charAt(0).toUpperCase()+columnfield.slice(1); %><%=upl%></option>
+                                                            <%});%>
+                                                        </select>
+                                                    </div>
+                                                </div> -->
+                                            </div>                                            
+                                        </div>
+                                        <div class="col-md-8">
+                                            <!-- <span class="prvEmail"> Preview Email</span> -->
+                                            <!-- <textarea id="PreviewEmail" class="form-control showNotification" ></textarea> -->
+                                            <div class="col-xs-12">
+                                                <div class="col-sm-12">
+                                                    <label for="emailContentN"> Preview Email :</label>
+                                                    <div class="clearfix">&nbsp;</div>
+                                                    <div class="form-group input-group form-float">
+                                                        <div class="form-line taskDate emailSubject">
+                                                            <input id="emailSubject" type="text" class="form-control txtchange" autocomplete="off"  name="subjectOfEmail" value="">
+                                                            <label for="emailSubject" class="form-label taskDate">Email Subject</label>
+                                                        </div>
+                                                    </div>
+                                                    <div id="emailContentN" name="emailContentN" class="form-control" value=""></div>
+                                                </div>
+                                                <div class="clearfix">&nbsp;</div>
+                                            </div>
+                                            <div class="col-xs-12">
+                                                <div class="col-sm-12">
+                                                    <span class="prvEmail"> Preview SMS</span>
+                                                    <div id="PreviewSMS" class="form-control showNotification"></div>
+                                                </div>
+                                            </div>
+                                  
+                                        </div>
+                                       
+                                    </div>
+                                    
+                                </div>
+                                
+                             </div>
+                        </div>
+                        
+                        <div id="tab3" class="tab-contents">
+                            <div class="row">
+                                
+                              
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 notificationCls">
+                                    <span class="heading">On Which action you want to notify</span>
+                                    <div class="form-group">
+                                        <input type="radio" name="action" id="Add" class="with-gap notifyDetails" value="add" <% if (model.action_on && model.action_on == 'add') { %>checked<% } %>>
+                                        <label for="Add">Add</label>
+                                        <input type="radio" name="action" id="Update" class="with-gap notifyDetails" value="update" <% if (model.action_on && model.action_on == 'update') { %>checked<% } %>>
+                                        <label for="Update" class="m-l-20">Update</label>
+                                        <input type="radio" name="action" id="delete" class="with-gap notifyDetails" value="delete" <% if (model.action_on && model.action_on == 'delete') { %>checked<% } %>>
+                                        <label for="delete" class="m-l-20">delete</label>
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12 notify on_update" style="display:none;">
+                                            <div class="addRecords">Click here
+                                                <div class="buttonAdd">
+                                                    <button type="button" class="ws-btn-default addFieldsToTrigger" data-toggle="tooltip" data-placement="top" title="Add Fields">
+                                                        <i class="material-icons">add</i>
+                                                    </button>
+                                                </div>
+                                                to add the Fields.
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-11">
+                                                    <div class="row">
+                                                        <div class="col-md-6 on_addFields" style="display:none;" >
+                                                            <span class="heading fieldNotify">On Which Field you want to notify</span>
+                                                        </div>
+                                                        <div class="col-md-6 on_FieldSelect" style="display:none;" > 
+                                                            <span class="heading">On Which value you want to update</span>
+                                                        </div>
+                                                        <!-- <div class="col-md-6 field-text"  style="display: none;">
+                                                            <span class="heading">On Which value you want to update</span>
+                                                        </div> -->
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="notifyBtn buttonAdd" style="display:none;">
+                                                        <!-- <button type="button" class="ws-btn-default addFieldsToTrigger" data-toggle="tooltip" data-placement="top" title="Add Fields">
+                                                            <i class="material-icons addFields">add</i>
+                                                        </button> -->
+                                                        <span data-toggle="tooltip" data-placement="top" title="Add Fields" data-action="add" class="addFieldsToTrigger">
+                                                            <i class="material-icons addFields">add</i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 selectFields">
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                
+                            </div>
+                        </div>
+                        <div class="textCenter">
+                            <button type="button" class="btn bg-indigo previous" disabled>Previous</button>
+                            <button type="button" class="btn bg-indigo btnNext">Next</button>
+                            <button type="button" class="btn bg-indigo saveNotification" data-action="close">Save</button>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- <div class="clearfix">&nbsp;</div>    <div class="clearfix">&nbsp;</div>  <div class="clearfix">&nbsp;</div>  <div class="clearfix">&nbsp;</div>  <div class="clearfix">&nbsp;</div>   -->
+                <div class="ws-schedule-border"></div>
+            </div>
+            <div class="testWIzer">
+                <!-- <form id="regForm" action="/action_page.php">
+                    <h1>Register:</h1>
+                  
+                    <div class="tab">Name:
+                      <p><input placeholder="First name..." oninput="this.className = ''" name="fname"></p>
+                      <p><input placeholder="Last name..." oninput="this.className = ''" name="lname"></p>
+                    </div>
+                    <div class="tab">Contact Info:
+                      <p><input placeholder="E-mail..." oninput="this.className = ''" name="email"></p>
+                      <p><input placeholder="Phone..." oninput="this.className = ''" name="phone"></p>
+                    </div>
+                    <div class="tab">Birthday:
+                      <p><input placeholder="dd" oninput="this.className = ''" name="dd"></p>
+                      <p><input placeholder="mm" oninput="this.className = ''" name="nn"></p>
+                      <p><input placeholder="yyyy" oninput="this.className = ''" name="yyyy"></p>
+                    </div>
+                    <div class="tab">Login Info:
+                      <p><input placeholder="Username..." oninput="this.className = ''" name="uname"></p>
+                      <p><input placeholder="Password..." oninput="this.className = ''" name="pword" type="password"></p>
+                    </div>
+                    <div style="overflow:auto;">
+                      <div style="float:right;">
+                        <button type="button" id="prevBtn" onclick="nextPrev(-1)">Previous</button>
+                        <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+                      </div>
+                    </div>
+                   
+                    <div style="text-align:center;margin-top:40px;">
+                      <span class="step"></span>
+                      <span class="step"></span>
+                      <span class="step"></span>
+                      <span class="step"></span>
+                    </div>
+                  </form> -->
+            </div>
+        </div>
+    </form>
+    <div id="notification_div"  ></div>
+    <div class="emptyAppointmentImg emptyNotificationImg" <% if(notificationList.length != 0){%> style="display: none;" <%}%> >
+        <img id="emptyAppointment" style="max-width: 100%;" src="https://cms.webtrixsolutions.in/images/imgpsh_fullsize_anim.jpg">
+        <span>There Is No Notification.</span>
+        <div class="actionBtns">
+            <button type="button" id="btnNotifications" class="btn bg-indigo btnTrigger">Create Notifications</button>
+        </div>
+    </div>
+</div>
+
+             

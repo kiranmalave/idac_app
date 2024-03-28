@@ -1,5 +1,5 @@
 <div class="ws_ColumnConfigure">
-    <div id="customFilterView">
+    <div id="customFilterView" class="configureColumnCls">
         <div class="row ">
             <div class="col-md-12 ">
                 <div class="column-loader text-center">
@@ -12,6 +12,17 @@
                                 <div class="circle"></div>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="search-container">
+                    <input type="text" name="search" id="fieldSearch" placeholder="Search field..." class="search-input">
+                    <span class="material-icons">search</span>
+                </div>
+
+                <div class="defaultMessage d-flex-center no-fields-msg" style="display: none;">
+                    <div class="m-20">
+                        <h4 class="d-flex-center">No Fields Found</h4>
+                        <p>There are no fields that match your current search.</p>
                     </div>
                 </div>
 

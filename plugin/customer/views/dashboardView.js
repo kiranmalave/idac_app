@@ -11,13 +11,11 @@ define([
     '../views/customerSingleView',
     '../models/customerSingleModel',
     '../../task/collections/historyCollection',
-    '../../project/views/projectSingleView',
     '../../task/views/taskViewDashbord',
-    '../../project/views/projectViewOther',
     '../../taxInvoice/views/taxInvoiceView',
     'text!../templates/dashboard_temp.html',
 
-  ], function ($, _, Backbone, custom, Swal, moment, multiselectOptions, timeselectOptions, dashboardModel, customerSingleView, customerSingleModel, historyCollection, projectSingleView, taskViewDashbord,projectViewOther, taxInvoiceView, dashBoard_temp ) {
+  ], function ($, _, Backbone, custom, Swal, moment, multiselectOptions, timeselectOptions, dashboardModel, customerSingleView, customerSingleModel, historyCollection, taskViewDashbord, taxInvoiceView, dashBoard_temp ) {
   
     var dashboardView = Backbone.View.extend({
       model: dashboardModel,
@@ -28,13 +26,14 @@ define([
         this.multiselectOptions = new multiselectOptions();
         this.customerModel = new customerSingleModel();
         this.timeselectOptions = new timeselectOptions();
+        this.menuId = options.menuId;
         var selfobj = this;
         if (this.customerID != "") {
           this.customerModel.set({ customer_id: this.customerID });
           this.customerModel.fetch({
             headers: {
               'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-            }, error: selfobj.onErrorHandler
+            },data:{menuId:this.menuId}, error: selfobj.onErrorHandler
           }).done(function (res) {
             var birthDate = selfobj.customerModel.get("birth_date");
             if (birthDate != null && birthDate != "0000-00-00") {
@@ -77,7 +76,6 @@ define([
       preparetime: function () {
         let selfobj = this;
         var models = this.historyList.models;
-        console.log(this.historyList.models);
         for (var i = 0; i < models.length; i++) {
           var model = models[i];
           var timestamp = model.get('activity_date');
@@ -96,28 +94,10 @@ define([
         switch(show){
           case "singlecustomerview":{
             var customer_id = $(e.currentTarget).attr("data-customer_id");
-            new customerSingleView({customer_id: customer_id,loadfrom:"dashboard", searchCustomer:this, form_label:"Company/Clients" });
+            new customerSingleView({customer_id: customer_id,loadfrom:"dashboard", searchCustomer:this, menuId: this.menuId });
             break;
           }
         }
-      },
-
-      refreshDashboard: function(customerID){
-        let selfobj = this;
-        this.customerModel.set({ customer_id: customerID });
-        this.customerModel.fetch({
-          headers: {
-            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-          }, error: selfobj.onErrorHandler
-        }).done(function (res) {
-          var birthDate = selfobj.customerModel.get("birth_date");
-          if (birthDate != null && birthDate != "0000-00-00") {
-            selfobj.customerModel.set({ "birth_date": moment(birthDate).format("DD-MM-YYYY") });
-          }
-          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-          $(".popupLoader").hide();
-          selfobj.render();
-        });
       },
   
       showOverlay: function (e) {
@@ -149,6 +129,24 @@ define([
           }
         });
       },
+
+      refreshDashboard: function(customerID){
+        let selfobj = this;
+        this.customerModel.set({ customer_id: customerID });
+        this.customerModel.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          },data:{menuId:this.menuId}, error: selfobj.onErrorHandler
+        }).done(function (res) {
+          var birthDate = selfobj.customerModel.get("birth_date");
+          if (birthDate != null && birthDate != "0000-00-00") {
+            selfobj.customerModel.set({ "birth_date": moment(birthDate).format("DD-MM-YYYY") });
+          }
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".popupLoader").hide();
+          selfobj.render();
+        });
+      },
   
       tablinks:function(e){
         let selfobj = this;
@@ -174,12 +172,13 @@ define([
         var selfobj = this;
         var da = selfobj.multiselectOptions.setCheckedValue(e);
         selfobj.model.set(da);
+
+
       },
   
       render: function () {
         var template = _.template(dashBoard_temp);
-        console.log(this.historyList.models);
-        var res = template({"customerModel":this.customerModel,"historyList": this.historyList.models});
+        var res = template({"customerModel":this.customerModel,"historyList":this.historyList.models});
         this.$el.html(res);
         $(".app_playground").append(this.$el);
         new taskViewDashbord({ action:"", customerID: this.customerID, custName: this.customerName}); 

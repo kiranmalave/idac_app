@@ -1,4 +1,4 @@
-  define([
+define([
   'underscore',
   'backbone',
 ], function (_, Backbone) {
@@ -8,12 +8,14 @@
     defaults: {
       customer_id: null,
       salutation: "mr",
-      name: null,
+      first_name: null,
+      middle_name: null,
+      last_name: null,
       mobile_no: null,
       birth_date: null,
       note: null,
       email: null,
-      record_type: "company",
+      record_type: "individual",
       address: null,
       customer_image: null,
       billing_name: null,
@@ -29,6 +31,8 @@
       latitude: null,
       longitude: null,
       zipcode: null,
+      assignee: null,
+      assigneeName: null,
       office_land_line: null,
       stages: null,
       lead_source: null,
