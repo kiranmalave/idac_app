@@ -46,31 +46,33 @@ define([
                 }
                 
                 /********/
-
-                if (result.data[0].metadata && result.data[0].metadata != undefined && result.data[0].metadata.trim() !== '') {
-                    selfobj.metadata  = JSON.parse(result.data[0].metadata);
-                } 
-                if (result.data[0].c_metadata && result.data[0].c_metadata != undefined && result.data[0].c_metadata.trim() !== '') {
-                    selfobj.c_metadata  = JSON.parse(result.data[0].c_metadata);
-                    selfobj.arrangedColumnList = selfobj.c_metadata;
-                }
-                if (result.data[0].metadata && result.data[0].metadata != undefined) {
-                    var metadatas = selfobj.metadata;
-                    if(metadatas != undefined){
-                        const flatArray = Object.values(metadatas).flatMap(row => {
-                        const fields = [];
-                        if (row.col1 && row.col1.fieldID !== undefined) {
-                            fields.push({ fieldID: row.col1.fieldID, fieldLabel: row.col1.fieldLabel, fieldType: row.col1.fieldType,column_name: row.col1.column_name,linkedWith: row.col1.linkedWith,fieldOptions: row.col1.fieldOptions,dateFormat: row.col1.dateFormat,displayFormat: row.col1.displayFormat,parentCategory: row.col1.parentCategory});
+                if(result.data[0] != undefined){
+                 
+                    if (result.data[0].metadata && result.data[0].metadata != undefined && result.data[0].metadata.trim() !== '') {
+                        selfobj.metadata  = JSON.parse(result.data[0].metadata);
+                    } 
+                    if (result.data[0].c_metadata && result.data[0].c_metadata != undefined && result.data[0].c_metadata.trim() !== '') {
+                        selfobj.c_metadata  = JSON.parse(result.data[0].c_metadata);
+                        selfobj.arrangedColumnList = selfobj.c_metadata;
+                    }
+                    if (result.data[0].metadata && result.data[0].metadata != undefined) {
+                        var metadatas = selfobj.metadata;
+                        if(metadatas != undefined){
+                            const flatArray = Object.values(metadatas).flatMap(row => {
+                            const fields = [];
+                            if (row.col1 && row.col1.fieldID !== undefined) {
+                                fields.push({ fieldID: row.col1.fieldID, fieldLabel: row.col1.fieldLabel, fieldType: row.col1.fieldType,column_name: row.col1.column_name,linkedWith: row.col1.linkedWith,fieldOptions: row.col1.fieldOptions,dateFormat: row.col1.dateFormat,displayFormat: row.col1.displayFormat,parentCategory: row.col1.parentCategory});
+                            }
+                            if (row.col2 && row.col2.fieldID !== undefined) {
+                                fields.push({ fieldID: row.col2.fieldID, fieldLabel: row.col2.fieldLabel, fieldType: row.col2.fieldType,column_name: row.col2.column_name,linkedWith: row.col2.linkedWith,fieldOptions: row.col2.fieldOptions,dateFormat: row.col2.dateFormat,displayFormat: row.col2.displayFormat,parentCategory: row.col2.parentCategory});
+                            }
+                            if (row.col3 && row.col3.fieldID !== undefined) {
+                                fields.push({ fieldID: row.col3.fieldID, fieldLabel: row.col3.fieldLabel, fieldType: row.col3.fieldType,column_name: row.col3.column_name,linkedWith: row.col3.linkedWith,fieldOptions: row.col3.fieldOptions,dateFormat: row.col3.dateFormat,displayFormat: row.col3.displayFormat,parentCategory: row.col3.parentCategory});
+                            }
+                            return fields;
+                            });
+                            selfobj.customColumnList = flatArray;
                         }
-                        if (row.col2 && row.col2.fieldID !== undefined) {
-                            fields.push({ fieldID: row.col2.fieldID, fieldLabel: row.col2.fieldLabel, fieldType: row.col2.fieldType,column_name: row.col2.column_name,linkedWith: row.col2.linkedWith,fieldOptions: row.col2.fieldOptions,dateFormat: row.col2.dateFormat,displayFormat: row.col2.displayFormat,parentCategory: row.col2.parentCategory});
-                        }
-                        if (row.col3 && row.col3.fieldID !== undefined) {
-                            fields.push({ fieldID: row.col3.fieldID, fieldLabel: row.col3.fieldLabel, fieldType: row.col3.fieldType,column_name: row.col3.column_name,linkedWith: row.col3.linkedWith,fieldOptions: row.col3.fieldOptions,dateFormat: row.col3.dateFormat,displayFormat: row.col3.displayFormat,parentCategory: row.col3.parentCategory});
-                        }
-                        return fields;
-                        });
-                        selfobj.customColumnList = flatArray;
                     }
                 }
 
