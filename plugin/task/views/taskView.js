@@ -1539,7 +1539,8 @@ define([
     openColumnArrangeModal: function (e) {
       let selfobj = this;
       var show = $(e.currentTarget).attr("data-action");
-      var stdColumn = ['task_id','subject','assignee','task_type','task_status','task_priority','due_date','category_id'];
+      // var stdColumn = ['task_id','subject','assignee','task_type','task_status','task_priority','due_date','category_id'];
+      var stdColumn = [];
       switch (show) {
         case "arrangeColumns": {
           var isOpen = $(".ws_ColumnConfigure").hasClass("open");
