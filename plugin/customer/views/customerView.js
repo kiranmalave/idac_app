@@ -32,7 +32,9 @@ define([
   '../../core/views/notificationView',
   '../views/escalationView',
   "../../admin/collections/adminCollection",
-], function ($, _, Backbone, datepickerBT, moment, Swal, customerSingleView, customerNotesView, mailView, customerActivityView, taskSingleView, customerCollection, customerNotesCollection, customerFilterOptionModel, customerModel, customerNoteModel, appSettings, columnArrangeModalView, configureColumnsView, dynamicFormData, singleMenuModel, slugCollection, emailMasterCollection, timeselectOptions, customerRowTemp, leadGridRow, customerTemp, customerFilterTemp, linkedDropdown, notificationView,escalationView,adminCollection,) {
+  '../../core/views/moduleDefaultSettings',
+  'text!../templates/leadModernView.html',
+], function ($, _, Backbone, datepickerBT, moment, Swal, customerSingleView, customerNotesView, mailView, customerActivityView, taskSingleView, customerCollection, customerNotesCollection, customerFilterOptionModel, customerModel, customerNoteModel, appSettings, columnArrangeModalView, configureColumnsView, dynamicFormData, singleMenuModel, slugCollection, emailMasterCollection, timeselectOptions, customerRowTemp, leadGridRow, customerTemp, customerFilterTemp, linkedDropdown, notificationView,escalationView,adminCollection,moduleDefaultSettings,leadModernView) {
   var customerView = Backbone.View.extend({
     plural_label: '',
     module_desc: '',
@@ -41,7 +43,7 @@ define([
     listDataGrid: [],
     paginginfo: [],
     totalRec: 0,
-    View: 'list',
+    View: 'traditionalList',
     module_name: 'customer',
     isdataupdated:false,
     customerModel: customerModel,
@@ -50,6 +52,7 @@ define([
     initialize: function (options) {
       this.startX = 0;
       this.startWidth = 0;  
+      this.userSettings = {};
       this.$handle = null;
       this.$table = null;
       this.pressed = false;
@@ -59,6 +62,7 @@ define([
       this.arrangedColumnList = [];
       this.filteredFields = [];
       this.totalColumns = 0;
+      this.tableStructure = {},
       $(".profile-loader").show();
       $(".customMail").hide();
       $(".customMailMinimize").hide();
@@ -68,12 +72,26 @@ define([
       $(".maxActive").hide();
       this.mname = Backbone.history.getFragment();
       permission = ROLE[this.mname];
+      this.menuId = permission.menuID;
+      // if(localStorage.getItem('user_setting')){
+      //   this.userSettings = JSON.parse(localStorage.getItem('user_setting'));
+      //   for (const rowKey in selfobj.userSettings) {
+      //     if(rowKey == selfobj.menuId){
+      //       const displayView = selfobj.userSettings[rowKey].displayView;
+      //       this.tableStructure = selfobj.userSettings[rowKey].tableStructure;
+      //     }
+      //   }
+      // }else{
+      //   this.userSettings = {};
+      // }
       this.paginginfo = [],
-        this.menuId = permission.menuID;
       this.appSettings = new appSettings();
       this.dynamicFormDatas = new dynamicFormData();
       this.timeselectOptions = new timeselectOptions();
       this.menuList = new singleMenuModel();
+      this.moduleDefaultSettings = new moduleDefaultSettings();
+      searchCustomer = new customerCollection();
+      this.collection = new customerCollection();
       this.appSettings.getMenuList(this.menuId, function (plural_label, module_desc, form_label, result) {
         selfobj.plural_label = plural_label;
         selfobj.module_desc = module_desc;
@@ -93,7 +111,7 @@ define([
       } else if (this.mname == "customer") {
         filterOption.set({ type: "customer" });
       }
-
+      // filterOption.set({ company_id: DEFAULTCOMPANY });
       this.categoryList = new slugCollection();
       this.categoryList.fetch({
         headers: {
@@ -128,8 +146,6 @@ define([
       });
 
       filterOption.set({ "menuId": this.menuId });
-      searchCustomer = new customerCollection();
-      this.collection = new customerCollection();
       this.collection.on('add', this.addOne, this);
       this.collection.on('reset', this.addAll, this);
       selfobj.render();
@@ -216,9 +232,9 @@ define([
       // Determine which color to use based on brightness
       var invertedColor;
       if (brightness > 128) {
-          invertedColor = '#000000'; // Use black for light colors
+          invertedColor = '#000000'; 
       } else {
-          invertedColor = '#FFFFFF'; // Use white for dark colors
+          invertedColor = '#FFFFFF';
       }
       
       return invertedColor;
@@ -227,8 +243,6 @@ define([
   // Example usage
   // var hexColor = "#ff0000"; // Red color
   // var invertedColor = invertHex(hexColor);
-  // console.log("Inverted color:", invertedColor);
-  
 
     events:
     {
@@ -245,22 +259,20 @@ define([
       "click .showpage": "loadData",
       "change .changeBox": "changeBox",
       "click .arrangeColumns": "openColumnArrangeModal",
-      "click .markCust": "markCutomer",
+      "click .markAsCust": "markCutomer",
       // "click .ccBtn": "openComposeMail",
       // "click .bccBtn": "displayList",
       "click .close": "mailHide",
       "click .minimize": "minimize",
       "click .openFull": "maximize",
       "click .showMax": "showmax",
-      "click .list_mode": "gridMode",
-      "click .grid_mode": "gridMode",
       "click .changeStatusGrid": "changeStatusGrid",
       "click .sortColumns": "sortColumn",
       "change .dropval": "singleFilterOptions",
       "click .downloadReport": "downloadReport",
       'mousedown .table-resizable .resize-bar': 'onMouseDown',
-      'mousemove .table-resizable th, .table-resizable td': 'onMouseMove',
-      'mouseup .table-resizable th, .table-resizable td': 'onMouseUp',
+      'mousemove .table-resizable th': 'onMouseMove',
+      'mouseup .table-resizable th': 'onMouseUp',
       'dblclick .table-resizable thead': 'resetColumnWidth',
       "input .countryChange": "getCountry",
       "click .selectCountry": "setCountry",
@@ -270,6 +282,63 @@ define([
       "click .selectCity": "setCity",
       "mouseover .customerRow" :"handleMouseHover",
       "mouseleave .customerRow" :"handleMouseLeave",
+      "click .listViewBtn" : "showViewList",
+      "click .setViewMode" : "setViewMode",
+    },
+
+    showViewList: function (e) {
+      $(".showListView").toggle();
+    },
+
+    setViewMode: function(e){
+      let selfobj = this;
+      var View = $(e.currentTarget).val();
+      var isOpen = $(".ws_ColumnConfigure").hasClass("open");
+      if (isOpen) {
+        $(".ws_ColumnConfigure").removeClass("open");
+      }
+      selfobj.moduleDefaultSettings.setModuleDefaultView(selfobj.menuId,View,selfobj.tableStructure);
+      if (View == "traditionalList") {
+        $("#leadlistview").show();
+        $("#leadgridview").hide();
+        $("#modernlistview").hide();
+        $(".grid_mode").removeAttr("disabled")
+        $(".list_mode").attr('disabled', 'disabled');
+        $(".modernlist_mode").removeAttr("disabled")
+        $("#arrangeColumns").show();
+        $(".showListView").toggle();
+        selfobj.View = "traditionalList";
+        selfobj.resetSearch();
+      }else if(View == 'modernlist'){
+        $("#leadgridview").hide();
+        $("#modernlistview").show();
+        $("#leadlistview").hide();
+        $(".grid_mode").removeAttr("disabled")
+        $(".modernlist_mode").attr('disabled', 'disabled');
+        $(".list_mode").removeAttr("disabled")
+        $("#arrangeColumns").show();
+        $(".showListView").toggle();
+        selfobj.View = "modernlist";
+        selfobj.resetSearch();
+        var numColumns = selfobj.arrangedColumnList ? selfobj.arrangedColumnList.length : 0;
+        var defaultWidth = numColumns <= 5 ? '100%' : (numColumns * 20) + '%';
+        $(".tableModern").css("width", defaultWidth);
+      }else if (View == "grid") {
+        $("#leadgridview").show();
+        $("#leadlistview").hide();
+        $("#modernlistview").hide();
+        $(".list_mode").removeAttr("disabled")
+        $(".grid_mode").attr('disabled', 'disabled');
+        $(".modernlist_mode").removeAttr("disabled")
+        $(".hide").hide();
+        $(".showListView").toggle();
+        selfobj.collection.reset();
+        selfobj.View = "grid";
+        selfobj.girdLazyLoad(listgridID = "", firstLoad = true);
+        selfobj.setupDropable();
+        selfobj.setupSortable();
+        selfobj.leadCanbanSlider();
+      }
     },
 
     filteredSearch:function(e){
@@ -288,18 +357,52 @@ define([
       this.$table = this.$handle.closest('.table-resizable').addClass('resizing');
     },
 
+    // onMouseMove: function (event) {
+    //   if (this.pressed) {
+    //     this.$handle.width(this.startWidth + (event.pageX - this.startX));
+    //   }
+    // },
+
     onMouseMove: function (event) {
       if (this.pressed) {
-        this.$handle.width(this.startWidth + (event.pageX - this.startX));
+        let index = this.$handle.index();
+        let currentWidth = this.startWidth + (event.pageX - this.startX);
+        currentWidth = Math.max(currentWidth, 100);
+        this.$handle.width(currentWidth);
       }
     },
-
-    onMouseUp: function () {
+    
+    onMouseUp: function (event) {
       if (this.pressed) {
         this.$table.removeClass('resizing');
         this.pressed = false;
       }
+      var selfobj = this;
+      if (!selfobj.tableStructure) {
+        selfobj.tableStructure = {};
+      }
+      let tableName = $(event.currentTarget).closest('table').attr('id');
+      $('#'+tableName + ' thead th').each(function() {
+        var datacolumn = $(this).attr('data-column');
+        var styleWidth = $(this).css('width');
+        var width = parseFloat(styleWidth);
+        let columnObj = {};
+        // if(datacolumn){
+        //   selfobj.tableStructure[datacolumn] = width;
+        // }
+        if(datacolumn){
+          columnObj[datacolumn] = width;
+          if (!selfobj.tableStructure[tableName]) {
+            selfobj.tableStructure[tableName] = columnObj;
+          } else {
+            Object.assign(selfobj.tableStructure[tableName], columnObj);
+          }
+        }
+      });
+      
+      selfobj.moduleDefaultSettings.setModuleDefaultView(selfobj.menuId, selfobj.View, selfobj.tableStructure);
     },
+
     resetColumnWidth: function () {
       // Reset column sizes on double click
       this.$el.find('th').css('width', '');
@@ -421,54 +524,55 @@ define([
       $('.openFull').remove('maxActiveRemove');
     },
 
-    gridMode: function (e) {
-      let selfobj = this;
-      var View = $(e.currentTarget).val();
-      if (View == "list") {
-        $("#leadlistview").show();
-        $("#leadgridview").hide();
-        $(".grid_mode").removeAttr("disabled")
-        $(".list_mode").attr('disabled', 'disabled');
-        $("#arrangeColumns").show();
-        selfobj.View = "list";
-        selfobj.resetSearch();
-      } else if (View == "grid") {
-        $("#leadgridview").show();
-        $("#leadlistview").hide();
-        $(".list_mode").removeAttr("disabled")
-        $(".grid_mode").attr('disabled', 'disabled');
-        $(".hide").hide();
-        selfobj.collection.reset();
-        selfobj.View = "grid";
-        selfobj.girdLazyLoad(listgridID = "", firstLoad = true);
-        selfobj.setupDropable();
-        selfobj.setupSortable();
-        selfobj.leadCanbanSlider();
-      }
-    },
-
-    girdLazyLoad: function (listgridID, firstLoad) {
-      
+    girdLazyLoad: function (listgridID) {
       let selfobj = this;
       if (listgridID == "") {
         if(selfobj.isdataupdated || selfobj.listDataGrid.length == 0){
-
+          var isFilter = false;
+          if(filterOption.get("stages") != null){
+            isFilter = true;
+            console.log("isFilter "+isFilter);
+          }
           $.each(this.categoryList.models, function (index, value) {
             $.each(value.attributes.sublist, function (index2, value2) {
-              filterOption.set({ stages: value2.category_id });
-              selfobj.listDataGrid[value2.category_id] = new customerCollection();
-              selfobj.listDataGrid[value2.category_id].fetch({
-                headers: {
-                  'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-                }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
-              }).done(function (res) {
-                if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-                $(".profile-loader").hide();
-                selfobj.paginginfo = res.paginginfo;
-                selfobj.addAllGrid(value2.category_id);
-              });
-              
-              $("#leadlistview").hide();
+              if(!isFilter){
+                filterOption.set({stages:value2.category_id});
+                  selfobj.listDataGrid[value2.category_id] = new customerCollection();
+                  selfobj.listDataGrid[value2.category_id].fetch({
+                    headers: {
+                      'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+                    }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+                  }).done(function (res) {
+                    if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+                    $(".profile-loader").hide();
+                    selfobj.paginginfo = res.paginginfo;
+                    selfobj.setGridPagging(selfobj.paginginfo,value2.category_id);
+                    selfobj.addAllGrid(value2.category_id);
+                  });
+                $("#leadlistview").hide();
+                $("#modernlistview").hide();
+              }else{
+                if(filterOption.get("stages") == value2.category_id){
+                  selfobj.listDataGrid[value2.category_id] = new customerCollection();
+                  selfobj.listDataGrid[value2.category_id].fetch({
+                    headers: {
+                      'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+                    }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+                  }).done(function (res) {
+                    if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+                    $(".profile-loader").hide();
+                    selfobj.paginginfo = res.paginginfo;
+                    selfobj.setGridPagging(selfobj.paginginfo);
+                    selfobj.addAllGrid(value2.category_id,value2.category_id);
+                  });
+                  $("#leadlistview").hide();
+                  $("#modernlistview").hide();
+                }else{
+                  selfobj.listDataGrid[value2.category_id] = new customerCollection();
+                  selfobj.addAllGrid(value2.category_id);
+                }
+                
+              }
             });
           });
           
@@ -498,11 +602,24 @@ define([
             if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
             $(".profile-loader").hide();
             selfobj.paginginfo = res.paginginfo;
+            selfobj.setGridPagging(selfobj.paginginfo, listgridID);
           });
           selfobj.listDataGrid[listgridID].on('add', this.addOne, this);
           selfobj.listDataGrid[listgridID].on('reset', this.addAll, this);
         }
       }
+    },
+
+    setGridPagging: function(pagingInfo, stageID){
+      $("#"+stageID).find('.gridPagging').empty();
+      if(pagingInfo.end > pagingInfo.totalRecords){
+        var paggingString = pagingInfo.totalRecords + " of " + pagingInfo.totalRecords;
+      }else{
+        var paggingString = pagingInfo.end + " of " + pagingInfo.totalRecords;
+      }
+      
+      $("#"+stageID).find('.gridPagging').append(paggingString);
+
     },
 
     stageColumnUpdate: function (stage) {
@@ -520,12 +637,6 @@ define([
         selfobj.addAllGrid(stage);
       });
       $('#' + stage).children().not(".totalCount").remove();
-    },
-
-    getInitials:function (name) {
-      const words = name.split(' ');
-      const initials = words.map(word => word.charAt(0));
-      return initials.join('').toUpperCase();
     },
 
     showmax: function () {
@@ -565,7 +676,7 @@ define([
             selfobj.filterSearch();
             return;
           } else {
-            new configureColumnsView({ menuId: this.menuId, ViewObj: selfobj, stdColumn: stdColumn,menuName: selfobj.mname, });
+            new configureColumnsView({ menuId: this.menuId, ViewObj: selfobj, stdColumn: stdColumn,menuName: selfobj.mname,viewMode: selfobj.View });
             $(e.currentTarget).addClass("BG-Color");
           }
           break;
@@ -648,6 +759,13 @@ define([
           var removeIds = [];
           var status = $(e.currentTarget).attr("data-action");
           var action = "changeStatus";
+          if(selfobj.View == 'modernlist'){
+            $('#modernList input:checkbox').each(function () {
+              if ($(this).is(":checked")) {
+                removeIds.push($(this).attr("data-customer_id"));
+              }
+            });
+          }
           $('#customerList input:checkbox').each(function () {
             if ($(this).is(":checked")) {
               removeIds.push($(this).attr("data-customer_id"));
@@ -695,6 +813,11 @@ define([
           });
         } else if (result.isDenied) {
           $('#customerList input:checkbox').each(function () {
+            if ($(this).is(":checked")) {
+              $(this).prop('checked', false);
+            }
+          });
+          $('#modernList input:checkbox').each(function () {
             if ($(this).is(":checked")) {
               $(this).prop('checked', false);
             }
@@ -780,7 +903,6 @@ define([
         case "singleCustomerData": {
           var customer_id = $(e.currentTarget).attr("data-customer_id");
           new customerSingleView({ customer_id: customer_id, menuId: this.menuId, searchCustomer: this, menuName: this.mname, form_label: selfobj.form_label, loadfrom: "customer" });
-
           $('body').find(".loder");
           $(".profile-loader").hide();
           break;
@@ -820,14 +942,6 @@ define([
           new taskSingleView({ customer_id: customer_id, customerName: cust_name, loadFrom: "customer", searchtask: this, menuName:'task' });
           break;
         }
-        case "appointment": {
-          var customer_id = $(e.currentTarget).attr("data-customer_id");
-          var cust_name = $(e.currentTarget).attr("data-first_name");
-          var cust_mail = $(e.currentTarget).attr("data-email");
-          new appointmentSingleView({ customer_id: customer_id, customerName: cust_name, cust_mail: cust_mail, loadFrom: "customer", searchappointment: this })
-          $('body').find(".loder");
-          break;
-        }
         case "notificationView": {
           var categoryList = [];
           new notificationView({ menuID: this.menuId, searchreceipt: this, module_name: this.module_name,categoryList:categoryList,filteredData : selfobj.filteredData });
@@ -845,7 +959,7 @@ define([
 
     },
 
-    resetSearch: function (stage) {
+    resetSearch: function () {
       let selfobj = this;
       filterOption.clear().set(filterOption.defaults);
       if (this.mname == "leads") {
@@ -853,6 +967,7 @@ define([
       } else if (this.mname == "customer") {
         filterOption.set({ type: "customer" });
       }
+      // filterOption.set({ company_id: DEFAULTCOMPANY });
       $(".multiOptionSel").removeClass("active");
       $(".filterClear").val("");
       $("#textSearch").val("select");
@@ -862,21 +977,17 @@ define([
       $(".form-line").removeClass("focused");
       $(".hidetextval").hide();
       $('#textSearch option[value=customer_id]').attr('selected', 'selected');
-      if (selfobj.View == "list") {
-        this.filterSearch(false);
-      } else {
-        filterOption.set({ "menuId": this.menuId });
-        selfobj.stageColumnUpdate(stage);
-      }
+      this.filterSearch(false);
+      filterOption.set({ "menuId": this.menuId });
+      
       let filterOptionLi = document.getElementById('filterOption');
       let taskBadgeSpan = filterOptionLi.querySelector('span.taskBadge');
       if (taskBadgeSpan) {
         taskBadgeSpan.remove();
       }
-
       $(".down").removeClass("active");
       $(".up").removeClass("active");
-
+      
     },
 
     loaduser: function () {
@@ -885,21 +996,30 @@ define([
 
     addOne: function (objectModel) {
       var selfobj = this;
-      if (selfobj.View == "list") {
-        this.totalRec = this.collection.length;
-        if (this.totalRec == 0) {
-          $(".noCustAdded").show();
-          $("#leadlistview").hide();
-        } else {
-          if (selfobj.View == "list") {
-            $(".noCustAdded").hide();
-            $("#leadlistview").show();
+        if (selfobj.View == "traditionalList" || selfobj.mname == 'customer') {
+          this.totalRec = this.collection.length;
+          if (this.totalRec == 0) {
+            $(".noCustAdded").show();
+            $("#leadlistview").hide();
+          } else {
+              $(".noCustAdded").hide();
+              $("#leadlistview").show();
           }
+        } else if (selfobj.View == "modernlist") {
+          this.totalRec = this.collection.length;
+          if (this.totalRec == 0) {
+            $(".noCustAdded").show();
+            $("#modernlistview").hide();
+          } else {
+              $(".noCustAdded").hide();
+              $("#modernlistview").show();
+          }
+        } else {
+          $(".noCustAdded").hide();
+          $("#leadlistview").hide();
+          $("#modernlistview").hide();
         }
-      } else {
-        $(".noCustAdded").hide();
-        $("#leadlistview").hide();
-      }
+      
       selfobj.arrangedColumnList.forEach((column) => {
         if (column.fieldType == 'Datepicker' || column.fieldType == 'Date') {
           if (objectModel.attributes["" + column.column_name] != "0000-00-00" && objectModel.attributes["" + column.column_name] != null) {
@@ -934,17 +1054,25 @@ define([
           objectModel.attributes["" + column.column_name] = "-";
         }
       });
-      if (selfobj.View == "list") {
+      if (selfobj.View == "traditionalList" || selfobj.mname == 'customer') {
         var template = _.template(customerRowTemp);
         objectModel.set({ "initial": selfobj.getInitials(objectModel.attributes.name) });
-        objectModel.set({ "initialColor": selfobj.getColorByInitials(objectModel.attributes.initial) });
+        objectModel.set({ "initialBgColor": selfobj.getColorByInitials(objectModel.attributes.initial) });
+        objectModel.set({ "initialColor": selfobj.getFontColor(objectModel.attributes.initialBgColor) });
         $("#customerList").append(template({ customerDetails: objectModel, arrangedColumnList: this.arrangedColumnList, menuName: this.mname, menuID: this.menuId }));
-      } else {
+      }else if (selfobj.View == "modernlist") {
+        var template = _.template(leadModernView);
+        objectModel.set({ "initial": selfobj.getInitials(objectModel.attributes.name) });
+        objectModel.set({ "initialBgColor": selfobj.getColorByInitials(objectModel.attributes.initial) });
+        objectModel.set({ "initialColor": selfobj.getFontColor(objectModel.attributes.initialBgColor) });
+        $("#modernList").append(template({ customerDetails: objectModel, arrangedColumnList: this.arrangedColumnList, menuName: this.mname, menuID: this.menuId }));
+       } else {
         var template = _.template(leadGridRow);
         objectModel.set({ "lastActivityTime": selfobj.timeselectOptions.displayRelativeTime(objectModel.attributes.last_activity_date) });
         objectModel.set({ "initial": selfobj.getInitials(objectModel.attributes.name) });
-        objectModel.set({ "initialColor": selfobj.getColorByInitials(objectModel.attributes.initial) });
-        if (objectModel.attributes.stageID != 0 && objectModel.attributes.stageID != null) {
+        objectModel.set({ "initialBgColor": selfobj.getColorByInitials(objectModel.attributes.initial) });
+        objectModel.set({ "initialColor": selfobj.getFontColor(objectModel.attributes.initialBgColor) });
+        if (objectModel.attributes.stageID != 0 && objectModel.attributes.stageID != null && objectModel.attributes.stageID != "") {
           $("#" + objectModel.attributes.stageID).append(template({ customerDetails: objectModel, customerLength: this.collection.length }));
         } else {
           $("#otherStage").append(template({ customerDetails: objectModel, customerLength: this.collection.length }));
@@ -955,6 +1083,7 @@ define([
 
     addAll: function () {
       $("#customerList").empty();
+      $("#modernList").empty();
       this.collection.forEach(this.addOne, this);
     },
 
@@ -1155,14 +1284,15 @@ define([
     },
 
     filterSearch: function (isClose = false, stage) {
+      
       if (isClose && typeof isClose != 'object') {
         $('.' + this.toClose).remove();
         rearrageOverlays();
       }
-      if (this.View == "grid") {
-        this.stageColumnUpdate(stage);
-        return;
-      }
+      // if (this.View == "grid") {
+      //   this.stageColumnUpdate(stage);
+      //   return;
+      // }
       this.collection.reset();
       var selfobj = this;
       readyState = true;
@@ -1200,59 +1330,72 @@ define([
           appliedFilterCount++;
         }
       }
-      this.collection.fetch({
-        headers: {
-          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, add: true, remove: false, merge: false, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
-      }).done(function (res) {
-        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-        $(".profile-loader").hide();
-        res.paginginfo.loadFrom = selfobj.toClose;
-        setPagging(res.paginginfo, res.loadstate, res.msg);
-        $element.attr("data-currPage", 1);
-        $element.attr("data-index", res.paginginfo.nextpage);
-        if (res.loadstate === false) {
-          $(".profile-loader-msg").html(res.msg);
-          $(".profile-loader-msg").show();
-        } else {
-          $(".profile-loader-msg").hide();
-        }
-
-        selfobj.totalRec = res.paginginfo.totalRecords;
-      
-        if (selfobj.totalRec == 0) {
-          $('#leadlistview').hide();
-          if(selfobj.filteredSearch == true){
-            $('.noDataFound').show();
-          }else{
-            $('.noCustAdded').show();
+      if (this.View == "grid") {
+        selfobj.isdataupdated = true;
+        selfobj.girdLazyLoad("");
+      }else{
+        this.collection.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, add: true, remove: false, merge: false, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".profile-loader").hide();
+          res.paginginfo.loadFrom = selfobj.toClose;
+          setPagging(res.paginginfo, res.loadstate, res.msg);
+          $element.attr("data-currPage", 1);
+          $element.attr("data-index", res.paginginfo.nextpage);
+          if (res.loadstate === false) {
+            $(".profile-loader-msg").html(res.msg);
+            $(".profile-loader-msg").show();
+          } else {
+            $(".profile-loader-msg").hide();
           }
-        } else {
-          $('#leadlistview').show();
-          if(selfobj.filteredSearch == true){
-            $('.noDataFound').hide();
-          }else{
-            $('.noCustAdded').hide();
+          
+          selfobj.totalRec = res.paginginfo.totalRecords;
+          console.log("selfobj.View",selfobj.View);
+          if (selfobj.totalRec == 0) {
+            if (selfobj.View == "traditionalList") {
+              $('#leadlistview').hide();
+            }else if (selfobj.View == "modernlist") {
+              $('#modernlistview').hide();
+            }
+            if(selfobj.filteredSearch == true){
+              $('.noDataFound').show();
+            }else{
+              $('.noCustAdded').show();
+            }
+          } else {
+            if (selfobj.View == "traditionalList") {
+              $('#leadlistview').show();
+            }else if (selfobj.View == "modernlist") {
+              $('#modernlistview').show();
+            }
+            if(selfobj.filteredSearch == true){
+              $('.noDataFound').hide();
+            }else{
+              $('.noCustAdded').hide();
+            }
           }
+          selfobj.setValues();
+  
+        });
+
+        if (appliedFilterCount > 0) {
+          document.getElementById('filterOption').classList.add('active');
+        } else {
+          document.getElementById('filterOption').classList.remove('active');
         }
-        selfobj.setValues();
-
-      });
-
-      if (appliedFilterCount > 0) {
-        document.getElementById('filterOption').classList.add('active');
-      } else {
-        document.getElementById('filterOption').classList.remove('active');
-      }
-
-      let filterOptionLi = document.getElementById('filterOption');
-      let taskBadgeSpan = filterOptionLi.querySelector('span.taskBadge');
-      if (taskBadgeSpan) {
-        taskBadgeSpan.remove();
-      }
-      if (appliedFilterCount != 0) {
-        let url = "<span class='badge bg-pink taskBadge'>" + appliedFilterCount + "</span>"
-        document.getElementById('filterOption').innerHTML += url;
+  
+        let filterOptionLi = document.getElementById('filterOption');
+        let taskBadgeSpan = filterOptionLi.querySelector('span.taskBadge');
+        if (taskBadgeSpan) {
+          taskBadgeSpan.remove();
+        }
+        if (appliedFilterCount != 0) {
+          let url = "<span class='badge bg-pink taskBadge'>" + appliedFilterCount + "</span>"
+          document.getElementById('filterOption').innerHTML += url;
+        }
       }
     },
 
@@ -1377,6 +1520,44 @@ define([
         var temp2 = moment(valuetxt, 'DD-MM-YYYY').valueOf();
         if (temp2 > temp) {
           $("#createdDateStart").val("");
+        }
+      });
+
+      startDate = $('#last_activityStart').datepickerBT({
+        format: "dd-mm-yyyy",
+        todayBtn: "linked",
+        clearBtn: true,
+        todayHighlight: true,
+        StartDate: new Date(),
+        numberOfMonths: 1,
+        autoclose: true,
+      }).on('changeDate', function (ev) {
+        $('#last_activityStart').change();
+        var valuetxt = $("#last_activityStart").val();
+        var temp = moment(valuetxt, 'DD-MM-YYYY').valueOf();
+        filterOption.set({ last_activityStart: valuetxt });
+        var valuetxt = $("#last_activityEnd").val();
+        var temp2 = moment(valuetxt, 'DD-MM-YYYY').valueOf();
+        if (temp > temp2) {
+          $("#last_activityEnd").val("");
+        }
+      });
+      endDate = $('#last_activityEnd').datepickerBT({
+        format: "dd-mm-yyyy",
+        todayBtn: "linked",
+        clearBtn: true,
+        todayHighlight: true,
+        numberOfMonths: 1,
+        autoclose: true,
+      }).on('changeDate', function (ev) {
+        $('#last_activityEnd').change();
+        var valuetxt = $("#last_activityEnd").val();
+        var temp = moment(valuetxt, 'DD-MM-YYYY').valueOf();
+        filterOption.set({ last_activityEnd: valuetxt });
+        var valuetxt = $("#last_activityStart").val();
+        var temp2 = moment(valuetxt, 'DD-MM-YYYY').valueOf();
+        if (temp2 > temp) {
+          $("#last_activityStart").val("");
         }
       });
 
@@ -1635,15 +1816,27 @@ define([
         }
       });
 
+      // $(".row.kanban-view").sortable({
+      //   placeholder: "ui-state-highlight",
+      //   forcePlaceholderSize: true,
+      //   items: '>.leadIndex',
+      //   cursor: 'grabbing',
+      //   stop: function (event, ui) {
+      //     setTimeout(function () { selfobj.savePositions(); }, 100);
+      //   }
+      // });
+
       $(".row.kanban-view").sortable({
         placeholder: "ui-state-highlight",
         forcePlaceholderSize: true,
-        items: '>.leadIndex',
+        items: '.leadIndex',
         cursor: 'grabbing',
-        stop: function (event, ui) {
+        connectWith: '.listgrid',
+        stop: function(event, ui) {
           setTimeout(function () { selfobj.savePositions(); }, 100);
         }
-      });
+      }).disableSelection();
+
     },
 
     setupDragable: function () {
@@ -1653,6 +1846,12 @@ define([
         helper: "clone",
         cursor: "move",
         zIndex: 1000,
+        start: function(event, ui) {
+            $(this).css("opacity", "0.6");
+        },
+        stop: function(event, ui) {
+            $(this).css("opacity", "1");
+        }
       });
     },
 
@@ -1940,75 +2139,111 @@ define([
       if ($(event.target).closest(checkboxTd).length === 0 && $(event.target).closest(actionColumn).length === 0 ) {
           if (button.length > 0) {
               if (!button.is(":hover")) {
+                const offset = 10;
                   button.css({
                       display: "block",
                       left: event.clientX + "px",
-                      top: event.clientY + "px"
+                      top: (event.clientY + offset) + "px",
                   });
               }
           }
       }
     },
   
-  handleMouseLeave: function(event) {
-      const customerRow = $(event.currentTarget);
-      const customerId = customerRow.data('customerid');
-      const relatedTarget = $(event.relatedTarget);
-      if (!relatedTarget.hasClass("customerRow")) {
-          customerRow.find(".CustomerHoverButton").css("display", "none");
-      }
-  },
+    handleMouseLeave: function(event) {
+        const customerRow = $(event.currentTarget);
+        const customerId = customerRow.data('customerid');
+        const relatedTarget = $(event.relatedTarget);
+        if (!relatedTarget.hasClass("customerRow")) {
+            customerRow.find(".CustomerHoverButton").css("display", "none");
+        }
+    },
 
-   getColorByInitials:function(initials) {
-    console.log("getColorByInitials",initials);
-    const colors = [
-      // "rgb(252, 231, 246)",
-      // "rgb(227, 251, 204)",
-      // "rgb(253, 234, 215)",
-      // "rgb(221, 214, 254)",
-      // "rgb(239, 248, 255)",
-      // "rgb(209, 224, 255)",
-      // "rgb(207, 249, 254)",
-      // "rgb(252, 231, 246)",
-      "#fce7f6", // Original color
-      "#f8d6e7", // Similar tone, different hue
-      "#d6f8e7", // Similar tone, different hue
-      "#e7d7fd", // Similar tone, different hue
-      "#f1f9dd", // Similar tone, different hue
-      "#d6e6ff", // Similar tone, different hue
-      "#d3f8fd", // Similar tone, different hue
-      "#fce7f6", // Original color
-      "#f8d6e7", // Similar tone, different hue
-      "#d6f8e7", // Similar tone, different hue
-      "#e7d7fd", // Similar tone, different hue
-      "#f1f9dd", // Similar tone, different hue
-      "#d6e6ff", // Similar tone, different hue
-      "#d3f8fd", // Similar tone, different hue
-      "#fce7f6", // Original color
-      "#f8d6e7", // Similar tone, different hue
-      "#d6f8e7", // Similar tone, different hue
-      "#e7d7fd", // Similar tone, different hue
-      "#f1f9dd", // Similar tone, different hue
-      "#d6e6ff", // Similar tone, different hue
-      "#d3f8fd", // Similar tone, different hue
-      "#fce7f6", // Original color
-      "#f8d6e7", // Similar tone, different hue
-      "#d6f8e7", // Similar tone, different hue
-      "#e7d7fd", // Similar tone, different hue
-      "#f1f9dd", // Similar tone, different hue
-      "#d6e6ff", // Similar tone, different hue
-      "#d3f8fd", // Similar tone, different hue
-    ];
-    
-    let sum = 0;
-    for (let i = 0; i < initials.length; i++) {
-        sum += initials.charCodeAt(i);
-    }
-    const index = sum % colors.length;
-    console.log("index",index);
-    return colors[index];
-  },
+    getInitials: function(name) {
+      if(name){
+        const words = name.split(' ');
+        let initials;
+        if (words.length === 1) {
+            initials = [words[0].charAt(0)];
+        } else {
+            initials = [words[0].charAt(0), words[words.length - 1].charAt(0)];
+        }
+        return initials.join('').toUpperCase();
+      }
+    },
   
+    getColorByInitials:function(initials) {
+      const colors = [
+        "#fce7f6", 
+        "#f8d6e7",
+        "#d6f8e7",
+        "#e7d7fd",
+        "#f1f9dd",
+        "#d6e6ff",
+        "#d3f8fd",
+        "#fce7f6", 
+        "#f8d6e7",
+        "#d6f8e7",
+        "#e7d7fd",
+        "#f1f9dd",
+        "#d6e6ff",
+        "#d3f8fd",
+        "#fce7f6", 
+        "#f8d6e7",
+        "#d6f8e7",
+        "#e7d7fd",
+        "#f1f9dd",
+        "#d6e6ff",
+        "#d3f8fd",
+        "#fce7f6", 
+        "#f8d6e7",
+        "#d6f8e7",
+        "#e7d7fd",
+        "#f1f9dd",
+        "#d6e6ff",
+        "#d3f8fd",
+      ];
+      
+      let sum = 0;
+      if(initials){
+        for (let i = 0; i < initials.length; i++) {
+          sum += initials.charCodeAt(i);
+        }
+        const index = sum % colors.length;
+        return colors[index];
+      }
+    },
+
+    getFontColor: function(bgColor) {
+      if(bgColor){
+        var selfobj = this;
+        const rgb = selfobj.hexToRgb(bgColor);
+        const darkerRgb = {
+            r: Math.max(0, rgb.r - 130),
+            g: Math.max(0, rgb.g - 130),
+            b: Math.max(0, rgb.b - 130) 
+        };
+        const darkerHex = selfobj.rgbToHex(darkerRgb.r, darkerRgb.g, darkerRgb.b);
+        return `rgba(${darkerRgb.r}, ${darkerRgb.g}, ${darkerRgb.b}, 1)`;
+      }
+    },
+
+    rgbToHex: function(r, g, b) {
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    },
+
+    hexToRgb :function(hex) {
+      if(hex){
+        hex = hex.replace(/^#/, '');
+        const bigint = parseInt(hex, 16);
+        return {
+            r: (bigint >> 16) & 255,
+            g: (bigint >> 8) & 255,
+            b: bigint & 255
+        };
+      }
+    },
+ 
     render: function () {
       var selfobj = this;
       var template = _.template(customerTemp);
@@ -2027,10 +2262,11 @@ define([
         column.fieldLabel = index !== -1 ? fieldName[index] : column.fieldLabel;
       });
 
-      this.$el.html(template({ totalRec: this.totalRec, menuName: this.mname, closeItem: this.toClose, pluralLable: this.plural_label, "moduleDesc": selfobj.module_desc, "arrangedColumnList": selfobj.arrangedColumnList, categoryList: selfobj.categoryList.models }));
+      this.$el.html(template({ totalRec: this.totalRec, menuName: this.mname, closeItem: this.toClose, pluralLable: this.plural_label, "moduleDesc": selfobj.module_desc, "arrangedColumnList": selfobj.arrangedColumnList, categoryList: selfobj.categoryList.models,displayView :selfobj.View }));
       var numColumns = selfobj.arrangedColumnList ? selfobj.arrangedColumnList.length : 0;
       var defaultWidth = numColumns <= 5 ? '100%' : (numColumns * 20) + '%';
       $("#clist").css("width", defaultWidth);
+      $(".tableModern").css("width", defaultWidth);
       $(".app_playground").append(this.$el);
       $(".loder").hide();
       setToolTip();
@@ -2044,9 +2280,96 @@ define([
         let rounded = Math.round(remainingScroll);
         if (rounded <= 0) {
           var listgridID = element.attr("id");
-          selfobj.girdLazyLoad(listgridID, firstLoad = false);
+          selfobj.girdLazyLoad(listgridID);
         }
       });
+      if(localStorage.getItem('user_setting')){
+        this.userSettings = JSON.parse(localStorage.getItem('user_setting'));
+        for (const rowKey in selfobj.userSettings) {
+          if(rowKey == selfobj.menuId){
+            const displayView = selfobj.userSettings[rowKey].displayView;
+            this.tableStructure = selfobj.userSettings[rowKey].tableStructure;
+          }
+        }
+      }else{
+        this.userSettings = {};
+      }
+        setTimeout(function () {
+          if(selfobj.userSettings){
+            for (const rowKey in selfobj.userSettings) {
+              if(rowKey == selfobj.menuId){
+                const displayView = selfobj.userSettings[rowKey].displayView;
+                const tableStructure = selfobj.userSettings[rowKey].tableStructure;
+                if(displayView){
+                  console.log("displayView",displayView);
+                  if(displayView == 'traditionalList' || selfobj.mname == 'customer'){
+                    $("#leadlistview").show();
+                    $("#leadgridview").hide();
+                    $("#modernlistview").hide();
+                    $(".grid_mode").removeAttr("disabled")
+                    $(".list_mode").attr('disabled', 'disabled');
+                    $(".modernlist_mode").removeAttr("disabled")
+                    $("#arrangeColumns").show();
+                    $(".showListView").toggle();
+                    selfobj.View = "traditionalList";
+                    selfobj.resetSearch();
+                  }else if(displayView == 'modernlist'){
+                    $("#leadlistview").hide();
+                    $("#leadgridview").hide();
+                    $("#modernlistview").show();
+                    $(".grid_mode").removeAttr("disabled")
+                    $(".modernlist_mode").attr('disabled', 'disabled');
+                    $(".list_mode").removeAttr("disabled")
+                    $("#arrangeColumns").show();
+                    $(".showListView").toggle();
+                    selfobj.View = "modernlist";
+                    selfobj.resetSearch();
+                  }else{
+                    $("#leadgridview").show();
+                    $("#leadlistview").hide();
+                    $("#modernlistview").hide();
+                    $(".list_mode").removeAttr("disabled")
+                    $(".grid_mode").attr('disabled', 'disabled');
+                    $(".modernlist_mode").removeAttr("disabled")
+                    $(".hide").hide();
+                    $(".showListView").toggle();
+                    selfobj.collection.reset();
+                    selfobj.View = "grid";
+                    selfobj.girdLazyLoad(listgridID = "");
+                    selfobj.setupDropable();
+                    selfobj.setupSortable();
+                    selfobj.leadCanbanSlider();
+                  }
+                }
+                if (tableStructure) {
+                  for (const property in tableStructure) {
+                    if (tableStructure.hasOwnProperty(property)) {
+                      const columns = tableStructure[property];
+                      if (columns) {
+                        for (const columnName in columns) {
+                          if (columns.hasOwnProperty(columnName)) {
+                            selfobj.arrangedColumnList.forEach((column) => {
+                              if (column.column_name === columnName) {
+                                const value = columns[columnName];
+                                const thElement = document.querySelector(`th[data-column="${columnName}"]`);
+                                var table = $(thElement).closest('table').attr('id');
+                                if (thElement) {
+                                  thElement.style.width = value + 'px';
+                                }
+                              }
+                            });
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          $(".showListView").hide();
+        }, 300);
+    
       return this;
     }
   });

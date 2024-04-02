@@ -36,7 +36,7 @@
           </div>
         </div>
       <!-- </div> -->
-        <div class="body table" id="leadlistview" style="display: none;">
+        <div class="body table" id="leadlistview">
           <div class="header moduleSec lead">
             <div>
               <h2>
@@ -52,40 +52,56 @@
                   <button type="button" class="btn bg-indigo arrangeColumns" data-action="arrangeColumns">Arrange columns</button>
                 </div> -->
 
-
               <div class="addColumns">
                 <button type="button" class="arrangeColumns btn-bgColor" data-action="arrangeColumns"
                   data-toggle="tooltip" data-placement="top" title="Configure Columns">
                   <span><span class="material-icons">view_column</span><span
                       class="material-icons">expand_more</span></span>
                 </button>
-                <div class="" id="customColumnConfigure"></div>
+                <div class="list_customColumnConfigure" id="customColumnConfigure"></div>
               </div>
-              <% if(arrangedColumnList.length> 0){ %>
-                <form id="reports" method="POST" action="#">
-                  <div class="donloadBtn" data-toggle="tooltip" data-placement="top" title="Download Data">
-                    <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown"
-                      aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top"
-                      title="Download Data">
-                      <span class="material-symbols-outlined">download</span>
+                <% if(arrangedColumnList.length> 0){ %>
+                  <form id="reports" method="POST" action="#">
+                    <div class="donloadBtn" data-toggle="tooltip" data-placement="top" title="Download Data">
+                      <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top"
+                        title="Download Data">
+                        <span class="material-symbols-outlined">download</span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a href="javascript:void(0);" class="downloadReport" data-type="pdf">PDF</a></li>
+                        <li><a href="javascript:void(0);" class="downloadReport" data-type="excel">Excel</a></li>
+                      </ul>
+                    </div>
+                  </form>
+                <% } %>
+                <%if(menuName=="leads" ){%>
+                  <div class="btn-group btn-group-block gridmode float-right btnDetails lisTDetails" style="right:0">
+                    <button class="btn ws-btn-default ws-btn-grid listViewBtn listView">
+                      <!-- displayView : <%=displayView%>  -->
+                      <!-- <%if(displayView == "traditionalList" ){ %>
+                        <span class="material-icons" style="margin-top: 2px;">view_list</span>
+                      <% } else if(displayView == "modernlist" ){ %>
+                        <span class="material-icons" style="margin-top: 2px;">dns</span>
+                      <% } else { %>
+                        <span class="material-icons" style="margin-top: 2px;">grid_on</span>
+                      <% } %> -->
+                      <span class="material-icons" style="margin-top: 2px;">view_list</span>
                     </button>
-                    <ul class="dropdown-menu">
-                      <li><a href="javascript:void(0);" class="downloadReport" data-type="pdf">PDF</a></li>
-                      <li><a href="javascript:void(0);" class="downloadReport" data-type="excel">Excel</a></li>
+                    <ul class="showListView forGrid" style="display: none;">
+                      <li>
+                        <button class="btn ws-btn-default ws-btn-grid list_mode setViewMode" value="traditionalList"><span class="material-icons" style="margin-top: 2px;">view_list</span> Traditional List</button>
+                      </li>
+                      <li>
+                        <button class="btn ws-btn-default ws-btn-grid modernlist_mode setViewMode" value="modernlist"><span class="material-icons" style="margin-top: 2px;">dns</span> Modern list</button>
+                      </li>
+                      <li>
+                        <button class="btn ws-btn-default ws-btn-grid  grid_mode setViewMode" value="grid"><span class="material-icons" style="margin-top: 2px;">grid_on</span>Grid View</button>
+                      </li>
                     </ul>
                   </div>
-                </form>
-                <% } %>
-                  <%if(menuName=="leads" ){%>
-                    <div class="btn-group btn-group-block gridmode float-right btnDetails" style="right:0">
-                      <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span
-                          class="material-icons" style="margin-top: 2px;">view_list</span></button>
-                      <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span
-                          class="material-icons" style="margin-top: 2px;">grid_on</span></button>
-                    </div>
-                    <%}%>
+                <%}%>
             </div>
-
           </div>
 
           <div class="actionList">
@@ -105,10 +121,8 @@
             </div>
           </div>
           <% if(arrangedColumnList.length> 0){ %>
-            <div class="customTableClass"><!--customerListTable-->
+            <div class="customTableClass">
               <table id="clist" class="table jambo_table bulk_action tableList table-hover table-bordered table-resizable tablewidth">
-              <!-- <table id="clist" class="table bulk_action tableList table-hover table-bordered table-resizable" style="width: 150%;"> -->
-                <!-- <table id="clist" class="table bulk_action tableList table-hover"> -->
                 <thead id="thead">
                   <tr class="headings">
                     <th class="check-gap">
@@ -117,88 +131,30 @@
                         <label for="cAll">&nbsp;</label>
                       </div>
                     </th>
-                    <!-- <th class="column-title">Customer ID</th> -->
-                    <!-- <th class="order sortColumns column-title" data-value="" data-field="Name">
-                    Name
-                    <span class="material-symbols-outlined sortarrow up">
-                      north
-                    </span>
-                    <span class="material-symbols-outlined sortarrow down">
-                      south
-                    </span>
-                  </th> -->
-                    <!-- <th class="order sortColumns column-title" data-value="" data-field="email">
-                    Email
-                    <span class="material-symbols-outlined sortarrow up">
-                      north
-                    </span>
-                    <span class="material-symbols-outlined sortarrow down">
-                      south
-                    </span>
-                  </th> -->
-                    <!-- <th class="order sortColumns column-title" data-value="" data-field="mobile_no">Mobile Number
-                    <span class="material-symbols-outlined sortarrow up">
-                      north
-                    </span>
-                    <span class="material-symbols-outlined sortarrow down">
-                      south
-                    </span>
-                  </th> -->
-                    <!-- <th class="order sortColumns column-title" data-value="" data-field="record_type">Record Type
-                    <span class="material-symbols-outlined sortarrow up">
-                      north
-                    </span>
-                    <span class="material-symbols-outlined sortarrow down">
-                      south
-                    </span>
-                  </th> -->
-                    <!-- <%if(menuName=="leads" ){%> -->
-                      <!-- <th class="order sortColumns column-title" data-value="" data-field="stages">Lead Stage
-                      <span class="material-symbols-outlined sortarrow up">
-                        north
-                      </span>
-                      <span class="material-symbols-outlined sortarrow down">
-                        south
-                      </span>
-                    </th> -->
-                      <!-- <%}%> -->
-                        <!-- <% _.each(arrangedColumnList, function(column) { %>             
-                    <th class="order sortColumns column-title" data-value="" data-field="whatappnumber" ><%= column.fieldLabel %>
-                      <span class="material-symbols-outlined sortarrow up">
-                        north
-                      </span>
-                      <span class="material-symbols-outlined sortarrow down">
-                        south
-                      </span>
-                    </th>   
-                    <% }); %> -->
+                  
                         <% _.each(arrangedColumnList, function(column) { %>
-                          <% if(column.column_name=="stages" ) { %>
+                          <% if(column.column_name == "stages" ) { %>
                             <% if(menuName=="leads" ) { %>
-                              <th class="order sortColumns column-title text-capitalize drag-line" data-value=""
-                                data-field="stages">Lead Stage
-                                <span class="material-symbols-outlined sortarrow up">
-                                  north
-                                </span>
-                                <span class="material-symbols-outlined sortarrow down">
-                                  south
+                              <th class="order column-title text-capitalize drag-line" data-value="" data-field="t.stages" data-column="stages">Lead Stage
+                                <span class="sortColumns" data-field="t.stages">
+                                  <span class="material-symbols-outlined sortarrow up">north</span>
+                                  <span class="material-symbols-outlined sortarrow down"> south</span>
                                 </span>
                                 <div class="resize-bar"></div>
                               </th>
-                              <% } %>
-                              <% } else { %>
-                              <th class="column-title text-capitalize drag-line"
-                                data-field="<%= column.column_name %>">
+                            <% } %>
+                            <% } else { %>
+                              <th class="column-title text-capitalize drag-line" data-field="<%= column.column_name %>" data-column="<%= column.column_name %>">
                                 <%= column.fieldLabel %>
-                                <span class="sortColumns" data-field="<%= column.column_name %>">
+                                <span class="sortColumns" data-field="t.<%= column.column_name %>">
                                   <span class="material-symbols-outlined sortarrow up">north</span>
                                   <span class="material-symbols-outlined sortarrow down">south</span>
                                 </span>
                                   <div class="resize-bar"></div>
                               </th>
-                              <% } %>
-                            <% }); %>
-                                <th class="column-title">Action</th>
+                          <% } %>
+                        <% }); %>
+                        <th class="column-title">Action</th>
                   </tr>
                 </thead>
                 <tbody id="customerList"></tbody>
@@ -233,6 +189,149 @@
               </div>
               <% } %>
         </div>
+
+        <div class="body moderntable" id="modernlistview" style="display: none;">
+          <div class="header moduleSec">
+            <div>
+              <h2>
+                <%=pluralLable%>
+              </h2>
+              <div class="moduleDesc">
+                <%=moduleDesc%>
+              </div>
+            </div>
+            <div class="text-right actionBtns topBtnDetails" id="arrangeColumns" style="top:-7px;right:-19px;">
+              <div class="text-right actionBtns" id="arrangeColumns">
+                <div class="addColumns">
+                  <button type="button" class="arrangeColumns btn-bgColor columntop" data-action="arrangeColumns" data-toggle="tooltip" data-placement="top" title="Configure Columns">
+                    <span><span class="material-icons">view_column</span><span class="material-icons">expand_more</span></span>
+                  </button>
+                  <div class="modern_customColumnConfigure" id="customColumnConfigure"></div>
+                </div>
+                <% if(arrangedColumnList.length> 0){ %>
+                  <form id="reports" method="POST" action="#">
+                    <div class="donloadBtn" data-toggle="tooltip" data-placement="top" title="Download Data">
+                      <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top"
+                        title="Download Data">
+                        <span class="material-symbols-outlined">download</span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a href="javascript:void(0);" class="downloadReport" data-type="pdf">PDF</a></li>
+                        <li><a href="javascript:void(0);" class="downloadReport" data-type="excel">Excel</a></li>
+                      </ul>
+                    </div>
+                  </form>
+                <% } %>
+                <%if(menuName=="leads" ){%>
+                  <div class="btn-group btn-group-block gridmode float-right btnDetails lisTDetails" style="right:0">
+                    <button class="btn ws-btn-default ws-btn-grid listViewBtn listView">
+                      <!-- displayView : <%=displayView%>  -->
+                      <!-- <%if(displayView == "traditionalList" ){ %>
+                        <span class="material-icons" style="margin-top: 2px;">view_list</span>
+                      <% } else if(displayView == "modernlist" ){ %>
+                        <span class="material-icons" style="margin-top: 2px;">dns</span>
+                      <% } else { %>
+                        <span class="material-icons" style="margin-top: 2px;">grid_on</span>
+                      <% } %> -->
+                      <span class="material-icons" style="margin-top: 2px;">view_list</span>
+                    </button>
+                    <ul class="showListView forGrid" style="display: none;">
+                      <li>
+                        <button class="btn ws-btn-default ws-btn-grid list_mode setViewMode" value="traditionalList"><span class="material-icons" style="margin-top: 2px;">view_list</span> Traditional List</button>
+                      </li>
+                      <li>
+                        <button class="btn ws-btn-default ws-btn-grid modernlist_mode setViewMode" value="modernlist"><span class="material-icons" style="margin-top: 2px;">dns</span> Modern list</button>
+                      </li>
+                      <li>
+                        <button class="btn ws-btn-default ws-btn-grid  grid_mode setViewMode" value="grid"><span class="material-icons" style="margin-top: 2px;">grid_on</span>Grid View</button>
+                      </li>
+                    </ul>
+                  </div>
+                <%}%>
+              </div>
+            </div>
+          </div>
+          <div class="actionList">
+            <%if(permission.delete=="yes" ) { %>
+              <span type="button" style="display:none;" class="changeStatus deleteAll" data-action="delete"
+                data-toggle="tooltip" data-placement="top" title="Delete"><i class="material-icons"
+                  data-toggle="tooltip" data-placement="top" title="Delete"
+                  style="background-color: #494b94; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px; color:#fff;">delete</i></span>
+              <% } %>
+          </div>
+          <div class="customTableClass forTask modernTable">
+            <table id="custModernList" class="table jambo_table bulk_action tableList table-hover table-resizable tablewidth tableModern">
+              <thead id="thead" style="z-index: 8;">
+                <tr class="headings">
+                    <th class="check-gap">
+                      <div class="listCheckbox">
+                        <input id="cAll" class="checkall chk-col-amber" data-tocheck="custModernList" type="checkbox">
+                        <label for="cAll">&nbsp;</label>
+                      </div>
+                      <div class="resize-bar"></div>
+                    </th>
+                    <% _.each(arrangedColumnList, function(column) { %>
+                      <% if(column.column_name == "stages" ) { %>
+                        <% if(menuName=="leads" ) { %>
+                          <th class="order column-title table-bordered text-capitalize drag-line" data-value="" data-field="t.stages" data-column="stages">Lead Stage
+                            <span class="sortColumns" data-field="t.stages">
+                              <span class="material-symbols-outlined sortarrow up">north</span>
+                              <span class="material-symbols-outlined sortarrow down"> south</span>
+                            </span>
+                            <div class="resize-bar"></div>
+                          </th>
+                        <% } %>
+                        <% } else { %>
+                          <th class="column-title table-bordered text-capitalize drag-line" data-field="<%= column.column_name %>" data-column="<%= column.column_name %>">
+                            <%= column.fieldLabel %>
+                            <span class="sortColumns" data-field="t.<%= column.column_name %>">
+                              <span class="material-symbols-outlined sortarrow up">north</span>
+                              <span class="material-symbols-outlined sortarrow down">south</span>
+                            </span>
+                              <div class="resize-bar"></div>
+                          </th>
+                      <% } %>
+                    <% }); %>
+                    <th class="column-title">Action</th>
+                </tr>
+              </thead>
+              <tbody id="modernList"></tbody>
+            </table>
+          </div>
+
+        <div class="profile-loader text-center table">
+          <div class="preloader table">
+            
+            <div class="loderGif table">
+              <img src="images/webloader.gif" alt="User" />
+            </div>
+          </div>
+        </div>
+
+        <div id="loadMember" data-index="1" data-currTask="1"></div>
+
+        <div class="footer row">
+
+          <div class="col-sm-4" style="padding: 0;">
+
+            <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
+                class="page-info f_txt"></span></div>
+
+          </div>
+          <div class="col-sm-4">
+            <div class="profile-loader-msg text-center"></div>
+          </div>
+
+          <div class="col-sm-4" style="padding: 0;">
+            <div class="showPageDetails dataTables_paginate paging_simple_numbers">
+              <ul class="pagination"></ul>
+            </div>
+          </div>
+        </div>
+      
+        </div>
+
         <div class="body greed" id="leadgridview" style="display: none;">
           <div class="header moduleSec lead">
             <div>
@@ -244,11 +343,42 @@
               </div>
             </div>
             <div class="leadRight">
-              <div class="btn-group btn-group-block gridmode float-right btnDetails">
-                <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span
-                    class="material-icons" style="margin-top: 2px;">view_list</span></button>
-                <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span class="material-icons"
-                    style="margin-top: 2px;">grid_on</span></button>
+              <form id="reports" method="POST" action="#">
+                <div class="donloadBtn" data-toggle="tooltip" data-placement="top" title="Download Data">
+                  <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top"
+                    title="Download Data">
+                    <span class="material-symbols-outlined">download</span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a href="javascript:void(0);" class="downloadReport" data-type="pdf">PDF</a></li>
+                    <li><a href="javascript:void(0);" class="downloadReport" data-type="excel">Excel</a></li>
+                  </ul>
+                </div>
+              </form>
+              <div class="btn-group btn-group-block gridmode float-right btnDetails lisTDetails" style="right:0">
+                <button class="btn ws-btn-default ws-btn-grid listViewBtn listView">
+                  <!-- displayView : <%=displayView%>  -->
+                  <!-- <%if(displayView == "traditionalList" ){ %>
+                    <span class="material-icons" style="margin-top: 2px;">view_list</span>
+                  <% } else if(displayView == "modernlist" ){ %>
+                    <span class="material-icons" style="margin-top: 2px;">dns</span>
+                  <% } else { %>
+                    <span class="material-icons" style="margin-top: 2px;">grid_on</span>
+                  <% } %> -->
+                  <span class="material-icons" style="margin-top: 2px;">view_list</span>
+                </button>
+                <ul class="showListView forGrid" style="display: none;">
+                  <li>
+                    <button class="btn ws-btn-default ws-btn-grid list_mode setViewMode" value="traditionalList"><span class="material-icons" style="margin-top: 2px;">view_list</span> Traditional List</button>
+                  </li>
+                  <li>
+                    <button class="btn ws-btn-default ws-btn-grid modernlist_mode setViewMode" value="modernlist"><span class="material-icons" style="margin-top: 2px;">dns</span> Modern list</button>
+                  </li>
+                  <li>
+                    <button class="btn ws-btn-default ws-btn-grid  grid_mode setViewMode" value="grid"><span class="material-icons" style="margin-top: 2px;">grid_on</span>Grid View</button>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -257,26 +387,26 @@
               <%if(menuName=="leads" ){%>
                 <% _.each(categoryList, function(parentCat) { %>
                   <% _.each(parentCat.attributes.sublist, function(category) { %>
-                    <div class="greedLeadTotal leadIndex" data-lead-id="<%=category.category_id%>"
-                      style="background-color: <%=category.cat_color_light%>;">
+                    <div class="greedLeadTotal leadIndex" data-lead-id="<%=category.category_id%>" style="background-color: <%=category.cat_color_light%>;">
                       <div class="listgrid leadDrop" id="<%=category.category_id%>">
                         <div style="background-color: <%=category.cat_color%>" class="totalCount">
                           <h2 style="color:<%=category.font_color%>">
                             <%=category.categoryName%>
                           </h2>
+                          <span class="gridPagging"></span>
                         </div>
                       </div>
                     </div>
-                    <%})%>
-                      <%})%>
-                        <%}%>
-                          <div class="greedLeadTotal" data-lead-id="otherStage">
-                            <div class="listgrid" id="otherStage">
-                              <div class="totalCount">
-                                <h2>Other Stage</h2>
-                              </div>
-                            </div>
-                          </div>
+                  <%})%>
+                <%})%>
+              <%}%>
+              <div class="greedLeadTotal" data-lead-id="otherStage">
+                <div class="listgrid" id="otherStage">
+                  <div class="totalCount">
+                    <h2>Other Stage</h2>
+                  </div>
+                </div>
+              </div>
             </div>
             <!-- Slider -->
             <div class="kanban-scroll-view">
@@ -308,7 +438,7 @@
         </li>
         <% } %>
 
-          <!-- <li class="loadview nav-item" data-view="notificationView" data-item="notificationView" data-toggle="tooltip"
+          <li class="loadview nav-item" data-view="notificationView" data-item="notificationView" data-toggle="tooltip"
             data-placement="top" title="Notify">
             <span class="material-icons">settings</span>
           </li>
@@ -317,7 +447,7 @@
               data-placement="top" title="Escalation">
               <span class="material-icons">notification_important</span>
             </li>
-            <% } %> -->
+            <% } %>
     </ul>
   </div>
 

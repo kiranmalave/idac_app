@@ -233,6 +233,20 @@
   </div>
   <div class="clearfix">&nbsp;</div>
   
+  <%if(menuName == "leads"){%>
+    <label>Last Activity Date</label>
+    <div class="row dateList">
+      <div class="col-5">
+        <input type="text" id="last_activityStart" class="form-control txtchange filterClear" placeholder="Start Date" readonly>
+      </div>
+      <div class="input-group-addon mt-2">to</div>
+      <div class="col-5">
+        <input type="text" id="last_activityEnd" class="form-control txtchange filterClear" placeholder="End Date" readonly>
+      </div>
+    </div>
+    <div class="clearfix">&nbsp;</div>
+  <%}%>
+  
   <% _.each(filteredFields, function(column) { %>
     <% if(column.fieldType == "Datepicker"){%> 
       <label><%= column.fieldLabel%></label>
@@ -296,6 +310,18 @@
       <div class="clearfix">&nbsp;</div>
     <% } %>
   <% }); %>
+  <%if(menuName == "leads"){%>
+    <div class="row">
+      <div class="col-md-12">
+        <label>Record Type:</label>
+        <ul class="item-container" data-valid="record_type">
+          <li class="record_type multiOptionSel" data-single="Y" data-value="individual">Individual</li>
+          <li class="record_type multiOptionSel" data-single="Y" data-value="company">Company</li>
+        </ul>
+      </div>
+    </div>
+  <%}%>
+  </div>
 
   <!-- <div class="row pt-2">
     <div class="col-md-12">
@@ -317,8 +343,7 @@
   <div class="col-xs-12 text-center filter-footer">
     <hr>
     <div class="filter-right">
-    <input type="button" id="filterSearch" class="filterSearch btn btn-raised bg-green waves-effect"
-      value="Search"></button>
+    <input type="button" id="filterSearch" class="filterSearch btn btn-raised bg-green waves-effect" value="Search"></button>
     <input type="button" id="resetSearch" class="btn btn-raised bg-blue-grey resetval" value="Reset"></button>
     <input id="filterOption" type="button" class="btn btn-raised bg-blue-grey colseFil" value="Close"></button>
     </div>

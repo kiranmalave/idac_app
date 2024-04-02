@@ -77,6 +77,7 @@ define([
       $(e.currentTarget).addClass('activeNew');
       $('#reminder_date').val('');
       $(".form-line").removeClass("focused");
+      $('#reminder_time').val('');
     },
 
     addOne: function (objectModel) {
@@ -102,9 +103,12 @@ define([
         var datePart = moment(dateTimeArray[0]).format("DD-MM-YYYY");
         var timePart = moment(reminderDate).format("h:mm a");
         selfobj.model.set({"reminder_date":dateTimeArray[0]});
+        selfobj.model.set({"reminder_time":dateTimeArray[1]});
         $('#reminder_date').val(datePart);
+        $('#reminder_time').val(timePart);
       }else{
         $('#reminder_date').val('');
+        $('#reminder_time').val('');
       }
      
       console.log("selfobj.model editnote",selfobj.model);
@@ -317,6 +321,35 @@ define([
         newdetails["" + toID] = valuetxt;
         selfobj.model.set({ newdetails });
         console.log("selfobj.model",selfobj.model);
+      });
+
+      // $("#reminder_date").datepickerBT({
+      //   format: "dd-mm-yyyy",
+      //   todayBtn: "linked",
+      //   clearBtn: true,
+      //   todayHighlight: true,
+      //   startDate: new Date(),
+      //   numberOfMonths: 1,
+      //   autoclose: true,
+      // }).on('changeDate', function (selected) {
+      //   $('#reminder_date').change();
+      //   var valuetxt = $("#reminder_date").val();
+      //   selfobj.model.set({ reminder_date: valuetxt });
+      // });
+
+      $('#reminder_time').timepicker({
+        timeFormat: 'hh:mm a',
+        interval: 15,
+        startTime: '00:00',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true,
+        change: function (e) {
+          var st = $("#reminder_time").val();
+          var tempsTime = moment(st, "hh:mm a").format("HH:mm:ss");
+          selfobj.model.set({ reminder_time: tempsTime });
+          console.log(tempsTime);
+        },
       });
 
       var __toolbarOptions = [
