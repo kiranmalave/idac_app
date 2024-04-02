@@ -25,7 +25,10 @@
                             <%}%>   
                             <% if(activityDetails.attributes.record_type =='lead'){ %>
                                 <i class="material-icons">person</i>
-                            <%}%>         
+                            <%}%>   
+                            <% if(activityDetails.attributes.record_type =='email'){ %>
+                                <i class="material-icons">mail</i>
+                            <%}%>      
                     </div>
                 </div>
 
@@ -55,13 +58,16 @@
                                         <% if(activityDetails.attributes.record_type =='lead'){ %>
                                             <h4>Lead</h4>
                                         <%}%>
+                                        <% if(activityDetails.attributes.record_type =='email'){ %>
+                                            <h4>Email</h4>
+                                        <%}%>
                                     </div>
                                 <div class="Time" >
                                     <p><%=activityDetails.attributes.timeString%></p>
                                 </div>
                             </div>
                             <div class="details">
-                                <p><%=activityDetails.attributes.description%> <%if(view != "upcoming"){%> <%if(activityDetails.attributes.record_type == "task"){%>By: <%=activityDetails.attributes.createdName%> Task ID: <%=activityDetails.attributes.record_id%><%}else if(activityDetails.attributes.record_type == "appointment"){%> Appoitment ID: <%=activityDetails.attributes.record_id%><%}%><%}else{%>Created By: <%=activityDetails.attributes.createdName%><%}%></p>
+                                <p><%=activityDetails.attributes.description%> <%if(view != "upcoming"){%> <%if(activityDetails.attributes.record_type == "task"){%>By: <%=activityDetails.attributes.createdName%> Task ID: <%=activityDetails.attributes.record_id%><%}else if(activityDetails.attributes.record_type == "appointment"){%> Appoitment ID: <%=activityDetails.attributes.record_id%><%}%><%}else if(activityDetails.attributes.record_type == "email"){%>Sent <%}else{%>Created By: <%=activityDetails.attributes.createdName%><%}%></p>
                             </div>
                         </div>
                     </a>
@@ -96,7 +102,7 @@
                             </div>
                         </div>
                         <div class="details">
-                            <p><%=activityDetails.attributes.description%> <%if(view != "upcoming"){%> <%if(activityDetails.attributes.record_type == "task"){%>By: <%=activityDetails.attributes.createdName%> Task ID: <%=activityDetails.attributes.record_id%><%}else if(activityDetails.attributes.record_type == "appointment"){%> Appoitment ID: <%=activityDetails.attributes.record_id%><%}%><%}else{%>Created By: <%=activityDetails.attributes.createdName%><%}%></p>
+                            <p><%=activityDetails.attributes.description%> <%if(view != "upcoming"){%> <%if(activityDetails.attributes.record_type == "task"){%>By: <%=activityDetails.attributes.createdName%> Task ID: <%=activityDetails.attributes.record_id%><%}else if(activityDetails.attributes.record_type == "appointment"){%> Appoitment ID: <%=activityDetails.attributes.record_id%><%}%><%}%> By: <%=activityDetails.attributes.createdName%></p>
                         </div>
                     </div>
                 <%}%>

@@ -9,12 +9,24 @@
         <% if(column.column_name == "name" ) { %>
           <td class="draglinerow truncateWidth">
               <a class="custName" target="_blank" href="#customerDashboard/<%= customerDetails.attributes.customer_id %>/<%=menuID%>">
-                <%if (customerDetails.attributes.customer_image == "" ){%>
-                  <span class="initial" style="background-color : <%=customerDetails.attributes.initialColor%>"><%=customerDetails.attributes.initial%> </span>
+                <%if (customerDetails.attributes.customer_image == "" || customerDetails.attributes.customer_image == null){%>
+                  <span class="initial" style="background-color : <%=customerDetails.attributes.initialBgColor%>; color:<%=customerDetails.attributes.initialColor%>" ><%=customerDetails.attributes.initial%> </span>
                 <%}else{%>
                     <img src="<%=customerDetails.attributes.customer_image%>" style=" width: 25px; height: 25px; border-radius: 50%;display:flex;flex-shrink:0"/>
-                <%}%><span class="salutationCls"><%=customerDetails.attributes.salutation%>.</span><span class="nametooltip truncateColumns"> <%=customerDetails.attributes.name%> 
-                </span> <i class="material-icons">open_in_new</i></a>
+                <%}%><span class="salutationCls"><%=customerDetails.attributes.salutation%>.</span><span class="nametooltip truncateColumns"> <%=customerDetails.attributes.name%> </span> 
+                <% if ((customerDetails.attributes.email == '-') || (customerDetails.attributes.mobile_no == '-')) { %>
+                  <% if ((customerDetails.attributes.email == '-') && (customerDetails.attributes.mobile_no == '-')) { %>
+                    <img src="images/alertIcon.png" class="alertIcon" data-toggle="tooltip" data-placement="top" title="Email Address & Mobile no. Not Found"/>
+                    <!-- <span class="alertIcon material-icons" data-toggle="tooltip" data-placement="top" title="Email Address & Mobile no. Not Found">warning</span> -->
+                  <% } else if ((customerDetails.attributes.email == '-')) { %>
+                    <img src="images/alertIcon.png" class="alertIcon" data-toggle="tooltip" data-placement="top" title="Email Address Not Found"/>
+                    <!-- <span class="alertIcon material-icons" data-toggle="tooltip" data-placement="top" title="Email Address Not Found">warning</span> -->
+                  <% } else { %>
+                    <img src="images/alertIcon.png" class="alertIcon" data-toggle="tooltip" data-placement="top" title="Mobile no. Not Found"/>
+                    <!-- <span class="alertIcon material-icons" data-toggle="tooltip" data-placement="top" title="Mobile no. Not Found">warning</span> -->
+                  <% } %>
+                <% } %>
+              </a>
           </td>
           <% } else if(column.column_name == "email" ) { %>
             <td class="draglinerow truncateWidth">
@@ -25,8 +37,16 @@
         <% } else if(column.column_name == "stages" ) { %>
           <% if(menuName=="leads" ) { %>
             <td class="draglinerow truncateWidth">
-              <div class="nametooltip truncateColumns">
-                <%=customerDetails.attributes.stages%>
+              <div class="nametooltip truncateColumns" >
+                <span <%if(customerDetails.attributes.stage_color != "" && customerDetails.attributes.stage_color != null){%>style="background: <%=customerDetails.attributes.stage_color%>; color:white;  padding:4px 10px; border-radius:5px "<%} else {%>style="color:#00000"<%}%>><%=customerDetails.attributes.stages%></span>
+              </div>
+            </td>
+          <% } %>
+        <%} else if(column.column_name == "lead_source" ) { %>
+          <% if(menuName=="leads" ) { %>
+            <td class="draglinerow truncateWidth">
+              <div class="nametooltip truncateColumns" >
+                <span <%if(customerDetails.attributes.source_color != "" && customerDetails.attributes.source_color != null){%>style="background: <%=customerDetails.attributes.source_color%>; color:white;  padding:4px 10px; border-radius:5px "<%} else {%>style="color:#00000"<%}%>><%=customerDetails.attributes.lead_source%></span>
               </div>
             </td>
           <% } %>
@@ -47,9 +67,8 @@
               data-customer_id="<%=customerDetails.attributes.customer_id%>" data-view="singleCustomerData"
               data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
               <% if(customerDetails.attributes.type == "lead" ){%>
-                <button type="button" class="btn bg-indigo markCust" data-id="<%=customerDetails.attributes.customer_id%>"
-                  style="margin-left:15px; margin-top:3px">Mark as Customer</button>
-                <%}%>
+                <button type="button" class="btn bg-indigo markAsCust" data-id="<%=customerDetails.attributes.customer_id%>">Mark as Customer</button>
+              <%}%>
           </td>
           <td>
             <div class="CustomerHoverButton">
