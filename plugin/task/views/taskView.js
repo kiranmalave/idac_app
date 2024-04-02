@@ -835,7 +835,6 @@ define([
     },
 
     setTaskStatus :function(e){
-      alert("herer");
       var selfobj = this;
       var selectedStatusId = '';
       var task_id = $(e.currentTarget).attr('data-task_id');
