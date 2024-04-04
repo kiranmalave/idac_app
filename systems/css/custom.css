@@ -13777,3 +13777,11 @@ button.ws-btn-default.newNote.activeNew i {
   position: relative;
   box-shadow: none;
 }
+
+img.alertIcon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+}
