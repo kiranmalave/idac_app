@@ -305,3 +305,25 @@ $route['menuPagesMaster/updatePositions'] = 'Pages/updatePositions';
 
 $route['translate_uri_dashes'] = FALSE;
 $route['404_override'] = '';
+
+
+$route['donorReportDetails'] = 'ExcelExport/donorReportDetails';
+$route['celebrateWithUsReport'] = 'ExcelExport/celebrateWithUsReport';
+$route['reportDataPreview'] = 'ExcelExport/reportDataPreview';
+$route['reports'] = 'ExcelExport/reports';
+$route['customerReports'] = 'ExcelExport/customerReports';
+$route['taskReports'] = 'ExcelExport/taskReports';
+$route['campaignReports'] = 'ExcelExport/campaignReports';
+$route['careerReports'] = 'ExcelExport/careerReports';
+$route['emailReports'] = 'ExcelExport/emailReports';
+$route['serviceReports'] = 'ExcelExport/serviceReports';
+$route['ourTeamReports'] = 'ExcelExport/ourTeamReports';
+$route['ourClientsReports'] = 'ExcelExport/ourClientsReports';
+$route['testimonialsReports'] = 'ExcelExport/testimonialsReports';
+$route['faqReports'] = 'ExcelExport/faqReports';
+$route['eventsReports'] = 'ExcelExport/eventsReports';
+$route['expensesReports'] = 'ExcelExport/expensesReports';
+$route['receiptReports'] = 'ExcelExport/receiptReports';
+$route['courseReports'] = 'ExcelExport/courseReports';
+$route['adminReports'] = 'ExcelExport/adminReports';
+$route['companyReports'] = 'ExcelExport/companyReports';
