@@ -2330,4 +2330,18 @@ class TaskMaster extends CI_Controller
 			$this->response->output($status, 200);
 		}
 	}
+
+	public function updatePositions(){
+		$this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$action = $this->input->post("action");
+		if (trim($action) == "changePositions") {
+			$menuIDs = $this->input->post("menuIDs");
+			foreach ($menuIDs as $key => $value) {
+				$where = array('category_id' => $value);
+				$categoryIndex['lead_index'] = $key;
+				$iscreated = $this->CommonModel->updateMasterDetails('categories', $categoryIndex, $where);
+			}
+		}
+	}
 }

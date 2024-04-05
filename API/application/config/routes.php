@@ -239,6 +239,7 @@ $route['getHistory'] = 'taskMaster/getTaskHistory';
 $route['getCustomerList'] = 'systems/Application/getList';
 $route['getAssigneeList'] = 'systems/Application/getList';
 $route['getList'] = 'systems/Application/getList';
+$route['taskColumnUpdatePositions'] = 'taskMaster/updatePositions';
 
 ######Invoice
 $route['taxInvoiceList'] = 'TaxInvoice/index';
