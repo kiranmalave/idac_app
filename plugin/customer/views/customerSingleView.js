@@ -412,7 +412,7 @@ define([
       if (this.menuName == "customer") {
         this.model.set({ "type": "customer" });
       }
-      this.model.set({ "company_id": DEFAULTCOMPANY });
+      // this.model.set({ "company_id": DEFAULTCOMPANY });
         
       if ($("#customerDetails").valid()) {
         $(e.currentTarget).html("<span>Saving..</span>");
