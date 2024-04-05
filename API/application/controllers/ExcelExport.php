@@ -11,9 +11,11 @@ class ExcelExport extends CI_Controller
 	{
 		parent::__construct();
 		//$this->load->library("Excel");
-		$this->load->model("ExcelExportModel");
+		// $this->load->model("ExcelExportModel");
 		$this->load->model("CommonModel");
+		$this->load->library("Filters");
 	}
+	
 	public function index()
 	{
 		$data["traineeData"] = $this->ExcelExportModel->fetch_data();
@@ -356,9 +358,7 @@ class ExcelExport extends CI_Controller
 	public function celebrateWithUsReport()
 	{
 		$postData = json_decode($_POST['formData']);
-		$t = $postData->textSearch;
-		$t = $t ?? '';
-		$textSearch = trim($t);
+		$textSearch = $postData->textSearch;
 		$textval = $postData->textval;
 		$orderBy = $postData->orderBy;
 		$order = $postData->order;
@@ -376,6 +376,7 @@ class ExcelExport extends CI_Controller
 
 		$wherec = $join = array();
 		if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
+			$textSearch = trim($textSearch);
 			$wherec["$textSearch like  "] = "'" . $textval . "%'";
 			$sortedArr['Search By'] = $textSearch;
 			$sortedArr['Search Text'] = $textval;
@@ -551,7 +552,6 @@ class ExcelExport extends CI_Controller
 			$this->mpdfci->Output();
 		}
 	}
-
 
 	public function reportDataPreview()
 	{
@@ -760,5 +760,2791 @@ class ExcelExport extends CI_Controller
 			$status['flag'] = 'S';
 			$this->response->output($status, 200);
 		}
+	}
+
+	public function reports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+	
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function customerReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+	
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"country_id" => ["table" => "country", "alias" => "cn", "column" => "country_name", "key2" => "country_id"],
+				"state_id" => ["table" => "states", "alias" => "st", "column" => "state_name", "key2" => "state_id"],
+				"city_id" => ["table" => "cities", "alias" => "ci", "column" => "city_name", "key2" => "city_id"],
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+				"lead_source" => ["table" => "categories", "alias" => "cl", "column" => "categoryName", "key2" => "category_id"],
+				"stages" => ["table" => "categories", "alias" => "c", "column" => "categoryName", "key2" => "category_id"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+		
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+
+		$jkey = count($join)+1;
+			$join[$jkey]['type'] ="LEFT JOIN";
+			$join[$jkey]['table']="categories";
+			$join[$jkey]['alias'] ="css";
+			$join[$jkey]['key1'] ="stages";
+			$join[$jkey]['key2'] ="category_id";
+
+		$selectC = $selectC;
+		// $selectC = "css.category_id AS stageID, ".$selectC;
+		// $selectC = "t.name,t.email,t.mobile_no,t.record_type,".$selectC;
+		// if($this->menuDetails->menuLink == 'leads'){
+		// 	$selectC = $selectC.",t.stageName";
+		// }
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function taskReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"customer_id" => ["table" => "customer", "alias" => "cs", "column" => "name", "key2" => "customer_id"],
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+		
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+
+		$jkey = count($join)+1;
+		$join[$jkey]['type'] ="LEFT JOIN";
+		$join[$jkey]['table']="admin";
+		$join[$jkey]['alias'] ="a";
+		$join[$jkey]['key1'] ="assignee";
+		$join[$jkey]['key2'] ="adminID";
+
+		$jkey = count($join)+1;
+		$join[$jkey]['type'] ="LEFT JOIN";
+		$join[$jkey]['table']="categories";
+		$join[$jkey]['alias'] ="c";
+		$join[$jkey]['key1'] ="task_status";
+		$join[$jkey]['key2'] ="category_id";
+
+		$jkey = count($join)+1;
+		$join[$jkey]['type'] ="LEFT JOIN";
+		$join[$jkey]['table']="categories";
+		$join[$jkey]['alias'] ="ca";
+		$join[$jkey]['key1'] ="task_priority";
+		$join[$jkey]['key2'] ="category_id";
+
+		$selectC = "t.subject,a.name,ca.categoryName AS priority_slug,c.categoryName AS status_slug,t.due_date,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function campaignReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+	
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		$selectC = "t.campaign_name,t.campaign_type,t.from_email,t.to_emails,t.created_date,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function careerReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+		
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		$selectC = "t.job_title,t.created_date,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function emailReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		$selectC = "t.tempName,t.subjectOfEmail,t.created_date,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function serviceReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		$selectC = "t.serviceTitle,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function ourTeamReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		$selectC = "t.name,t.created_date,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function ourClientsReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		$selectC = "t.client_name,t.created_date,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function testimonialsReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		$selectC = "t.testimonial_name,t.created_date,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function faqReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		$selectC = "t.faq_question,t.faq_answer,t.asked_by_name,t.is_email_send,t.created_date,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function eventsReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		$jkey = count($join)+1;
+		$join[$jkey]['type'] ="LEFT JOIN";
+		$join[$jkey]['table']="event_schedule";
+		$join[$jkey]['alias'] ="es";
+		$join[$jkey]['key1'] ="event_id";
+		$join[$jkey]['key2'] ="event_id";
+
+		$selectC = "t.title,t.start_date,t.created_date,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function expensesReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"expense_by" => ["table" => "admin", "alias" => "ae", "column" => "name", "key2" => "adminID"],
+				"approver_id" => ["table" => "admin", "alias" => "aa", "column" => "name", "key2" => "adminID"],
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}				
+		
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		
+		$selectC = "t.expense_date,t.merchant,t.amount,t.status,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function receiptReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"customer_id" => ["table" => "customer", "alias" => "cs", "column" => "name", "key2" => "customer_id"],
+				"payment_method" => ["table" => "categories", "alias" => "cpm", "column" => "categoryName", "key2" => "category_id"],
+				"type_of_donation" => ["table" => "categories", "alias" => "ctd", "column" => "categoryName", "key2" => "category_id"],
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		
+		$selectC = "t.name,t.receipt_number,t.email_id,t.contact_number,t.status,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function courseReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		
+		$selectC = "t.title,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+	
+	public function adminReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+		$jkey = count($join)+1;
+		$join[$jkey]['type'] ="LEFT JOIN";
+		$join[$jkey]['table']="user_role_master";
+		$join[$jkey]['alias'] ="rn";
+		$join[$jkey]['key1'] ="roleID";
+		$join[$jkey]['key2'] ="roleID";
+		$selectC = "t.name,t.userName,t.email,rn.roleName AS roleName,t.lastLogin,t.status,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
+	}
+
+	public function companyReports()
+	{
+		
+		// $this->access->checkTokenKey();
+		$this->response->decodeRequest();
+		$method = $this->input->method(TRUE);
+		$config = array();
+		$config = $this->config->item('pagination');
+		$postData = (array) json_decode($_POST['data']);
+		//print_r($postData);exit;
+		$reportType = $postData['type'];
+		unset($postData['type']);
+
+		$this->filters->menuID =$postData['menuId'];
+		$this->filters->getMenuData();
+		$this->dyanamicForm_Fields = $this->filters->dyanamicForm_Fields;
+		$this->menuDetails = $this->filters->menuDetails;
+		$wherec = $join = array();
+		$whereData = $this->filters->prepareFilterData($postData);
+		$wherec = $whereData["wherec"];
+		$other = $whereData["other"];
+		$join = $whereData["join"];
+		$selectC = $whereData["select"];
+
+		// create join for created by and modified data details
+		if (isset($this->menuDetails->c_metadata) && !empty($this->menuDetails->c_metadata)) {
+			$colData = array_column(json_decode($this->menuDetails->c_metadata), "column_name");
+		
+			$columnNames = [
+				"created_by" => ["table" => "admin", "alias" => "ad", "column" => "name", "key2" => "adminID"],
+				"modified_by" => ["table" => "admin", "alias" => "am", "column" => "name", "key2" => "adminID"],
+			];
+		
+			foreach ($columnNames as $columnName => $columnData) {
+				if (in_array($columnName, $colData)) {
+					$jkey = count($join) + 1;
+					$join[$jkey]['type'] = "LEFT JOIN";
+					$join[$jkey]['table'] = $columnData["table"];
+					$join[$jkey]['alias'] = $columnData["alias"];
+					$join[$jkey]['key1'] = $columnName;
+					$join[$jkey]['key2'] = $columnData["key2"];
+					$columnNameShow = $columnData["column"];
+					$selectC .= "," . $columnData["alias"] . "." . $columnNameShow . " as " . $columnName;
+				}
+			}
+			// Remove the leading comma if $selectC is not empty
+			$selectC = ltrim($selectC, ',');
+			// print($selectC);exit;
+		}
+
+		// if($selectC != ""){
+		// 	$selectC = $selectC.",ad.name as createdBy,am.name as modifiedBy";
+		// }else{
+		// 	$selectC = $selectC."ad.name as createdBy,am.name as modifiedBy";	
+		// }
+	
+		$selectC = "t.infoID,t.companyName,".$selectC;
+		// print $selectC; exit;
+		$processDetails = $this->CommonModel->GetMasterListDetails($selectC, $this->menuDetails->table_name, $wherec, '', '', $join, $other);
+		// print "<pre>";
+		//print_r($wherec);//exit;
+		//$reportType="Excel";
+		$printDetails = $rowArray = array();
+			$i = 0;
+			foreach ($processDetails as $key => $value) {
+				
+				foreach ($value as $rowKey => $rowValue) {
+					$printDetails[$i][$rowKey] = $rowValue;
+					if($i==0){
+						$rowArray[] = $rowKey;
+					}
+				}
+				$i++;
+			}
+			foreach ($this->filters->linkedFields as $keyTitle => $valueTitle) {
+				if(in_array($valueTitle->linkedWith."_".trim($valueTitle->column_name),$rowArray))
+				{
+					$ek = array_keys($rowArray,($valueTitle->linkedWith."_".trim($valueTitle->column_name)));
+					$rowArray[$ek[0]] = ucfirst(str_replace("_"," ",$valueTitle->column_name));
+				}
+			}
+			foreach ($rowArray as $key => $value) {
+				$rowArray[$key] =  ucfirst(str_replace("_"," ",$value));
+			}
+		// print_r($printDetails);exit;
+		if ($reportType == "excel") {
+			
+			$spreadsheet = new Spreadsheet();
+			$Excel_writer = new Xls($spreadsheet);
+			$spreadsheet->setActiveSheetIndex(0);
+			$spreadsheet->getActiveSheet()->setTitle("Sheet1");
+			$styleArray = array(
+				'borders' => array(
+					'outline' => array(
+						'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+						'color' => array('argb' => '00999999'),
+					),
+				),
+			);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$rowArray,   // The data to set
+					NULL,        // Array values with this value will not be set
+					'A1'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			$spreadsheet->getActiveSheet()
+				->fromArray(
+					$printDetails,  // The data to set
+					NULL,        // Array values with this value will not be set
+					'A2'         // Top left coordinate of the worksheet range where
+					//    we want to set these values (default is A1)
+				);
+			for ($i = 0; $i <= count($printDetails); $i++) {
+				for ($j = 0; $j < count($rowArray); $j++) {
+					$spreadsheet->getActiveSheet()->getCellByColumnAndRow($j + 1, $i + 2)->getStyle()->applyFromArray($styleArray)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)->setWrapText(true);
+				}
+			}
+			header('Content-Type: application/vnd.ms-excel');
+			// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			$filename = "Report_".$this->filters->menuDetails->menuLink . ".xls";
+			header('Content-Disposition: attachment;filename="' . $filename . '"');
+
+			// do not remove below two line.it`s clean the unwanted data and make clean Xls
+			ob_end_clean();
+			ob_start();
+			$Excel_writer->save('php://output');
+		}
+		if ($reportType == "pdf") {
+			$data = array();
+			$data['processDetails'] = $printDetails;
+			$data['headers'] = $rowArray;
+			if (!isset($printDetails) || empty($printDetails)) {
+				echo "No data found for this selection.";
+				exit();
+			}
+
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			//$this->mpdfci->setFooter('{PAGENO}');
+			//generate the PDF from the given html
+			// foreach($processDetails as $key => $value) {
+			// echo "sdfsdfsdf";
+			// print(asort($sortedArr));exit;
+			//$data['sortedArr'] = $sortedArr;
+			$pdfFilePath = $this->load->view('pdfReportView', $data, true);
+			$this->mpdfci->AddPage();
+			//$this->mpdfci->SetWatermarkImage($this->config->item('app_url') . "/images/PNG_LOGO.png", 0.3, 'F', array(17, 50));
+			$this->mpdfci->showWatermarkImage = true;
+			$this->mpdfci->WriteHTML($pdfFilePath);
+
+			// }
+			//download it.
+			// $filePath=$this->config->item("receiptPATH").$reciptID.".pdf";
+			//print $filePath; exit();
+
+			$this->mpdfci->Output();
+		}
+
 	}
 }
