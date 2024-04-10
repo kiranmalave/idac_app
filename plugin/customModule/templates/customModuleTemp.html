@@ -34,8 +34,7 @@
                             </div>
                         </div>
                         <% if(Object.keys(metadata).length> 0){ %>
-                            <div class="text-right actionBtns topBtnDetails" id="arrangeColumns"
-                                style="top:-7px;right:-19px;">
+                            <div class="text-right actionBtns topBtnDetails" id="arrangeColumns">
                                 <div class="text-right actionBtns" id="arrangeColumns">
                                     <!-- <div class="text-right actionBtns" id="arrangeColumns">
                                     <button type="button" class="btn bg-indigo arrangeColumns" data-action="arrangeColumns">Arrange columns</button>
@@ -47,12 +46,12 @@
                                             <span><span class="material-icons">view_column</span><span
                                                     class="material-icons">expand_more</span></span>
                                         </button>
-                                        <div class="" id="customColumnConfigure"></div>
+                                        <div class="customColumnConfigure" id="customColumnConfigure"></div>
                                     </div>
                                     <% if(arrangedColumnList.length> 0){ %>
                                         <form id="reports" method="POST" action="#">
-                                            <div class="btn-group dn-mail" style="height: 33px;" data-toggle="tooltip"
-                                                data-placement="top" title="Download Data">
+                                            <div class="btn-group dn-mail" data-toggle="tooltip" data-placement="top"
+                                                title="Download Data">
                                                 <!-- <button type="button" class="arrangeColumns" data-action="arrangeColumns"  data-toggle="tooltip" data-placement="top" title="Configure Columns">
                                                 <span><span class="material-icons">view_column</span><span class="material-icons">expand_more</span></span>
                                             </button> -->
@@ -91,13 +90,12 @@
                         <% } %>
                             <%if(arrangedColumnList.length> 0 && Object.keys(metadata).length > 0) { %>
                                 <!-- <div class="body"> -->
-                                <div class="actionList" style="top:35px">
+                                <div class="actionList">
                                     <%if(permission.delete=="yes" ) { %>
                                         <span type="button" style="display:none;" class="changeStatus deleteAll"
                                             data-action="delete" data-toggle="tooltip" data-placement="top"
-                                            title="Delete"><i class="material-icons" data-toggle="tooltip"
-                                                data-placement="top" title="Delete"
-                                                style="background-color: #494b94; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px; color:#fff;">delete</i></span>
+                                            title="Delete"><i class="material-icons dlt-btn" data-toggle="tooltip"
+                                                data-placement="top" title="Delete">delete</i></span>
                                         <% } %>
                                 </div>
                                 <div class="profile-loader text-center table"
@@ -109,7 +107,8 @@
                                     </div>
                                 </div>
                                 <div class="customTableClass">
-                                    <table id="customTable" class="table bulk_action tableList table-hover">
+                                    <table id="customTable" 
+                                    class="table bulk_action tableList table-hover table-bordered table-resizable tablewidth">
                                         <thead id="thead">
                                             <tr class="headings">
                                                 <th scope="row">
@@ -118,22 +117,30 @@
                                                             data-tocheck="customList" type="checkbox">
                                                         <label for="cAll">&nbsp;</label>
                                                     </div>
+                                                    <!-- <div class="resize-bar"></div> -->
                                                 </th>
-                                                <th class="column-title sortColumns" data-field="id">ID
+                                                <!-- <th class="column-title sortColumns" data-field="id" >ID
                                                     <span class="material-symbols-outlined sortarrow up">north</span>
                                                     <span class="material-symbols-outlined sortarrow down">south</span>
-                                                </th>
+                                                    <div class="resize-bar"></div>
+                                                </th> -->
                                                 <% _.each(arrangedColumnList, function(column) { %>
-                                                    <th class="column-title sortColumns"
-                                                        data-field="<%= column.column_name %>">
+                                                    <th class="column-title  drag-line">
+                                                      <div class="thhead">
                                                         <%= column.fieldLabel %>
-                                                            <span
-                                                                class="material-symbols-outlined sortarrow up">north</span>
-                                                            <span
-                                                                class="material-symbols-outlined sortarrow down">south</span>
+                                                          <div class=" sortwidth">
+                                                            <span class="sortColumns material-symbols-outlined sortarrow up"
+                                                              data-field="<%= column.column_name %>" data-toggle="tooltip" data-placement="top" title="A-Z">north</span>
+                                                            <span class="sortColumns material-symbols-outlined sortarrow down"
+                                                              data-field="<%= column.column_name %>" data-toggle="tooltip" data-placement="top" title="Z-A">south</span>
+                                                          </div>
+                                                      </div>
+                                                      <div class="resize-bar"></div>
                                                     </th>
                                                     <% }); %>
-                                                        <th class="column-title">Action </th>
+                                                        <th class="column-title drag-line">Action
+                                                            <!-- <div class="resize-bar"></div> -->
+                                                        </th>
                                             </tr>
                                         </thead>
                                         <tbody id="customList">
