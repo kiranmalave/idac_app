@@ -30,16 +30,16 @@
                 </h5>
                 <p>
                     <span><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Due date">calendar_today</i></span>
-                    <%if(taskDetails.attributes.due_date != "" && taskDetails.attributes.due_date != ""){%>
+                    <%if(taskDetails.attributes.due_date != "" && taskDetails.attributes.due_date != null){%>
                         <span><%=taskDetails.attributes.due_date%></span>   
                     <%} else {%>
                         <span>--</span>
                     <%}%>
-                    <% if(taskDetails.attributes.assigneePhoto) { %>
+                    <% if(taskDetails.attributes.assigneePhoto != null && taskDetails.attributes.assigneePhoto != ""  && taskDetails.attributes.assigneePhoto != undefined) { %>
                         <img class="logoImgCls assigneePhoto" src="<%=PROFILEPHOTOUPLOAD%><%=taskDetails.attributes.assigneeID%>/profilePic/<%=taskDetails.attributes.assigneePhoto%>" data-toggle="tooltip" data-placement="top" title="Assignee">
                     <% } else { %>
                         <!-- <img class="logoImgCls assigneePhoto" src="<%=IMAGES%>/avatar-default.png"> -->
-                        <span class="logoImgCls" data-toggle="tooltip" data-placement="top" title="Assignee"><%=assigneeInitial%></span>
+                        <span class="logoImgCls assigneeInitial" data-toggle="tooltip" data-placement="top" title="Assignee"><%=assigneeInitial%></span>
                     <% } %>
                 </p>
             </div>

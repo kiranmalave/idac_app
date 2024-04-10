@@ -32,9 +32,7 @@ class MenuMaster extends CI_Controller
 	{
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
-		$t = $this->input->post('textSearch');
-		$t = $t ?? '';
-		$textSearch = trim($t);
+		$textSearch = $this->input->post('textSearch');
 		$isAll = $this->input->post('getAll');
 		$curPage = $this->input->post('curpage');
 		$textval = $this->input->post('textval');
@@ -52,6 +50,7 @@ class MenuMaster extends CI_Controller
 		$config = $this->config->item('pagination');
 		$wherec = $join = array();
 		if (isset($textSearch) && !empty($textSearch) && isset($textval) && !empty($textval)) {
+			$textSearch = trim($textSearch);
 			$wherec["$textSearch like  "] = "'" . $textval . "%'";
 		}
 
@@ -59,6 +58,7 @@ class MenuMaster extends CI_Controller
 			$statusStr = str_replace(",", '","', $statuscode);
 			$wherec["status"] = 'IN ("' . $statusStr . '")';
 		}
+		
 
 
 		$config["base_url"] = base_url() . "menuDetails";
@@ -118,7 +118,7 @@ class MenuMaster extends CI_Controller
 			$menuDetails['isParent'] = $this->validatedata->validate('isParent','Is Parent Status',true,'',array());
 			$menuDetails['menuIndex'] = $this->validatedata->validate('menuIndex','Menu Index',true,'',array());
 			$menuDetails['isClick'] = $this->validatedata->validate('isClick','is clickable',true,'',array());
-			$menuDetails['iconName'] = $this->validatedata->validate('iconName','Icon Name',false,'',array());
+			$menuDetails['iconName'] = $this->validatedata->validate('iconName','Icon',false,'',array());
 			$menuDetails['mobile_screen'] = $this->validatedata->validate('mobile_screen','Mobile Screen',false,'',array());
 			$menuDetails['linked'] = $this->validatedata->validate('linked','Is Linked',true,'',array());
 			$menuDetails['is_custom'] = $this->validatedata->validate('is_custom','Is Custom',true,'',array());
@@ -129,7 +129,9 @@ class MenuMaster extends CI_Controller
 			$menuDetails['menuName'] = $this->validatedata->validate('menuName', 'Menu Name', false, '', array());
 			$menuDetails['menu_custom_link'] = $this->validatedata->validate('menu_custom_link','Custom Link',false,'',array());
 			$menuDetails['table_name'] = $this->validatedata->validate('table_name', 'Table Name', false, '', array());
+
 			//print $menuDetails['custom_module']; exit;
+			
 			if ($menuDetails['isParent'] == "no") {
 				$menuDetails['parentID'] = $this->validatedata->validate('parentID', 'Parent ID', true, '', array());
 			} else {
@@ -144,13 +146,24 @@ class MenuMaster extends CI_Controller
 		switch ($method) {
 			case "PUT": {
 					if ($menuDetails['custom_module'] == "yes") {
-						$menuDetails['menuName'] = $this->validatedata->validate('menuName', 'Menu Name', false, '', array());
+						//$menuDetails['menuName'] = $this->validatedata->validate('menuName', 'Menu Name', false, '', array());
 						$menuDetails['module_name'] = strtolower(str_replace(" ", "_", $this->validatedata->validate('module_name', 'Module Name', false, '', array())));
 					} else {
 						$menuDetails['module_name'] = strtolower(str_replace(" ", "_", $this->validatedata->validate('module_name', 'Module Name', true, '', array())));
-						$menuDetails['menuName'] = $this->validatedata->validate('menuName', 'Menu Name', false, '', array());
+						//$menuDetails['menuName'] = $this->validatedata->validate('menuName', 'Menu Name', false, '', array());
+						$menuDetails['menuLink'] = $menuDetails['module_name'];
+						if(!isset($menuDetails['table_name']) || empty($menuDetails['table_name'])){
+							$menuDetails['table_name'] = $menuDetails['module_name'];
+						}
 					}
-
+					// check is menu name exits and rename it
+					// check is menu name exits and rename it
+					// I THINK NO NEED THIS CODE- Kiran
+					// $where = array("menuName" => $menuDetails['menuName']);
+					// $menuHistory = $this->CommonModel->getMasterDetails('menu_master', '', $where);
+					// if(isset($menuHistory) && !empty($menuHistory)){
+					// 	$menuDetails['menuName'] = $menuDetails['menuName']."_".rand(1,10);
+					// }
 					$menuDetails['created_by'] = $this->input->post('SadminID');
 					$menuDetails['created_date'] = $updateDate;
 
@@ -163,8 +176,8 @@ class MenuMaster extends CI_Controller
 						$status['flag'] = 'F';
 						$this->response->output($status, 200);
 					} else {
-						if ($menuDetails['custom_module'] != "yes") {
-							$this->datatables->createTable($menuDetails['module_name']);
+						if ($menuDetails['custom_module'] != "yes" && $menuDetails['is_custom'] != "y") {
+							$this->datatables->create_table($menuDetails['module_name']);
 						}
 						if ($this->db->trans_status() === FALSE) {
 							$this->db->trans_rollback();
@@ -284,7 +297,6 @@ class MenuMaster extends CI_Controller
 						$status['flag'] = 'S';
 						$this->response->output($status, 200);
 					} else {
-
 						$status['msg'] = $this->systemmsg->getErrorCode(227);
 						$status['statusCode'] = 227;
 						$status['data'] = array();
@@ -300,14 +312,12 @@ class MenuMaster extends CI_Controller
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$action = $this->input->post("action");
-		$action = $action ?? '';
 		if (trim($action) == "changeStatus") {
 			$ids = $this->input->post("list");
 			$statusCode = $this->input->post("status");
 			$changestatus = $this->CommonModel->changeMasterStatus('menu_master', $statusCode, $ids, 'menuID');
 
 			if ($changestatus) {
-
 				$status['data'] = array();
 				$status['statusCode'] = 200;
 				$status['flag'] = 'S';
@@ -317,6 +327,66 @@ class MenuMaster extends CI_Controller
 				$status['msg'] = $this->systemmsg->getErrorCode(996);
 				$status['statusCode'] = 996;
 				$status['flag'] = 'F';
+				$this->response->output($status, 200);
+			}
+		}
+		if (trim($action) == "permanentDelete") {
+			
+			$ids = $this->input->post("list");
+			//delete menu
+			$this->db->trans_start();
+			$tableDetails = $this->CommonModel->getMasterDetails("menu_master","table_name,custom_module",array("menuID"=>$ids));
+			if(isset($tableDetails[0]->custom_module) && $tableDetails[0]->custom_module == "yes"){
+				// print("permanentDelete");exit;
+				// $this->db->trans_rollback();
+				// $status['data'] = array();
+				// $status['msg'] = $this->systemmsg->getErrorCode(235);
+				// $status['statusCode'] = 996;
+				// $status['flag'] = 'F';
+				// $this->response->output($status, 200);
+				$del = $this->CommonModel->deleteMasterDetails("menu_master",array("menuID"=>$ids),array());
+				// $submenuDetails["isParent"]= "yes";
+				// $submenuDetails["parentID"]= null;
+				// $submenuDetails["menuIndex"]= 999;
+				// $whereS = array('parentID' =>$ids);
+				// $subMenuUpdate = $this->CommonModel->updateMasterDetails("menu_master", $submenuDetails, $whereS);
+
+				if ($this->db->trans_status() === FALSE) {
+					$this->db->trans_rollback();
+					$status['data'] = array();
+					$status['msg'] = $this->systemmsg->getErrorCode(996);
+					$status['statusCode'] = 996;
+					$status['flag'] = 'F';
+					$this->response->output($status, 200);
+				}else{
+					$this->db->trans_commit();
+					$status['data'] = array();
+					$status['statusCode'] = 200;
+					$status['flag'] = 'S';
+					$this->response->output($status, 200);
+				}
+			}
+			$del = $this->CommonModel->deleteMasterDetails("menu_master",array("menuID"=>$ids),array());
+			// $submenuDetails["isParent"]= "yes";
+			// $submenuDetails["parentID"]= null;
+			// $submenuDetails["menuIndex"]= 999;
+			// $whereS = array('parentID' =>$ids);
+			// $subMenuUpdate = $this->CommonModel->updateMasterDetails("menu_master", $submenuDetails, $whereS);
+			if(isset($tableDetails[0]->table_name) && !empty($tableDetails[0]->table_name)){
+				$this->datatables->delete_table($tableDetails[0]->table_name);
+			}
+			if ($this->db->trans_status() === FALSE) {
+				$this->db->trans_rollback();
+				$status['data'] = array();
+				$status['msg'] = $this->systemmsg->getErrorCode(996);
+				$status['statusCode'] = 996;
+				$status['flag'] = 'F';
+				$this->response->output($status, 200);
+			}else{
+				$this->db->trans_commit();
+				$status['data'] = array();
+				$status['statusCode'] = 200;
+				$status['flag'] = 'S';
 				$this->response->output($status, 200);
 			}
 		}
@@ -407,6 +477,7 @@ class MenuMaster extends CI_Controller
 		$where = array("status =" => "'active'");
 		$order = array("orderBy" => "menuName", "order" => "ASC");
 		$menuHistory = $this->CommonModel->GetMasterListDetails('menuID,menuName,parentID,menuLink', 'menu_master', $where, '', '', array(), $order);
+		// print_r($menuHistory);
 		foreach ($menuHistory as $key => $value) {
 
 			$menuHistory[$key]->add = "no";
@@ -554,40 +625,50 @@ class MenuMaster extends CI_Controller
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$action = $this->input->post("action");
-		$action = $action ?? '';
 		if (trim($action) == "changePositions") {
+			$iscreated = false;
 			$menuIDs = json_decode($this->input->post("menuIDs"), true);
 			foreach ($menuIDs as $pos => $menuData) {
-				if (isset($menuData['children'])) {
+				if (isset($menuData['children']) && !empty($menuData['children'])) {
 					$childrens = [];
 					foreach ($menuData['children'] as $cpos => $children) {
 						$subMenuPagesDetails['menuIndex'] = $cpos + 1;
 						$subMenuPagesDetails['parentID'] = $menuData['id'];
+						$subMenuPagesDetails['isParent'] = "no";
 						$where = array("menuID" => $children['id']);
 						$iscreated = $this->CommonModel->updateMasterDetails('menu_master', $subMenuPagesDetails, $where);
+						if (!$iscreated) {
+							$status['msg'] = $this->systemmsg->getErrorCode(998);
+							$status['statusCode'] = 998;
+							$status['data'] = array();
+							$status['flag'] = 'F';
+							$this->response->output($status, 200);
+						}
 					}
 				}
 				$menuPagesDetails['menuIndex'] = $pos + 1;
+				$menuPagesDetails['isParent'] = "yes";
+				$menuPagesDetails['parentID'] = "0";
 				$where = array('menuID' => $menuData['id']);
 				$iscreated = $this->CommonModel->updateMasterDetails('menu_master', $menuPagesDetails, $where);
+				if (!$iscreated) {
+					$status['msg'] = $this->systemmsg->getErrorCode(998);
+					$status['statusCode'] = 998;
+					$status['data'] = array();
+					$status['flag'] = 'F';
+					$this->response->output($status, 200);
+				}
 			}
 
-			if (!$iscreated) {
-				$status['msg'] = $this->systemmsg->getErrorCode(998);
-				$status['statusCode'] = 998;
-				$status['data'] = array();
-				$status['flag'] = 'F';
-				$this->response->output($status, 200);
-			} else {
-				$status['msg'] = $this->systemmsg->getSucessCode(400);
-				$status['statusCode'] = 400;
-				$status['data'] = array();
-				$status['flag'] = 'S';
-				$this->response->output($status, 200);
-			}
+			
+			$status['msg'] = $this->systemmsg->getSucessCode(400);
+			$status['statusCode'] = 400;
+			$status['data'] = array();
+			$status['flag'] = 'S';
+			$this->response->output($status, 200);
+			
 		}
 	}
-
 	public function saveMetaData(){
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
@@ -612,3 +693,4 @@ class MenuMaster extends CI_Controller
 			}
 		}
 }
+	

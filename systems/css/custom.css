@@ -13722,6 +13722,10 @@ button.ws-btn-default.newNote.activeNew i {
   margin-left: auto;
 }
 
+.taskCard span.assigneeInitial{
+  margin-left: auto;
+}
+
 .taskCard [type="checkbox"].filled-in+label:after{
   border-radius: 10px;
   width: 20px;

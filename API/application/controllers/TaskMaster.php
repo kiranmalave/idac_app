@@ -563,7 +563,7 @@ class TaskMaster extends CI_Controller
 			$join[$jkey]['alias'] ="ap";
 			$join[$jkey]['key1'] ="assignee";
 			$join[$jkey]['key2'] ="adminID";
-			$selectC = "ap.photo AS assigneePhoto,ap.adminID AS assigneeID,".$selectC;
+			$selectC = "ap.photo AS assigneePhoto, ap.name AS assigneeName,".$selectC;
 			// print($selectC);exit;
 			// print_r($wherec);exit;
 			$taskDetails = $this->CommonModel->GetMasterListDetails($selectC, 'tasks', $wherec, $config["per_page"], $page, $join, $other);

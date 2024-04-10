@@ -807,8 +807,8 @@ define([
         $("#taskModernList").append(template2({ taskDetails: objectModel, arrangedColumnList: this.arrangedColumnList }));
       }else{
         var template = _.template(taskGridRow);
-        if(objectModel.attributes.assignee){
-          var initial = selfobj.getInitials(objectModel.attributes.assignee);
+        if(objectModel.attributes.assigneeName){
+          var initial = selfobj.getInitials(objectModel.attributes.assigneeName);
         }
         if (objectModel.attributes.task_statusID != 0) {
           $("#" + objectModel.attributes.task_statusID).append(template({ taskDetails: objectModel, taskLength: this.collection.length , assigneeInitial: initial ? initial : '',}));
