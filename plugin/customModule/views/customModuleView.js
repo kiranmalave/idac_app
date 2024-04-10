@@ -15,14 +15,13 @@ define([
     '../models/customFilterOptionModel',
     '../../dynamicForm/collections/dynamicFormDataCollection',
     '../../dynamicForm/collections/dynamicStdFieldsCollection',
-    '../../menu/models/singleMenuModel',
     '../collections/customCollection',
     '../../category/collections/slugCollection',
     'text!../templates/customModuleTemp.html',
     'text!../templates/customRowTemp.html',
     'text!../templates/customFilterOption_temp.html',
     'text!../../dynamicForm/templates/linkedDropdown.html',
-  ], function ($, _, Backbone, validate, inputmask, datepickerBT, Swal,moment, customModuleSingleView,columnArrangeModalView,configureColumnsView,appSettings,customFilterOptionModel,dynamicFormData,dynamicStdFieldsCol,singleMenuModel,customCollection,slugCollection,customModuleTemp,customRowTemp,customFilterTemp,linkedDropdown) {
+  ], function ($, _, Backbone, validate, inputmask, datepickerBT, Swal,moment, customModuleSingleView,columnArrangeModalView,configureColumnsView,appSettings,customFilterOptionModel,dynamicFormData,dynamicStdFieldsCol,customCollection,slugCollection,customModuleTemp,customRowTemp,customFilterTemp,linkedDropdown) {
   
     var customModuleView = Backbone.View.extend({
       module_desc:'',
@@ -32,6 +31,10 @@ define([
       arrangedColumnList: [],
       dynamicStdFieldsList : [],
       initialize: function (options) {
+        this.startX = 0;
+        this.startwidth = 0;
+        this.$table = null;
+        this.pressed = false;
         this.toClose = "customFilterView";
         this.menuId = options.menuId;
         var selfobj = this;
@@ -48,7 +51,6 @@ define([
         this.menuId = getmenu;
         this.appSettings = new appSettings();
         this.dynamicFormDatas = new dynamicFormData();
-        this.menuList = new singleMenuModel();
         this.totalRec = 0;
         this.appSettings.getMenuList(getmenu, function(plural_label,module_desc,form_label,result) {
           selfobj.plural_label = plural_label;
@@ -93,7 +95,38 @@ define([
         "change .txtchange": "updateOtherDetails",
         "change .dropval": "singleFilterOptions",
         "click .downloadReport": "downloadReport",
-        
+        'mousedown .table-resizable .resize-bar': 'onMouseDown',
+        'mousemove .table-resizable th, .table-resizable td': 'onMouseMove',
+        'mouseup .table-resizable th, .table-resizable td': 'onMouseUp',
+        'dblclick .table-resizable thead': 'resetColumnWidth'
+      },
+  
+  
+      onMouseDown: function (event) {
+        let index = $(event.target).parent().index();
+        this.$handle = this.$el.find('th').eq(index);
+        this.pressed = true;
+        this.startX = event.pageX;
+        this.startWidth = this.$handle.width();
+        this.$table = this.$handle.closest('.table-resizable').addClass('resizing');
+      },
+  
+      onMouseMove: function (event) {
+        if (this.pressed) {
+          this.$handle.width(this.startWidth + (event.pageX - this.startX));
+        }
+      },
+  
+      onMouseUp: function () {
+        if (this.pressed) {
+          this.$table.removeClass('resizing');
+          this.pressed = false;
+        }
+      },
+  
+      resetColumnWidth: function () {
+        // Reset column sizes on double click
+        this.$el.find('th').css('width', '');
       },
 
       downloadReport: function (e) {

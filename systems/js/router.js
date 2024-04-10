@@ -42,12 +42,13 @@ define([
   'plugin/testimonials/views/testimonialsView',
   'plugin/faq/views/faqView',
   'plugin/contactUs/views/contactUsView',
+  'plugin/customModule/views/customModuleView',
   'plugin/dynamicForms/views/dynamicFormsView',
   'text!../templates/appMain_temp.html',
   'text!../templates/appFull_temp.html',
   'text!../templates/sideNav_temp.html',
   'text!../templates/topNav_temp.html',
-], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, Swal, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, customerdashboardView, branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView,contactUsView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
+], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, Swal, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, customerdashboardView, branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView,contactUsView, customModuleView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
 
   var AppRouter = Backbone.Router.extend({
     routes: {
@@ -87,6 +88,7 @@ define([
       'testimonials': 'testimonialsView',
       'faqs': 'faqView',
       'contactUs':'contactUsView',
+      'app/:menuID': 'customModuleView',
       'dynamicForms': 'dynamicFormsView',
       'formMaster': 'formMasterView',
       'formQuestions/:formID': 'formQuestionsView',
@@ -458,6 +460,13 @@ define([
       var validate = preTemp();
       if (validate) {
         new dynamicFormsView({ action: action });
+      }
+    });
+
+    app_router.on('route:customModuleView', function (action) {
+      var validate = preTemp();
+      if (validate) {
+        new customModuleView({ menuId: action });
       }
     });
 

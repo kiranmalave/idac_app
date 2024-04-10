@@ -1,25 +1,26 @@
-
 <tr class="even pointer">
     <th class="a-center" scope="row">
         <div class="listCheckbox">
-            <input type="checkbox" id="cAll_<%= customDetails.id %>" class="memberlistcheck chk-col-amber" data-custom_id="<%= customDetails.id %>">
+            <input type="checkbox" id="cAll_<%= customDetails.id %>" class="memberlistcheck chk-col-amber"
+                data-custom_id="<%= customDetails.id %>">
             <label for="cAll_<%= customDetails.id %>">&nbsp;</label>
         </div>
-      </th>
-     <td class="">
+    </th>
+    <!-- <td class="" style="padding-left: 22px !important; padding-top: 6px !important;">
         <%= customDetails.id %>
-    </td>
+    </td> -->
     <% _.each(arrangedColumnList, function(column) { %>
-        <td class="">
-            <% if (column.linkedWith != "" && column.linkedWith != null && column.linkedWith != "undefined") { %>
+        <td class="draglinerow">
+            <% if (column.linkedWith !="" && column.linkedWith !=null && column.linkedWith !="undefined" ) { %>
                 <%= customDetails["" + column.linkedWith + "_" + column.column_name] %>
-            <% } else { %>
-                <%= customDetails["" + column.column_name] %>
-            <% } %>
+                    <% } else { %>
+                        <%= customDetails["" + column.column_name] %>
+                            <% } %>
         </td>
-    <% }); %>
-    
-    <td>
-        <button type="button" class="ws-btn-default loadview"  data-custom_id="<%= customDetails.id %>" data-view="singleCustomFieldData" data-toggle="tooltip" data-placement="top" title="Edit"><i class="material-icons">mode_edit</i></button>
-    </td>
-  </tr>
+        <% }); %>
+            <td class="draglinerow">
+                <button type="button" class="ws-btn-default loadview" data-custom_id="<%= customDetails.id %>"
+                    data-view="singleCustomFieldData" data-toggle="tooltip" data-placement="top" title="Edit"><i
+                        class="material-icons">mode_edit</i></button>
+            </td>
+</tr>
