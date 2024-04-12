@@ -434,13 +434,6 @@ define([
       mailTruncateElements.forEach(function (element) {
         var textWidth = element.offsetWidth;
         var parentEle = element.parentElement;
-
-        if (textWidth >= 100) {
-          parentEle.querySelector('.tooltiptxt').style.display = 'block';
-        }
-        else {
-          parentEle.querySelector('.tooltiptxt').style.display = 'none';
-        }
       });
     },
     addAll: function () {
