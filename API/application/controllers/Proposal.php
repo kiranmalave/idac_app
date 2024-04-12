@@ -193,7 +193,6 @@ class Proposal extends CI_Controller {
 						}
 							$wherePro=array('project_id'=>$proposalDetails['project_id']);
 							$projectNumber = $this->CommonModel->getMasterDetails('project','project_number',$wherePro);
-
 							$where=array('project_id'=>$proposalDetails['project_id'],'client_id'=>$proposalDetails['client_id']);
 							$oldProposalDetail = $this->CommonModel->getMasterDetails('proposal','proposal_id',$where);
 							if(isset($oldProposalDetail) && !empty($oldProposalDetail)){
