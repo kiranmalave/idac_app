@@ -1,5 +1,10 @@
 <!-- Top Bar -->
 <nav class="navbar">
+    <div class="loder" style="display: none;">
+        <div class="loader">
+            <div class="bar"></div>
+        </div>
+    </div>
   <div class="col-12">        
       <div class="navbar-header">
           <a href="javascript:void(0);" class="bars"></a>
@@ -7,9 +12,9 @@
       </div>
       <ul class="nav navbar-nav navbar-left">
           <li><a href="javascript:void(0);" class="ls-toggle-btn" data-close="true"><i class="zmdi zmdi-swap"></i></a></li>
-        </ul>
-         <!--  <li><a href="mail-inbox.html" class="inbox-btn hidden-sm-down" data-close="true"><i class="zmdi zmdi-email"></i></a></li>
-          <li class="dropdown menu-app hidden-sm-down"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button"> <i class="zmdi zmdi-apps"></i> </a>
+          <!-- <li><a href="mail-inbox.html" class="inbox-btn hidden-sm-down" data-close="true"><i class="zmdi zmdi-email"></i></a></li> -->
+          <!-- <li><button class="inbox-btn hidden-sm-down mailView" data-close="true"><i class="zmdi zmdi-email"></i></button></li> -->
+          <!-- <li class="dropdown menu-app hidden-sm-down"><a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button"> <i class="zmdi zmdi-apps"></i> </a>
               <ul class="dropdown-menu slideDown">
                   <li class="body">
                       <ul class="menu">
@@ -23,10 +28,23 @@
                   </li>
               </ul>
           </li> -->
-      <ul class="nav navbar-nav navbar-right">
+      </ul>
+      <ul class="nav navbar-nav navbar-right addUserInfo">
           <!-- <li><a href="javascript:void(0);" class="js-search" data-close="true"><i class="zmdi zmdi-search"></i></a></li> -->
-          <!-- <li class="dropdown">
-              <a href="javascript:void(0);" class="dropdown-toggle xs-hide" data-toggle="dropdown" role="button"><i class="zmdi zmdi-notifications"></i>
+          <li class="dropdown">
+              <a href="javascript:void(0);" class="dropdown-toggle xs-hide" data-toggle="dropdown" role="button">
+                <!-- <i class="zmdi zmdi-notifications"></i> -->
+                <div class="bell-icon" tabindex="0">
+                    <svg version="1.1"  x="0px" y="0px" width="30px" height="30px" viewBox="0 0 50 30" enable-background="new 0 0 30 30" xml:space="preserve">
+                      <g class="bell-icon__group">
+                        <path class="bell-icon__ball" id="ball" fill-rule="evenodd" stroke-width="1.5" clip-rule="evenodd" fill="none" stroke="#currentColor" stroke-miterlimit="10" d="M28.7,25 c0,1.9-1.7,3.5-3.7,3.5s-3.7-1.6-3.7-3.5s1.7-3.5,3.7-3.5S28.7,23,28.7,25z"/>
+                        <path class="bell-icon__shell" id="shell" fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" stroke="#currentColor" stroke-width="2" stroke-miterlimit="10" d="M35.9,21.8c-1.2-0.7-4.1-3-3.4-8.7c0.1-1,0.1-2.1,0-3.1h0c-0.3-4.1-3.9-7.2-8.1-6.9c-3.7,0.3-6.6,3.2-6.9,6.9h0 c-0.1,1-0.1,2.1,0,3.1c0.6,5.7-2.2,8-3.4,8.7c-0.4,0.2-0.6,0.6-0.6,1v1.8c0,0.2,0.2,0.4,0.4,0.4h22.2c0.2,0,0.4-0.2,0.4-0.4v-1.8 C36.5,22.4,36.3,22,35.9,21.8L35.9,21.8z"/>
+                      </g>
+                    </svg>
+                    <!-- <div class="notification-amount">
+                      <span>1</span>
+                    </div> -->
+                  </div>
                   <div class="notify"><span class="heartbit"></span><span class="point"></span></div>
               </a>
               <ul class="dropdown-menu slideDown">
@@ -86,12 +104,12 @@
                   </li>
                   <li class="footer"><a href="javascript:void(0);">View All Notifications</a></li>
               </ul>
-          </li> -->
-          <li class="dropdown">
-              <!-- <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button"><i class="zmdi zmdi-flag"></i>
+          </li>
+          <!-- <li class="dropdown">
+              <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button"><i class="zmdi zmdi-flag"></i>
                   <div class="notify"><span class="heartbit"></span><span class="point"></span></div>
-              </a> -->
-              <!-- <ul class="dropdown-menu slideDown">
+              </a>
+              <ul class="dropdown-menu slideDown">
                   <li class="header">TASKS</li>
                   <li class="body">
                       <ul class="menu tasks list-unstyled">
@@ -128,40 +146,44 @@
                       </ul>
                   </li>
                   <li class="footer"><a href="javascript:void(0);">View All Tasks</a></li>
-              </ul> -->
-          </li>            
-          <li class="user-info">
-            <div class="aline">
-                <div class="image">
-                    <!-- <span class="initial"><%=INITIALS%></span> -->
-                    <%if (PROFILEIMG=="" ){%>
-                        <span class="initial"><%=INITIALS%></span>
-                        <!-- <span><%=INITIALS%></span> -->
-                        <!-- <img src="images/avatar-default.png" alt="User" /> -->
-                        <%}else{%>
-                        <img src="<%=PROFILEPHOTOUPLOAD%><%=ADMINID%>/profilePic/<%=PROFILEIMG%>" />
-                    <%}%>
-                    <a href="#userProfile" style="padding: 0 0; text-decoration:none; color:#404040"><%=ADMINNAME%></a>
-                </div>
-                <div class="info-container">
-                    <div class="name">
-                        <li></li>
-                        <li><a href="#logout" class="mega-menu xs-hide" data-close="true"><i class="zmdi zmdi-power"></i></a></li>
-                       <!-- <span href="#userProfile">  </span>  -->
+              </ul>
+          </li>    -->
+
+            <li class="user-info">
+                <div class="aline">
+                    <div class="image">
+                        <!-- <span class="initial"><%=INITIALS%></span> -->
+                        <%if (PROFILEIMG=="" ){%>
+                            <span class="initial"><%=INITIALS%></span>
+                            <!-- <span><%=INITIALS%></span> -->
+                            <!-- <img src="images/avatar-default.png" alt="User" /> -->
+                            <%}else{%>
+                            <img src="<%=PROFILEPHOTOUPLOAD%><%=ADMINID%>/profilePic/<%=PROFILEIMG%>" />
+                        <%}%>
+                        <a href="#userProfile" style="padding: 0 0; text-decoration:none; color:#404040"><%=ADMINNAME%></a>
                     </div>
-                    <!-- <div class="btn-group user-helper-dropdown" style="position: absolute; right: -25px">
-                        <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" role="button">
-                        keyboard_arrow_down </i>
-                        <ul class="dropdown-menu slideUp">
-                        <li><a href="#userProfile"><i class="material-icons">person</i>Profile</a></li>
-                        <li class="divider"></li>
-                        
-                        <li><a href="#logout"><i class="material-icons">input</i>Sign Out</a></li>
-                        </ul>
-                    </div> -->
+                    <div class="info-container">
+                        <div class="name">
+                            <li></li>
+                            <li><a href="#logout" class="mega-menu xs-hide" data-close="true"><i class="zmdi zmdi-power"></i></a></li>
+                           <!-- <span href="#userProfile">  </span>  -->
+                        </div>
+                        <!-- <div class="btn-group user-helper-dropdown" style="position: absolute; right: -25px">
+                            <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" role="button">
+                            keyboard_arrow_down </i>
+                            <ul class="dropdown-menu slideUp">
+                            <li><a href="#userProfile"><i class="material-icons">person</i>Profile</a></li>
+                            <li class="divider"></li>
+                            
+                            <li><a href="#logout"><i class="material-icons">input</i>Sign Out</a></li>
+                            </ul>
+                        </div> -->
+                    </div>
                 </div>
-            </div>
-        </li> 
+            </li>         
+         
       </ul>
+      <div class="customMail customMailTopNav" style="display: none;">
+      </div>
   </div>
 </nav>

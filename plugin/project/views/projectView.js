@@ -71,7 +71,7 @@ define([
       this.customerList.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler, data: { status: "active" }
+        }, error: selfobj.onErrorHandler, data: { status: "active", getAll:"Y" }
       }).done(function (res) {
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
