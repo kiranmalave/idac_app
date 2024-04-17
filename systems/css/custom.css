@@ -6267,14 +6267,7 @@ span.select2.select2-container.select2-container--default {
 /* button.btn.ws-btn-default.ws-btn-grid.grid_mode {
   background: #f1f2f4;
 } */
-.body.greed .header.moduleSec.lead .btn-group.btn-group-block.gridmode.float-right.btnDetails .ws-btn-default:hover {
-  /* background: none !important;
-  border-radius: 50%; */
-  width: 35px;
-  text-align: center;
-  padding: 0px;
-  height: 35px;
-}
+
 
 /* .body.greed {
   padding-top: 3px;
@@ -7828,7 +7821,9 @@ section.content.home.main_container {
 
 
 .taskOverFlow {
-  overflow: visible !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 

@@ -63,6 +63,13 @@ $route['mLogin'] = 'Login/verifyUserMobile';
 $route['dashboardDetails'] = 'Dashboard/getDashboardCount';
 $route['alerts'] = 'Dashboard/alerts';
 
+###### notification
+$route['notificationMasterList'] = 'systems/NotificationMaster/getNotificationList';
+$route['notificationMaster'] = 'systems/NotificationMaster/notificationMaster';
+$route['notificationMaster/(:num)'] = 'systems/NotificationMaster/notificationMaster/$1';
+$route['notificationMaster/(:num)'] = 'systems/notificationMaster/notificationMaster/$1';
+$route['notificationMaster/status'] = 'systems/notificationMaster/notificationChangeStatus';
+
 // sendEmails
 $route['emailSend'] = 'systems/EmailSender/sendEmail';
 

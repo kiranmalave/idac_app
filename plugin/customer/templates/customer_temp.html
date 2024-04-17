@@ -135,7 +135,7 @@
                         <% _.each(arrangedColumnList, function(column) { %>
                           <% if(column.column_name == "stages" ) { %>
                             <% if(menuName=="leads" ) { %>
-                              <th class="order column-title text-capitalize drag-line" data-value="" data-field="t.stages" data-column="stages">Lead Stage
+                              <th class="order column-title text-capitalize drag-line" data-value="" data-field="t.stages" data-column="stages" style="padding-left: 20px !important;">Lead Stage
                                 <span class="sortColumns" data-field="t.stages">
                                   <span class="material-symbols-outlined sortarrow up">north</span>
                                   <span class="material-symbols-outlined sortarrow down"> south</span>
@@ -144,7 +144,7 @@
                               </th>
                             <% } %>
                             <% } else { %>
-                              <th class="column-title text-capitalize drag-line" data-field="<%= column.column_name %>" data-column="<%= column.column_name %>">
+                              <th class="column-title text-capitalize drag-line" data-field="<%= column.column_name %>" data-column="<%= column.column_name %>" style="padding-left: 20px !important;">
                                 <%= column.fieldLabel %>
                                 <span class="sortColumns" data-field="t.<%= column.column_name %>">
                                   <span class="material-symbols-outlined sortarrow up">north</span>
@@ -154,7 +154,7 @@
                               </th>
                           <% } %>
                         <% }); %>
-                        <th class="column-title">Action</th>
+                        <th class="column-title" style="padding-left: 20px !important;">Action</th>
                   </tr>
                 </thead>
                 <tbody id="customerList"></tbody>
@@ -274,7 +274,7 @@
                     <% _.each(arrangedColumnList, function(column) { %>
                       <% if(column.column_name == "stages" ) { %>
                         <% if(menuName=="leads" ) { %>
-                          <th class="order column-title table-bordered text-capitalize drag-line" data-value="" data-field="t.stages" data-column="stages">Lead Stage
+                          <th class="order column-title table-bordered text-capitalize drag-line" data-value="" data-field="t.stages" data-column="stages" style="padding-left: 20px !important;">Lead Stage
                             <span class="sortColumns" data-field="t.stages">
                               <span class="material-symbols-outlined sortarrow up">north</span>
                               <span class="material-symbols-outlined sortarrow down"> south</span>
@@ -283,7 +283,7 @@
                           </th>
                         <% } %>
                         <% } else { %>
-                          <th class="column-title table-bordered text-capitalize drag-line" data-field="<%= column.column_name %>" data-column="<%= column.column_name %>">
+                          <th class="column-title table-bordered text-capitalize drag-line" data-field="<%= column.column_name %>" data-column="<%= column.column_name %>" style="padding-left: 20px !important;">
                             <%= column.fieldLabel %>
                             <span class="sortColumns" data-field="t.<%= column.column_name %>">
                               <span class="material-symbols-outlined sortarrow up">north</span>
@@ -293,7 +293,7 @@
                           </th>
                       <% } %>
                     <% }); %>
-                    <th class="column-title">Action</th>
+                    <th class="column-title" style="padding-left: 20px !important;">Action</th>
                 </tr>
               </thead>
               <tbody id="modernList"></tbody>
