@@ -450,6 +450,7 @@ class Proposal extends CI_Controller {
 		$join[1]['key2'] ="customer_id";
 
 		$proposalDetails = $this->CommonModel->GetMasterListDetails($selectC,'proposal',$where,'','',$join,'');
+		// print_r($proposalDetails);exit;
 		$description = $proposalDetails[0]->description;
 		$details = array() ;
 		if($proposalDetails[0]->modified_date == "0000-00-00 00:00:00"){
@@ -457,19 +458,25 @@ class Proposal extends CI_Controller {
 		}else{
 			$date = $proposalDetails[0]->modified_date;
 		}
-		if(isset($description) && !empty($description))
-		{    
-			$key = "{{client_name}}";
-			if(isset($proposalDetails[0]->company_name) && !empty($proposalDetails[0]->company_name)){
-				$C_value = $proposalDetails[0]->company_name;
-			}else{
-				$C_value = "";
-			}
-			if (strpos($description,$key) !== false) {
-				$description =str_replace($key, $C_value, $description);
-				$proposalDetails[0]->description = $description;
+		if (isset($description) && !empty($description) && isset($proposalDetails[0])) {
+			$keys = ["{{name}}", "{{project_name}}", "{{company_name}}", "{{proposal_number}}", "{{modified_date}}"];
+			
+			foreach ($keys as $key) {
+				$property = trim(str_replace(array('{{', '}}'), '', $key), '{}'); // Extract property name from key
+				$C_value = isset($proposalDetails[0]->$property) ? $proposalDetails[0]->$property : '';
+				// print_r($property);exit;
+				// Check if property is modified_date and not equal to "0000-00-00"
+				if ($property == 'modified_date' && $C_value == "0000-00-00 00:00:00") {
+					$C_value = $proposalDetails[0]->created_date;
+					$description = str_replace($key, $C_value, $description);
+					$proposalDetails[0]->description = $description;
+				} elseif (strpos($description, $key) !== false) {
+					$description = str_replace($key, $C_value, $description);
+					$proposalDetails[0]->description = $description;
+				}
 			}
 		}
+		
 		$where = array("adminID"=> $adminID);
 		$roleID = $this->CommonModel->getMasterDetails('admin','roleID',$where);
 		$proposalDetails[0]->roleID = $roleID[0]->roleID;
