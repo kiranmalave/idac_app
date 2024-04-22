@@ -21,7 +21,7 @@ define([
   '../views/shippingModalView',
   '../../companyMaster/models/companySingleModel',
   '../../menu/collections/menuCollection',
-  'text!../templates/taxInvoiceSingle_temp.html',
+  'text!../templates/quotationToInvoice_temp.html',
   'text!../templates/additionalCharges_temp.html',
 
 ], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, icheck, select2, moment, Quill,multiselectOptions, customerCollection, singleTaxInvoiceModel, dynamicFieldRender, invoiceItems,customerSingleView,slugCollection,readFilesView,shippingModalView,companySingleModel,menuCollection,taxInvoice_temp,additionalCharges_temp) {
@@ -54,9 +54,6 @@ define([
           res.data.forEach(function (menu) {
               if(menu.menuLink == 'companyMaster'){
                 selfobj.companyMenuID = menu.menuID;
-                if (DEFAULTCOMPANY == 0 || DEFAULTCOMPANY == '') {
-                  alert('Please Select Company First..!');return;
-                }
                 selfobj.companySingleModel.set({'infoID' : DEFAULTCOMPANY}); 
                 if(selfobj.companySingleModel.get('infoID') != ''){
                   selfobj.companySingleModel.fetch({
@@ -141,7 +138,7 @@ define([
       "click .custDetails": "customerDetails",
       "click .shipTocheck": "shipTocheck",
       "click .removeFields": "removeFields",
-      "click .editShippingDetails": "editShippingDetails",
+      "click .shippingDetails": "shippingDetails",
       "click .editCustomerDetails": "editCustomerDetails",
     },
 
@@ -196,8 +193,8 @@ define([
       this.$el.on('click', '.shipTocheck', this.shipTocheck.bind(this));
       this.$el.off('click', '.removeFields', this.removeFields);
       this.$el.on('click', '.removeFields', this.removeFields.bind(this));
-      this.$el.off('click', '.editShippingDetails', this.editShippingDetails);
-      this.$el.on('click', '.editShippingDetails', this.editShippingDetails.bind(this));
+      this.$el.off('click', '.shippingDetails', this.shippingDetails);
+      this.$el.on('click', '.shippingDetails', this.shippingDetails.bind(this));
       this.$el.off('click', '.editCustomerDetails', this.editCustomerDetails);
       this.$el.on('click', '.editCustomerDetails', this.editCustomerDetails.bind(this));
     },
@@ -216,7 +213,7 @@ define([
       $('.customerAddDetails').hide();
       $('.customerDetailsDrop').show();
     },
-    editShippingDetails: function (e) {
+    shippingDetails: function (e) {
       var selfobj = this;
       $('#shippingModal').modal('toggle');
       new shippingModalView({ taxInvoice: this });
@@ -313,19 +310,17 @@ define([
     },
     ShowPaymentLogs:function(){
       this.logsAmt = 0 ;
-      this.receiptStr = '' ;
+      var receiptStr = '' ;
       var logs = this.model.get('paymentLogs');
       if (logs != undefined && logs != '') {
         logs.forEach((log)=>{
           this.logsAmt = this.logsAmt + parseInt(log.amount);
-          if (this.receiptStr == '') 
-            this.receiptStr = this.receiptStr + '#'+log.receipt_number;
-          else
-            this.receiptStr = this.receiptStr + ', #'+log.receipt_number;
+          receiptStr = '<br><span>#'+log.receipt_number+'</span> <span> - '+log.amount+'</span>';
+          $('.advanceReceipts').append(receiptStr);
         });
         $('.LogsPayment').show();
         $('.logsAmt').html('-'+this.logsAmt);
-        $('.receiptStr').html(this.receiptStr);
+        // $('.receiptStr').html(this.receiptStr);
       }
     },
     removeFields: function (e) {
@@ -815,8 +810,6 @@ define([
         $(".profile-loader").hide();
         selfobj.model.set("customerList", res.data);
         selfobj.render();
-        $('.custDetails').hide();
-        $('.customerAddDetails').hide();
       });
     },
     onErrorHandler: function (collection, response, options) {
@@ -1080,6 +1073,7 @@ define([
       var ship_to = selfobj.model.get("ship_to");
       var shipping_address = selfobj.model.get("shipping_address");
       var inconvertToInvoice = 'yes' ;
+      var quotationNumber = selfobj.model.get("invoiceNumber") ;
       var largestGst = selfobj.model.get('largestGst') ;
       var additionalCharges = selfobj.model.get('additionalCharges') ;
       var pending_amt = this.model.get('pending_amount');
@@ -1095,7 +1089,7 @@ define([
       {
         alert('Payment status required!');return;
       }
-      var record_type = selfobj.menuName;
+      var record_type = 'invoice';
       var isnewInvoice = 'no' ;
 
       if (tmpinvoiceID != '' || tmpinvoiceID != 0 ) {
@@ -1125,7 +1119,7 @@ define([
       var additional_chargesStr = JSON.stringify(additional_charges);
       var error = [];
       // Set header Information
-      var InheaderInfo = {'logsAmt':logsAmt,'pending_amt':pending_amt,'show_on_pdf':show_on_pdf,'additional_char' : additional_chargesStr,'largestGst':largestGst,'additionalCharges':additionalCharges,'inconvertToInvoice':inconvertToInvoice,'payment_note':payment_note,'isnewInvoice':isnewInvoice,'company_id':company_id, "payment_date":payment_date,"payment_amount":payment_amount,"payment_mode":payment_mode,"transaction_id":transaction_id,"payment_status":payment_status,"invoiceID": invoiceID, "processingYear": processingYear, "processingMonth": processingMonth, "traineeCount": traineeCount, "customerID": customerID, "invoiceDate": invoiceDate,"valid_until_date": valid_until_date,"ship_to" : ship_to,"shipping_address" : shipping_address, "record_type":record_type};
+      var InheaderInfo = {'quotationNumber' : quotationNumber,'isconvert':'yes','logsAmt':logsAmt,'pending_amt':pending_amt,'show_on_pdf':show_on_pdf,'additional_char' : additional_chargesStr,'largestGst':largestGst,'additionalCharges':additionalCharges,'inconvertToInvoice':inconvertToInvoice,'payment_note':payment_note,'isnewInvoice':isnewInvoice,'company_id':company_id, "payment_date":payment_date,"payment_amount":payment_amount,"payment_mode":payment_mode,"transaction_id":transaction_id,"payment_status":payment_status,"invoiceID": '', "processingYear": processingYear, "processingMonth": processingMonth, "traineeCount": traineeCount, "customerID": customerID, "invoiceDate": invoiceDate,"valid_until_date": valid_until_date,"ship_to" : ship_to,"shipping_address" : shipping_address, "record_type":record_type};
       invoiceItemsDetails.add(InheaderInfo);
       console.log('HEADER : ',InheaderInfo);
       $("tr.item-list-box").each(function (key, value) {
@@ -1288,11 +1282,9 @@ define([
       }
     },
     render: function () {
-      console.log("render");
       var source = taxInvoice_temp;
       var template = _.template(source);
       $("#" + this.toClose).remove();
-      console.log('invoice Details : ',selfobj.companyDetails);
       this.$el.html(template({ model: this.model.attributes , menuName : this.menuName,categoryList : selfobj.categoryList.models,companyDetails: selfobj.companyDetails ? selfobj.companyDetails[0] : []}));
       
       this.$el.addClass("tab-pane in active panel_overflow");
@@ -1352,7 +1344,6 @@ define([
         selfobj.ShowAdditionalCharges();
         selfobj.ShowPaymentLogs();
         selfobj.rowTotal();
-       
       }
       $('.invoice_logo.accordion-content-description.is-open').css('height', '0px');
       $('.invoice_logo.accordion-content-description.is-open').css('height', ($('.invoice_logo.accordion-content-description').get(0).scrollHeight + 15) + 'px');

@@ -34,6 +34,7 @@ define([
       infoIGST: null,
       infoCGST: null,
       customerList: null,
+      ship_to: 'no',
     },
     urlRoot: function () {
       return APIPATH + 'taxInvoice/'

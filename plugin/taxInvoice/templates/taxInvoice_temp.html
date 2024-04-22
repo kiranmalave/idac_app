@@ -1,87 +1,188 @@
-<div class="container-fluid taskcard">
+<div class="container-fluid">
   <div class="row clearfix">
     <div class="col-lg-12">
-      <div class="card">
-        <div class="header">
-          <h2>Tax Invoice</h2>
-          <% if(loadFrom=="custDashboardInvoice" ){%>
-            <button type="button" class="ws-btn-default loadview editButton" data-view="singletaxInvoiceData"
-              data-item="proposalSingleView" data-toggle="tooltip" data-placement="top" title="Edit"><i
-                class="material-icons">add</i></button>
-            <%}%>
-        </div>
-        <div class="noRec noCustRec" <% if(totalRec == 0){%>style="display: block;"<%}else{%>style="display: none;"<%}%>>
-          <div class="noCustRecDetails">
-            <div class="noCustRecPic">
-              <img src="images/noRecrds.png" alt="">
-            </div>
-            <div class="noCustRecText">
-              <h1>You haven’t added any <span> Invoices </span> here</h1>
-              <p>Click on add button to add the <span> Invoices </span></p>
-              <div class="buttonAdd">
-                <button type="button" class="btn btn-link waves-effect loadview nav-item addCust" data-view="singletaxInvoiceData" data-item="taxInvoiceSingleView">
-                  Add
-                </button>
+      <div class="card customerTable customModule">
+        <div class="noCustRec noCustAdded"  %>
+              <div class="noCustRecDetails">       
+
+                <div class="noCustRecPic">
+                  <img src="images/noRecrds.png" alt="">
+                </div>
+                <div class="noCustRecText">
+                  <h1>You haven’t added any <span>
+                      <%=pluralLable%>
+                    </span> here</h1>
+                    <div class="addRecords">Click here
+                      <div class="buttonAdd">
+                          <button type="button" 
+                              class="ws-btn-default loadview"
+                              data-view="singletaxInvoiceData"
+                              data-item="taxInvoiceSingleView"
+                              data-toggle="tooltip" 
+                              data-placement="top" 
+                              title="Add <%=pluralLable%>">
+                              <i class="material-icons">add</i>
+                          </button>
+                      </div>
+                      to add the <%=pluralLable%>
+                  </div>
+                </div>
+             </div>
+      </div>
+
+      <div class="invoiceRight card customModule" style="display: none;">
+
+        <div class="body table">
+          <div class="header moduleSec">
+            <div>
+              <h2>
+                <%=pluralLable%>
+              </h2>
+              <div class="moduleDesc">
+                <%=moduleDesc%>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="body" id="invoiceListTable" style="display: none;">
-          <div class="actionList">
-            <!-- <div class="action-icons-div ml-1"> -->
-            <%if(permission.delete=="yes" ) { %>
-              <span type="button" style="display: none;" class="changeStatus deleteAll" data-action="delete"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Delete"
+            <div class="text-right actionBtns topBtnDetails" id="arrangeColumns">
+              <div class="text-right actionBtns" id="arrangeColumns">
+                <div class="addColumns">
+                  <button type="button" class="arrangeColumns btn-bgColor" data-action="arrangeColumns"
+                    data-toggle="tooltip" data-placement="top" title="Configure Columns">
+                    <span><span class="material-icons">view_column</span><span
+                        class="material-icons">expand_more</span></span>
+                  </button>
+                  <div class="customColumnConfigure" id="customColumnConfigure"></div>
+                </div>
+                <form id="reports" method="POST" action="#">
+                  <div class="donloadBtn" data-toggle="tooltip" data-placement="top" title="Download Data">
+                    <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top"
+                      title="Download Data">
+                      <span class="material-symbols-outlined">download</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a href="javascript:void(0);" class="downloadReport" data-type="pdf">PDF</a></li>
+                      <li><a href="javascript:void(0);" class="downloadReport" data-type="excel">Excel</a></li>
+                    </ul>
+                  </div>
+                </form>
+
+                <div class="btn-group btn-group-block gridmode float-right">
+                  <button class="btn ws-btn-default ws-btn-grid list_mode" value="list" disabled="disabled"><span
+                      class="material-icons" style="margin-top: 2px;">view_list</span></button>
+                  <button class="btn ws-btn-default ws-btn-grid  grid_mode" value="grid"><span class="material-icons"
+                      style="margin-top: 2px;">grid_on</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- <%if(permission.delete=="yes" ) { %>
+              <span type="button" style="display: none;" class="changeStatus deleteAll" data-action="delete"><i
+                  class="material-icons" data-toggle="tooltip" data-placement="top" title="Delete"
                   style="background-color: #F5BF00; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px;">delete</i></span>
+              <% } %> -->
+
+          </div>
+          <div class="actionList">
+            <%if(permission.delete=="yes" ) { %>
+              <span type="button" style="display:none;" class="changeStatus deleteAll" data-action="delete"
+                data-toggle="tooltip" data-placement="top" title="Delete"><i class="material-icons dlt-btn"
+                  data-toggle="tooltip" data-placement="top" title="Delete"></i>delete</i></span>
               <% } %>
           </div>
-          <table id="clist" class="table jambo_table bulk_action tableList">
-            <thead id="thead">
-              <tr class="headings">
-                <th>
-                  <div class="listCheckbox">
-                    <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
-                    <label for="cAll">&nbsp;</label>
+          
+            <div class="customTableClass texReceipt">
+              <table id="clist" class="table invoice-table jambo_table bulk_action tableList table-bordered table-resizable">
+                <thead id="thead">
+                  <tr class="headings">
+                    <th class="check-gap">
+                      <div class="listCheckbox">
+                        <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
+                        <label for="cAll">&nbsp;</label>
+                      </div>
+                      <div class="resize-bar"></div>
+                    </th>
+                    <div class="resize-bar"></div>
+
+                    <th class="column-title" style="padding: 0px 20px 0px 20px !important;">
+                      <%=moduleDesc%> Number
+                      <div class="resize-bar"></div>
+                    </th>
+                    <th class="column-title" style="padding: 0px 20px 0px 20px !important;">Customer Name
+                      <div class="resize-bar"></div>
+                    </th>
+                    <th class="column-title" style="padding: 0px 20px 0px 20px !important;">Total Amount 
+                      <div class="resize-bar"></div>
+                    </th>
+                    <th class="column-title" style="padding: 0px 20px 0px 20px !important;">Gross Amount 
+                      <div class="resize-bar"></div>
+
+                    </th>
+                    <th class="column-title" style="padding: 0px 20px 0px 20px !important;">Bill Generated Date
+                      <div class="resize-bar"></div>
+                    </th>
+
+                    <th class="column-title" style="padding: 0px 20px 0px 20px !important;"> Payment Status
+                      <div class="resize-bar"></div>
+                    </th>
+                    <th class="column-title" style="padding: 0px 20px 0px 20px !important;">Status
+                      <div class="resize-bar"></div>
+                    </th>
+
+                   
+                    <% _.each(arrangedColumnList, function(column) { %>
+                      <th class="column-title  drag-line">
+                        <div class="thhead">
+                          <%= column.fieldLabel %>
+                            <div class=" sortwidth">
+                              <span class="sortColumns material-symbols-outlined sortarrow up"
+                                data-field="<%= column.column_name %>" data-toggle="tooltip" data-placement="top" title="A-Z">north</span>
+                              <span class="sortColumns material-symbols-outlined sortarrow down"
+                                data-field="<%= column.column_name %>" data-toggle="tooltip" data-placement="top" title="Z-A">south</span>
+                            </div>
+                        </div>
+                        <div class="resize-bar"></div>
+                      </th>
+                    <% }); %>
+
+                      <th class="column-title drag-line">Action</th>
+
+                  </tr>
+                </thead>
+                <tbody id="taxInvoiceList"></tbody>
+              </table>
+            </div>
+
+            <!-- <div class="profile-loader-msg text-center"></div> -->
+            <div class="profile-loader text-center">
+              <div class="preloader">
+                <div class="spinner-layer pl-amber">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
                   </div>
-                </th>
-                <th class="column-title">Invoice No..</th>
-                <th class="column-title">Customer Name</th>
-                <th class="column-title">Total Amount</th>
-                <th class="column-title">Gross Amount</th>
-                <th class="column-title">Bill Generated Date</th>
-                <th class="column-title">Action</th>
-              </tr>
-            </thead>
-            <tbody id="taxInvoiceList">
-            </tbody>
-          </table>
-          <div class="profile-loader-msg text-center"></div>
-          <div class="profile-loader text-center">
-            <div class="preloader">
-              <div class="spinner-layer pl-amber">
-                <div class="circle-clipper left">
-                  <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                  <div class="circle"></div>
+                  <div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div id="loadMember" data-index="1" data-currPage="1"></div>
-           <!-- paggination -->
-        <div class="footer row">
-          <div class="col-sm-5">
-            <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
-                class="page-info"></span></div>
-          </div>
-          <div class="col-sm-7">
-            <div class="showPageDetails dataTables_paginate paging_simple_numbers">
-              <ul class="pagination">
-              </ul>
+            <div id="loadMember" data-index="1" data-currPage="1"></div>
+            <!-- paggination -->
+            <div class="footer row">
+              <div class="col-sm-4" style="padding: 0;">
+                <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
+                    class="page-info f_txt"></span></div>
+              </div>
+              <div class="col-sm-4">
+                <div class="profile-loader-msg text-center"></div>
+              </div>
+              <div class="col-sm-4" style="padding: 0;">
+                <div class="showPageDetails dataTables_paginate paging_simple_numbers">
+                  <ul class="pagination"></ul>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <!-- paggination -->
+            <!-- paggination -->
+         
         </div>
       </div>
     </div>
@@ -97,7 +198,8 @@
       </span>
     </li>
     <%if(permission.add=="yes" ) { %>
-      <li class="loadview nav-item" data-toggle="tooltip" data-placement="top" title="Add" data-view="singletaxInvoiceData" data-item="taxInvoiceSingleView">
+      <li class="loadview nav-item" data-toggle="tooltip" data-placement="top" title="Add"
+        data-view="singletaxInvoiceData" data-item="taxInvoiceSingleView">
         <span class="material-icons">add</span>
         <!-- <button type="button" class="btn btn-info loadview" data-target="#myModal" data-taskID="" data-show="singletaskData"data-toggle="modal">Add Task Details</button> -->
       </li>
@@ -109,7 +211,6 @@
 
 </div>
 
-<!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -127,3 +228,27 @@
     </div>
   </div>
 </div>
+
+  <!-- Large Size -->
+  <div class="modal fade" id="largeModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div id="mediaLoad" class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="shippingModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md forShipping" role="document">
+      <div class="modal-content">
+        <div id="shippingMedia" class="modal-body shippingSave">
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="modal fade" id="customColumnModal" tabindex="-1" role="dialog"></div>
+
