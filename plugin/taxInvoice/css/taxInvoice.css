@@ -1,0 +1,549 @@
+
+.invoiceAccordion{
+    width: 100%;
+    background: #FFF;
+    margin:0 1rem;
+  }
+  .invoiceAccordion .accordion-content{
+    margin:10px 0;
+    overflow: hidden;
+    line-height: 2.2;
+  }
+  
+  .invoiceAccordion .accordion-content.is-open{
+    padding-bottom: 10px;
+  }
+  
+  .invoiceAccordion .accordion-content header{
+    display:flex;
+    min-height: 40px;
+    padding: 0 15px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: space-between;
+    transition:all 0.2s linear;
+    background: #F2F2FF;
+    border-radius: 10px 10px 0px 0px;
+  }
+  
+  .invoiceAccordion .accordion-content.is-open header{
+    min-height: 35px;
+  }
+  
+  .invoiceAccordion .accordion-content-title{
+    font-size: 14px;
+    font-weight: 400;
+    color:#000000;
+  }
+  
+  .invoiceAccordion .accordion-content-description{
+    height: 0px;
+    color:#000000;
+    padding: 0 15px;
+    background-color: #fff;
+    border: 1px solid #BDC0FA;
+    border-radius: 0px 0px 10px 10px;
+    border-top: none;
+  }
+  
+  .invoiceAccordion .accordion-content header i{ 
+    font-size: 30px;
+  }
+  
+  .invoiceAccordion h4{
+    margin-bottom: 0px;
+    margin-top: 5px;
+  }
+  
+  .taxInvoice .form-control{
+    background: #F4F4F4;
+    border: none;
+    border-radius: 0px;
+  }
+  
+  .invoices_body tr .pending_amt{
+    display: flex;
+  }
+  .invoices_body .amtChange{
+    width: 100px;
+  }
+  
+  .taxInvoice label{
+    margin-bottom: 0px;
+  }
+  
+  .custCompanyDetails{
+    padding-top: 10px;
+  }
+  
+  .shipToClass{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  
+  .shipToClass [type="checkbox"].filled-in:not(:checked)+label:after,.shipToClass [type="checkbox"].filled-in:checked+label:after{
+    height: 16px;
+    width: 16px;
+    top: 4px;
+  }
+  
+  .shipToClass [type="checkbox"].filled-in:checked+label:before {
+    top: 3px;
+    left: 1px;
+    width: 6px;
+    height: 12px;
+  }
+  
+  .shipToClass [type="checkbox"]+label {
+    padding-left: 23px;
+  }
+  
+  .detailsDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #77B0DA;
+    border-radius: 5px;
+    text-align: center;
+    padding: 15px;
+    color: #666666;
+    font-weight: 100;
+    cursor: pointer;
+  }
+  
+  .detailsDiv img {
+    width: 65px;
+    height: 65px;
+  }
+  
+  
+  .detailsDiv img{
+    width: 70px;
+    height: 70px;
+  }
+  
+  .customerDetails.detailsDiv{
+    margin-top: 16px;
+    cursor: pointer;
+  }
+  
+  #invoice_table #item-header{
+    background: #F2F2FF;
+    width: 100%;
+  }
+  
+  #invoice_table .items-holder{
+    width: 100%;
+  }
+  
+  #invoice_table th {
+    /* padding: 5px 0px 5px 5px;
+    vertical-align: middle; */
+    font-size: 13px;
+  }
+  
+  .additionalDetails{
+    border: 1px solid #BDC0FA;
+    border-radius: 5px;
+  }
+  
+  .amtAdditionalCls .bankDetails{
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  
+  .bankInfo,.additionalCharges{
+    padding: 10px;
+  }
+  
+  /* .termsConditions{
+    padding: 20px;
+  } */
+  
+  .amountCls [type="checkbox"].filled-in:not(:checked)+label:after {
+    height: 16px;
+    width: 16px;
+    border: 1px solid #5a5a5a;
+    top: 3px;
+  }
+  
+  .amountCls [type="checkbox"].filled-in:checked+label:after {
+    top: 3px;
+    width: 16px;
+    height: 16px;
+  }
+  
+  .amountCls [type="checkbox"].filled-in:checked+label:before {
+    top: 2px;
+    left: 1px;
+    width: 5px;
+    height: 12px;
+  }
+  
+  .addCharges{
+    color: #0B78F9;
+    cursor: pointer;
+    background: none;
+  }
+  /* 
+  .amountCls{
+    margin-top: 10px;
+  } */
+  
+  .editableDetails{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .editableDetails i{
+    margin-top: -5px;
+    font-size: 18px;
+  }
+  
+  .amtInWords{
+    margin-bottom: 20px;
+  }
+  
+  .custCompanyDetails .companyDetails{
+    margin-top: 15px;
+  }
+  
+  .custCompanyDetails .companyDetails p {
+    margin-bottom: -6px;
+  }
+  
+  .custCompanyDetails .companyDetails .companyName{
+    margin-bottom: 5px;
+  }
+  
+  .custCompanyDetails .companyDetails .gstCls{
+    margin-top: 5px;
+  }
+  
+  .invoiceAccordion .invoiceLogo{
+    padding: 10px;
+    margin-top: 12px;
+  }
+  
+  .uploadInvoiceLogo{
+    border: 1px dashed #77B0DA;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .uploadInvoiceLogo img{
+    width: 59px;
+    height: 57px;
+  }
+  
+  .bankDetails.taxInvoice .form-control{
+    width: 68%;
+  }
+  
+  .bankDetails h6{
+    width: 27%;
+  }
+  
+  #companySingleView .ql-toolbar.ql-snow + .ql-container.ql-snow,.termsConditions .ql-toolbar.ql-snow + .ql-container.ql-snow{
+    width: 100%;
+  }
+  
+  .bottom-border::after{
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+    width: 94%;
+    z-index: 0;
+    border-bottom: 1px solid #cfcdcd;
+  }
+  
+  .m-b-Cls {
+    margin-bottom: 75px;
+  }
+  
+  .d-none{
+    display: none;
+  }
+  
+  .removeFields{
+    cursor: pointer;
+  }
+  
+  .addCharges:disabled {
+    cursor: not-allowed;
+  }
+  
+  .quantityUnit , .discount_types{
+    display: flex;
+    gap: 2px;
+    /* padding-top: 16px!important; */
+  }
+  
+  .modal-dialog.forShipping {
+    /* max-width: unset; */
+    pointer-events: unset;
+  }
+  
+  .pac-container {
+    z-index: 9999;
+  }
+  
+  .custEditDetails{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .pt-7{
+    padding-top: 7px;
+  }
+  
+  .input-p{
+    padding: 5px;
+  }
+  
+  img.invoiceDeleteImg{
+    width: 16px;
+    height: 16px;
+  }
+  
+  #addRow img{
+    width: 30px;
+  }
+  
+  button#addRow{
+    box-shadow: none;
+  }
+  
+  .addRowClass{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+  }
+  
+  .quantityUnit .form-group,.productDropdown .form-group {
+    margin-bottom: 0px;
+  }
+  
+  #invoice_table.table-striped tbody tr:nth-of-type(odd) {
+    background: #F2F2FF;
+  }
+  
+  #invoice_table.table-striped tbody tr:nth-of-type(even) {
+    background: #FCFCFF;
+  }
+  
+  #invoice_table .form-control{
+    height: 30px;
+  }
+  
+  #invoice_table.table-striped tbody tr:nth-of-type(odd) .del-row.btn-default{
+    background-color: #F2F2FF!important;
+  }
+  
+  #invoice_table.table-striped tbody tr:nth-of-type(even) .del-row.btn-default{
+    background-color: #FCFCFF!important;
+  }
+  
+  .totalAmtClass{
+    background: #F2F2F2;
+    padding: 15px;
+    margin: 0px 0px 15px 0px;
+    font-weight: bold;
+  }
+  
+  .fontWtBold{
+    font-weight: bold;
+  }
+  
+  .pLeftRight-5{
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  
+  .d-flex-align{
+    display: flex;
+    align-items: center;
+  }
+  
+  .pAll-5{
+    padding: 5px;
+  }
+  
+  .text-center{
+    text-align: center;
+  }
+  
+  .column-title.actionColumn{
+    padding: 0px 20px 0px 20px;
+  }
+  
+  .sortingBtn .btn-bgColor {
+    padding: 0px;
+    line-height: 0.5;
+  }
+  
+  .sortingBtn .btn-bgColor .material-icons{
+    line-height: 1;
+  }
+  
+  .lead_cust_table th{
+    /* display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0px; */
+  }
+  
+  .sortingBtn{
+    float: right;
+    position: relative;
+    visibility: hidden;
+  }
+  
+  .showSortOptions{
+      display: none;
+      position: absolute;
+      top: 27px;
+      background: #fff;
+      width: 150px;
+      box-shadow: 2px 2px 5px 1px #ccc;
+      flex-direction: column;
+      left: 0px;
+      z-index: 999;
+  }
+  
+  .showSortOptions button{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 9px;
+    gap: 9px;
+    box-shadow: none;
+  }
+  
+  .showSortOptions .ws-btn-default:hover{
+    width: 100%;
+    background-color: rgba(0, 0, 0, .075);
+    padding: 5px 10px;
+  }
+  
+  .showSortOptions button.btn{
+    box-shadow: none!important;
+    padding: 5px 10px;
+  }
+  
+  .column-title:hover .sortingBtn{
+    visibility: visible!important;
+  }
+  
+  .showSortOptions .material-icons{
+    font-size: 18px;
+  }
+  
+  .ws-btn-default:disabled {
+    cursor: not-allowed;
+  }
+  
+  .greedLeadTotalBody .row#customerGridRow1 {
+    width: auto;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    overflow-x: hidden!important;
+  }
+  
+  .sortColumns{
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .sortColumns.selected::before {
+      content: "\e876";
+      font-family: "Material Icons";
+      color: #2684FF;
+      font-size: 18px;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+  }
+  
+  @media (max-width: 768px) {
+    .logo-login-bg {
+      display: none;
+    }
+  }
+  
+  .menu-dark{
+    background-color: #787bfc6b !important;
+  }
+  
+  .menu-dark i {
+    color: #fff !important;
+  }
+  
+  .colorPicker.btn-group{
+    width: 100%;
+  }
+  
+  .colorPicker.btn-group input{
+    width: 100%;
+  }
+  
+  .stripInfo{
+    color: #9e9e9e;
+      font-size: 15px;
+      line-height: 2;
+      font-weight: 600;
+  }
+  
+  .navigationList{
+    max-height: 500px;
+    overflow: auto;
+  }
+  
+  .themeOptionSetup{
+      position: sticky;
+      top: 53px;
+      left: 0px;
+      right: 0px;
+      z-index: 5;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      box-shadow: 0px 3px 16px 0px rgba(0, 0, 0, 0.1);
+  }
+  
+  .themeOptionSetup .heading{
+      font-size: 18px;
+      font-weight: 600;
+      padding: 0px;
+  }
+  
+  .taskSelectOptions .ws-select .btn{
+    height: 20px;
+  }
+  
+  .leadDetailsCard img.assigneePhoto {
+    margin-left: auto;
+  }
+  .leadDetailsCard img.logoImgCls {
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+  }

@@ -54,10 +54,8 @@ define([
           res.data.forEach(function (menu) {
               if(menu.menuLink == 'companyMaster'){
                 selfobj.companyMenuID = menu.menuID;
-                if (DEFAULTCOMPANY == 0 || DEFAULTCOMPANY == '') {
-                  alert('Please Select Company First..!');return;
-                }
-                selfobj.companySingleModel.set({'infoID' : DEFAULTCOMPANY}); 
+                
+                selfobj.companySingleModel.set({'infoID' : "1"}); 
                 if(selfobj.companySingleModel.get('infoID') != ''){
                   selfobj.companySingleModel.fetch({
                     headers: {
@@ -694,7 +692,7 @@ define([
       $('#largeModal').modal('toggle');
       $('.uploadInvoiceLogo').hide();
       
-      var companyID = DEFAULTCOMPANY; 
+      var companyID = "1"; 
       selfobj.companySingleModel.set({'infoID' : companyID}); 
       selfobj.companySingleModel.set({ "invoice_logo": url });
       selfobj.companySingleModel.set({ "menuId": selfobj.companyMenuID });
@@ -717,7 +715,7 @@ define([
       var newdetails = [];
       newdetails["" + toID] = valuetxt;
       selfobj.companySingleModel.set(newdetails);
-      var companyID = DEFAULTCOMPANY; 
+      var companyID = "1"; 
       selfobj.companySingleModel.set({'infoID' : companyID}); 
       selfobj.companySingleModel.set({ "menuId": selfobj.companyMenuID });
       selfobj.companySingleModel.save({}, {
@@ -1266,7 +1264,7 @@ define([
               var delta = editor.getContents();
               var text = editor.getText();
               var justHtml = editor.root.innerHTML;
-              selfobj.companySingleModel.set({'infoID' : DEFAULTCOMPANY}); 
+              selfobj.companySingleModel.set({'infoID' : "1"}); 
               selfobj.companySingleModel.set({"menuId":selfobj.companyMenuID});
               if(selfobj.menuName == 'quotation'){
                 selfobj.companySingleModel.set({"quotation_terms_conditions":justHtml});
