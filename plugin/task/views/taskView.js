@@ -32,7 +32,7 @@ define([
     form_label:'',
     loadfrom: null,
     totalRec: 0,
-    View:'list',
+    View:'traditionalList',
     listDataGrid: [],
     initialize: function (options) {
       this.startX = 0;
@@ -227,7 +227,7 @@ define([
         $("#taskGridView").hide();
         $("#taskmodernlistview").hide()
         $(".grid_mode").removeAttr("disabled")
-        selfobj.View = "list";
+        selfobj.View = "traditionalList";
         selfobj.resetSearch();
         $(".showListView").toggle();
       } else if (View == "modernlist") {
@@ -235,7 +235,7 @@ define([
         $("#taskListView").hide();
         $("#taskGridView").hide();
         $(".grid_mode").removeAttr("disabled")
-        selfobj.View = "list";
+        selfobj.View = "modernlist";
         selfobj.resetSearch();
         $(".showListView").toggle();
       } else if (View == "grid") {
@@ -720,7 +720,7 @@ define([
       $(".form-line").removeClass("focused");
       $("#textSearch").val("select");
       this.filterCount = null;
-      if(selfobj.View == "list"){
+      if(selfobj.View == "traditionalList"){
         this.filterSearch(false);
       }else{
         filterOption.set({ "menuId": this.menuId });
@@ -744,38 +744,57 @@ define([
 
     addOne: function (objectModel) {
       var selfobj = this;
-      var dueDateMoment = moment(objectModel.attributes.due_date);
-      objectModel.attributes.newDate = objectModel.attributes.due_date;
-
-      if (objectModel.attributes.due_date != "0000-00-00" && objectModel.attributes.due_date != null) {
-        objectModel.attributes.due_date = dueDateMoment.format("DD-MMM-YYYY");
-        var today = moment();
-        if (dueDateMoment.isSame(today, 'day')) {
-          objectModel.attributes.due_date = "Today";
-        } else if (dueDateMoment.isSame(today.clone().subtract(1, 'day'), 'day')) {
-          objectModel.attributes.due_date = "Yesterday";
-        } else if (dueDateMoment.isSame(today.clone().add(1, 'day'), 'day')) {
-          objectModel.attributes.due_date = "Tomorrow";
-        } else {
-          objectModel.attributes.date_status = dueDateMoment.format("MMMM Do, YYYY");
-        }
-      } else {
-        objectModel.attributes.due_date = ""
-      }
+      selfobj.totalRec = selfobj.collection.length;
+      // var dueDateMoment = moment(objectModel.attributes.due_date);
+      // objectModel.attributes.newDate = objectModel.attributes.due_date;
+      // console.log("column.column_name",column.column_name);
+    
+      // if (objectModel.attributes.due_date != "0000-00-00" && objectModel.attributes.due_date != null) {
+      //   objectModel.attributes.due_date = dueDateMoment.format("DD-MMM-YYYY");
+      //   var today = moment();
+      //   if (dueDateMoment.isSame(today, 'day')) {
+      //     objectModel.attributes.due_date = "Today";
+      //   } else if (dueDateMoment.isSame(today.clone().subtract(1, 'day'), 'day')) {
+      //     objectModel.attributes.due_date = "Yesterday";
+      //   } else if (dueDateMoment.isSame(today.clone().add(1, 'day'), 'day')) {
+      //     objectModel.attributes.due_date = "Tomorrow";
+      //   } else {
+      //     objectModel.attributes.date_status = dueDateMoment.format("MMMM Do, YYYY");
+      //   }
+      // } else {
+      //   objectModel.attributes.due_date = "-"
+      // }
 
       if (selfobj.arrangedColumnList) {
         selfobj.arrangedColumnList.forEach((column) => {
+          if (objectModel.attributes["" + column.column_name] != "undefined" && objectModel.attributes["" + column.column_name] != null && objectModel.attributes["" + column.column_name] != "") {
+            objectModel.attributes["" + column.column_name] = objectModel.attributes["" + column.column_name];
+          }else{
+            objectModel.attributes["" + column.column_name] = "-";
+          }
           if (column.fieldType == 'Datepicker' || column.fieldType == 'Date') {
-            if (objectModel.attributes["" + column.column_name] != "0000-00-00") {
+            if (objectModel.attributes["" + column.column_name] != "0000-00-00" && objectModel.attributes["" + column.column_name] != null && objectModel.attributes["" + column.column_name] != '-') {
               var dueDateMoment = moment(objectModel.attributes["" + column.column_name]);
               if (column.dateFormat != "" && column.dateFormat != null && column.dateFormat != "undefined") {
                 objectModel.attributes["" + column.column_name] = dueDateMoment.format(column.dateFormat);
               } else {
                 objectModel.attributes["" + column.column_name] = dueDateMoment.format("DD-MM-YYYY");
+                if(column.column_name == 'due_date'){
+                  var today = moment();
+                  if (dueDateMoment.isSame(today, 'day')) {
+                    objectModel.attributes.due_date = "Today";
+                  } else if (dueDateMoment.isSame(today.clone().subtract(1, 'day'), 'day')) {
+                    objectModel.attributes.due_date = "Yesterday";
+                  } else if (dueDateMoment.isSame(today.clone().add(1, 'day'), 'day')) {
+                    objectModel.attributes.due_date = "Tomorrow";
+                  } else {
+                    objectModel.attributes.date_status = dueDateMoment.format("MMMM Do, YYYY");
+                  }
+                }
               }
             }
             else {
-              objectModel.attributes["" + column.column_name] = "-"
+              objectModel.attributes["" + column.column_name] = "-";
             }
           }
           if (column.fieldType == 'Timepicker') {
@@ -798,17 +817,16 @@ define([
 
         });
       }
-
-
-      if (selfobj.View == "list") {
+      if (selfobj.View == "traditionalList") {
         var template = _.template(taskRowTemp);
         $("#taskList").append(template({ taskDetails: objectModel, arrangedColumnList: this.arrangedColumnList}));
+      } else if (selfobj.View == "modernlist") {
         var template2 = _.template(taskModernRow);
         $("#taskModernList").append(template2({ taskDetails: objectModel, arrangedColumnList: this.arrangedColumnList }));
-      }else{
+      } else {
         var template = _.template(taskGridRow);
-        if(objectModel.attributes.assigneeName){
-          var initial = selfobj.getInitials(objectModel.attributes.assigneeName);
+        if(objectModel.attributes.assignee){
+          var initial = selfobj.getInitials(objectModel.attributes.assignee);
         }
         if (objectModel.attributes.task_statusID != 0) {
           $("#" + objectModel.attributes.task_statusID).append(template({ taskDetails: objectModel, taskLength: this.collection.length , assigneeInitial: initial ? initial : '',}));
