@@ -1,0 +1,307 @@
+<div class="tab-pane in active">
+    <div id="companySingleView">
+        <form id="companyDetails" name="companyDetails" action="#">
+            <div class="text-right actionBtns">
+                <button type="button" class="btn bg-indigo saveCompanyDetails waves-effect hover-tooltip">Save<span
+                        class="tooltip-text">Tooltip</span></button>
+                <button type="button" class="btn bg-indigo saveCompanyDetails" data-action="new">Save & new</button>
+            </div>
+
+            <div class="clearfix">&nbsp;</div>
+            <label> <strong> Company Details</strong></label>
+            <div class="clearfix">&nbsp;</div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="companyName" class="form-label">Company Name</label>
+                            <input id="companyName" class="form-control txtchange" name="companyName" required="" autocomplete="off"
+                                maxlength="45" type="text" value="<%=model.companyName%>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                    <div class="form-line">
+                        <label for="fromName" class="form-label">Email From Name</label>
+                        <input type="text" name="fromName" id="fromName" class="form-control txtchange" value="<%=model.fromName %>">
+                    </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="fromEmail" class="form-label">From Email</label>
+                            <input id="fromEmail" class="form-control txtchange" name="fromEmail" type="email" value="<%=model.fromEmail%>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <input id="mobile_number" class="form-control txtchange txtcolor" autocomplete="off" name="mobile_number" value="<%=model.mobile_number%>">
+                            <label for="mobile_number" class="form-label">Mobile No:</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="ccEmail" class="form-label">CC Email</label>
+                            <input type="email" name="ccEmail" id="ccEmail" class="form-control txtchange" value="<%=model.ccEmail %>">
+                        </div>
+                    </div>
+                </div> -->
+                <!-- <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="ourTarget" class="form-label">Our Target</label>
+                            <input type="text" name="ourTarget" id="ourTarget" class="form-control txtchange has-feedback-left" value="<%=model.ourTarget %>">
+                            <span class="fa fa-inr form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+
+            <div class="clearfix">&nbsp;</div>
+            <label> <strong> Company Address</strong></label>
+            <div class="clearfix">&nbsp;</div>
+
+            <div class="row">
+                <!-- <div class="col-md-12">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="company_address" class="form-label">Company Address</label>
+                            <input id="company_address" title="Company Address" class="form-control txtchange"
+                                name="company_address" value="<%=model.company_address%>">
+                        </div>
+                    </div>
+                </div> -->
+                <div class="col-md-12">
+                    <div class="form-group input-group form-float">
+                        <div class="form-line">
+                            <label for="company_address" class="form-label">Company Address</label>
+                            <input id="company_address" title="Company Address" class="form-control txtchange taskDate txtcolor" autocomplete="off" name="company_address" value="<%=model.company_address%>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group form-float">
+                        <div class="form-line removeBorder">
+                            <select id="country_id" name="country_id" class="form-control countryChange ws-select show-tick repeatChange backgroundHide txtcolor" data-live-search="true" title="Select Country">
+                                <% _.each(countryList, function(model1) { %>
+                                    <option <% if(model1.attributes.country_id==model.country_id ){ %> selected <%}%> value="<%=model1.attributes.country_id%>"><%=model1.attributes.country_name%></option>
+                                <%})%>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group form-float">
+                        <div class="form-line removeBorder">
+                            <select id="state_id" name="state_id" class="form-control stateChange ws-select show-tick repeatChange backgroundHide txtcolor" data-live-search="true" title="Select State" disabled>
+                                <% _.each(stateList, function(model1) { %>
+                                    <option <% if(model1.attributes.state_id==model.state_id ){ %>selected <% } %>value="<%=model1.attributes.state_id%>"><%=model1.attributes.state_name%></option>
+                                <%})%>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                   <div class="form-group form-float">
+                        <div class="form-line taskDate removeBorder">
+                            <select id="city_id" name="city_id" class="form-control cityChange dropval ws-select show-tick repeatChange backgroundHide txtcolor" data-live-search="true" title="Select City" disabled>
+                                <% _.each(cityList, function(model1) { %>
+                                    <option <% if(model1.attributes.city_id==model.city_id ){ %>selected <% } %>value="<%=model1.attributes.city_id%>"><%=model1.attributes.city_name%></option>
+                                <%})%>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                   <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="zip" class="form-label">Zip Code</label>
+                            <input id="zip" class="form-control txtchange" name="zip" value="<%=model.zip%>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clearfix">&nbsp;</div>
+            <label> <strong>GST Details</strong></label>
+            <div class="clearfix">&nbsp;</div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="pan" class="form-label">PAN Number</label>
+                            <input id="pan" class="form-control txtchange" name="pan" value="<%=model.pan%>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="centralGst" class="form-label">Central GST</label>
+                            <input id="centralGst" class="form-control txtchange" name="centralGst" value="<%=model.centralGst%>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="stateGst" class="form-label">State GST</label>
+                            <input id="stateGst" class="form-control txtchange" name="stateGst" value="<%=model.stateGst%>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="interGst" class="form-label">Inter GST</label>
+                            <input id="interGst" class="form-control txtchange" name="interGst" value="<%=model.interGst%>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="gst_no" class="form-label">GST No</label>
+                            <input id="gst_no" class="form-control txtchange" name="gst_no" value="<%=model.gst_no%>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="msme_no" class="form-label">MSME No</label>
+                            <input id="msme_no" class="form-control txtchange" name="msme_no" value="<%=model.msme_no%>">
+                        </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="lut_no" class="form-label">LUT No</label>
+                            <input id="lut_no" class="form-control txtchange" name="lut_no" value="<%=model.lut_no%>">
+                        </div>
+                    </div>
+                </div>
+              </div>
+
+            <div class="clearfix">&nbsp;</div>
+            <label> <strong>Bank Account Details</strong></label>
+            <div class="clearfix">&nbsp;</div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="bank_details" class="form-label">Bank Details </label>
+                            <input id="bank_details" class="form-control txtchange" name="bank_details" value="<%=model.bank_details%>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="bank_acc_no" class="form-label">Bank Account Number</label>
+                            <input id="bank_acc_no" class="form-control txtchange" name="bank_acc_no" value="<%=model.bank_acc_no%>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="ifsc_code" class="form-label">IFSC Code</label>
+                            <input id="ifsc_code" class="form-control txtchange" name="ifsc_code" value="<%=model.ifsc_code%>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group form-float">
+                        <div class="form-line">
+                            <label for="mcir_code" class="form-label">MCIR Code</label>
+                            <input id="mcir_code" class="form-control txtchange" name="mcir_code" value="<%=model.mcir_code%>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clearfix">&nbsp;</div>
+            <!-- <label> <strong>Quotation Terms and conditions</strong></label> -->
+            <!-- <div class="clearfix">&nbsp;</div> -->
+
+            <div class="ws-quill">
+                <div class="row ">
+                    <div class="col-md-12 m-b-Cls">
+                        <label for="quotation_terms_conditions" class=""><strong>Quotation Terms and conditions</strong></label>
+                        <div id="quotation_terms_conditions" class="form-control mb-3">
+                            <%=model.quotation_terms_conditions%>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- <label> <strong>Invoice Terms and conditions</strong></label> -->
+            <div class="clearfix">&nbsp;</div>
+
+            <div class="ws-quill">
+                <div class="row ">
+                    <div class="col-md-12 m-b-Cls">
+                        <label for="invoice_terms_condotions" class=""><strong>Invoice Terms and conditions</strong></label>
+                        <div id="invoice_terms_condotions" class="form-control mb-3">
+                            <%=model.invoice_terms_condotions%>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+           
+            <!-- <label> <strong>Receipt Terms and conditions</strong></label> -->
+            <div class="clearfix">&nbsp;</div>
+
+            <div class="ws-quill">
+                <div class="row ">
+                    <div class="col-md-12 m-b-Cls">
+                        <label for="receipt_terms_condotions" class=""><strong>Receipt Terms and conditions</strong></label>
+                        <div id="receipt_terms_condotions" class="form-control mb-3">
+                            <%=model.receipt_terms_condotions%>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+           
+            <div class="clearfix">&nbsp;</div>
+            <label> <strong>Invoice Logo</strong></label>
+            <div class="clearfix">&nbsp;</div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="clearfix">&nbsp;
+                                <input id="typehead" class="btn loadMedia" type="button" value="Select Logo"
+                                    name="Select Logo" data-change="ws-bg-image" data-toggle="modal" data-target="#largeModal">
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-5">
+                            <img id="profile_pic_view" style="max-width: 100%;" src="<%=model.invoice_logo%>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+            <div class="clearfix">&nbsp;</div>
+            <div id="dynamicFormFields" class="dynamic-align"></div>
+
+        </form>
+    </div>
+</div>

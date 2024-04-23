@@ -1,18 +1,224 @@
 <tr class="even pointer bg-<%=taxInvoiceDetails.attributes.status%>">
   <td class="a-center">
-    <div class="listCheckbox">
-        <input id="cAll_<%= taxInvoiceDetails.attributes.invoiceID %>" class="memberlistcheck chk-col-amber" data-invoiceID="<%= taxInvoiceDetails.attributes.invoiceID %>" type="checkbox">
+    <% if(taxInvoiceDetails.attributes.status=="draft" ) { %>
+      <div class="listCheckbox">
+        <input id="cAll_<%= taxInvoiceDetails.attributes.invoiceID %>"
+          data-status="<%=taxInvoiceDetails.attributes.status%>" class="memberlistcheck chk-col-amber"
+          data-id="<%=taxInvoiceDetails.attributes.invoiceID %>" type="checkbox">
         <label for="cAll_<%= taxInvoiceDetails.attributes.invoiceID %>">&nbsp;</label>
-    </div>
+      </div>
+
+    <%}%>    
   </td>
-  <td class="loadview" data-toggle="modal" data-target="#myModal" data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>"data-show="singleTaxInvoiceData" ><a href="javascript:;"><u><%=taxInvoiceDetails.attributes.invoiceNumber%></u></a></td></td>
+<td class="loadview" data-toggle="modal" data-target="#myModal" data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>"data-show="singleTaxInvoiceData" ><a href="javascript:;"><u><%=taxInvoiceDetails.attributes.invoiceNumber%></u></a></td></td>
   <td class=""><%=taxInvoiceDetails.attributes.customerName%></td>
   <td class=""><%=taxInvoiceDetails.attributes.invoiceTotal%></td>
   <td class=""><%=taxInvoiceDetails.attributes.grossAmount%></td>
   <td class=""><%= formatDate(taxInvoiceDetails.attributes.created_date,'no') %></td>
-  <td>
-    <button type="button" class="ws-btn-default loadview" data-toggle="tooltip"  data-placement="top" title="Edit"  data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>" data-view="singletaxInvoiceData"><i class="material-icons">mode_edit</i></button>
-    <a href="<%=APIPATH%>printBill/<%=taxInvoiceDetails.attributes.invoiceID%>" target="_blank" data-toggle="tooltip"  data-placement="top" title="Download" class="editHover" style="color: #5f6368;"><span class="material-symbols-outlined ">download</span></a>
+  <td class="" style="position: relative;">
+    <% if(taxInvoiceDetails.attributes.payment_status =="partially" ){ %> 
+      <span style="cursor:pointer;" data-id="<%=taxInvoiceDetails.attributes.invoiceID%>" data-action="partially_paid" data-target="#exampleModal_%=taxInvoiceDetails.attributes.invoiceID%>" class="paymentStatus badge badge-danger">Partial Payment</span>
+    <% }else{%>
+      <span class=""><span class="label bg-green"> <i style="position: relative;top: 5px;" class="material-icons">done_all</i> Paid </span></span>
+    <% } %>    
+    <div class="modal fade" id="paymentModal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+    
+          <div class="modal-header">
+            <h4 class="modal-title">Receipts </h4>
+            <button type="button" class="close cancelBtn" data-dismiss="modal">&times;</button>
+          </div>
+    
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-6 form-details">
+                <div class="form-group form-float">
+                  <div class="form-line" >
+                    <label class="form-label">Payment Amount</label>
+                    <input autocomplete="off" type="number" name="pending_amount" id="pending_amount" class="form-control" />
+                  </div>  
+                </div>
+              </div>
+              <div class="col-sm-6 form-details">
+                <div class="form-group form-float">
+                  <div class="form-line" >
+                    <label class="form-label">Payment Date</label>
+                    <input autocomplete="off" type="text" name="payment_date" id="payment_date" class="form-control"/>
+                  </div>            
+                </div>
+              </div>
+            </div>
+           <div class="row">
+            <div class="col-sm-6 form-details">
+              <div class="form-group form-float">
+                <div class="form-line" >    
+                      <select for="mode_of_payment" id="mode_of_payment" name="mode_of_payment" title="Payment Mode" class="form-control ws-select show-tick repeatChange">
+                          <%if(permission.add=="yes" ) { %>
+                              <option class="addNew" value="">Select Mode Of Payment</option>
+                              <%}%>
+                                  <% _.each(categoryList, function(modelcat) { %>
+                                      <% if(modelcat.attributes.slug=="payment_mode" )
+                                          _.each(modelcat.attributes.sublist, function(model1) { %>
+                                            <option value="<%=model1.category_id%>"><%=model1.categoryName%></option>
+                                          <%})%>
+                                  <%})%>
+
+                      </select>
+                      <!-- <label for="mode_of_payment" class="form-label">Mode Of Payment</label> -->
+                  </div>
+              </div>
+          </div>
+              <div class="col-sm-6 form-details">
+                <div class="form-group form-float">
+                  <div class="form-line" >
+                    <label class="form-label">Transaction ID</label>
+                    <input autocomplete="off" type="text" name="transaction_id" id="transaction_id" class="form-control" />
+                  </div>  
+                </div>
+              </div>
+           </div> 
+           <div class="row">
+                <div class="col-sm-12 form-details">
+                  <div class="form-group form-float">
+                    <div class="form-line" >
+                      <label class="form-label">Note : </label>
+                        <textarea id="payment_note" rows="3" cols="50" name="payment_note" class="form-control"></textarea>
+                    </div>  
+                  </div>
+                </div>
+            </div> 
+           
+            </form>
+            <div class="row">
+              <div class="col-md-4">
+                  <p class="mt-2 logAttachTitle dragdrop-image">Attachments</p>
+              </div>
+            </div>
+            <div class="row attachupdate logAttach">
+              <button type="button" class="loadMedia ws-logModalbtn dotborder" data-change="ws-bg-image"
+                  data-toggle="modal" data-target=""><span
+                      class="material-icons">add</span></button>
+              <div id="attachedDoc" class="row logAttachDoc"></div>
+            </div>
+
+            <div class="row upload" style="display: none;">
+              <div class="icon-left">
+                  <div class="ws-icon">
+                      <span class="material-symbols-outlined"></span>
+                  </div>
+              </div>
+              <div class="right-layout ws-quill">
+                  <div class="row ">
+                      <div class="col-md-12 ws-dragbox logAttachDragBox">
+                          <div class="ws-assignee-column">
+                              <input type="file" multiple class="btn btn-default btn__action"  id="attachement"/>
+                          </div>
+                      </div>
+                      <div class="col-md-12 text-right ">
+                          <button type="button" class="btn bg-indigo hideUpload clacel">Cancel</button>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="clearfix">&nbsp;</div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary cancelBtn" data-action="cancel" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" data-action="savePayment"  id="saveChangesBtn">Save changes</button>
+            </div>
+          </div>
+          <div class="logTablediv" style="padding: 10px;">
+            <div class="customTableClass">
+              <table id="paylogs" class="table paylogs jambo_table bulk_action tableList table-bordered"></table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </td>
+  <!-- <div class="pamentPopUp" id="pamentPopUp_<%=taxInvoiceDetails.attributes.invoiceID%>" style="display: none;">
+    <div class="pamenttop">
+      <div class="form-details">
+        <div class="form-group form-float">
+          <div class="form-line" >
+            <input autocomplete="off" type="number" name="pending_amount" id="pending_amount_<%=taxInvoiceDetails.attributes.invoiceID%>" class="form-control" placeholder="Payment Amount" />
+          </div>
+        </div>
+      </div>
+      <div class="form-details">
+        <div class="form-group form-float">
+          <div class="form-line" >
+            <input autocomplete="off" type="text" name="payment_date" id="payment_date_<%=taxInvoiceDetails.attributes.invoiceID%>" class="form-control" placeholder="Payment Date" />
+          </div>
+        </div>
+      </div>
+      <button type="button" class="ws-btn-default savePayment" data-action="savePayment" data-toggle="tooltip"  data-placement="top" title="cancel"  data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>" ><i class="material-icons">save </i></button>
+      <button type="button" class="ws-btn-default savePayment"  data-action="cancel" data-toggle="tooltip"  data-placement="top" title="save"  data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>" ><i class="material-icons">cancel</i></button>
+    </div>
+  </div> -->
+  <!-- <span class=""><span class="label bg-green"> <i style="position: relative;top: 5px;" class="material-icons">done_all</i> Approved </span></span>
+  <span class=""><span class="label bg-red"> <i style="position: relative;top: 5px;" class="material-icons">error</i> Canceled </span></span> -->
+    
+  <!-- <td class=""><% if(taxInvoiceDetails.attributes.pending_amount > 0){%><%=taxInvoiceDetails.attributes.pending_amount%><% }else{%> --- <% } %></td> -->
+  <td class="">
+    <% if(taxInvoiceDetails.attributes.status == "draft") { %>
+      <span style="cursor:pointer;" data-id="<%=taxInvoiceDetails.attributes.invoiceID%>" data-action="approved" class="invoiceStatus badge badge-success">Approve</span>
+      <span style="cursor:pointer;" data-id="<%=taxInvoiceDetails.attributes.invoiceID%>" data-action="cancel" class="invoiceStatus badge badge-danger">Cancel</span>
+    <%}%>
+    <% if(taxInvoiceDetails.attributes.status == "approved") { %>
+      <span class=""><span class="label bg-green"> <i style="position: relative;top: 5px;" class="material-icons">done_all</i> Approved </span></span>
+    <%}%>
+    <% if(taxInvoiceDetails.attributes.status == "cancel") { %>
+      <span class=""><span class="label bg-red"> <i style="position: relative;top: 5px;" class="material-icons">error</i> Canceled </span></span>
+    <%}%>
+  </td>
+  <% _.each(arrangedColumnList, function(column) { %>
+    <% if(column.column_name == 'invoiceNumber') { %>
+      <td class="loadview draglinerow" data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>" data-view="singletaxInvoiceData" >
+        <a href="javascript:;"><u><%=taxInvoiceDetails.attributes.invoiceNumber%></u></a></td>
+    <% } else if(column.column_name == 'status') { %>
+      <td class="draglinerow">
+        <% if(taxInvoiceDetails.attributes.status == "draft") { %>
+          <span style="cursor:pointer;" data-id="<%=taxInvoiceDetails.attributes.invoiceID%>" data-action="approved" class="invoiceStatus badge badge-success">Approve</span>
+          <span style="cursor:pointer;" data-id="<%=taxInvoiceDetails.attributes.invoiceID%>" data-action="cancel" class="invoiceStatus badge badge-danger">Cancel</span>
+        <%}%>
+        <% if(taxInvoiceDetails.attributes.status == "approved") { %>
+          <span class=""><span class="label bg-green"> <i style="position: relative;top: 5px;" class="material-icons">done_all</i> Approved </span></span>
+        <%}%>
+        <% if(taxInvoiceDetails.attributes.status == "cancel") { %>
+          <span class=""><span class="label bg-red"> <i style="position: relative;top: 5px;" class="material-icons">error</i> Canceled </span></span>
+        <%}%>
+      </td>
+    <% } else if(column.column_name == 'payment_status') { %>
+      <td class="draglinerow" style="position: relative;">
+        <% if(taxInvoiceDetails.attributes.payment_status =="partially" ){ %> 
+          <span style="cursor:pointer;" data-id="<%=taxInvoiceDetails.attributes.invoiceID%>" data-action="partially_paid" data-target="#exampleModal_%=taxInvoiceDetails.attributes.invoiceID%>" class="paymentStatus badge badge-danger">Partial Payment</span>
+        <% }else{%>
+          <span class=""><span class="label bg-green"> <i style="position: relative;top: 5px;" class="material-icons">done_all</i> Paid </span></span>
+        <% } %>    
+      
+      </td>
+    <% } else { %>
+      <td class="draglinerow">
+        <% if (column.linkedWith !="" && column.linkedWith !=null && column.linkedWith !="undefined" ) { %>
+          <%= taxInvoiceDetails.attributes["" + column.linkedWith + "_" + column.column_name] %>
+        <% } else { %>
+          <%= taxInvoiceDetails.attributes["" + column.column_name] %>
+        <% } %>
+      </td>
+    <% } %>
+  <% }); %>
+    <td class="draglinerow">
+      <button type="button" class="ws-btn-default loadview" data-toggle="tooltip" data-placement="top" title="Edit"
+        data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>" data-view="singletaxInvoiceData"><i
+          class="material-icons">mode_edit</i></button>
+    <% if(menuName=="quotation" ){ %>
+      <button type="button" class="ws-btn-default loadview" data-toggle="tooltip" data-placement="top" title="Edit"
+        data-invoiceID="<%=taxInvoiceDetails.attributes.invoiceID%>" data-view="convertInvoice"><i
+          class="material-icons">sync</i></button>
+    <% } %>
+      <a href="<%=APIPATH%>printBill/<%=taxInvoiceDetails.attributes.invoiceID%>" target="_blank"
+        data-toggle="tooltip" data-placement="top" title="Download" style="color: #5f6368;"><span
+          class="material-symbols-outlined">download</span></a>
+    </td>
 </tr>
-              

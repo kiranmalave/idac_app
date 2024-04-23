@@ -33,7 +33,7 @@ define([
       stepSize: null,
       numType: "INT",
       isNull: "FALSE",
-      valDefault: "NONE",
+      valDefault: "NULL",
       modified_by: null,
       created_date: null,
       modified_date: null,

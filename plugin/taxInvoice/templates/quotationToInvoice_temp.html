@@ -1,10 +1,7 @@
 <div class="tab-pane in active">
   <form id="taxInvoiceDetails" name="taxInvoiceDetails" action="#">
-    <div class="text-right actionBtns">
-      <% if(model.status !='approved') { %>
-        <button type="button" class="btn bg-indigo saveTaxInvoiceDetails waves-effect hover-tooltip" data-action="close">Save<span class="tooltip-text">Tooltip</span></button>
-        <button type="button" class="btn bg-indigo saveTaxInvoiceDetails" data-action="new">Save & new</button>
-      <% } %>
+    <div class="text-right actionBtns">  
+      <button type="button" class="btn bg-indigo saveTaxInvoiceDetails waves-effect hover-tooltip" data-action="close">Save<span class="tooltip-text">Tooltip</span></button>
     </div>
     <div class="row">
       <div class="invoiceAccordion" id="accordion">
@@ -71,12 +68,10 @@
           <div class="CustomerCompany accordion-content-description is-open">
             <div class="row custCompanyDetails">
             
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 pb-3 form-details custShippingAddress">
-                  <h6>Customer Details</h6>
+                <div class="col-md-4 form-details custShippingAddress">
                   <div class="form-group form-float customerDetailsDrop">
                     <div class="form-line" style="border: none;">
-                      <select id="customer_id" name="customer_id" class="form-control dropval ws-select show-tick" title="Select Customer" data-live-search="true">
-                        <option class="addNewCust addNew" value="addCustomer">Add Customer</option>
+                      <select id="customer_id" name="customer_id" class="form-control dropval ws-select show-tick" title="Select Customer">
                         <option value="">Select Customer</option>
                         <% _.each(model.customerList, function(model1) { %>
                           <option <% if(model1.customer_id==model.customer_id ){ %>selected <% } %> data-state_id = "<%=model1.state_id%>" value="<%=model1.customer_id%>"><%=model1.name%></option>
@@ -100,7 +95,7 @@
                   </div>
                 </div>
 
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 pb-3  custDetails">
+                <div class="col-md-4 custDetails">
                   <h6>Bill To</h6>
                   <div class="customerDetails detailsDiv">
                     <img src="images/customerImg.png"/>
@@ -109,7 +104,7 @@
                 </div>  
             
               
-              <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 pb-3">
+              <div class="col-md-4">
                 <span class="shipToClass">
                   <h6>Ship To</h6>
                   <input type="checkbox" name="ship_to" id="ship_to" class="filled-in chk-col-light-blue shipTocheck" <%if(model.ship_to == "yes"){%>checked<%}%>/>
@@ -133,7 +128,7 @@
                     <div class="custEditDetails">
                       <p class="custAddress"></p>
                         <div class="buttonAdd">
-                          <button type="button" class="ws-btn-default editShippingDetails" data-toggle="tooltip" data-placement="top" title="Edit Address">
+                          <button type="button" class="ws-btn-default shippingDetails" data-toggle="tooltip" data-placement="top" title="Edit Address" style="display: flex!important">
                               <i class="material-icons">edit</i>
                           </button>
                         </div>
@@ -143,7 +138,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 pb-3">
+              <div class="col-md-4">
                 <h6>Company Details</h6>
                 <div class="companyDetails">
                   <h6 class="companyName"><%=companyDetails.companyName%></h6>
@@ -378,7 +373,7 @@
     <div class="row amtAdditionalCls equal-height">
       <div class="col-md-6">
         <div class="bankInfo additionalDetails">
-          <h6 class="mb-3">Amount in words : <span class="amtInWords"></span></h6>
+          <h6 class="">Amount in words : <span class="amtInWords"></span></h6>
           <div class="editableDetails"><h6>Bank Details </h6></div>
           <div class="bankDetails taxInvoice"><h6>Bank Name:</h6><input id="bank_details" class="form-control companyDetailsChange" name="bank_details" value="<%=companyDetails.bank_details%>"></div>
           <div class="bankDetails taxInvoice"><h6>A/C No.:</h6><input id="bank_details" class="form-control companyDetailsChange" name="bank_details" value="<%=companyDetails.bank_acc_no%>"></div>
@@ -412,21 +407,21 @@
               </button>
             </div>
           </div>
-          <div class="row bottom-border mt-3 pb-2" style="position: relative;">
+          <div class="row mt-3">
             <div class="col-md-12 addAdditionalFields">
             </div>
           </div>
-          <div class="row amountCls mt-2"> 
+          <div class="row amountCls"> 
           <div class="col-md-12">
             <div style="display: none;" class="LogsPayment row bottom-border mt-2 mb-2">
               <div class="col-md-8">
                 <div>
-                  <input type="checkbox" name="advanceReceipts" id="advanceReceipts" <% if(model.show_on_pdf == 'yes') { %> checked <% } %>class="filled-in updateAmt chk-col-light-blue advanceReceiptsCheck"/>
-                  <label for="advanceReceipts">Show Advance Receipts on PDF <span class="receiptStr"></span></label>
+                  <!-- <input type="checkbox" name="advanceReceipts" id="advanceReceipts" <% if(model.show_on_pdf == 'yes') { %> checked <% } %>class="filled-in updateAmt chk-col-light-blue advanceReceiptsCheck"/> -->
+                  <label for="advanceReceipts" class="advanceReceipts">Advance Receipts : <span class="receiptStr"></span></label>
                 </div>
               </div>
               <div class="col-md-4">
-                <div>
+                <div class="logsAmounts">
                   <h6 class="logsAmt"></h6>
                 </div>
               </div>
@@ -496,7 +491,9 @@
     </div>
     
     <div class="row">
-      <div class="col-xs-6">&nbsp;</div>
+        <div class="col-xs-6">
+          &nbsp;
+        </div>
       <div class="clearfix">&nbsp;</div>      
       <div class="col-lg-12">
         <div class="table-responsive">
@@ -522,8 +519,8 @@
           </table>
          
           <% if(model.invoiceID =='' || model.invoiceID==null || model.invoiceID == undefined ){ %>
-          <div class="row log" style="display: none;">
-            <div class="col-md-6 form-details">
+          <div class="row log col-sm-12" style="display: none;">
+            <div class="col-sm-6 form-details">
               <div class="form-group form-float">
                 <div class="form-line" >
                   <label class="form-label">Payment Amount</label>
@@ -531,7 +528,7 @@
                 </div>  
               </div>
             </div>
-            <div class="col-md-6 form-details">
+            <div class="col-sm-6 form-details">
               <div class="form-group form-float">
                 <div class="form-line" >
                   <label class="form-label">Payment Date</label>
@@ -540,11 +537,10 @@
               </div>
             </div>
           </div>
-
-          <div class="row log" style="display: none;">
-            <div class="col-md-6 form-details">
+          <div class="row log col-sm-12" style="display: none;">
+            <div class="col-sm-6 form-details">
               <div class="form-group form-float">
-                <div class="" >    
+                <div class="form-line" >    
                       <select for="mode_of_payment" id="mode_of_payment" name="mode_of_payment" title="Payment Mode" class="form-control ws-select dropval show-tick repeatChange">
                           <%if(permission.add=="yes" ) { %>
                             <option class="addNew" value="">Select Mode Of Payment</option>
@@ -560,7 +556,7 @@
                   </div>
               </div>
           </div>
-              <div class="col-md-6 form-details">
+              <div class="col-sm-6 form-details">
                 <div class="form-group form-float">
                   <div class="form-line" >
                     <label class="form-label">Transaction ID</label>
@@ -569,8 +565,8 @@
                 </div>
               </div>
            </div>
-          <div class="row log " style="display: none;">
-            <div class="col-md-12 form-details">
+          <div class="row log col-sm-12" style="display: none;">
+            <div class="col-sm-12 form-details">
               <div class="form-group form-float">
                 <div class="form-line" >
                   <label class="form-label">Note : </label>
@@ -579,19 +575,18 @@
               </div>
             </div>
           </div> 
+
            <div class="row log" style="display: none;">
-            <div class="col-md-6">
-                <p class="ml-2 mt-2 logAttachTitle dragdrop-image">Attachments</p>
+            <div class="col-sm-6">
+                <p class="ml-4 mt-2 logAttachTitle dragdrop-image">Attachments</p>
             </div>
           </div>
           
           <div class="row attachupdate logAttach log" style="display: none;">
-            <div class="ml-2 col-sm-6">
-              <button type="button" class="loadMedia ws-logModalbtn dotborder" data-change="ws-bg-image"
-                data-toggle="modal" data-target=""><span
+            <button type="button" class="loadMedia ws-logModalbtn dotborder" data-change="ws-bg-image"
+                data-toggle="modal" data-target="#largeModal"><span
                     class="material-icons">add</span></button>
-              <div id="attachedDoc" class="row logAttachDoc"></div>
-            </div>
+            <div id="attachedDoc" class="row logAttachDoc"></div>
           </div>
           <% } %>
           <div class="row upload" style="display: none;">

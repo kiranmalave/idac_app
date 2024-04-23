@@ -248,6 +248,14 @@ $route['getAssigneeList'] = 'systems/Application/getList';
 $route['getList'] = 'systems/Application/getList';
 $route['taskColumnUpdatePositions'] = 'taskMaster/updatePositions';
 
+######Company Master
+$route['companyMasterList'] = 'companyMaster/getCompanyDetails';
+$route['companyMaster'] = 'companyMaster/companyMaster';
+$route['companyMaster/(:num)'] = 'companyMaster/companyMaster/$1';
+$route['companyMaster/status'] = 'companyMaster/companyChangeStatus';
+$route['getCompanyList'] = 'companyMaster/getCompanyList';
+$route['setDefualtCompany'] = 'companyMaster/setDefualtCompany';
+
 ######Invoice
 $route['taxInvoiceList'] = 'TaxInvoice/index';
 $route['taxInvoice'] = 'TaxInvoice/getTaxInvoiceDetails';
