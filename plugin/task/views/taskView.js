@@ -75,7 +75,6 @@ define([
           this.openSingleTemp(this.taskID);
         }
       }
-      
       this.menuList = new singleMenuModel();
       this.appSettings.getMenuList(this.menuId, function(plural_label,module_desc,form_label,result) {
         selfobj.plural_label = plural_label;

@@ -458,6 +458,11 @@ class Proposal extends CI_Controller {
 		}else{
 			$date = $proposalDetails[0]->modified_date;
 		}
+		
+		$where = array("adminID"=> $adminID);	
+		$roleID = $this->CommonModel->getMasterDetails('admin','roleID',$where);
+		$proposalDetails[0]->roleID = $roleID[0]->roleID;
+		$proposalDetails[0]->date = $date;
 		if (isset($description) && !empty($description) && isset($proposalDetails[0])) {
 			$keys = ["{{name}}", "{{project_name}}", "{{company_name}}", "{{proposal_number}}", "{{modified_date}}"];
 			
@@ -476,18 +481,64 @@ class Proposal extends CI_Controller {
 				}
 			}
 		}
-		
-		$where = array("adminID"=> $adminID);
-		$roleID = $this->CommonModel->getMasterDetails('admin','roleID',$where);
-		$proposalDetails[0]->roleID = $roleID[0]->roleID;
-		$proposalDetails[0]->date = $date;
+		if($proposalDetails[0]->modified_date == "0000-00-00 00:00:00"){
+			$proposalDetails[0]->modified_date = $proposalDetails[0]->created_date;
+		}
 		$data= array();
 	 	$data['proposalData']= $proposalDetails;
+	 	$logo = $this->config->item('imagesPATH').'idac_logo.png';
         $pdfFilePath = $this->load->view("proposalpdf",$data,true);
+        $header = '<table width="100%"><tr><td width="25%" style="text-align:left">IDAC</td><td width="50%" style="text-align:center">'.$proposalDetails[0]->name.'</td><td width="25%" style="text-align:right">KB</td></tr></table>';
+        $footer ='<hr><table width="100%">
+			<tr>
+				<td width="25%" style="text-align:left">'.$proposalDetails[0]->proposal_number.'</td>
+				<td width="50%" style="text-align:center">{PAGENO} of {nbpg}</td>
+				<td width="25%" style="text-align:right">'.$proposalDetails[0]->modified_date.'</td>
+			</tr>
+		</table>';
+
         //load mPDF library
         $this->load->library('MPDFCI');
 		$this->mpdfci->SetWatermarkImage($this->config->item( 'app_url' )."/images/idac_logo.png",0.3,'F',array(17,50));
-        $this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+		$this->mpdfci->SetHeader($header);
+        $this->mpdfci->SetHTMLFooter($footer);
+        $this->mpdfci->WriteHTML('<table width="100%">
+			<tr>
+				<td style="height: '.($h-40).'pt; text-align: center; vertical-align: middle; padding: 0px 5px; margin: 0;"></td>
+			</tr>
+			<tr>
+				<td style="height:152pt;text-align: center;vertical-align: middle;"><img style="" width="180px" src="'.$logo.'"></td>
+			</tr>
+			<tr><td style="text-align: center;vertical-align: middle;">
+				<h3>Proposal</h3>
+				<h2></h2>
+			</td>
+			</tr>
+			<tr>
+				<td style="height: 80pt;text-align: center;vertical-align: middle;">
+				<h3>'.$proposalDetails[0]->project_name.'</h3>
+			</tr>
+			<tr>
+				<td style="text-align: center;vertical-align: middle;">
+				<p>for</p>
+			</tr>
+			<tr>
+				<td style="height: 80pt;text-align: center;vertical-align: middle;">
+				<h3>'.$proposalDetails[0]->company_name.'</h3>
+			</tr>
+			<tr>
+				<td style="text-align: center;vertical-align: middle;">
+				<p>by</p>
+			</tr>
+			<tr>
+				<td style="height: 80pt;text-align: center;vertical-align: middle;">
+				<b>Dr Kiran Bhagate</b> BE, MTech, PhD, MIMechE, CEng(UK)
+				<h3>India Pvt Ltd</h3>
+			</tr>
+
+		</table>');
+		$this->mpdfci->AddPage('','NEXT-ODD','','','','','','','','','','myHeader', 'html_myHeader2', '', '',1, 1, 0, 0);
+		$this->mpdfci->SetHeader($header);
  	    $this->mpdfci->WriteHTML($pdfFilePath);
        	$this->mpdfci->Output();  
 	}

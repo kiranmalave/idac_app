@@ -1242,16 +1242,11 @@ input::-webkit-inner-spin-button {
 }
 
 .actionBtns {
-  position: sticky;
-  top: 0px;
-  background: #fff;
-  z-index: 9999;
-  padding-bottom: 8px;
-  padding-right: 13px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
+  margin-top: 0;
+  right: 27px;
+  top: 6px;
+  padding-bottom: 0;
+  position: absolute;
 }
 
 .btn-circle i {

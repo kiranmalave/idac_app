@@ -1330,6 +1330,7 @@ define([
           appliedFilterCount++;
         }
       }
+      console.log(filterOption.attributes);
       if (this.View == "grid") {
         selfobj.isdataupdated = true;
         selfobj.girdLazyLoad("");
