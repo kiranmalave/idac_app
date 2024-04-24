@@ -148,6 +148,7 @@ define([
       "click .hideUpload" : "hideUpload",
       "change .assignChange": "getassignee",
       "input .selectAssignee": "setAssignee",
+      "change .countrySelect": "setCountryCode",
     },
     attachEvents: function () {
       // Detach previous event bindings
@@ -181,6 +182,8 @@ define([
       this.$el.on('input', '.assignChange', this.getassignee.bind(this));
       this.$el.off('click', '.selectAssignee', this.setAssignee);
       this.$el.on('click', '.selectAssignee', this.setAssignee.bind(this));
+      this.$el.off("change", ".countrySelect", this.setCountryCode);
+      this.$el.on("change", ".countrySelect", this.setCountryCode.bind(this));
     },
 
     onErrorHandler: function (collection, response, options) {
@@ -244,6 +247,12 @@ define([
           .join(',');
       }
       this.model.set({ [toName]: existingValues });
+    },
+
+    setCountryCode: function(e){
+      e.stopPropagation();
+      var value = $(e.currentTarget).val();
+      $(".countrySelect .filter-option-inner-inner").text(value);
     },
 
     setCountry: function (e) {

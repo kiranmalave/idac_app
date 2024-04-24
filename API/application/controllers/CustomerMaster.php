@@ -330,6 +330,13 @@ class CustomerMaster extends CI_Controller
 			$customerDetails['lead_source'] = $this->validatedata->validate('lead_source', 'lead source', false, '', array());
 			$customerDetails['mailing_address'] = $this->validatedata->validate('mailing_address', 'Mailing Address', false, '', array());
 			$customerDetails['assignee'] = $this->validatedata->validate('assignee', 'Assignee', false, '', array());
+			$customerDetails['assignee'] = $this->validatedata->validate('assignee', 'Assignee', false, '', array());
+			$countryCodeNumber = $this->input->post('countryCodeNumber');
+			$countryarray = explode(" ", $countryCodeNumber);
+			$mobNumberArray = explode(" ", $customerDetails['mobile_no']);
+			$myObj = array_merge($countryarray,$mobNumberArray);
+			$myJSON = json_encode($myObj);
+			$customerDetails['mobile_no'] = $myJSON;
 
 			if($customerDetails['type'] =="lead"){
 				$fieldData = $this->datatables->mapDynamicFeilds("leads",$this->input->post());
@@ -505,6 +512,19 @@ class CustomerMaster extends CI_Controller
 				if(!empty($assignee)){
 					$assigneeName = array_column($assignee,'name');
 					$customerDetails[0]->assigneeName = $assigneeName;
+				}
+				if(isset($customerDetails[0]->mobile_no) && !empty($customerDetails[0]->mobile_no)) {
+					// $mobileNumberObject = $customerDetails[0]->mobile_no;
+					$mobileNumberString = $customerDetails[0]->mobile_no;
+
+					// Decoding the JSON-like string to get the actual array
+					$mobileNumberArray = json_decode($mobileNumberString);
+
+					// Extracting country code and number from the array
+					$countryCode = $mobileNumberArray[0];
+					$number = $mobileNumberArray[1];
+					$customerDetails[0]->mobile_no = $number;
+					$customerDetails[0]->countryCode = $countryCode;
 				}
 				$status['data'] = $customerDetails;
 				$status['statusCode'] = 200;
