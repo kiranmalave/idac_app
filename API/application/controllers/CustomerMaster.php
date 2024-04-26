@@ -256,6 +256,14 @@ class CustomerMaster extends CI_Controller
 			$result = $customerTaskUpcoming + $customerAppUpcoming + $customerNoteUpcoming;
 			$customerDetails[$key]->upcomingCount = $result;
 
+			$mobNo = json_decode($value->mobile_no);
+			// print_r($value->mobile_no);
+			if(isset($mobNo) && !empty($mobNo)){
+				if(is_array($mobNo)){
+					$customerDetails[$key]->mobile_no = $mobNo[0].' '.$mobNo[1];
+				}
+			}
+
 		}
 
 		$status['data'] = $customerDetails;
@@ -519,12 +527,13 @@ class CustomerMaster extends CI_Controller
 
 					// Decoding the JSON-like string to get the actual array
 					$mobileNumberArray = json_decode($mobileNumberString);
-
+					if(is_array($mobileNumberArray)){
 					// Extracting country code and number from the array
-					$countryCode = $mobileNumberArray[0];
-					$number = $mobileNumberArray[1];
-					$customerDetails[0]->mobile_no = $number;
-					$customerDetails[0]->countryCode = $countryCode;
+						$countryCode = $mobileNumberArray[0];
+						$number = $mobileNumberArray[1];
+						$customerDetails[0]->mobile_no = $number;
+						$customerDetails[0]->countryCode = $countryCode;
+					}
 				}
 				$status['data'] = $customerDetails;
 				$status['statusCode'] = 200;
