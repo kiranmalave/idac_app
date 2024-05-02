@@ -127,6 +127,8 @@ class ProposalTemplateMaster extends CI_Controller
 
 			$proposalTemplateDetails['description'] = $this->validatedata->validate('description', 'Description', true, '', array());
 
+			$proposalTemplateDetails['cost'] = $this->validatedata->validate('cost', 'Cost', false, '', array());
+
 			$proposalTemplateDetails['status'] = $this->validatedata->validate('status', 'status', true, '', array());
 
 			if ($method == "PUT") {

@@ -36,13 +36,30 @@
                     <div class="right-layout mb-5">
                         <div class="row">
                             <div class="col-md-12">
-                                <label for="description" style="color: #999;">Template Description</label>
+                                <label for="description">Template Description</label>
                                 <div id="description" class="form-control"><%=model.description%></div>
                             </div>
                         </div>
                     </div>
                 </div>       
                 <div class="clearfix">&nbsp;</div>      
+                <div class="list-row">
+                    <div class="icon-left">
+                        <div class="ws-icon">
+                            <span class="material-symbols-outlined">currency_rupee</span>
+                        </div>
+                    </div>
+                    <div class="right-layout mb-5">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="costing">Costing</label>
+                                <div id="costing" class="form-control" style="height: auto;">
+                                    <%=model.cost%>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
            
         </div> 
