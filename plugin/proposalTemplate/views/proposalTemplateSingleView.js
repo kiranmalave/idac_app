@@ -152,7 +152,9 @@ define([
         let selfobj = this;
         var mid = this.model.get("temp_id");
         var proposalContent = tinymce.get("description").getContent();
+        var costingContent = tinymce.get("costing").getContent();
         this.model.set({"description": proposalContent});
+        this.model.set({"cost": costingContent});
         let isNew = $(e.currentTarget).attr("data-action");
         if (permission.edit != "yes") {
           alert("You dont have permission to edit");
@@ -264,6 +266,9 @@ define([
       fromEditors: function () {
         if (tinyMCE.activeEditor != undefined) {
           tinyMCE.activeEditor.remove("description");
+          if($('#costing').length){
+            tinyMCE.activeEditor.remove("costing");  
+          }
         }
         tinyMCE.init({
           selector: "#description, #costing",
@@ -293,7 +298,6 @@ define([
         var source = projecttemp;
         var template = _.template(source);
         $("#" + this.toClose).remove();
-        console.log(this.ourClientsList);
         this.$el.html(template({ "model": this.model.attributes , "ourClientsList": this.ourClientsList.models}));
         this.$el.addClass("tab-pane in active panel_overflow");
         this.$el.attr("id", this.toClose);

@@ -9,6 +9,7 @@ define([
         temp_id: null,
         temp_name: null,
         description: null,
+        cost: null,
         status: 'active',
       },
       urlRoot: function () {

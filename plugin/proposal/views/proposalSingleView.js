@@ -232,6 +232,7 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".popupLoader").hide();
         selfobj.model.set({ description: tempDetails.attributes.description });
+        selfobj.model.set({ cost: tempDetails.attributes.cost });
         selfobj.render();
       });
       console.log(tempDetails);
