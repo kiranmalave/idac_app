@@ -72,9 +72,6 @@
     <div>
         <h2>Proposal No: <?php echo $proposalData[0]->proposal_number; ?></h2>
 	</div>
-    <div >
-        <h2>Name: <?php echo ($proposalData[0]->name); ?></h2>
-	</div>
     <div>
         <h2>Client: <?php echo ($proposalData[0]->company_name); ?></h2>
 	</div>
@@ -83,9 +80,6 @@
 	</div>
 </div>
 <div>
-    <div>
-        <h2>Proposal Description:</h2>
-	</div>
      <div><?php echo ($proposalData[0]->description); ?></div>
 	 <?php if($proposalData[0]->roleID == 1){?>
 		<div>
