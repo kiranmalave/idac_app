@@ -488,7 +488,8 @@ class Proposal extends CI_Controller {
 	 	$data['proposalData']= $proposalDetails;
 	 	$logo = $this->config->item('imagesPATH').'idac_logo.png';
         $pdfFilePath = $this->load->view("proposalpdf",$data,true);
-        $header = '<table width="100%"><tr><td width="25%" style="text-align:left">IDAC</td><td width="50%" style="text-align:center">'.$proposalDetails[0]->name.'</td><td width="25%" style="text-align:right">KB</td></tr></table>';
+        $header = '<table width="100%"><tr><td width="25%" style="text-align:left">IDAC</td><td width="50%" style="text-align:center">'.$proposalDetails[0]->company_name . ' - ' . $proposalDetails[0]->project_name.'</td><td width="25%" style="text-align:right">KB</td></tr></table>';
+
         $footer ='<hr><table width="100%">
 			<tr>
 				<td width="25%" style="text-align:left">'.$proposalDetails[0]->proposal_number.'</td>
@@ -501,7 +502,7 @@ class Proposal extends CI_Controller {
         $this->load->library('MPDFCI');
 		$this->mpdfci->SetWatermarkImage($this->config->item( 'app_url' )."/images/idac_logo.png",0.3,'F',array(17,50));
 		$this->mpdfci->SetHeader($header);
-        $this->mpdfci->SetHTMLFooter($footer);
+        
         $this->mpdfci->WriteHTML('<table width="100%">
 			<tr>
 				<td style="height: '.($h-40).'pt; text-align: center; vertical-align: middle; padding: 0px 5px; margin: 0;"></td>
@@ -537,8 +538,9 @@ class Proposal extends CI_Controller {
 			</tr>
 
 		</table>');
-		$this->mpdfci->AddPage('','NEXT-ODD','','','','','','','','','','myHeader', 'html_myHeader2', '', '',1, 1, 0, 0);
-		$this->mpdfci->SetHeader($header);
+
+		$this->mpdfci->AddPage('','NEXT-ODD','','','','','','','','','',$this->mpdfci->SetHTMLHeader($header),$this->mpdfci->SetHTMLFooter($footer), '', '',1, 1, 0, 0);
+		$this->mpdfci->SetHTMLFooter($footer);
  	    $this->mpdfci->WriteHTML($pdfFilePath);
        	$this->mpdfci->Output();  
 	}
