@@ -23,8 +23,9 @@ define([
   '../../menu/collections/menuCollection',
   'text!../templates/quotationToInvoice_temp.html',
   'text!../templates/additionalCharges_temp.html',
+  '../../category/views/categorySingleView',
 
-], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, icheck, select2, moment, Quill,multiselectOptions, customerCollection, singleTaxInvoiceModel, dynamicFieldRender, invoiceItems,customerSingleView,slugCollection,readFilesView,shippingModalView,companySingleModel,menuCollection,taxInvoice_temp,additionalCharges_temp) {
+], function ($, _, Backbone, validate, inputmask, datepickerBT, typeahead, icheck, select2, moment, Quill,multiselectOptions, customerCollection, singleTaxInvoiceModel, dynamicFieldRender, invoiceItems,customerSingleView,slugCollection,readFilesView,shippingModalView,companySingleModel,menuCollection,taxInvoice_temp,additionalCharges_temp,categorySingleView) {
 
   var taxInvoiceSingleView = Backbone.View.extend({
     model: singleTaxInvoiceModel,
@@ -54,6 +55,9 @@ define([
           res.data.forEach(function (menu) {
               if(menu.menuLink == 'companyMaster'){
                 selfobj.companyMenuID = menu.menuID;
+                if (DEFAULTCOMPANY == 0 || DEFAULTCOMPANY == '') {
+                  alert('Please Select Company First..!');return;
+                }
                 selfobj.companySingleModel.set({'infoID' : DEFAULTCOMPANY}); 
                 if(selfobj.companySingleModel.get('infoID') != ''){
                   selfobj.companySingleModel.fetch({
@@ -113,6 +117,17 @@ define([
       }
 
     },
+    refreshCat: function () {
+      let selfobj = this;
+      this.categoryList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y', slug: 'unit' }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        selfobj.render();
+      });
+    },
     events:
     {
       "click .saveTaxInvoiceDetails": "saveTaxInvoiceDetails",
@@ -138,7 +153,7 @@ define([
       "click .custDetails": "customerDetails",
       "click .shipTocheck": "shipTocheck",
       "click .removeFields": "removeFields",
-      "click .shippingDetails": "shippingDetails",
+      "click .editShippingDetails": "editShippingDetails",
       "click .editCustomerDetails": "editCustomerDetails",
     },
 
@@ -193,8 +208,8 @@ define([
       this.$el.on('click', '.shipTocheck', this.shipTocheck.bind(this));
       this.$el.off('click', '.removeFields', this.removeFields);
       this.$el.on('click', '.removeFields', this.removeFields.bind(this));
-      this.$el.off('click', '.shippingDetails', this.shippingDetails);
-      this.$el.on('click', '.shippingDetails', this.shippingDetails.bind(this));
+      this.$el.off('click', '.editShippingDetails', this.editShippingDetails);
+      this.$el.on('click', '.editShippingDetails', this.editShippingDetails.bind(this));
       this.$el.off('click', '.editCustomerDetails', this.editCustomerDetails);
       this.$el.on('click', '.editCustomerDetails', this.editCustomerDetails.bind(this));
     },
@@ -213,7 +228,7 @@ define([
       $('.customerAddDetails').hide();
       $('.customerDetailsDrop').show();
     },
-    shippingDetails: function (e) {
+    editShippingDetails: function (e) {
       var selfobj = this;
       $('#shippingModal').modal('toggle');
       new shippingModalView({ taxInvoice: this });
@@ -310,17 +325,19 @@ define([
     },
     ShowPaymentLogs:function(){
       this.logsAmt = 0 ;
-      var receiptStr = '' ;
+      this.receiptStr = '' ;
       var logs = this.model.get('paymentLogs');
       if (logs != undefined && logs != '') {
         logs.forEach((log)=>{
           this.logsAmt = this.logsAmt + parseInt(log.amount);
-          receiptStr = '<br><span>#'+log.receipt_number+'</span> <span> - '+log.amount+'</span>';
-          $('.advanceReceipts').append(receiptStr);
+          if (this.receiptStr == '') 
+            this.receiptStr = this.receiptStr + '#'+log.receipt_number;
+          else
+            this.receiptStr = this.receiptStr + ', #'+log.receipt_number;
         });
         $('.LogsPayment').show();
         $('.logsAmt').html('-'+this.logsAmt);
-        // $('.receiptStr').html(this.receiptStr);
+        $('.receiptStr').html(this.receiptStr);
       }
     },
     removeFields: function (e) {
@@ -341,6 +358,22 @@ define([
       var lastID = $("tr.item-list-box:last").attr("id");
       var lasts = lastID.split("-");
       var lastDetails = parseInt(lasts[1]);
+      var slug_id ='' ;
+       $.each(this.categoryList.models,function (key, val) {
+        if(val.attributes.slug == 'unit') {    
+          slug_id = val.attributes.category_id; 
+        }
+      })
+      var sel2 = '<select id="itemUnit_' + (lastDetails + 1) + '" name="itemUnit_' + (lastDetails + 1) + '" class="form-control ws-select dropval setnarr" title="Unit Type" data-slug="'+slug_id+'"> > ';
+      sel2 = sel2 + ' <option class="" value="">Select Units</option><option class = "addNew" value="addCategory">Add Units Type</option>';
+      $.each(this.categoryList.models, function (key, val) {
+        if(val.attributes.slug == 'unit') {       
+          $.each(val.attributes.sublist, function (key, modcat) {          
+            sel2 = sel2 + '<option value="' + modcat.category_id + '">' + modcat.categoryName + '</option>';
+          });
+        }
+      }); 
+      sel2 = sel2 + '</select>';
       var sel = '<div class="col-md-12 productDropdown nopadding"><div class="form-group form-float"><div class="form-line taskDate"><input id="narr_'+(lastDetails + 1)+'" type="text" class="form-control pdChange ddcnt taskDate" name="narr_'+(lastDetails + 1)+'" value="" placeholder="Type" /></div></div><div class="product-input"></div><div id="productDropdown_'+(lastDetails + 1)+'" class="dropdown-content custDrop" style="display: none;"></div></div>';
       var temprow = '<tr id="item-' + (lastDetails + 1) + '" class="item-list-box">' +
                     '<td class="sno">' + (lastDetails + 1) + '</td>' +
@@ -348,17 +381,18 @@ define([
                     '<td class="quantityUnit">' +
                     '<input type="text" name="itemQuantity_' + (lastDetails + 1) + '" id="itemQuantity_' + (lastDetails + 1) + '" class="form-control amtChange digits input-p" value="0">' +
                     '<div class="form-group form-float">' +
-                    '<div class="form-line focused">' +
-                    '<select for="itemUnit_' + (lastDetails + 1) + '" id="itemUnit_' + (lastDetails + 1) + '" name="itemUnit_' + (lastDetails + 1) + '" title="Unit" class="form-control ws-select dropval show-tick repeatChange nopadding">' +
-                    '<option value="245">KG</option>' +
-                    '<option value="246">Litre</option>' +
-                    '<option value="247">Gram</option>' +
-                    '</select>' +
+                    '<div class="form-line focused">' 
+                    + sel2 +
                     '</div>' +
                     '</div>' +
                     '</td>' +
                     '<td class="text-right">' +
                     '<input type="text" name="itemRate_' + (lastDetails + 1) + '" id="itemRate_' + (lastDetails + 1) + '" class="form-control amtChange digits" value="0">' +
+                    '<div class="apply-taxes">'+
+                        '<input type="checkbox" name="itemAmtWithGST_' + (lastDetails + 1) + '" id="itemAmtWithGST_' + (lastDetails + 1) + '" class="itemAmtWithGST-check updateAmt" >'+
+                        '<span class="itemAmtWithGST">With Gst</span>'+
+                    '</div>'+
+                    '<span class="itemWithGSTAmt_' + (lastDetails + 1) + '"></span>'+
                     '</td>' +
                     '<td class="discount_types">' +
                     '<input type="text" name="itemDiscount_' + (lastDetails + 1) + '" id="itemDiscount_' + (lastDetails + 1) + '" class="form-control amtChange input-p">' +
@@ -394,7 +428,23 @@ define([
     },
     addRow: function (e) {
       e.preventDefault();
-      var lastDetails = 1;
+      var lastDetails = 0;
+      var slug_id ='' ;
+      $.each(this.categoryList.models, function (key, val) {
+        if(val.attributes.slug == 'unit') {    
+          slug_id = val.attributes.category_id; 
+        }
+     })
+     var sel2 = '<select id="itemUnit_' + (lastDetails + 1) + '" name="itemUnit_' + (lastDetails + 1) + '" class="form-control ws-select dropval setnarr" title="Unit Type" data-slug="'+slug_id+'"> > ';
+      sel2 = sel2 + ' <option class="" value="">Select Units</option><option class = "addNew" value="addCategory">Add Units Type</option>';
+      $.each(this.categoryList.models, function (key, val) {
+        if(val.attributes.slug == 'unit') {       
+          $.each(val.attributes.sublist, function (key, modcat) {          
+            sel2 = sel2 + '<option value="' + modcat.category_id + '">' + modcat.categoryName + '</option>';
+          });
+        }
+      }); 
+      sel2 = sel2 + '</select>';
       var sel = '<div class="col-md-12 productDropdown nopadding"><div class="form-group form-float"><div class="form-line taskDate"><input id="narr_'+(lastDetails + 1)+'" type="text" class="form-control pdChange ddcnt taskDate" name="narr_'+(lastDetails + 1)+'" value="" placeholder="Type" /></div></div><div class="product-input"></div><div id="productDropdown_'+lastDetails+'" class="dropdown-content custDrop" style="display: none;"></div></div>';
       var temprow = '<tr id="item-' + (lastDetails + 1) + '" class="item-list-box">' +
       '<td class="sno">' + (lastDetails + 1) + '</td>' +
@@ -403,16 +453,17 @@ define([
       '<input type="text" name="itemQuantity_' + (lastDetails + 1) + '" id="itemQuantity_' + (lastDetails + 1) + '" class="form-control amtChange digits input-p" value="0">' +
       '<div class="form-group form-float">' +
       '<div class="form-line focused">' +
-      '<select for="itemUnit_' + (lastDetails + 1) + '" id="itemUnit_' + (lastDetails + 1) + '" name="itemUnit_' + (lastDetails + 1) + '" title="Unit" class=" amtChange form-control ws-select dropval show-tick repeatChange nopadding">' +
-      '<option value="245">KG</option>' +
-      '<option value="246">Litre</option>' +
-      '<option value="247">Gram</option>' +
-      '</select>' +
+      +sel2+
       '</div>' +
       '</div>' +
       '</td>' +
       '<td class="text-right">' +
       '<input type="text" name="itemRate_' + (lastDetails + 1) + '" id="itemRate_' + (lastDetails + 1) + '" class="form-control amtChange digits" value="0">' +
+      '<div class="apply-taxes">'+
+          '<input type="checkbox" name="itemAmtWithGST_' + (lastDetails + 1) + '" id="itemAmtWithGST_' + (lastDetails + 1) + '" class="itemAmtWithGST-check updateAmt" >'+
+          '<span class="itemAmtWithGST">With Gst</span>'+
+      '</div>'+
+      '<span class="itemWithGSTAmt_' + (lastDetails + 1) + '"></span>'+
       '</td>' +
       '<td class="discount_types">' +
       '<input type="text" name="itemDiscount_' + (lastDetails + 1) + '" id="itemDiscount_' + (lastDetails + 1) + '" class="form-control amtChange input-p">' +
@@ -537,35 +588,81 @@ define([
         var lastDetails = lasts[1];
        
         var rDisc = $("#itemDiscount_" + lastDetails).val();
+        var withGst = $("#itemAmtWithGST_" + lastDetails).is(":checked");
+       
         var rDiscType = $("#itemDiscountType_" + lastDetails).val();
         var rGst = $("#itemGST_" + lastDetails).val();
+        var price = parseFloat($("#itemRate_" + lastDetails).val());
+        
         rowtotal = (parseFloat($("#itemQuantity_" + lastDetails).val()) * parseFloat($("#itemRate_" + lastDetails).val()));
-
-        if (rDisc != '') {
+        // DISCOUNT 
+        if (rDisc != '' ) {
           var dis = 0 ;
+          rDisc = parseFloat(rDisc);
+
           if (rDiscType == 'amt') {
             rowtotal = rowtotal - rDisc  ;
+            if (rDisc <= price) {
+              
+              price = price - rDisc;
+              console.log('dprice1 : ',price);
+              
+            }else
+            {
+              alert('Discount is greater than price!');
+            }
+            console.log('dprice : ',price);
+            
             TotalDiscount = TotalDiscount + rDisc;
           }else
           {
             dis= rowtotal * (rDisc / 100) ;
             rowtotal = rowtotal - dis;
+
+            var dprice = price * (rDisc / 100);
+            console.log('dprice : ',dprice);
+            price = price - dprice;
+            console.log('dprice1 : ',dprice);
             TotalDiscount = TotalDiscount + dis;
           }
-        }
-        
-        if (rGst != '') {
-          var gs = rowtotal * (rGst / 100);
-          if (rGst > largestgst) {
-            largestgst = rGst;
+        } 
+
+        var gstAmt = parseFloat($("#itemRate_" + lastDetails).val());
+        // GST 
+          if (rGst != '') {
+            rGst = parseFloat(rGst);
+            if (parseFloat(rGst) > largestgst) { 
+              largestgst = parseFloat(rGst);
+            }
+            if(withGst){
+              gstAmt =  (price * 100) / (rGst + 100) ; 
+              gs = price - gstAmt;
+            }else
+            {
+              gstAmt =  price * (rGst / 100) ; 
+              gs = gstAmt;
+              rowtotal = rowtotal + ( gs * parseFloat($("#itemQuantity_" + lastDetails).val()));
+            }
+
+            console.log('price : ',price);
+            console.log('gstAmt : ',gstAmt);
+            console.log('gs : ',gs);
+            console.log('rowtotal : ',rowtotal);
+            console.log('dis : ',dis);
+            
+            TotalGST = TotalGST + (gs * parseFloat($("#itemQuantity_" + lastDetails).val()));
+            $(".itemGstAmt_" + lastDetails).empty().html(numberFormat(gs, 2));
+            $(".itemWithGSTAmt_" + lastDetails).empty().html(numberFormat(gstAmt, 2));
+            
+          }else
+          {
+            var gs = 0.00;
+            TotalGST = TotalGST + (gs * parseFloat($("#itemQuantity_" + lastDetails).val()));
+            $(".itemGstAmt_" + lastDetails).empty().html(numberFormat(gs, 2));
+            $(".itemWithGSTAmt_" + lastDetails).empty().html(numberFormat(gstAmt, 2));
           }
-          rowtotal = rowtotal - gs;
-          TotalGST = TotalGST + gs;
-          $(".itemGstAmt_" + lastDetails).empty().html(numberFormat(gs, 2));
-        }
-        
         TotalQty = TotalQty +  parseInt($("#itemQuantity_" + lastDetails).val());
-        TotalPrice = TotalPrice + parseFloat($("#itemRate_" + lastDetails).val());
+        TotalPrice = TotalPrice + gstAmt ;
         var tt = '<span id="rowTotal_'+lastDetails+'">'+numberFormat(rowtotal, 2)+' </span>'
         $("#itemtotal_" + lastDetails).empty().html(tt);
 
@@ -583,8 +680,9 @@ define([
       });
       var additional_gst = additional_ch * (largestgst / 100);
       additional_ch = additional_ch + additional_gst;
-      selfobj.model.set({'additionalCharges':additional_ch})
+      selfobj.model.set({'additionalCharges':additional_ch})      
       GrossTotal = subtotal + additional_ch;
+      console.log(GrossTotal);
       if ($('#advanceReceipts').prop('checked')) {
         var logsAmt = Math.abs(parseInt($('.logsAmt').text()));
         GrossTotal = GrossTotal - logsAmt;
@@ -597,13 +695,12 @@ define([
       $(".priceTotal").empty().html(numberFormat(TotalPrice, 2));
       $(".discTotal").empty().html(numberFormat(TotalDiscount, 2));
       $(".gstTotal").empty().html(numberFormat(TotalGST, 2));
-      $(".grossAmount").html(Math.round(numberFormat(GrossTotal, 2)));
+      $(".grossAmount").html(numberFormat(GrossTotal, 2));
       if ($('#roundOff').prop('checked')) {
         var rrd = Math.round(numberFormat(GrossTotal, 2)) - GrossTotal;
         $(".roundOff").html(numberFormat(rrd, 2));  
+        $(".grossAmount").html(Math.round(numberFormat(GrossTotal, 2)));
       }
-     
-      
       $(".diginum").digits();
     },
     updateTaxBox : function(){
@@ -613,21 +710,20 @@ define([
           return item && item.attributes && item.attributes.customer_id == selfobj.model.attributes.customer_id;
         });
         if(cust){
-          $('#ship_to').prop("checked", false);
-          selfobj.model.set({"ship_to" : 'no'});
           $('.custDetails').hide();
           $('.customerDetailsDrop').hide();
           $('.customerAddDetails').show();
           $('.custName').empty().append(cust.attributes.name); 
           $('.custAddress').empty().append(cust.attributes.address); 
-
           if (cust.attributes.address != '' && cust.attributes.address != null) {
             $('#ship_to').removeAttr("disabled");
+            $('.addressBeware').hide();
           }else
           {
             $('#ship_to').attr("disabled", true);
+            $('.addressBeware').show();
+            
           }
-
           $('.custZipcode').empty().append('Zip Code: ' + (cust.attributes.zipcode ? cust.attributes.zipcode : '-'));
           $('.custMobileNo').empty().append('Phone No.:' + (cust.attributes.mobile_no ? cust.attributes.mobile_no : '-')); 
           $('.custGstCls').empty().append('GST: ' + (cust.attributes.gst_no ? cust.attributes.gst_no : '-')); 
@@ -810,6 +906,8 @@ define([
         $(".profile-loader").hide();
         selfobj.model.set("customerList", res.data);
         selfobj.render();
+        $('.custDetails').hide();
+        $('.customerAddDetails').hide();
       });
     },
     onErrorHandler: function (collection, response, options) {
@@ -902,6 +1000,11 @@ define([
           this.updateTaxBox();
         } 
       }     
+      if (valuetxt == "addCategory") {
+        var slug = $(e.currentTarget).attr("data-slug");
+        alert(slug);
+        new categorySingleView({slug : slug , searchCategory: this, loadfrom: "taxInvoiceSingleView" , form_label : "Category" });
+      }
       if (this.model.get(toID) && Array.isArray(this.model.get(toID))) {
         this.model.set(toID, this.model.get(toID).join(","));
       }
@@ -1060,6 +1163,7 @@ define([
         selfobj.model.set({ shipping_address: selfobj.model.get("shipping_address")});
       }
       let isNew = $(e.currentTarget).attr("data-action");
+      var inconvertToInvoice = 'yes' ;
       invoiceItemsDetails.reset();
       var tmpinvoiceID = this.model.get("invoiceID");
       var invoiceID = selfobj.model.get("invoiceID");
@@ -1073,7 +1177,6 @@ define([
       var ship_to = selfobj.model.get("ship_to");
       var shipping_address = selfobj.model.get("shipping_address");
       var inconvertToInvoice = 'yes' ;
-      var quotationNumber = selfobj.model.get("invoiceNumber") ;
       var largestGst = selfobj.model.get('largestGst') ;
       var additionalCharges = selfobj.model.get('additionalCharges') ;
       var pending_amt = this.model.get('pending_amount');
@@ -1085,10 +1188,14 @@ define([
       var payment_note = this.model.get("payment_note") == '' || this.model.get("payment_note") == undefined ? '' : this.model.get("payment_note");
       var company_id = $.cookie('company_id');
       var show_on_pdf = $('#advanceReceipts').prop('checked') ? 'yes' : 'no';
-      if(payment_status=='' || payment_status== undefined )
-      {
-        alert('Payment status required!');return;
+      // var roundOff = $('#roundOff').prop('checked') ? 'yes' : 'no';
+      if (record_type != 'quotation') {
+        if(payment_status=='' || payment_status== undefined )
+        {
+          alert('Payment status required!');return;
+        }
       }
+
       var record_type = 'invoice';
       var isnewInvoice = 'no' ;
 
@@ -1100,6 +1207,7 @@ define([
       if (invoiceID == null) {
         isnewInvoice = 'yes' ;
       }
+      var invoiceID = null;
       var additional_charges = {};
       $(".fieldsSelection").each(function (key, value) {
         var lastAC = $(this).attr("id");
@@ -1119,9 +1227,9 @@ define([
       var additional_chargesStr = JSON.stringify(additional_charges);
       var error = [];
       // Set header Information
-      var InheaderInfo = {'quotationNumber' : quotationNumber,'isconvert':'yes','logsAmt':logsAmt,'pending_amt':pending_amt,'show_on_pdf':show_on_pdf,'additional_char' : additional_chargesStr,'largestGst':largestGst,'additionalCharges':additionalCharges,'inconvertToInvoice':inconvertToInvoice,'payment_note':payment_note,'isnewInvoice':isnewInvoice,'company_id':company_id, "payment_date":payment_date,"payment_amount":payment_amount,"payment_mode":payment_mode,"transaction_id":transaction_id,"payment_status":payment_status,"invoiceID": '', "processingYear": processingYear, "processingMonth": processingMonth, "traineeCount": traineeCount, "customerID": customerID, "invoiceDate": invoiceDate,"valid_until_date": valid_until_date,"ship_to" : ship_to,"shipping_address" : shipping_address, "record_type":record_type};
+      var InheaderInfo = {'logsAmt':logsAmt,'pending_amt':pending_amt,'show_on_pdf':show_on_pdf,'additional_char' : additional_chargesStr,'largestGst':largestGst,'additionalCharges':additionalCharges,'inconvertToInvoice':inconvertToInvoice,'inconvertToInvoice':inconvertToInvoice,'payment_note':payment_note,'isnewInvoice':isnewInvoice,'company_id':company_id, "payment_date":payment_date,"payment_amount":payment_amount,"payment_mode":payment_mode,"transaction_id":transaction_id,"payment_status":payment_status,"invoiceID": invoiceID, "processingYear": processingYear, "processingMonth": processingMonth, "traineeCount": traineeCount, "customerID": customerID, "invoiceDate": invoiceDate,"valid_until_date": valid_until_date,"ship_to" : ship_to,"shipping_address" : shipping_address, "record_type":record_type};
       invoiceItemsDetails.add(InheaderInfo);
-      console.log('HEADER : ',InheaderInfo);
+      console.log('HEADER :  ',InheaderInfo);
       $("tr.item-list-box").each(function (key, value) {
         var lastID = $(this).attr("id");
         var row = $(this).find(".sno").html();
@@ -1129,6 +1237,9 @@ define([
         var lastDetails = lasts[1];
 
         var narre = $("#narr_" + lastDetails).attr('product_id');
+        if (narre == undefined || narre == '') {
+          narre = $("#narr_" + lastDetails).val();
+        }
         var itemQuantity = parseFloat($("#itemQuantity_" + lastDetails).val());
         var itemUnit = $("#itemUnit_" + lastDetails).val();
         var itemRate = parseFloat($("#itemRate_" + lastDetails).val());
@@ -1137,7 +1248,7 @@ define([
         var interGstPercent = $("#itemGST_" + lastDetails).val();
         var interGstAmount = $(".itemGstAmt_" + lastDetails).text();
         var itemtotal = $("#itemtotal_" + lastDetails).text();
-        
+        var withGst = $('#itemAmtWithGST_'+ lastDetails).is(":checked") ? 'y' : 'n';
         if (narre == "") {
           error.push("Item type can not blank. Row No." + row);
         }
@@ -1149,9 +1260,10 @@ define([
             error.push("Item rate can not blank. Row No." + row);
           }
         }
-        var nerow = { "invoiceID": invoiceID,"itemtotal":itemtotal,"itemDiscountType":itemDiscountType,"itemDiscount":itemDiscount, "srno": lastDetails, "quantity": itemQuantity, "rate": itemRate, "unit": itemUnit, "invoiceLineChrgID": narre ,"interGstPercent":interGstPercent ,"interGstAmount":interGstAmount };
+        var nerow = { "invoiceID": invoiceID,"itemtotal":itemtotal,"itemDiscountType":itemDiscountType,"itemDiscount":itemDiscount, "srno": lastDetails, "quantity": itemQuantity, "rate": itemRate,"withGst":withGst, "unit": itemUnit, "invoiceLineChrgID": narre ,"interGstPercent":interGstPercent ,"interGstAmount":interGstAmount };
         invoiceItemsDetails.add(nerow);
       });
+      console.log(invoiceItemsDetails);
       if (error.length > 0) {
         var er = "";
         $.each(error, function (key, val) {
@@ -1173,7 +1285,7 @@ define([
       } else {
         method = "create";
       }
-
+      // return;
       $(e.currentTarget).html("<span>Saving..</span>");
       $(e.currentTarget).attr("disabled", "disabled");
       invoiceItemsDetails.sync(method, invoiceItemsDetails, { 
@@ -1282,9 +1394,12 @@ define([
       }
     },
     render: function () {
+      console.log("render");
       var source = taxInvoice_temp;
       var template = _.template(source);
       $("#" + this.toClose).remove();
+      console.log('invoice Details : ',selfobj.companyDetails);
+      console.log('model : ',selfobj.model.attributes);
       this.$el.html(template({ model: this.model.attributes , menuName : this.menuName,categoryList : selfobj.categoryList.models,companyDetails: selfobj.companyDetails ? selfobj.companyDetails[0] : []}));
       
       this.$el.addClass("tab-pane in active panel_overflow");
@@ -1328,7 +1443,7 @@ define([
       this.updateTaxBox();
       this.reArrangeIndex();
       $('.ws-select').selectpicker();
-      rearrageOverlays(selfobj.form_label, this.toClose);
+      rearrageOverlays('Invoice', this.toClose);//selfobj.form_label
       this.fromEditors();
       if(selfobj.companyDetails && selfobj.companyDetails[0] && selfobj.companyDetails[0].invoice_logo){
         $('body').find(".uploadInvoiceLogo").hide();
@@ -1341,9 +1456,17 @@ define([
         $(".custShippingAddress").hide();
       }
       if (selfobj.model.get("invoiceID") != null && selfobj.model.get("invoiceID") != '' ) {
+        $(".shippingDetails").hide();
+        if (selfobj.model.get("ship_to") == 'yes') {
+          $(".shipTocheckCls").show();
+        }else
+        {
+          $(".shipTouncheckCls").show();
+        }
         selfobj.ShowAdditionalCharges();
         selfobj.ShowPaymentLogs();
         selfobj.rowTotal();
+       
       }
       $('.invoice_logo.accordion-content-description.is-open').css('height', '0px');
       $('.invoice_logo.accordion-content-description.is-open').css('height', ($('.invoice_logo.accordion-content-description').get(0).scrollHeight + 15) + 'px');

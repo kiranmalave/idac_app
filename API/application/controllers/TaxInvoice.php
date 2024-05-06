@@ -179,7 +179,7 @@ class TaxInvoice extends CI_Controller {
 	 	$taxInvoiceData = $this->TaxInvoiceModel->getTaxInvoiceDetailsSingle($select,$wherec);
 	 	$invoiceLine = $this->TaxInvoiceModel->getTaxInvoiceLineDetails("*",$wherec);
 	 	$wherelogs = array("invoice_id = "=>$ID);
-		$inDetails = $this->CommonModel->GetMasterListDetails($selectC="t.receipt_number,t.amount",'payment_logs',$wherelogs,'','',array(),$other=array());
+		$inDetails = $this->CommonModel->GetMasterListDetails($selectC="t.receipt_number,t.amount",'receipts',$wherelogs,'','',array(),$other=array());
 	 	if(isset($taxInvoiceData) && !empty($taxInvoiceData)){
 			$taxInvoiceData[0]->invoiceLine = $invoiceLine;
 			$taxInvoiceData[0]->paymentLogs = $inDetails;
@@ -268,8 +268,7 @@ class TaxInvoice extends CI_Controller {
 									$getOrderBlce = number_format(floatval($orderOpen) + floatval($orderIn) - floatval($orderSettle) - floatval($orderCancel),2, '.', ''); //0+13-19-26
 									$avblStock['orderSettle'] = $orderSettle;
 									$avblStock['orderBalance'] = $getOrderBlce;
-									$isinsert1 = $this->CommonModel->updateMasterDetails('stocks',$avblStock,$whereP);
-									
+									$isinsert1 = $this->CommonModel->updateMasterDetails('stocks',$avblStock,$whereP);	
 								}
 							}
 						}else{
@@ -455,14 +454,19 @@ class TaxInvoice extends CI_Controller {
 				"ship_to"=>$invoiceLine[0]->ship_to,
 				"invoiceNumber"=>'',
 				"status"=>'draft',
-				"payment_date"=>$invoiceLine[0]->payment_status,
-				"created_by"=>$this->input->post('SadminID'),"created_date"=>date("Y-m-d H:i:s"));
-			if ($invoiceLine[0]->record_type == 'quotation') {
+				"payment_date"=>$invoiceLine[0]->payment_date,
+				"created_by"=>$this->input->post('SadminID'),"created_date"=>date("Y-m-d H:i:s")
+			);
 
+			if ($invoiceLine[0]->record_type == 'quotation') {
 				if (!isset($invoiceLine[0]->isconvert)) {
 					$datacc["invoiceNumber"] = $this->generateReceiptNumber($invoiceLine[0]->record_type);
 					$datacc["status"]='approved';
 				}
+			}
+			if ($invoiceLine[0]->record_type == 'receipt') {
+				$datacc["invoiceNumber"] = $this->generateReceiptNumber($invoiceLine[0]->record_type);
+				$datacc["status"]='approved';	
 			}
 			if (isset($invoiceLine[0]->isconvert) && $invoiceLine[0]->isconvert == 'yes') {
 				$datacc["invoiceNumber"] = $this->generateReceiptNumber($invoiceLine[0]->record_type);
@@ -470,8 +474,8 @@ class TaxInvoice extends CI_Controller {
 				$datacc["ref_quot_no"] = $invoiceLine[0]->quotationNumber;
 				$invoiceLine[0]->invoiceNumberConvert = $datacc["invoiceNumber"] ;
 			}
-		
-			$cDetails = $this->getCustomerDetails($invoiceLine[0]->customerID,$invoiceLine[0]->company_id);
+			// print_r($datacc);exit;
+			$cDetails = $this->getCustomerDetails($invoiceLine[0]->customerID,$invoiceLine[0]->company_id,$invoiceLine[0]->record_type);
 		
 			if (isset($cDetails[0]->name)) {
 				$datacc['customer_name'] = $cDetails[0]->name;
@@ -481,8 +485,7 @@ class TaxInvoice extends CI_Controller {
 			}
 			if (isset($cDetails[0]->address)) {
 				$datacc['customer_address']= $cDetails[0]->address;
-			}else
-			{
+			}else{
 				$status['data'] = array();
 				$status['msg'] = $this->systemmsg->getErrorCode(291);
 				$status['statusCode'] = 291;
@@ -497,8 +500,7 @@ class TaxInvoice extends CI_Controller {
 			}
 			if (isset($cDetails[0]->address)) {
 				$datacc['customer_address']= $cDetails[0]->address;
-			}else
-			{
+			}else{
 				$status['data'] = array();
 				$status['msg'] = $this->systemmsg->getErrorCode(291);
 				$status['statusCode'] = 291;
@@ -508,15 +510,13 @@ class TaxInvoice extends CI_Controller {
 			if (isset($cDetails[0]->customer_state)) {
 				$datacc['customer_state'] = $cDetails[0]->customer_state;
 			}		
-				
 			$datacc['terms']=$cDetails[0]->terms;
 			
 			$headerDetails = (array) $invoiceLine[0];
 			$fieldData = $this->datatables->mapDynamicFeilds($invoiceLine[0]->record_type,$headerDetails);
 			$datacc = array_merge($fieldData, $datacc);
-
 			$invoiceID = $this->TaxInvoiceModel->createTaxInvoiceInfo($datacc);
-			
+
 			if(!$invoiceID){
 				$status['data'] = array();
 				$status['msg'] = $this->systemmsg->getErrorCode(277);
@@ -539,7 +539,6 @@ class TaxInvoice extends CI_Controller {
 				// }
 				
 			}
-			
 			foreach ($invoiceLine as $key => $value) {
 				$invoiceLine[$key]->invoiceID = $invoiceID;
 	 		}
@@ -578,9 +577,9 @@ class TaxInvoice extends CI_Controller {
 				$this->response->output($status,200);
 		}
 		if(isset($invoiceLine) && !empty($invoiceLine)){
-			// print_r($invoiceLine);exit;
 			foreach ($invoiceLine as $key => $value) {
 				if($key !=0){
+					// $this->validateLine($value);
 					$inline[$i]["srNo"]=$value->srno;
 					$inline[$i]["invoiceID"]=$value->invoiceID;
 					$i++;
@@ -593,7 +592,6 @@ class TaxInvoice extends CI_Controller {
                     if($invoiceLine[0]->record_type == "delivery"){
                      $oldQuantity = 0 ;
                      $inLineData = $this->CommonModel->getMasterDetails('invoice_line', '', array('invoiceID'=>$invoiceLine[0]->invoiceID));
-                     // print_r($inLineData);
                      if (isset($inLineData) && !empty($inLineData)) {
                          if($value->invoiceLineChrgID == $inLineData[0]->invoiceLineChrgID)
                          	$oldQuantity = $inLineData[0]->invoiceLineQty;
@@ -627,7 +625,6 @@ class TaxInvoice extends CI_Controller {
 
                          $avblStock['orderIn'] = $getOrderIn; 
                          $avblStock['orderBalance'] = $getOrderBlce;
-                         //$avblStock['orderCancel'] = $getOrderBlce;
                          $avblStock['productID'] = $value->productID;
 
                          $isinsert1 = $this->CommonModel->saveMasterDetails('stocks',$avblStock);
@@ -639,29 +636,40 @@ class TaxInvoice extends CI_Controller {
 						if($value->rate!= '' ){
 							$rate = number_format($value->rate,2, '.', '');
 							$amt = number_format(($value->quantity * $rate),2, '.', '');
-							if ($value->itemDiscount != '') {
-								$dis = 0 ;
-								if (isset($value->itemDiscountType)) {
-									if ($value->itemDiscountType == 'amt') {
-										$amt = $amt - $value->itemDiscount ;
-									}else
-									{
-										$dis = $amt * ($value->itemDiscount / 100) ;
-										$amt = $amt - $dis;	
-									}
+							$rate1 = number_format($value->rate,2, '.', '');
+							$dis = 0 ;
+
+							if (!isset($value->itemDiscount)) {
+								$value->itemDiscount = 0 ;
+							}
+							if (isset($value->itemDiscountType)) {
+								if ($value->itemDiscountType == 'amt') {
+									$amt = $amt - ( $value->itemDiscount * $value->quantity) ;
+									$rate1 = $rate1 - $value->itemDiscount;
 								}else
 								{
-									$dis = $amt * ($value->itemDiscount / 100) ;
-									$amt = $amt - $dis;
+									print_r(' amt : '.$amt.'<br>');
+									$dis = $rate1 * ($value->itemDiscount / 100) ;
+									$rate1 = $rate1 - $dis ;
+									$amt = $amt - ( $dis * $value->quantity) ;	
 								}
 							}
+							$gs = 0 ;
 							if ($value->interGstPercent != '') {
-								$gs = $amt * ($value->interGstPercent / 100);
-								$amt = $amt - $gs;
+								
+								if($value->withGst == 'y'){
+									$gstAmt =  ($rate1 * 100) / ($value->interGstPercent + 100) ; 
+									$gs = $rate1 - $gstAmt;
+									$gs = $gs * ( $value->quantity );
+								}else{
+									$gstAmt =  $rate1 * ($value->interGstPercent / 100) ; 
+									$gs = $gstAmt * ( $value->quantity ) ;
+									$amt = $amt + $gs;
+								}
 							}
 						}
 						if($itemDetails[0]->isEdit == "yes"){
-							$data = array('discount_type'=>$value->itemDiscountType ,"invoiceLineChrgID"=>$value->invoiceLineChrgID,"invoiceLineAmount"=>$amt,"invoiceLineQty"=>$value->quantity,"discount"=>$value->itemDiscount,"invoiceLineRate"=>$rate,"invoiceLineUnit"=>$value->unit,"igst"=>$value->interGstPercent,"igst_amt"=>$value->interGstAmount);//,"invoiceLineNarr"=>$value->description,
+							$data = array('discount_type'=>$value->itemDiscountType ,'is_gst'=>$value->withGst,"invoiceLineChrgID"=>$value->invoiceLineChrgID,"invoiceLineAmount"=>$amt,"invoiceLineQty"=>$value->quantity,"discount"=>$value->itemDiscount,"invoiceLineRate"=>$rate,"invoiceLineUnit"=>$value->unit,"igst"=>$value->interGstPercent,"igst_amt"=>$gs);//,"invoiceLineNarr"=>$value->description,
 						}
 						// print_r($data);
 						$wherup = array("invoiceID"=>$value->invoiceID,"srNo"=>$value->srno);
@@ -671,27 +679,39 @@ class TaxInvoice extends CI_Controller {
 						if($value->rate!= '' ){
 							$rate = number_format($value->rate,2, '.', '');
 							$amt = number_format(($value->quantity * $rate),2, '.', '');
+							$rate1 = number_format($value->rate,2, '.', '');
 							$dis = 0 ;
-							
+
+							if (!isset($value->itemDiscount)) {
+								$value->itemDiscount = 0 ;
+							}
 							if (isset($value->itemDiscountType)) {
 								if ($value->itemDiscountType == 'amt') {
-									$amt = $amt - $value->itemDiscount ;
+									$amt = $amt - ( $value->itemDiscount * $value->quantity) ;
+									$rate1 = $rate1 - $value->itemDiscount;
 								}else
 								{
-									$dis = $amt * ($value->itemDiscount / 100) ;
-									$amt = $amt - $dis;	
+									$dis = $rate1 * ($value->itemDiscount / 100) ;
+									$rate1 = $rate1 - $dis ;
+									$amt = $amt - ( $dis * $value->quantity) ;	
 								}
-							}else
-							{
-								$dis = $amt * ($value->itemDiscount / 100) ;
-								$amt = $amt - $dis;
 							}
+							$gs = 0 ;
 							if ($value->interGstPercent != '') {
-								$gs = $amt * ($value->interGstPercent / 100);
-								$amt = $amt - $gs;
+								
+								if($value->withGst == 'y'){
+									$gstAmt =  ($rate1 * 100) / ($value->interGstPercent + 100) ; 
+									$gs = $rate1 - $gstAmt;
+									$gs = $gs * ( $value->quantity );
+								}else{
+									$gstAmt =  $rate1 * ($value->interGstPercent / 100) ; 
+									$gs = $gstAmt * ( $value->quantity ) ;
+									$amt = $amt + $gs;
+								}
 							}
 						}
-						$data = array("invoiceID"=>$value->invoiceID,'discount_type'=>$value->itemDiscountType ,"srNo"=>$value->srno,"invoiceLineChrgID"=>$value->invoiceLineChrgID,"discount"=>$value->itemDiscount,"invoiceLineAmount"=>$amt,"invoiceLineQty"=>$value->quantity,"invoiceLineRate"=>$rate,"invoiceLineUnit"=>$value->unit,"isEdit"=>"yes","igst"=>$value->interGstPercent,"igst_amt"=>$value->interGstAmount);//,"invoiceLineNarr"=>$value->description
+						$data = array("invoiceID"=>$value->invoiceID,'discount_type'=>$value->itemDiscountType,'is_gst'=>$value->withGst ,"srNo"=>$value->srno,"invoiceLineChrgID"=>$value->invoiceLineChrgID,"discount"=>$value->itemDiscount,"invoiceLineAmount"=>$amt,"invoiceLineQty"=>$value->quantity,"invoiceLineRate"=>$rate,"invoiceLineUnit"=>$value->unit,"isEdit"=>"yes","igst"=>$value->interGstPercent,"igst_amt"=>$gs);//,"invoiceLineNarr"=>$value->description
+						// print_r('<pre>');print_r($data);exit;
 						$isupdate = $this->TaxInvoiceModel->createInvoiceLineInfo($data);
 						if($isupdate){
 							// if($invoiceLine[0]->record_type == "delivery")
@@ -768,40 +788,45 @@ class TaxInvoice extends CI_Controller {
 				}
 			}else{
 				if ($invoiceLine[0]->isnewInvoice == 'yes') {
-					if ($invoiceLine[0]->payment_date != '') {
-						$datain['payment_date'] = dateFormat(($invoiceLine[0]->payment_date)) ;
-					}
-					if( $invoiceLine[0]->payment_status =="partially"){
-						if ( isset($invoiceLine[0]->payment_date) && $invoiceLine[0]->payment_date != '') {
+					if (isset($invoiceLine[0]->payment_status) && !empty($invoiceLine[0]->payment_status)) {
+						if ($invoiceLine[0]->payment_date != '') {
 							$datain['payment_date'] = dateFormat(($invoiceLine[0]->payment_date)) ;
 						}
-				
-						if($subTotal == $invoiceLine[0]->payment_amount)
-						{
-							$datain['pending_amount'] = '0';
-							$datain['payment_status'] = 'fully';
-						}else
-						{
-							if ($invoiceLine[0]->payment_amount > 0) {
-								$totalAmt1 = $subTotal - $invoiceLine[0]->payment_amount;
-								if($totalAmt1 == $subTotal){
-									$datain['pending_amount'] = '0';
-									$datain['payment_status'] = 'fully';
-								}	else{
-									$datain['pending_amount'] = $totalAmt1;
-									$datain['payment_status'] = 'partially';
-								}
+						if( $invoiceLine[0]->payment_status =="partially"){
+							if ( isset($invoiceLine[0]->payment_date) && $invoiceLine[0]->payment_date != '') {
+								$datain['payment_date'] = dateFormat(($invoiceLine[0]->payment_date)) ;
+							}
+							if($subTotal == $invoiceLine[0]->payment_amount)
+							{
+								$datain['pending_amount'] = '0';
+								$datain['payment_status'] = 'fully';
 							}else
 							{
-								$datain['pending_amount'] = $subTotal;
-								$datain['payment_status'] = 'partially';
-							}	
+								if ($invoiceLine[0]->payment_amount > 0) {
+									$totalAmt1 = $subTotal - $invoiceLine[0]->payment_amount;
+									if($totalAmt1 == $subTotal){
+										$datain['pending_amount'] = '0';
+										$datain['payment_status'] = 'fully';
+									}	else{
+										$datain['pending_amount'] = $totalAmt1;
+										$datain['payment_status'] = 'partially';
+									}
+								}else
+								{
+									$datain['pending_amount'] = $subTotal;
+									$datain['payment_status'] = 'partially';
+								}	
+							}
+						}else{
+							$datain['pending_amount']= 0;
+							$datain['payment_status'] = 'fully';
 						}
-					}else{
-						$datain['pending_amount']= 0;
-						$datain['payment_status'] = 'fully';
+					}else
+					{
+						$datain['pending_amount'] = $subTotal;
+						$datain['payment_status'] = 'partially';
 					}
-				}
+				}	
 			}
 			
 			$gm = number_format($subTotal,2, '.', '');
@@ -829,24 +854,15 @@ class TaxInvoice extends CI_Controller {
 				}
 				$lastlogID = '' ;
 				if ($invoiceLine[0]->isnewInvoice == 'yes' && !isset($invoiceLine[0]->isconvert)) {
-					if (!isset($invoiceLine[0]->payment_note) && empty($invoiceLine[0]->payment_note)) {
-						$invoiceLine[0]->payment_note = ' ';
-					}
-					$receiptNumber = $this->generateReceiptNumber('receipt');
-					if ($invoiceLine[0]->payment_status == 'fully') {
-						$data = array('notes'=>$invoiceLine[0]->payment_note,'receipt_number'=>$receiptNumber,'payment_log_date'=>$inDate,"amount" =>$datain['grossAmount'],"transaction_id"=>$invoiceLine[0]->transaction_id,"mode_of_payment"=>$invoiceLine[0]->payment_mode,'invoice_id'=>$invoiceLine[0]->invoiceID);	
-						$isinsert2 = $this->CommonModel->saveMasterDetails('payment_logs',$data);
-						if($isinsert2)
-						{
-							$lastlogID = $this->CommonModel->getLastInsertedID();
-							$this->db->trans_commit();	
-							$status['lastInvoiceID'] = $invoiceLine[0]->invoiceID;
-							$status['lastlogID'] = $lastlogID;
+					if(isset($invoiceLine[0]->payment_status) && !empty($invoiceLine[0]->payment_status))
+					{
+						if (!isset($invoiceLine[0]->payment_note) && empty($invoiceLine[0]->payment_note)) {
+							$invoiceLine[0]->payment_note = ' ';
 						}
-					}else{
-						if ($invoiceLine[0]->payment_amount > 0) {
-							$data = array('notes'=>$invoiceLine[0]->payment_note,'receipt_number'=>$receiptNumber,'payment_log_date'=>dateFormat($invoiceLine[0]->payment_date),"amount" =>$invoiceLine[0]->payment_amount,"transaction_id"=>$invoiceLine[0]->transaction_id,"mode_of_payment"=>$invoiceLine[0]->payment_mode,'invoice_id'=>$invoiceLine[0]->invoiceID);
-							$isinsert2 = $this->CommonModel->saveMasterDetails('payment_logs',$data);
+						$receiptNumber = $this->generateReceiptNumber('receipt');
+						if ($invoiceLine[0]->payment_status == 'fully') {
+							$data = array('notes'=>$invoiceLine[0]->payment_note,'receipt_number'=>$receiptNumber,'payment_log_date'=>$inDate,"amount" =>$datain['grossAmount'],"transaction_id"=>$invoiceLine[0]->transaction_id,"mode_of_payment"=>$invoiceLine[0]->payment_mode,'invoice_id'=>$invoiceLine[0]->invoiceID);	
+							$isinsert2 = $this->CommonModel->saveMasterDetails('receipts',$data);
 							if($isinsert2)
 							{
 								$lastlogID = $this->CommonModel->getLastInsertedID();
@@ -854,11 +870,27 @@ class TaxInvoice extends CI_Controller {
 								$status['lastInvoiceID'] = $invoiceLine[0]->invoiceID;
 								$status['lastlogID'] = $lastlogID;
 							}
-						}else
-						{
-							$this->db->trans_commit();	
-						}	
+						}else{
+							if ($invoiceLine[0]->payment_amount > 0) {
+								$data = array('notes'=>$invoiceLine[0]->payment_note,'receipt_number'=>$receiptNumber,'payment_log_date'=>dateFormat($invoiceLine[0]->payment_date),"amount" =>$invoiceLine[0]->payment_amount,"transaction_id"=>$invoiceLine[0]->transaction_id,"mode_of_payment"=>$invoiceLine[0]->payment_mode,'invoice_id'=>$invoiceLine[0]->invoiceID);
+								$isinsert2 = $this->CommonModel->saveMasterDetails('receipts',$data);
+								if($isinsert2)
+								{
+									$lastlogID = $this->CommonModel->getLastInsertedID();
+									$this->db->trans_commit();	
+									$status['lastInvoiceID'] = $invoiceLine[0]->invoiceID;
+									$status['lastlogID'] = $lastlogID;
+								}
+							}else
+							{
+								$this->db->trans_commit();	
+							}	
+						}
+					}else
+					{
+						$this->db->trans_commit();	
 					}
+					
 				}else
 				{
 					$this->db->trans_commit();	
@@ -886,6 +918,44 @@ class TaxInvoice extends CI_Controller {
 				$this->response->output($status,200);	
 			}
 		}
+	}
+	public function CalculateRowTotal($value)
+	{
+		$returnedTotal = array();
+
+		$rate = number_format($value->rate,2, '.', '');
+		$amt = number_format(($value->quantity * $rate),2, '.', '');
+		$rate1 = number_format($value->rate,2, '.', '');
+		$dis = 0 ;
+
+		if (!isset($value->itemDiscount)) {
+			$value->itemDiscount = 0 ;
+		}
+		if (isset($value->itemDiscountType)) {
+			if ($value->itemDiscountType == 'amt') {
+				$amt = $amt - ( $value->itemDiscount * $value->quantity) ;
+				$rate1 = $rate1 - $value->itemDiscount;
+			}else
+			{
+				$dis = $rate1 * ($value->itemDiscount / 100) ;
+				$rate1 = $rate1 - $dis ;
+				$amt = $amt - ( $dis * $value->quantity) ;	
+			}
+		}
+		$gs = 0 ;
+		if ($value->interGstPercent != '') {
+			if($value->withGst == 'y'){
+				$gstAmt =  ($rate1 * 100) / ($value->interGstPercent + 100) ; 
+				$gs = $rate1 - $gstAmt;
+				$gs = $gs * ( $value->quantity );
+			}else{
+				$gstAmt =  $rate1 * ($value->interGstPercent / 100) ; 
+				$gs = $gstAmt * ( $value->quantity ) ;
+				$amt = $amt + $gs;
+			}
+		}
+		
+		return returnedTotal;
 	}
 
 	public function generateReceiptNumber($record_type='')
@@ -923,6 +993,38 @@ class TaxInvoice extends CI_Controller {
 		}else
 		{
 			return $receiptDetails['invoiceNumber'];
+		}
+	}
+	public function getNextDocNumber($record_type='')
+	{
+		$wheredoct = array();
+		
+		if($record_type == "invoice")
+			$wheredoct["docTypeID"] = "1";
+		else if($record_type == "quotation")
+			$wheredoct["docTypeID"] = "3";	
+		else if($record_type == "delivery")
+			$wheredoct["docTypeID"] = "4";
+		else if($record_type == "receipt")
+			$wheredoct["docTypeID"] = "2";
+
+		$lastInvoiceDetails = $this->CommonModel->getMasterDetails("doc_prefix","docPrefixCD,docYearCD,docCurrNo",$wheredoct);		
+		if(!$lastInvoiceDetails){
+			$status['data'] = array();
+			$status['msg'] = $this->systemmsg->getErrorCode(267);
+			$status['statusCode'] = 267;
+			$status['flag'] = 'F';
+			$this->response->output($status,200);
+		}
+		
+		$invoiceNumber = $lastInvoiceDetails[0]->docPrefixCD.$lastInvoiceDetails[0]->docYearCD.'/'.sprintf('%02d', $lastInvoiceDetails[0]->docCurrNo);
+		if (isset($invoiceNumber) && !empty($invoiceNumber)) {
+			$status['data'] = $invoiceNumber;
+			$status['msg'] = "sucess";
+			$status['statusCode'] = 400;
+			$status['flag'] = 'S';
+			$this->response->output($status,200);
+
 		}
 	}
 
@@ -990,7 +1092,7 @@ class TaxInvoice extends CI_Controller {
 				}
 				// print_r($receiptNumber);exit;
 				$data = array('notes'=>$payment_note,'receipt_number'=>$receiptNumber,'payment_log_date'=>$p_date,"amount" =>$amt,"transaction_id"=>$transaction_id,"mode_of_payment"=>$mode_of_payment,'invoice_id'=>$invoiceID);
-				$isinsert2 = $this->CommonModel->saveMasterDetails('payment_logs',$data);
+				$isinsert2 = $this->CommonModel->saveMasterDetails('receipts',$data);
 				if($isinsert2)
 				{
 					$lastlogID = $this->db->insert_id();
@@ -1027,7 +1129,7 @@ class TaxInvoice extends CI_Controller {
 		$join[0]['key1'] ="mode_of_payment";
 		$join[0]['key2'] ="category_id";
 		
-		$inDetails = $this->CommonModel->GetMasterListDetails($selectC="t.*,c.categoryName As paymentMode",'payment_logs',$where,'','',$join,$other=array());
+		$inDetails = $this->CommonModel->GetMasterListDetails($selectC="t.*,c.categoryName As paymentMode",'receipts',$where,'','',$join,$other=array());
 		if(isset($inDetails) && !empty($inDetails)){
 			$status['data'] = $inDetails;
 			$status['statusCode'] = 200;
@@ -1168,41 +1270,41 @@ class TaxInvoice extends CI_Controller {
 		// check is bill created
 		$data= array();
 		$pdfFilePath = '';
+		// INFOSETTINGS 
 		$wherec = array("infoID"=>1);
 	 	$contract = $this->CommonModel->getMasterDetails("info_settings","*",$wherec);
-	 	$data['infoSettings']= $contract;
-
-		$invoiceLine = $this->input->post();
-		// check is bill created
-		
+		// TAXINVOICE DATA 
 		$wherec = array("invoiceID"=>$invoiceID);
 	 	$taxInvoiceData = $this->TaxInvoiceModel->getTaxInvoiceDetailsSingle("*",$wherec);
-	 	$data['taxInvoiceData']= $taxInvoiceData;
-	 	
-	 	$sel = "*,count(itemID) as total"; //itemID,invoiceID,srNo,invoiceLineChrgID,invoiceLineNarr,invoiceLineQty,invoiceLineUnit,invoiceLineRate,invoiceLineAmount,
-		$wher = array("invoiceID"=>$invoiceID);
+	 	// INVOICELINE DETAILS
+	 	$sel = "t.*,c.categoryName";
+		$wher = array("invoiceID = "=>$invoiceID);
 		$join = array();
 		$join[0]['type'] ="LEFT JOIN";
-		$join[0]['table']="products";
-		$join[0]['alias'] ="p";
-		$join[0]['key1'] ="invoiceLineChrgID";
-		$join[0]['key2'] ="product_id";
-		$invoiceLineDetails = $this->TaxInvoiceModel->getTaxInvoiceLineDetails($sel,$wher,true,$join);
-		$data['invoiceLineDetails']= $invoiceLineDetails;
-		
+		$join[0]['table']="categories";
+		$join[0]['alias'] ="c";
+		$join[0]['key1'] ="invoiceLineUnit";
+		$join[0]['key2'] ="category_id";
+		$invoiceLineDetails = $this->CommonModel->getMasterListDetails($sel,'invoice_line',$wher,'','',$join,'');
+		// IF PRODUCT IS NUMERRIC OR NOT NUMERIC
+		foreach ($invoiceLineDetails as $key => $inv) {
+			if(is_numeric($inv->invoiceLineChrgID))
+			{
+				$wherec = array("product_id"=>$inv->invoiceLineChrgID);
+	 			$product = $this->CommonModel->getMasterDetails("products","product_name",$wherec);
+				$inv->product_name = $product[0]->product_name;
+			}else
+			{
+				$inv->product_name = $inv->invoiceLineChrgID;
+			}	
+		}
+		// DEATAILS
 		$sel = "itemID,invoiceID,srNo,invoiceLineChrgID,invoiceLineNarr,invoiceLineQty,invoiceLineUnit,invoiceLineRate,invoiceLineAmount";
-		$wher = array("invoiceID"=>$invoiceID);
-		
 		$wher = array("invoiceID"=>"= ".$invoiceID);
-		$invoiceLineDetailsDesc = $this->CommonModel->GetMasterListDetails("t.invoiceLineNarr",'invoice_line',$wher,'','',$join);
-		$data['invoiceLineDetailsDesc']= $invoiceLineDetailsDesc;
-		//print_r($invoiceLineDetailsDesc); exit;
-		$data['counDetails']= "-";	
-		//this the the PDF filename that user will get to download
-	
+		$invoiceLineDetailsDesc = $this->CommonModel->GetMasterListDetails("t.invoiceLineNarr",'invoice_line',$wher,'','');
+		// CUSTOMER DETAILS
 		$wherec = array("customer_id"=>$taxInvoiceData[0]->customer_id);
 	 	$customerDetails = $this->CommonModel->getMasterDetails("customer","name,address,gst_no,state_id,mobile_no",$wherec);
-		
 		if ( $customerDetails[0]->state_id != 0) {
 			$wherec = array("state_id"=> $customerDetails[0]->state_id);
 			$stateD = $this->CommonModel->getMasterDetails("states","*",$wherec);
@@ -1211,8 +1313,14 @@ class TaxInvoice extends CI_Controller {
 				$customerDetails[0]->customer_state = $stateD[0]->state_name;
 			}
 		}	
+		// DATA ABSTRACTED
+		$data['invoiceLineDetailsDesc']= $invoiceLineDetailsDesc;
+		$data['infoSettings']= $contract;
 		$data['companyDetails'] = $customerDetails;
-		// print_r($taxInvoiceData[0]->record_type);
+		$data['taxInvoiceData']= $taxInvoiceData;
+		$data['invoiceLineDetails']= $invoiceLineDetails;
+		$data['counDetails']= "-";	
+
 		if($taxInvoiceData[0]->record_type == 'delivery')	
 			$pdfFilePath = $this->load->view("deliveryPdf",$data,true);	
 		else if($taxInvoiceData[0]->record_type == 'receipt')
@@ -1224,19 +1332,18 @@ class TaxInvoice extends CI_Controller {
 		else if($taxInvoiceData[0]->record_type == 'proforma')
 			$pdfFilePath = $this->load->view("proformapdf",$data,true);
 		
-
 		if(!$this->config->item('development')){
 			//load mPDF library
 			$this->load->library('MPDFCI');
 			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
 			$this->mpdfci->WriteHTML($pdfFilePath);
 			// Add the watermark
-			$this->mpdfci->SetWatermarkText($taxInvoiceData[0]->status);
-			$this->mpdfci->showWatermarkText = true;
-			$this->mpdfci->watermark_font = 'Arial';
-			$this->mpdfci->watermarkTextAlpha = 0.3;
-			$this->mpdfci->watermark_font_size = 36;
-			$this->mpdfci->watermarkTextColor = array(192, 192, 192);
+			// $this->mpdfci->SetWatermarkText($taxInvoiceData[0]->status);
+			// $this->mpdfci->showWatermarkText = true;
+			// $this->mpdfci->watermark_font = 'Arial';
+			// $this->mpdfci->watermarkTextAlpha = 0.3;
+			// $this->mpdfci->watermark_font_size = 36;
+			// $this->mpdfci->watermarkTextColor = array(192, 192, 192);
 			$this->mpdfci->Output();  
 		}else
 		{
@@ -1249,23 +1356,29 @@ class TaxInvoice extends CI_Controller {
 		
 		$data= array();
 		$pdfFilePath = '';
-
+		// print '<pre>';
 		// RECEIPT DETAILS
-		$wherer['payment_log_id = '] = $log_id;
+		$wherer['receipt_id = '] = $log_id;
 		$join = array();
 		$join[0]['type'] ="LEFT JOIN";
 		$join[0]['table']="categories";
 		$join[0]['alias'] ="c";
 		$join[0]['key1'] ="mode_of_payment";
 		$join[0]['key2'] ="category_id";
-		$receiptDetails = $this->CommonModel->GetMasterListDetails($selectC="t.*,c.categoryName As paymentMode",'payment_logs',$wherer,'','',$join,$other=array());
-		
+		$receiptDetails = $this->CommonModel->GetMasterListDetails($selectC="t.*,c.categoryName As paymentMode",'receipts',$wherer,'','',$join,$other=array());
 		// INVOICE DETAILS
-		$wheret = array("invoiceID"=>$receiptDetails[0]->invoice_id);
-	 	$taxInvoiceData = $this->TaxInvoiceModel->getTaxInvoiceDetailsSingle("*",$wheret);
+		$invoiceIDS = explode(',',$receiptDetails[0]->invoice_id);
+		$taxInvoices = array();
+		foreach ($invoiceIDS as $key => $ids) {
+			$wheret = array("invoiceID"=>$ids);
+	 		$taxInvoiceData = $this->TaxInvoiceModel->getTaxInvoiceDetailsSingle("*",$wheret);
+			$taxInvoices[] = $taxInvoiceData[0];
+		}
+		
 		// INFO DETAILS
 		$wherec = array("infoID"=> $taxInvoiceData[0]->company_id);
 	 	$contract = $this->CommonModel->getMasterDetails("info_settings","*",$wherec);
+		
 		// CUSTOMER DETAILS
 		$wherec = array("customer_id"=>$taxInvoiceData[0]->customer_id);
 	 	$customerDetails = $this->CommonModel->getMasterDetails("customer","name,address,gst_no,state_id,mobile_no",$wherec);
@@ -1279,12 +1392,12 @@ class TaxInvoice extends CI_Controller {
 		}	
 
 		$data['receiptDetails']= $receiptDetails;
-	 	$data['taxInvoiceData']= $taxInvoiceData;
+	 	$data['taxInvoiceData']= $taxInvoices;
 		$data['infoSettings']= $contract;	
 		$data['companyDetails'] = $customerDetails;
-		// print '<pre>';
+		
 	
-		// print_r($data);
+		// print_r($data);exit;
 		$pdfFilePath = $this->load->view("receiptPdf",$data,true);
 		
 		if(!$this->config->item('development')){
@@ -1304,16 +1417,19 @@ class TaxInvoice extends CI_Controller {
 		{
 			print_r($pdfFilePath);
 		}  
-
 	}
 	public function attachmentUpload($log_id = '',$invoiceID='')
-	{
+	{	
 		$this->access->checkTokenKey();
 		$this->response->decodeRequest();
 		$this->load->library('realtimeupload');
 		$extraData = array();
 		if(isset($log_id) && !empty($log_id)){
-			$mediapatharr = $this->config->item("mediaPATH") ."invoiceLog/".$invoiceID."/".$log_id ;
+			if ($invoiceID == 0) {
+				$mediapatharr = $this->config->item("mediaPATH") ."receipts/".$log_id ;
+			}else{
+				$mediapatharr = $this->config->item("mediaPATH") ."invoiceLog/".$invoiceID."/".$log_id ;
+			}
 			if (!is_dir($mediapatharr)) {
 				mkdir($mediapatharr, 0777);
 				chmod($mediapatharr, 0777);
@@ -1344,13 +1460,13 @@ class TaxInvoice extends CI_Controller {
 			'rename'=>true,
 			'returnLocation' => false,
 			'uniqueFilename' => false,
-			'dbTable' => 'payment_logs',
+			'dbTable' => 'receipts',
 			'fileTypeColumn' => '',
 			'fileColumn' => 'attachement',
 			'forignKey' => '',
 			'forignValue' => '',
 			'docType' => "",
-			'primaryKey'=>'payment_log_id',
+			'primaryKey'=>'receipt_id',
 			'primaryValue' => $log_id,
 			'docTypeValue' => '',
 			'isUpdate' => 'Y',
@@ -1359,9 +1475,8 @@ class TaxInvoice extends CI_Controller {
 		);
 		$this->realtimeupload->init($settings);
 	}
-	public function getCustomerDetails($cust_id ='',$defComp='')
+	public function getCustomerDetails($cust_id ='',$defComp='', $record_type = '')
 	{
-		
 		$wherec = array("customer_id"=>$cust_id);
 	 	$cDetails = $this->CommonModel->getMasterDetails("customer","*",$wherec);
 		if(isset($cDetails) && !empty($cDetails))
@@ -1370,7 +1485,13 @@ class TaxInvoice extends CI_Controller {
 	 		$contract = $this->CommonModel->getMasterDetails("info_settings","*",$wherec);
 			if(isset($contract) && !empty($contract))
 			{
-				$cDetails[0]->terms = $contract[0]->invoice_terms_condotions;
+				if ($record_type == 'quotation') {
+					$cDetails[0]->terms = $contract[0]->quotation_terms_conditions;
+				}elseif ($record_type == 'invoice') {
+					$cDetails[0]->terms = $contract[0]->invoice_terms_condotions;
+				}else{
+					$cDetails[0]->terms = $contract[0]->receipt_terms_condotions;
+				}
 			}
 			if ( $cDetails[0]->state_id != '0') {
 				$wherec = array("state_id"=> $cDetails[0]->state_id);
@@ -1388,18 +1509,152 @@ class TaxInvoice extends CI_Controller {
 
 	public function getLastLogId()
 	{
-		$orderBy = "payment_log_id";
+		$orderBy = "receipt_id";
 		$order ="DESC";
 		$other = array("orderBy"=>$orderBy,"order"=>$order);
-		$lastID= $this->CommonModel->GetMasterListDetails($selectC="payment_log_id",'payment_logs',$where=array(),'1','','',$other);
+		$lastID= $this->CommonModel->GetMasterListDetails($selectC="receipt_id",'receipts',$where=array(),'1','','',$other);
 		
 		if(isset($lastID) && !empty($lastID))	
 		{
-				$status['data'] = $lastID[0]->payment_log_id;
-				$status['msg'] = $this->systemmsg->getSucessCode(400);
-				$status['statusCode'] = 400;
-				$status['flag'] = 'S';
-				$this->response->output($status,200);	
+			$status['data'] = $lastID[0]->receipt_id;
+			$status['msg'] = $this->systemmsg->getSucessCode(400);
+			$status['statusCode'] = 400;
+			$status['flag'] = 'S';
+			$this->response->output($status,200);	
 		}
+	}
+	public function validateLine($value)
+	{
+		$this->validate($value->srno,'Serial no', false);
+		$this->validate($value->rate,'rate', true);
+		$this->validate($value->itemDiscountType,'item Discount Type', true);
+		$this->validate($value->itemDiscount,'item Discount', true);
+		$this->validate($value->quantity,'quantity', true);
+		$this->validate($value->invoiceLineChrgID ,'Product', false);
+		$this->validate($value->interGstPercent,'interGstPercent', false);
+		$this->validate($value->interGstAmount,'interGstAmount', false);
+		$this->validate($value->withGst,'withGst', true);
+	}
+
+	public function validate($fieldName = '', $lable = null, $isRequired = false)
+	{
+		$fieldName = $fieldName ?? '';
+		$textCheck = trim($fieldName);
+		
+		if ($isRequired == true) {
+			
+			if (!isset($textCheck) && empty($textCheck)) {
+				$status['msg'] = str_replace("{fieldName}", $lable, $this->systemmsg->getErrorCode(218));
+				$status['statusCode'] = 218;
+				$status['data'] = array();
+				$status['flag'] = 'F';
+				$this->response->output($status, 200);
+			}
+		}
+	}
+
+	public function getPdf($invoiceID)
+	{
+		// check is bill created
+		$data= array();
+		$pdfFilePath = '';
+		// INFOSETTINGS 
+		$wherec = array("infoID"=>1);
+	 	$contract = $this->CommonModel->getMasterDetails("info_settings","*",$wherec);
+		// TAXINVOICE DATA 
+		$wherec = array("invoiceID"=>$invoiceID);
+	 	$taxInvoiceData = $this->TaxInvoiceModel->getTaxInvoiceDetailsSingle("*",$wherec);
+	 	// INVOICELINE DETAILS
+	 	$sel = "t.*,c.categoryName";
+		$wher = array("invoiceID = "=>$invoiceID);
+		$join = array();
+		$join[0]['type'] ="LEFT JOIN";
+		$join[0]['table']="categories";
+		$join[0]['alias'] ="c";
+		$join[0]['key1'] ="invoiceLineUnit";
+		$join[0]['key2'] ="category_id";
+		$invoiceLineDetails = $this->CommonModel->getMasterListDetails($sel,'invoice_line',$wher,'','',$join,'');
+		// IF PRODUCT IS NUMERRIC OR NOT NUMERIC
+		foreach ($invoiceLineDetails as $key => $inv) {
+			if(is_numeric($inv->invoiceLineChrgID))
+			{
+				$wherec = array("product_id"=>$inv->invoiceLineChrgID);
+	 			$product = $this->CommonModel->getMasterDetails("products","product_name",$wherec);
+				$inv->product_name = $product[0]->product_name;
+			}else
+			{
+				$inv->product_name = $inv->invoiceLineChrgID;
+			}	
+		}
+		// DEATAILS
+		$sel = "itemID,invoiceID,srNo,invoiceLineChrgID,invoiceLineNarr,invoiceLineQty,invoiceLineUnit,invoiceLineRate,invoiceLineAmount";
+		$wher = array("invoiceID"=>"= ".$invoiceID);
+		$invoiceLineDetailsDesc = $this->CommonModel->GetMasterListDetails("t.invoiceLineNarr",'invoice_line',$wher,'','');
+		// CUSTOMER DETAILS
+		$wherec = array("customer_id"=>$taxInvoiceData[0]->customer_id);
+	 	$customerDetails = $this->CommonModel->getMasterDetails("customer","name,address,gst_no,state_id,mobile_no",$wherec);
+		if ( $customerDetails[0]->state_id != 0) {
+			$wherec = array("state_id"=> $customerDetails[0]->state_id);
+			$stateD = $this->CommonModel->getMasterDetails("states","*",$wherec);
+			if(isset($stateD) && !empty($stateD))
+			{
+				$customerDetails[0]->customer_state = $stateD[0]->state_name;
+			}
+		}	
+		// DATA ABSTRACTED
+		$data['invoiceLineDetailsDesc']= $invoiceLineDetailsDesc;
+		$data['infoSettings']= $contract;
+		$data['companyDetails'] = $customerDetails;
+		$data['taxInvoiceData']= $taxInvoiceData;
+		$data['invoiceLineDetails']= $invoiceLineDetails;
+		$data['counDetails']= "-";	
+		
+		if($taxInvoiceData[0]->record_type == 'delivery')	
+			$pdfFilePath = $this->load->view("deliveryPdf",$data,true);	
+		else if($taxInvoiceData[0]->record_type == 'receipt')
+        	$pdfFilePath = $this->load->view	("taxReceiptPdf",$data,true);
+		else if($taxInvoiceData[0]->record_type == 'quotation')
+        	$pdfFilePath = $this->load->view("qoutationPdf",$data,true);
+		else if($taxInvoiceData[0]->record_type == 'invoice')
+			$pdfFilePath = $this->load->view("invoicepdf",$data,true);
+		else if($taxInvoiceData[0]->record_type == 'proforma')
+			$pdfFilePath = $this->load->view("proformapdf",$data,true);
+		
+		$fileName = $taxInvoiceData[0]->customer_name.'.pdf';
+		$fileName = str_replace(' ','_',$fileName);
+		$filePath = $this->config->item("mediaPATH").'temp-invoice/';
+
+		if (!is_dir($filePath)) {
+			mkdir($filePath, 0777);
+			chmod($filePath, 0777);
+		} else {
+			if (!is_writable($filePath)) {
+				chmod($filePath, 0777);
+			}
+		}
+		
+		
+		if(!$this->config->item('development')){
+			//load mPDF library
+			$this->load->library('MPDFCI');
+			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
+			$this->mpdfci->WriteHTML($pdfFilePath);
+			$this->mpdfci->Output($filePath.'/'.$filePath, 'D');  
+			$status['data'] = $fileName;
+			$status['msg'] = $this->systemmsg->getSucessCode(400);
+			$status['statusCode'] = 400;
+			$status['flag'] = 'S';
+			$this->response->output($status,200);
+
+		}else
+		{
+			$status['data'] = $fileName;
+			$status['msg'] = $this->systemmsg->getSucessCode(400);
+			$status['statusCode'] = 400;
+			$status['flag'] = 'S';
+			$this->response->output($status,200);
+			// print_r($pdfFilePath);
+		}  
+
 	}
 }

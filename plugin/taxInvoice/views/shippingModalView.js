@@ -76,12 +76,14 @@ define([
         render: function () {
             var selfobj = this;
             var template = _.template(shippingModalTemp);
-            var shippingAddress = JSON.parse(selfobj.taxInvoice.model.attributes.shipping_address);
+            if(selfobj.taxInvoice.model && selfobj.taxInvoice.model.attributes.shipping_address){
+                var shippingAddress = JSON.parse(selfobj.taxInvoice.model.attributes.shipping_address);
+            }
             this.$el.html(template({
                 model: {
-                    address: shippingAddress.address,
-                    zipcode: shippingAddress.zipcode,
-                    mobile_no: shippingAddress.mobile_no
+                    address: shippingAddress ? shippingAddress.address : "",
+                    zipcode: shippingAddress ? shippingAddress.zipcode : "",
+                    mobile_no: shippingAddress ? shippingAddress.mobile_no : "",
                 }
             }));
             $('#shippingMedia').empty();

@@ -20,8 +20,11 @@ define([
       $(".modelbox").hide();
       $('#infoDetails').remove();
       $(".popupLoader").show();
+
+      permission = ROLE["usersList"];
+      this.menuId = permission.menuID;
+      this.storedAppInfo = null;
       this.model = new userProfileModel();
-      
       this.userRoleList = new userRoleCollection();
       this.userRoleList.fetch({
         headers: {
@@ -34,11 +37,11 @@ define([
         selfobj.render();
       });
 
-      this.model.set({ adminID: $.cookie('authid') })
+      this.model.set({ adminID: $.cookie('authid') });
       this.model.fetch({
         headers: {
           'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-        }, error: selfobj.onErrorHandler
+        }, data:{menuId:selfobj.menuId}, error: selfobj.onErrorHandler
       }).done(function (res) {
         var bDate = selfobj.model.get("dateOfBirth");
         if (bDate !== undefined && bDate !== "0000-00-00") {
@@ -64,6 +67,7 @@ define([
       "change .fileAdded": "updateImage",
       "click #address": "showlocation",
       "click .loadMedia": "loadMedia",
+      "click .signInToOneDrive":"signInToOneDrive",
     },
     onErrorHandler: function (collection, response, options) {
       alert("Something was wrong ! Try to refresh the page or contact administer. :(");
@@ -114,6 +118,7 @@ define([
       var menusingleview = new readFilesView({ loadFrom: "addpage", loadController: this });
     },
     updateOtherDetails: function (e) {
+
       var valuetxt = $(e.currentTarget).val();
       var toID = $(e.currentTarget).attr("id");
       var newdetails = [];
@@ -127,8 +132,12 @@ define([
       $.each(setvalues, function (key, value) {
         var modval = selfobj.model.get(value);
         if (modval != null) {
+          console.log(setvalues);
+
           var modeVal = modval.split(",");
+
         } else { var modeVal = {}; }
+
         $(".item-container li." + value).each(function () {
           var currentval = $(this).attr("data-value");
           var selecterobj = $(this);
@@ -138,6 +147,7 @@ define([
             }
           });
         });
+
       });
       setTimeout(function () {
         if (e != undefined && e.type == "click") {
@@ -285,6 +295,301 @@ define([
       });
     },
 
+    signInToOneDrive: function() {
+      // Register your own application at https://apps.dev.microsoft.com
+      // and set the "clientId" and "redirectUri" variables accordingly.
+      
+      var appInfo = {
+        "clientId": "ab6ef5a7-1db5-4fcc-8aff-3b2da5f9790c",
+        "redirectUri": APPPATH,
+        "scopes": "user.read files.read files.read.all sites.read.all",
+        "authServiceUri": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
+      };
+      console.log(appInfo);
+      this.provideAppInfo(appInfo);
+
+      // use Microsoft Graph v1.0
+      var baseUrl = ""
+      msGraphApiRoot = (baseUrl) ? baseUrl : "https://graph.microsoft.com/v1.0/me";
+      
+      this.challengeForAuth();
+
+      this.saveToCookie( { "apiRoot": msGraphApiRoot, "signedin": true } );
+      return false;
+    },
+
+    provideAppInfo: function(obj)
+    {
+      this.storedAppInfo  = obj;
+    },
+
+    challengeForAuth: function() {
+      var appInfo = this.getAppInfo();
+      var url =
+        appInfo.authServiceUri +
+        "?client_id=" + appInfo.clientId +
+        "&response_type=token" +
+        "&redirect_uri=" + encodeURIComponent(appInfo.redirectUri);
+    
+        if (appInfo.scopes)
+          url = url + "&scope=" + encodeURIComponent(appInfo.scopes);
+        if (appInfo.resourceUri)
+          url = url + "&resource=" + encodeURIComponent(appInfo.resourceUri);
+    
+      this.popup(url);
+    },
+
+    getAppInfo: function() {
+
+      if (this.storedAppInfo)
+        return this.storedAppInfo;
+    
+      var scriptTag = document.getElementById("odauth");
+      if (!scriptTag) {
+        alert("the script tag for odauth.js should have its id set to 'odauth'");
+      }
+    
+      var clientId = scriptTag.getAttribute("clientId");
+      if (!clientId) {
+        alert("the odauth script tag needs a clientId attribute set to your application id");
+      }
+    
+      var scopes = scriptTag.getAttribute("scopes");
+      // scopes aren't always required, so we don't warn here.
+    
+      var redirectUri = scriptTag.getAttribute("redirectUri");
+      if (!redirectUri) {
+        alert("the odauth script tag needs a redirectUri attribute set to your redirect landing url");
+      }
+    
+      var resourceUri = scriptTag.getAttribute("resourceUri");
+    
+      var authServiceUri = scriptTag.getAttribute("authServiceUri");
+      if (!authServiceUri) {
+        alert("the odauth script tag needs an authServiceUri attribtue set to the oauth authentication service url");
+      }
+    
+      var appInfo = {
+        "clientId": clientId,
+        "scopes": scopes,
+        "redirectUri": redirectUri,
+        "resourceUri": resourceUri,
+        "authServiceUri": authServiceUri
+      };
+    
+      this.storedAppInfo = appinfo;
+    
+      return appInfo;
+    },
+
+    saveToCookie: function(obj)
+    {
+      var expiration = new Date();
+      expiration.setTime(expiration.getTime() + 3600 * 1000);
+      var data = JSON.stringify(obj);
+      var cookie = "odexplorer=" + data +"; path=/; expires=" + expiration.toUTCString();
+
+      if (document.location.protocol.toLowerCase() == "https") {
+        cookie = cookie + ";secure";
+      }
+      document.cookie = cookie;
+    },
+
+    popup: function(url) {
+      var width = 525,
+          height = 525,
+          screenX = window.screenX,
+          screenY = window.screenY,
+          outerWidth = window.outerWidth,
+          outerHeight = window.outerHeight;
+    
+      var left = screenX + Math.max(outerWidth - width, 0) / 2;
+      var top = screenY + Math.max(outerHeight - height, 0) / 2;
+    
+      var features = [
+                  "width=" + width,
+                  "height=" + height,
+                  "top=" + top,
+                  "left=" + left,
+                  "status=no",
+                  "resizable=yes",
+                  "toolbar=no",
+                  "menubar=no",
+                  "scrollbars=yes"];
+      var popup = window.open(url, "oauth", features.join(","));
+      if (!popup) {
+        alert("failed to pop up auth window");
+      }
+    
+      popup.focus();
+    },
+
+    onAuthCallback: function() {
+      var authInfo = this.getAuthInfoFromUrl();
+      var token = authInfo["access_token"];
+      var expiry = parseInt(authInfo["expires_in"]);
+      if (token)
+      {
+        setCookie(token, expiry);
+        window.opener.onAuthenticated(token, window);
+      }
+    },
+
+    getAuthInfoFromUrl: function() {
+      if (window.location.hash) {
+        var authResponse = window.location.hash.substring(1);
+        var authInfo = JSON.parse(
+          '{' + authResponse.replace(/([^=]+)=([^&]+)&?/g, '"$1":"$2",').slice(0,-1) + '}',
+          function(key, value) { return key === "" ? value : decodeURIComponent(value); });
+        return authInfo;
+      }
+      else {
+        alert("failed to receive auth token");
+      }
+    },
+
+    onAuthenticated: function(token, authWindow) {
+      if (token) {
+        if (authWindow) {
+          removeLoginButton();
+          authWindow.close();
+        }
+
+        (function($){
+          // we extract the onedrive path from the url fragment and we
+          // flank it with colons to use the api's path-based addressing scheme
+          var path = "";
+          var beforePath = "";
+          var afterPath = "";
+          if (window.location.hash.length > 1) {
+            path = window.location.hash.substr(1);
+            beforePath =":";
+            afterPath = ":";
+          }
+
+          var odurl = msGraphApiRoot + "/drive/root" + beforePath + path + afterPath;
+
+          // the expand and select parameters mean:
+          //  "for the item i'm addressing, include its thumbnails and children,
+          //   and for each of the children, include its thumbnails. for those
+          //   thumbnails, return the 'large' size"
+          var thumbnailSize = "large"
+          var odquery = "?expand=thumbnails,children(expand=thumbnails(select=" + thumbnailSize + "))";
+          console.log("token: " + token)
+          $.ajax({
+            url: odurl + odquery,
+            dataType: 'json',
+            headers: { "Authorization": "Bearer " + token },
+            accept: "application/json;odata.metadata=none",
+            success: function(data) {
+              if (data) {
+                // clear out the old content
+                $('#od-items').empty();
+                $('#od-json').empty();
+
+                // add the syntax-highlighted json response
+                $("<pre>").html(syntaxHighlight(data)).appendTo("#od-json");
+
+                // process the response data. if we get back children (data.children)
+                // then render the tile view. otherwise, render the "one-up" view
+                // for the item's individual data. we also look for children in
+                // 'data.value' because if this app is ever configured to reqeust
+                // '/children' directly instead of '/parent?expand=children', then
+                // they'll be in an array called 'data'
+                var decodedPath = decodeURIComponent(path);
+                document.title = "OneDrive Explorer" + ((decodedPath.length > 0) ? " - " + decodedPath : "");
+                  
+                updateBreadcrumb(decodedPath);
+                var children = data.children || data.value;
+                if (children && children.length > 0) {
+                  $.each(children, function(i,item) {
+                    var tile = $("<div>").
+                      attr("href", "#" + path + "/" + encodeURIComponent(item.name)).
+                      addClass("item").
+                      click(function() {
+                        // when the page changes in response to a user click,
+                        // we set loadedForHash to the new value and call
+                        // odauth ourselves in user-click mode. this causes
+                        // the catch-all hashchange event handler not to
+                        // process the page again. see comment at the top.
+                        loadedForHash = $(this).attr('href');
+                        window.location = loadedForHash;
+                        odauth(true);
+                      }).
+                      appendTo("#od-items");
+
+                    // look for various facets on the items and style them accordingly
+                    if (item.folder) {
+                      tile.addClass("folder");
+                    }
+                    if (item.file) {
+                      tile.addClass("file");
+                    }
+
+                    if (item.thumbnails && item.thumbnails.length > 0) {
+                      var container = $("<div>").attr("class", "img-container").appendTo(tile)
+                      $("<img>").
+                        attr("src", item.thumbnails[0][thumbnailSize].url).
+                        appendTo(container);
+                    }
+
+                    $("<div>").
+                      addClass("nameplate").
+                      text(item.name).
+                      appendTo(tile);
+                  });
+                }
+                else if (data.file) {
+                  // 1-up view
+                  var tile = $("<div>").
+                    addClass("item").
+                    addClass("oneup").
+                    appendTo("#od-items");
+
+                  var downloadUrl = data['@microsoft.graph.downloadUrl'];
+                  if (downloadUrl) {
+                    tile.click(function(){window.open(downloadUrl, "Download");});
+                  }
+
+                  if (data.folder) {
+                    tile.addClass("folder");
+                  }
+
+                  if (data.thumbnails && data.thumbnails.length > 0) {
+                    $("<img>").
+                      attr("src", data.thumbnails[0].large.url).
+                      appendTo(tile);
+                  }
+                }
+                else {
+                  $('<p>No items in this folder.</p>').appendTo('#od-items');  
+                }
+              } else {
+                $('#od-items').empty();
+                $('<p>error.</p>').appendTo('#od-items');
+                $('#od-json').empty();
+              }
+            }
+          });
+        })(jQuery);
+      }
+      else {
+        alert("Error signing in");
+      }
+    },
+
+    removeLoginButton: function() {
+      if (typeof showCustomLoginButton === "function") {
+        showCustomLoginButton(false);
+        return;
+      }
+    
+      var loginText = document.getElementById("loginText");
+      if (loginText) {
+        document.body.removeChild(loginText);
+      }
+    },
+
     render: function () {
       var source = userProfileTemp;
       var template = _.template(source);
@@ -306,8 +611,6 @@ define([
         rotateButton: true,
         service: APIPATH + 'changeProfilePic/' + $.cookie('authid'),
         download: false,
-
-        
         willSave: function (data, ready) {
           //alert('saving!');
           ready(data);

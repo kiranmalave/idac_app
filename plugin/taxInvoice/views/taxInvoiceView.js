@@ -21,7 +21,9 @@ define([
   'text!../templates/taxInvoice_temp.html',
   'text!../../customModule/templates/customFilterOption_temp.html',
   'text!../../dynamicForm/templates/linkedDropdown.html',
-], function ($, _, Backbone, datepickerBT, select2, moment, taxInvoiceSingleView,quotationToInvoiceView, taxInvoiceCollection, taxInvoiceFilterOptionModel, columnArrangeModalView, configureColumnsView, appSettings, dynamicFormData, singleMenuModel, dynamicStdFieldsCol, slugCollection, taxInvoiceRowTemp, taxInvoice_temp, customFilterTemp, linkedDropdown) {
+  '../../core/views/mailView',
+
+], function ($, _, Backbone, datepickerBT, select2, moment, taxInvoiceSingleView,quotationToInvoiceView, taxInvoiceCollection, taxInvoiceFilterOptionModel, columnArrangeModalView, configureColumnsView, appSettings, dynamicFormData, singleMenuModel, dynamicStdFieldsCol, slugCollection, taxInvoiceRowTemp, taxInvoice_temp, customFilterTemp, linkedDropdown,mailView) {
 
   var taxInvoiceView = Backbone.View.extend({
     module_desc: '',
@@ -37,6 +39,12 @@ define([
       this.pressed = false;
       this.toClose = "taxInvoiceFilterView";
       var selfobj = this;
+      $(".customMail").hide();
+      $(".customMailMinimize").hide();
+      $(".opercityBg").hide();
+      $(".loder").show();
+      $('.customMail').remove('maxActive');
+      $(".maxActive").hide();
       selfobj.arrangedColumnList = [];
       this.filteredFields = [];
       selfobj.filteredData = [];
@@ -258,7 +266,11 @@ define([
       'mousedown .table-resizable .resize-bar': 'onMouseDown',
       'mousemove .table-resizable th, .table-resizable td': 'onMouseMove',
       'mouseup .table-resizable th, .table-resizable td': 'onMouseUp',
-      'dblclick .table-resizable thead': 'resetColumnWidth'
+      'dblclick .table-resizable thead': 'resetColumnWidth',
+      "click .close": "mailHide",
+      "click .minimize": "minimize",
+      "click .openFull": "maximize",
+      "click .showMax": "showmax",
     },
     loadMedia: function (e) {
       $('.upload').show();
@@ -388,9 +400,9 @@ define([
             if(res.statusCode == 994){app_router.navigate("logout",{trigger:true});}
             if(res.flag == "S"){
               
-              let url = APIPATH + 'logsUpload/' + selfobj.logID +'/'+invoiceID;
-              selfobj.uploadFileEl.elements.parameters.action = url;
-              selfobj.uploadFileEl.prepareUploads(selfobj.uploadFileEl.elements);
+                let url = APIPATH + 'logsUpload/' + selfobj.logID +'/'+invoiceID;
+                selfobj.uploadFileEl.elements.parameters.action = url;
+                selfobj.uploadFileEl.prepareUploads(selfobj.uploadFileEl.elements);
 
                 $('#payment_date').val('');
                 $('#pending_amount').val('');    
@@ -431,13 +443,13 @@ define([
            $('#paylogs').append(tbl); 
            var row = '';
             $.each(res.data, function(key, value) {
-              var att = '<a href="'+UPLOADS+'/invoiceLog/'+value.invoice_id+'/'+value.payment_log_id+'/'+value.attachement+'" target="_blank"data-toggle="tooltip" data-placement="top" title="View Attachment" style="color: #5f6368;"><span class="material-symbols-outlined">visibility</span></a>';
+              var att = '<a href="'+UPLOADS+'/invoiceLog/'+value.invoice_id+'/'+value.receipt_id+'/'+value.attachement+'" target="_blank"data-toggle="tooltip" data-placement="top" title="View Attachment" style="color: #5f6368;"><span class="material-symbols-outlined">visibility</span></a>';
               if(value.attachement== '')
               {
-                row = '<tr><td>'+value.receipt_number+'</td><td>'+value.amount+'</td><td>'+value.transaction_id+'</td><td>'+formatDate(value.payment_log_date)+'</td><td>'+value.paymentMode+'</td><td>'+value.notes+'</td><td></td><td class="text-center"><a href="'+APIPATH+'printReceipt/'+value.payment_log_id+'" target="_blank" data-toggle="tooltip" data-placement="top" title="Download" style="color: #5f6368;"><span class="material-symbols-outlined">download</span></a></td></tr>'
+                row = '<tr><td>'+value.receipt_number+'</td><td>'+value.amount+'</td><td>'+value.transaction_id+'</td><td>'+formatDate(value.payment_log_date)+'</td><td>'+value.paymentMode+'</td><td>'+value.notes+'</td><td></td><td class="text-center"><a href="'+APIPATH+'printReceipt/'+value.receipt_id+'" target="_blank" data-toggle="tooltip" data-placement="top" title="Download" style="color: #5f6368;"><span class="material-symbols-outlined">download</span></a></td></tr>'
               }else
               {
-                row = '<tr><td>'+value.receipt_number+'</td><td>'+value.amount+'</td><td>'+value.transaction_id+'</td><td>'+formatDate(value.payment_log_date)+'</td><td>'+value.paymentMode+'</td><td>'+value.notes+'</td><td class="text-center">'+att+'</td><td class="text-center"><a href="'+APIPATH+'printReceipt/'+value.payment_log_id+'" target="_blank" data-toggle="tooltip" data-placement="top" title="Download" style="color: #5f6368;"><span class="material-symbols-outlined">download</span></a></td></tr>'
+                row = '<tr><td>'+value.receipt_number+'</td><td>'+value.amount+'</td><td>'+value.transaction_id+'</td><td>'+formatDate(value.payment_log_date)+'</td><td>'+value.paymentMode+'</td><td>'+value.notes+'</td><td class="text-center">'+att+'</td><td class="text-center"><a href="'+APIPATH+'printReceipt/'+value.receipt_id+'" target="_blank" data-toggle="tooltip" data-placement="top" title="Download" style="color: #5f6368;"><span class="material-symbols-outlined">download</span></a></td></tr>'
               }
               $('#paymentLogList').append(row);
             });
@@ -591,7 +603,84 @@ define([
           var taxInvoicesingleview = new quotationToInvoiceView({ invoiceID: invoiceID, searchtaxInvoice: this, menuId: selfobj.menuId, form_label: selfobj.form_label, menuName: this.menuName  });
           break;
         }
+        case "mail": {
+          selfobj.getPdf(e);
+        
+         
+          break;
+        }
       }
+    },
+    getPdf : function(e)
+    {
+      var selfobj = this;
+      var invoiceID = $(e.currentTarget).attr('data-invoiceID');
+      selfobj.invoicePdfName = '' ;
+      $.ajax({
+        url: APIPATH + 'getPdf/' + invoiceID,
+        method: 'GET',
+        datatype: 'JSON',
+        beforeSend: function (request) {
+          request.setRequestHeader("token", $.cookie('_bb_key'));
+          request.setRequestHeader("SadminID", $.cookie('authid'));
+          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+          request.setRequestHeader("Accept", 'application/json');
+        },
+        success: function (res) {
+          if (res.flag == "S") {
+            if (res.data != '') {
+              selfobj.invoicePdfName = res.data;
+              console.log('invoicePdfName' , selfobj.invoicePdfName);
+
+              $(".customMail").show();
+              $('.customMail').remove('maxActive');
+              var customer_id = $(e.currentTarget).attr("data-customer_id");
+              var cust_name = $(e.currentTarget).attr("data-first_name");
+              var cust_mail = $(e.currentTarget).attr("data-custMail");
+              new mailView({ customer_id: customer_id, customerName: cust_name, customer_mail: cust_mail , invoicePDf : selfobj.invoicePdfName });
+              $('body').find(".loder");
+
+            }else{
+              alert('Pdf Not Found...!');
+            }
+          }
+        }
+      });
+    },
+    showmax: function () {
+      $(".customMail").show();
+      $(".customMailMinimize").hide();
+      var ele = document.querySelector(".openFull");
+      ele.classList.remove("maxActive");
+      $('.openFull').remove('maxActiveRemove');
+      $(".maxActive").hide();
+    },
+    mailHide: function (e) {
+      $(".customMail").hide();
+      $(".customMailMinimize").hide();
+      $(".opercityBg").hide();
+      var ele = document.querySelector(".customMail");
+      ele.classList.remove("maxActive");
+      $('.openFull').remove('maxActive');
+    },
+
+    minimize: function () {
+      $(".customMail").hide();
+      $(".customMailMinimize").show();
+      $(".opercityBg").hide();
+      $('.openFull').addClass('maxActiveRemove');
+      var ele = document.querySelector(".customMail");
+      ele.classList.remove("maxActive");
+      $(".maxActive").hide();
+    },
+    maximize: function () {
+      $(".opercityBg").show();
+      $(".customMail").show();
+      $(".customMailMinimize").hide();
+      $('.customMail').addClass('maxActive');
+      $('.openFull').remove('maxActive');
+      $(".closeFull").show();
+      $('.openFull').remove('maxActiveRemove');
     },
     resetSearch: function () {
       filterOption.clear().set(filterOption.defaults);
@@ -690,26 +779,26 @@ define([
         selfobj.filteredFields = filteredFields;
 
         selfobj.filteredFields.forEach(function (column) {
-          if (column.linkedWith != null && column.linkedWith != "" && column.linkedWith != 'undefined' && column.parentCategory != 'undefined' && column.parentCategory != "" && column.parentCategory != null) {
-            selfobj.categoryList = new slugCollection();
-            var matcchedID = [];
-            selfobj.categoryList.fetch({
-              headers: {
-                'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-              }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y', category_id: column.parentCategory }
-            }).done(function (res) {
-              if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-              $(".popupLoader").hide();
-              if (res.data[0]) {
-                for (var i = 0; i < res.data[0].sublist.length; i++) {
-                  matcchedID.push(res.data[0].sublist[i].categoryName);
-                }
-                column.fieldOptions = matcchedID.join(',');
-              }
-            });
-          } else {
+          // if (column.linkedWith != null && column.linkedWith != "" && column.linkedWith != 'undefined' && column.parentCategory != 'undefined' && column.parentCategory != "" && column.parentCategory != null) {
+          //   selfobj.categoryList = new slugCollection();
+          //   var matcchedID = [];
+          //   selfobj.categoryList.fetch({
+          //     headers: {
+          //       'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          //     }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y', category_id: column.parentCategory }
+          //   }).done(function (res) {
+          //     if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          //     $(".popupLoader").hide();
+          //     if (res.data[0]) {
+          //       for (var i = 0; i < res.data[0].sublist.length; i++) {
+          //         matcchedID.push(res.data[0].sublist[i].categoryName);
+          //       }
+          //       column.fieldOptions = matcchedID.join(',');
+          //     }
+          //   });
+          // } else {
             column.fieldOptions = column.fieldOptions;
-          }
+          // }
         });
 
         const resDataFieldNames = selfobj.filteredFields.map(item => item.column_name);
@@ -1188,12 +1277,13 @@ define([
           let fieldID = $(e.currentTarget).attr("data-fieldID");
           let selection = $(e.currentTarget).attr("data-selection");
           let dropdownContainer = $("#field_" + fieldID);
+          let fieldOpt = $(e.currentTarget).attr("data-fieldOpt");
           let selectedIDS = [];
 
           $.ajax({
             url: APIPATH + 'dynamicgetList/',
             method: 'POST',
-            data: { text: name, pluginID: pluginID, wherec: where, fieldID: fieldID },
+            data: { text: name, pluginID: pluginID, wherec: fieldOpt, fieldID: fieldID },
             datatype: 'JSON',
             beforeSend: function (request) {
               $(".textLoader").show();

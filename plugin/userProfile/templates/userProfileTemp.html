@@ -8,30 +8,32 @@
 
         <div class="body profileTemp"> 
           <!-- Nav tabs -->
-          <!-- <ul class="nav nav-tabs">
+          <ul class="nav nav-tabs">
               <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#Profile">Profile</a></li>
               <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Shrink">Sync</a></li>
-          </ul>                         -->
+              <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#OneDrive">One Drive Sync</a></li>
+          </ul>                        
           <!-- Tab panes -->
           <div class="tab-content">
             
               <div role="tabpanel" class="tab-pane in active" id="Profile">
-                <form id="userProfileDetails" name="userProfileDetails" action="#">
-                <div class="text-right actionBtns">
-                  <button type="button" class="btn bg-indigo saveUserDetails">Save</button>
+                <div class="row">
+                <div class="col-md-4">
+                  <div id="profilepic">
+                    <% if(model.photo=="" || model.photo=="avatar-default.svg" ) { %>
+                      <img src="<%=IMAGES%>/avatar-default.png">
+                    <% } else { %>
+                      <img src="<%=PROFILEPHOTOUPLOAD%><%=ADMINID%>/profilePic/<%=model.photo%>">
+                    <% } %>
+                      <input type="file" name="slim[]" />
+                  </div>
                 </div>
-                <div class="col-md-12">
-                  <div class="row">
-                    <div class="col-md-4">
-                      <div id="profilepic">
-                        <% if(model.photo=="" || model.photo=="avatar-default.svg" ) { %>
-                          <img src="<%=IMAGES%>/avatar-default.png">
-                        <% } else { %>
-                          <img src="<%=PROFILEPHOTOUPLOAD%><%=ADMINID%>/profilePic/<%=model.photo%>">
-                        <% } %>
-                          <input type="file" name="slim[]" />
-                      </div>
+                <div class="col-md-8">
+                  <form id="userProfileDetails" name="userProfileDetails" action="#">
+                    <div class="text-right actionBtns">
+                      <button type="button" class="btn bg-indigo saveUserDetails">Save</button>
                     </div>
+                  <div class="row">
                     <div class="col-md-8">
                       <div></div>
                       <div class="col-sm-12">
@@ -112,27 +114,20 @@
       
                     </div>
                   </div>
-                </div>
                 </form>
+                </div>
+                </div>
+                
               </div>
               <div role="tabpanel" class="tab-pane" id="Shrink">
                 <div class="col-md-12">
                   <div class="row">
                     <div class="col-md-4">
-                      <!-- <div id="profilepic">
-                        <% if(model.photo=="" || model.photo=="avatar-default.svg" ) { %>
-                          <img src="<%=IMAGES%>/avatar-default.png">
-                          <% } else { %>
-                            <img src="<%=PROFILEPHOTOUPLOAD%><%=ADMINID%>/profilePic/<%=model.photo%>">
-                            <% } %>
-                              <input type="file" name="slim[]" />
-                      </div> -->
                       <div class="companyImages">
                         <img src="images/google.png" alt=""/>
                       </div>
                     </div>
                     <div class="col-md-8">
-                      
                       <p class="googleDetails">
                         It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
                       </p>
@@ -148,7 +143,30 @@
                   </div>
                 </div>
               </div>
-              
+              <div role="tabpanel" class="tab-pane" id="OneDrive">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="companyImages">
+                        <img src="images/google.png" alt=""/>
+                      </div>
+                    </div>
+                    <div class="col-md-8">
+                      <p class="googleDetails">
+                        It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+                      </p>
+                      <% if(model.is_google_sync=="n") { %>
+                        <!-- <form action="<%=APIPATH%>googleSync" method="POST"> -->
+                          <input type="hidden" id="userID" name="userID" value="<%=model.adminID%>">
+                          <button type="submit" class="btn bg-indigo signInToOneDrive">Sign In with OneDrive</button>
+                        <!-- </form> -->
+                      <%}else{%>
+                        <img src="<%=APPPATH%>/images/site/green_check.jpg"/> Your account is sync with OneDrive.
+                      <%}%>
+                    </div>
+                  </div>
+                </div>
+              </div>
           </div>
       </div>
         </div>
