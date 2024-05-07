@@ -5,27 +5,28 @@ define([
 
   var infoSettingsModel = Backbone.Model.extend({
     idAttribute: "adminID",
-     defaults: {
+    defaults: {
         adminID:null,
         name:null,
         userName:null,
         email:null,
-        password:null,
+        password:"",
+        roleID:null,
         address:null,
         contactNo:null,
         whatsappNo:null,
-        dateOfBirth:null,
         myTarget:null,
+        dateOfBirth:null,
+        created_date:null,
+        lastLogin:null,
+        status:'Active',
+        is_approver:'no',
         photo:null,
         eyeIcon:"fa fa-eye-slash",
         inputType:"password",
-        created_by:null,
-        modified_by:null,
-        created_date:null,
-        modified_date:null,
-    },
-  	urlRoot:function(){
-
+        menuId:null,
+	},
+	urlRoot:function(){
       return APIPATH+'addadmin/'
     },
     parse : function(response) {

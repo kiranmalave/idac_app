@@ -55,6 +55,7 @@ $route['login'] = 'Login/verifyUser';
 $route['salt'] = 'Login/getsalt';
 $route['logout'] = 'Login/logout';
 $route['forgotPassword'] = 'Login/resetPassword';
+$route['saveOnedriveToken'] = 'systems/OneDrive/onedriveSync';
 
 $route['mSalt'] = 'Login/getsaltMobile';
 $route['mLogin'] = 'Login/verifyUserMobile';

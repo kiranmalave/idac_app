@@ -42,13 +42,14 @@ define([
   'plugin/testimonials/views/testimonialsView',
   'plugin/faq/views/faqView',
   'plugin/contactUs/views/contactUsView',
+  'plugin/oneDrive/views/oneDriveView',
   'plugin/customModule/views/customModuleView',
   'plugin/dynamicForms/views/dynamicFormsView',
   'text!../templates/appMain_temp.html',
   'text!../templates/appFull_temp.html',
   'text!../templates/sideNav_temp.html',
   'text!../templates/topNav_temp.html',
-], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, Swal, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, customerdashboardView, branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView,contactUsView, customModuleView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
+], function ($, _, Backbone, bootstrap, jqueryCookie, Waves, adminjs, bootstrapSelect, notify, custom, Swal, loginView, resetPasswordRequestView, dashboardView, userProfileView, adminView, userRoleView, menuView, infoSettingsView, categoryView, themeView, pagesMasterView, pagesMasterSingleDesign, dynamicFormView, accessDetailsView, pagesMenuMasterView, themeOptionView, taskView, customerView, customerdashboardView, branchView, proposalView, projectView,proposalTemplateView, taxInvoiceView, readFilesView, ourClientsView, ourTeamView, testimonialsView, faqView,contactUsView, oneDriveView, customModuleView, dynamicFormsView, appMain_temp, appFull_temp, sidebar, topNav) {
 
   var AppRouter = Backbone.Router.extend({
     routes: {
@@ -94,6 +95,7 @@ define([
       'formQuestions/:formID': 'formQuestionsView',
       'projectpage/:customer_id': 'projectView',
       'proposalpage/:customer_id': 'proposalView',
+      'oneDriveAccess': 'oneDriveAccess',
       '*actions': 'defaultAction'
     }
   });
@@ -210,11 +212,32 @@ define([
 
     app_router = new AppRouter;
 
+    app_router = new AppRouter;
+
     app_router.on('route:defaultAction', function (actions) {
+
+      // check if this is from the one drive
+      // alert(window.location.hash);
+      if (window.location.hash.includes("access_token")) {
+        authResponse = window.location.hash.substring(1);
+        var expDate = new Date();
+        expDate.setTime(expDate.getTime() + (120 * 60 * 12000)); // add 15 minutes
+        $.cookie('oneauthResponse',authResponse, { path: COKI, expires: expDate });
+        app_router.navigate("oneDriveAccess",{ trigger: true });
+        window.close();
+        return;
+      }
       if (typeof ($.cookie('authid')) == "undefined") {
         app_router.navigate("login", { trigger: true });
       } else {
         app_router.navigate("dashboard", { trigger: true });
+      }
+    });
+
+    app_router.on('route:oneDriveAccess', function (actions) {
+      var validate = preTemp();
+      if (validate) {
+        new oneDriveView({action: actions});
       }
     });
 
