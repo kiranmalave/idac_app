@@ -640,9 +640,10 @@ define([
               new mailView({ customer_id: customer_id, customerName: cust_name, customer_mail: cust_mail , invoicePDf : selfobj.invoicePdfName });
               $('body').find(".loder");
 
-            }else{
-              alert('Pdf Not Found...!');
             }
+          }else
+          {
+            alert(res.msg);
           }
         }
       });

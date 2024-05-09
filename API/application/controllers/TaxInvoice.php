@@ -1332,6 +1332,7 @@ class TaxInvoice extends CI_Controller {
 		else if($taxInvoiceData[0]->record_type == 'proforma')
 			$pdfFilePath = $this->load->view("proformapdf",$data,true);
 		
+	
 		if(!$this->config->item('development')){
 			//load mPDF library
 			$this->load->library('MPDFCI');
@@ -1622,6 +1623,7 @@ class TaxInvoice extends CI_Controller {
 		
 		$fileName = $taxInvoiceData[0]->customer_name.'.pdf';
 		$fileName = str_replace(' ','_',$fileName);
+
 		$filePath = $this->config->item("mediaPATH").'temp-invoice/';
 
 		if (!is_dir($filePath)) {
@@ -1632,29 +1634,47 @@ class TaxInvoice extends CI_Controller {
 				chmod($filePath, 0777);
 			}
 		}
-		
-		
+		$file = $filePath.$fileName;
 		if(!$this->config->item('development')){
-			//load mPDF library
 			$this->load->library('MPDFCI');
 			$this->mpdfci->SetHTMLFooter('<div style="text-align: center">{PAGENO} of {nbpg}</div>');
 			$this->mpdfci->WriteHTML($pdfFilePath);
-			$this->mpdfci->Output($filePath.'/'.$filePath, 'D');  
-			$status['data'] = $fileName;
-			$status['msg'] = $this->systemmsg->getSucessCode(400);
-			$status['statusCode'] = 400;
-			$status['flag'] = 'S';
-			$this->response->output($status,200);
-
+			$this->mpdfci->Output($file, 'F');  
+			
+			if(file_exists($file))
+			{
+				$status['data'] = $fileName;
+				$status['msg'] = $this->systemmsg->getSucessCode(400);
+				$status['statusCode'] = 400;
+				$status['flag'] = 'S';
+				$this->response->output($status,200);
+			}else
+			{
+				$status['msg'] = $this->systemmsg->getErrorCode(309);
+				$status['statusCode'] = 309;
+				$status['data'] = array();
+				$status['flag'] = 'F';
+				$this->response->output($status, 200);	
+			}
 		}else
 		{
-			$status['data'] = $fileName;
-			$status['msg'] = $this->systemmsg->getSucessCode(400);
-			$status['statusCode'] = 400;
-			$status['flag'] = 'S';
-			$this->response->output($status,200);
-			// print_r($pdfFilePath);
+			if(!file_exists($file))
+			{
+				$status['data'] = $fileName;
+				$status['msg'] = $this->systemmsg->getSucessCode(400);
+				$status['statusCode'] = 400;
+				$status['flag'] = 'S';
+				$this->response->output($status,200);
+			}else
+			{
+				$status['msg'] = $this->systemmsg->getErrorCode(309);
+				$status['statusCode'] = 309;
+				$status['data'] = array();
+				$status['flag'] = 'F';
+				$this->response->output($status, 200);	
+			}
 		}  
-
 	}
+
+	
 }
