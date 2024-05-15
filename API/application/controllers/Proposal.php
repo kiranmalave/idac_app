@@ -487,8 +487,9 @@ class Proposal extends CI_Controller {
 		$data= array();
 	 	$data['proposalData']= $proposalDetails;
 	 	$logo = $this->config->item('imagesPATH').'idac_logo.png';
+	 	$smallLogo = $this->config->item('imagesPATH').'idacSmallLogo.png';
         $pdfFilePath = $this->load->view("proposalpdf",$data,true);
-        $header = '<table width="100%"><tr><td width="25%" style="text-align:left">IDAC</td><td width="50%" style="text-align:center">'.$proposalDetails[0]->company_name . ' - ' . $proposalDetails[0]->project_name.'</td><td width="25%" style="text-align:right">KB</td></tr></table>';
+        $header = '<table width="100%"><tr><td width="25%" style="text-align:left"><img style="" width="50px" src="'.$smallLogo.'"></td><td width="50%" style="text-align:center">'.$proposalDetails[0]->company_name . ' - ' . $proposalDetails[0]->project_name.'</td><td width="25%" style="text-align:right">KB</td></tr></table>';
 
         $footer ='<hr><table width="100%">
 			<tr>
@@ -534,14 +535,16 @@ class Proposal extends CI_Controller {
 			<tr>
 				<td style="height: 80pt;text-align: center;vertical-align: middle;">
 				<b>Dr Kiran Bhagate</b> BE, MTech, PhD, MIMechE, CEng(UK)
-				<h3>India Pvt Ltd</h3>
+				<h3>IDAC India Pvt Ltd</h3>
 			</tr>
 
 		</table>');
 
-		$this->mpdfci->AddPage('','NEXT-ODD','','','','','','','','','',$this->mpdfci->SetHTMLHeader($header),$this->mpdfci->SetHTMLFooter($footer), '', '',1, 1, 0, 0);
+		$this->mpdfci->AddPage('','NEXT-ODD','','','','','','','','','',$this->mpdfci->SetHeader($header),$this->mpdfci->SetHTMLFooter($footer), '', '',1, 1, 0, 0);
 		$this->mpdfci->SetHTMLFooter($footer);
  	    $this->mpdfci->WriteHTML($pdfFilePath);
+ 	    $this->mpdfci->AddPage('','NEXT-ODD','','','','','','','','','',$this->mpdfci->SetHeader($header),$this->mpdfci->SetHTMLFooter($footer), '', '',1, 1, 0, 0);
+ 	    $this->mpdfci->WriteHTML('<div>'.$proposalDetails[0]->cost.'</div>');
        	$this->mpdfci->Output();  
 	}
  }

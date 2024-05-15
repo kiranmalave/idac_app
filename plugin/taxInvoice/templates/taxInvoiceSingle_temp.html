@@ -77,7 +77,6 @@
                     <div class="form-line" style="border: none;">
                       <select id="customer_id" name="customer_id" class="form-control dropval ws-select show-tick" title="Select Customer" data-live-search="true">
                         <option class="addNewCust addNew" value="addCustomer">Add Customer</option>
-                        <option value="">Select Customer</option>
                         <% _.each(model.customerList, function(model1) { %>
                           <option <% if(model1.customer_id==model.customer_id ){ %>selected <% } %> data-state_id = "<%=model1.state_id%>" value="<%=model1.customer_id%>"><%=model1.name%></option>
                         <%}); %>
@@ -266,7 +265,7 @@
                 
               </td> -->
               <td class="quantityUnit">
-                <input <% if(modelLine.isEdit =='no'){ %> disabled <% } %> type="text" name="itemQuantity_<%=modelLine.srNo%>" id="itemQuantity_<%=modelLine.srNo%>" class="form-control amtChange digits input-p" value="<%=modelLine.invoiceLineQty%>">
+                <input <% if(modelLine.isEdit =='no'){ %> disabled <% } %> type="text" name="itemQuantity_<%=modelLine.srNo%>" id="itemQuantity_<%=modelLine.srNo%>" class="form-control amtChange digits input-p unitClass" value="<%=modelLine.invoiceLineQty%>">
                 <div class="form-group form-float">
                   <div class="form-line" >    
                         <select for="itemUnit_<%=modelLine.srNo%>" id="itemUnit_<%=modelLine.srNo%>" name="itemUnit_<%=modelLine.srNo%>" title="Unit" class="form-control ws-select dropval show-tick repeatChange nopadding">
@@ -329,7 +328,7 @@
                 </div>
               </td>
               <td class="quantityUnit">
-                <input type="text" name="itemQuantity_1" id="itemQuantity_1" class="form-control amtChange input-p">
+                <input type="text" name="itemQuantity_1" id="itemQuantity_1" class="form-control amtChange input-p unitClass">
                 <div class="form-group form-float">
                   <div class="form-line" >  
                         <% var slug_id ='' ;  %>
@@ -363,7 +362,7 @@
                 <span class="itemWithGSTAmt_1"></span>
               </td>
               <td class="discount_types">
-                <input type="text" name="itemDiscount_1" id="itemDiscount_1" class="form-control amtChange input-p" value="0">
+                <input type="text" name="itemDiscount_1" id="itemDiscount_1" class="form-control amtChange input-p" value="">
                 <div class="form-group form-float">
                   <div class="form-line" >    
                         <select for="itemDiscountType_1" id="itemDiscountType_1" name="itemDiscountType_1" title="Type" class="form-control ws-select amtChange dropval show-tick repeatChange nopadding">
@@ -387,17 +386,19 @@
       </table>
       <div class="col-xs-12">
         <div class="addRowClass">
-          <button id="addRow" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Add Rows"><img src="images/addRow.png"/></button>
+            <span>Click on</span>
+            <button id="addRow" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Add Rows"><img src="images/addRow.png"/></button>
+            <span>to add more item</span>
         </div>
       </div>
       <div class="col-xs-12">
         <div class="row totalAmtClass">
          <div class="col-md-4"></div>
-         <div class="col-md-2 fontWtBold qtyTotal"   style="margin-left: -64px;">00.00</div>
-         <div class="col-md-1 fontWtBold priceTotal" style="margin-left: -17px;">00.00</div>
+         <div class="col-md-2 fontWtBold qtyTotal"   style="margin-left: -35px;">00.00</div>
+         <div class="col-md-1 fontWtBold priceTotal" style="margin-left: 17px;">00.00</div>
          <div class="col-md-1 fontWtBold discTotal"  style="margin-left:  13px;">00.00</div>
          <div class="col-md-1 fontWtBold gstTotal"   style="margin-left:  56px;">00.00</div>
-         <div class="col-md-1 fontWtBold subTotal"   style="margin-left:  65px;">00.00</div>
+         <div class="col-md-1 fontWtBold subTotal"   style="margin-left:  25px;">00.00</div>
         </div>
       </div>
     </div>

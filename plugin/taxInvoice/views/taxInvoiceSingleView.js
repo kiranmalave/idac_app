@@ -367,7 +367,7 @@ define([
           slug_id = val.attributes.category_id; 
         }
       })
-      var sel2 = '<select id="itemUnit_' + (lastDetails + 1) + '" name="itemUnit_' + (lastDetails + 1) + '" class="form-control ws-select dropval setnarr" title="Unit Type" data-slug="'+slug_id+'"> > ';
+      var sel2 = '<select id="itemUnit_' + (lastDetails + 1) + '" name="itemUnit_' + (lastDetails + 1) + '" class="form-control ws-select dropval setnarr" title="Unit" data-slug="'+slug_id+'"> > ';
       sel2 = sel2 + ' <option class="" value="">Select Units</option><option class = "addNew" value="addCategory">Add Units Type</option>';
       $.each(this.categoryList.models, function (key, val) {
         if(val.attributes.slug == 'unit') {       
@@ -387,7 +387,7 @@ define([
                     '<td class="sno">' + (lastDetails + 1) + '</td>' +
                     '<td class="custom-dropdown">' + sel + '</td>' +
                     '<td class="quantityUnit">' +
-                    '<input type="text" name="itemQuantity_' + (lastDetails + 1) + '" id="itemQuantity_' + (lastDetails + 1) + '" class="form-control amtChange digits input-p" value="0">' +
+                    '<input type="text" name="itemQuantity_' + (lastDetails + 1) + '" id="itemQuantity_' + (lastDetails + 1) + '" class="form-control amtChange digits input-p unitClass" value="">' +
                     '<div class="form-group form-float">' +
                     '<div class="form-line focused">' 
                     + sel2 +
@@ -395,7 +395,7 @@ define([
                     '</div>' +
                     '</td>' +
                     '<td class="text-right">' +
-                    '<input type="text" name="itemRate_' + (lastDetails + 1) + '" id="itemRate_' + (lastDetails + 1) + '" class="form-control amtChange digits" value="0">' +
+                    '<input type="text" name="itemRate_' + (lastDetails + 1) + '" id="itemRate_' + (lastDetails + 1) + '" class="form-control amtChange digits" value="">' +
                     '<div class="apply-taxes">'+
                         '<input type="checkbox" name="itemAmtWithGST_' + (lastDetails + 1) + '" id="itemAmtWithGST_' + (lastDetails + 1) + '" class="itemAmtWithGST-check updateAmt" >'+
                         '<span class="itemAmtWithGST">With Gst</span>'+
@@ -403,7 +403,7 @@ define([
                     '<span class="itemWithGSTAmt_' + (lastDetails + 1) + '"></span>'+
                     '</td>' +
                     '<td class="discount_types">' +
-                    '<input type="text" name="itemDiscount_' + (lastDetails + 1) + '" id="itemDiscount_' + (lastDetails + 1) + '" class="form-control amtChange input-p" value="0">' +
+                    '<input type="text" name="itemDiscount_' + (lastDetails + 1) + '" id="itemDiscount_' + (lastDetails + 1) + '" class="form-control amtChange input-p" value="">' +
                     '<div class="form-group form-float">'+
                     '<div class="form-line" >'+ 
                     '<select for="itemDiscountType_' + (lastDetails + 1) + '" id="itemDiscountType_' + (lastDetails + 1) + '" name="itemDiscountType_' + (lastDetails + 1) + '" title="Type" class="form-control amtChange ws-select dropval show-tick repeatChange nopadding">'+
@@ -443,7 +443,7 @@ define([
           slug_id = val.attributes.category_id; 
         }
      })
-     var sel2 = '<select id="itemUnit_' + (lastDetails + 1) + '" name="itemUnit_' + (lastDetails + 1) + '" class="form-control ws-select dropval setnarr" title="Unit Type" data-slug="'+slug_id+'"> > ';
+     var sel2 = '<select id="itemUnit_' + (lastDetails + 1) + '" name="itemUnit_' + (lastDetails + 1) + '" class="form-control ws-select dropval setnarr" title="Unit" data-slug="'+slug_id+'"> > ';
       sel2 = sel2 + ' <option class="" value="">Select Units</option><option class = "addNew" value="addCategory">Add Units Type</option>';
       $.each(this.categoryList.models, function (key, val) {
         if(val.attributes.slug == 'unit') {       
@@ -458,7 +458,7 @@ define([
       '<td class="sno">' + (lastDetails + 1) + '</td>' +
       '<td class="custom-dropdown">' + sel + '</td>' +
       '<td class="quantityUnit">' +
-      '<input type="text" name="itemQuantity_' + (lastDetails + 1) + '" id="itemQuantity_' + (lastDetails + 1) + '" class="form-control amtChange digits input-p" value="0">' +
+      '<input type="text" name="itemQuantity_' + (lastDetails + 1) + '" id="itemQuantity_' + (lastDetails + 1) + '" class="form-control amtChange digits input-p unitClass" value="">' +
       '<div class="form-group form-float">' +
       '<div class="form-line focused">' +
       +sel2+
@@ -466,7 +466,7 @@ define([
       '</div>' +
       '</td>' +
       '<td class="text-right">' +
-      '<input type="text" name="itemRate_' + (lastDetails + 1) + '" id="itemRate_' + (lastDetails + 1) + '" class="form-control amtChange digits" value="0">' +
+      '<input type="text" name="itemRate_' + (lastDetails + 1) + '" id="itemRate_' + (lastDetails + 1) + '" class="form-control amtChange digits" value="">' +
       '<div class="apply-taxes">'+
           '<input type="checkbox" name="itemAmtWithGST_' + (lastDetails + 1) + '" id="itemAmtWithGST_' + (lastDetails + 1) + '" class="itemAmtWithGST-check updateAmt" >'+
           '<span class="itemAmtWithGST">With Gst</span>'+
@@ -474,7 +474,7 @@ define([
       '<span class="itemWithGSTAmt_' + (lastDetails + 1) + '"></span>'+
       '</td>' +
       '<td class="discount_types">' +
-      '<input type="text" name="itemDiscount_' + (lastDetails + 1) + '" id="itemDiscount_' + (lastDetails + 1) + '" class="form-control amtChange input-p" value="0">' +
+      '<input type="text" name="itemDiscount_' + (lastDetails + 1) + '" id="itemDiscount_' + (lastDetails + 1) + '" class="form-control amtChange input-p" value="">' +
       '<div class="form-group form-float">'+
       '<div class="form-line" >'+ 
       '<select for="itemDiscountType_' + (lastDetails + 1) + '" id="itemDiscountType_' + (lastDetails + 1) + '" name="itemDiscountType_' + (lastDetails + 1) + '" title="Type" class="form-control ws-select dropval show-tick repeatChange nopadding">'+
@@ -492,8 +492,8 @@ define([
       '<button id="itemdel_' + (lastDetails + 1) + '" class="del-row btn-small btn-default"><img class="invoiceDeleteImg" src="images/deleteImg.png"></button>' +
       '</td>' +
       '</tr>';
-      // var temprow = '<tr id="item-' + (lastDetails + 1) + '" class="item-list-box"><td class="sno">' + (lastDetails + 1) + '</td><td class="custom-dropdown" >' + sel + '</td><td><input type="text" name="itemName_' + (lastDetails + 1) + '" id="itemName_' + (lastDetails + 1) + '" class="form-control"> </td><td><input type="text" name="itemQuantity_' + (lastDetails + 1) + '" id="itemQuantity_' + (lastDetails + 1) + '" class="form-control amtChange digits" value="0"></td><td class= "tax-lable"><input type="text" name="itemUnit_' + (lastDetails + 1) + '" id="itemUnit_' + (lastDetails + 1) + '" class="form-control"> <label style="display: none;" class="item_cgst">Cgst</label>   <label style="display: none;" class="item_sgst">Sgst</label> <label style="display: none;" class="item_igst">Igst</label> </td><td class="text-right"><input type="text" name="itemRate_' + (lastDetails + 1) + '" id="itemRate_' + (lastDetails + 1) + '" class="form-control amtChange digits" value="0"> <input type="text" name="centralGstPercent_' + (lastDetails + 1) + '" id="centralGstPercent_' + (lastDetails + 1) + '" class="form-control item_cgst amtChange" style="display: none;" value="'+this.model.get('centralGstPercent')+'">  <input type="text" name="stateGstPercent_' + (lastDetails + 1) + '" id="stateGstPercent_' + (lastDetails + 1) + '" class="form-control item_sgst amtChange" style="display: none;" value="'+this.model.get('stateGstPercent')+'"> <input type="text" name="stateGstPercent_' + (lastDetails + 1) + '"" id="interGstPercent_' + (lastDetails + 1) + '" class="form-control item_igst amtChange" style="display: none;" value="'+this.model.get('interGstPercent')+'"> </td><td class="text-right total-td" id="itemtotal_' + (lastDetails + 1) + '"></td><td class="text-right"><button id="itemdel_' + (lastDetails + 1) + '" class="del-row btn-small btn-default"><img src="images/deleteImg.png"/></button></td></tr>';
-      //  var temprow = '<tr id="item-' + (lastDetails + 1) + '" class="item-list-box"><td class="sno">' + (lastDetails + 1) + '</td><td class="custom-dropdown" >' + sel + '</td><td><input type="text" name="itemName_' + (lastDetails + 1) + '" id="itemName_' + (lastDetails + 1) + '" class="form-control"> <div class="accessories" > <input type="checkbox" name="usb_mouse_' + (lastDetails + 1) + '" id="usb_mouse_' + (lastDetails + 1) + '" class="assc" ><span class="" >USB Mouse</span></div><div class="accessories" ><input type="checkbox" name="usb_keyboard_' + (lastDetails + 1) + '" id="usb_keyboard_' + (lastDetails + 1) + '" class=" assc"><span   class="" >USB Keyboard</span></div> <div class="accessories" ><input type="checkbox" name="laptop_backpack_' + (lastDetails + 1) + '" id="laptop_backpack_' + (lastDetails + 1) + '" class="assc" ><span   class="" >Laptop Backpack</span></div> <div class="accessories" ><input type="checkbox" name="wifi_adapter_' + (lastDetails + 1) + '" id="wifi_adapter_' + (lastDetails + 1) + '" class="assc" ><span class="" > Wifi Adapter</span></div> <div class="accessories" ><input type="checkbox" name="display_connector_' + (lastDetails + 1) + '" id="display_connector_' + (lastDetails + 1) + '" class="assc"><span class="" >Display Connector</span></div>  <div class="accessories" ><input type="checkbox" name="usb_c_type_connector_' + (lastDetails + 1) + '" id="usb_c_type_connector_' + (lastDetails + 1) + '" class="assc" ><span  class="" >USB & C Type Connector</span></div> <div class="accessories" ><input type="checkbox" name="hdmi_cable_' + (lastDetails + 1) + '" id="hdmi_cable_' + (lastDetails + 1) + '" class="assc"  ><span class="" >HDMI Cable</span></div> <div class="accessories" ><input type="checkbox" name="charger_' + (lastDetails + 1) + '" id="charger_' + (lastDetails + 1) + '" class="assc" ><span class="" >Charger</span><input type="text" name="serial_no_' + (lastDetails + 1) + '" id="serial_no_' + (lastDetails + 1) + '" class="form-control serial_no" value="" placeholder="Charger Serial No"> </div> </td><td><input type="text" name="itemQuantity_' + (lastDetails + 1) + '" id="itemQuantity_' + (lastDetails + 1) + '" class="form-control amtChange digits" value="0"> <input type="checkbox" style="display: none;" name="apply_taxes_' + (lastDetails + 1) + '" id="apply_taxes_' + (lastDetails + 1) + '" class=" apply_tax-check updateAmt" ><span  style="display: none;" class="apply_tax-check" >Apply taxes</span> </td><td class= "tax-lable"><input type="text" name="itemUnit_' + (lastDetails + 1) + '" id="itemUnit_' + (lastDetails + 1) + '" class="form-control"> <label style="display: none;" class="item_cgst">Cgst</label>   <label style="display: none;" class="item_sgst">Sgst</label> <label style="display: none;" class="item_igst">Igst</label> </td><td class="text-right"><input type="text" name="itemRate_' + (lastDetails + 1) + '" id="itemRate_' + (lastDetails + 1) + '" class="form-control amtChange digits" value="0"> <input type="text" name="centralGstPercent_' + (lastDetails + 1) + '" id="centralGstPercent_' + (lastDetails + 1) + '" class="form-control item_cgst amtChange" style="display: none;" value="'+this.model.get('centralGstPercent')+'">  <input type="text" name="stateGstPercent_' + (lastDetails + 1) + '" id="stateGstPercent_' + (lastDetails + 1) + '" class="form-control item_sgst amtChange" style="display: none;" value="'+this.model.get('stateGstPercent')+'"> <input type="text" name="stateGstPercent_' + (lastDetails + 1) + '"" id="interGstPercent_' + (lastDetails + 1) + '" class="form-control item_igst amtChange" style="display: none;" value="'+this.model.get('interGstPercent')+'"> </td><td class="text-right total-td" id="itemtotal_' + (lastDetails + 1) + '"></td><td class="text-right"><button id="itemdel_' + (lastDetails + 1) + '" class="del-row btn-small btn-default"><img class="invoiceDeleteImg" src="images/deleteImg.png"/></button></td></tr>';
+      // var temprow = '<tr id="item-' + (lastDetails + 1) + '" class="item-list-box"><td class="sno">' + (lastDetails + 1) + '</td><td class="custom-dropdown" >' + sel + '</td><td><input type="text" name="itemName_' + (lastDetails + 1) + '" id="itemName_' + (lastDetails + 1) + '" class="form-control"> </td><td><input type="text" name="itemQuantity_' + (lastDetails + 1) + '" id="itemQuantity_' + (lastDetails + 1) + '" class="form-control amtChange digits" value=""></td><td class= "tax-lable"><input type="text" name="itemUnit_' + (lastDetails + 1) + '" id="itemUnit_' + (lastDetails + 1) + '" class="form-control"> <label style="display: none;" class="item_cgst">Cgst</label>   <label style="display: none;" class="item_sgst">Sgst</label> <label style="display: none;" class="item_igst">Igst</label> </td><td class="text-right"><input type="text" name="itemRate_' + (lastDetails + 1) + '" id="itemRate_' + (lastDetails + 1) + '" class="form-control amtChange digits" value=""> <input type="text" name="centralGstPercent_' + (lastDetails + 1) + '" id="centralGstPercent_' + (lastDetails + 1) + '" class="form-control item_cgst amtChange" style="display: none;" value="'+this.model.get('centralGstPercent')+'">  <input type="text" name="stateGstPercent_' + (lastDetails + 1) + '" id="stateGstPercent_' + (lastDetails + 1) + '" class="form-control item_sgst amtChange" style="display: none;" value="'+this.model.get('stateGstPercent')+'"> <input type="text" name="stateGstPercent_' + (lastDetails + 1) + '"" id="interGstPercent_' + (lastDetails + 1) + '" class="form-control item_igst amtChange" style="display: none;" value="'+this.model.get('interGstPercent')+'"> </td><td class="text-right total-td" id="itemtotal_' + (lastDetails + 1) + '"></td><td class="text-right"><button id="itemdel_' + (lastDetails + 1) + '" class="del-row btn-small btn-default"><img src="images/deleteImg.png"/></button></td></tr>';
+      //  var temprow = '<tr id="item-' + (lastDetails + 1) + '" class="item-list-box"><td class="sno">' + (lastDetails + 1) + '</td><td class="custom-dropdown" >' + sel + '</td><td><input type="text" name="itemName_' + (lastDetails + 1) + '" id="itemName_' + (lastDetails + 1) + '" class="form-control"> <div class="accessories" > <input type="checkbox" name="usb_mouse_' + (lastDetails + 1) + '" id="usb_mouse_' + (lastDetails + 1) + '" class="assc" ><span class="" >USB Mouse</span></div><div class="accessories" ><input type="checkbox" name="usb_keyboard_' + (lastDetails + 1) + '" id="usb_keyboard_' + (lastDetails + 1) + '" class=" assc"><span   class="" >USB Keyboard</span></div> <div class="accessories" ><input type="checkbox" name="laptop_backpack_' + (lastDetails + 1) + '" id="laptop_backpack_' + (lastDetails + 1) + '" class="assc" ><span   class="" >Laptop Backpack</span></div> <div class="accessories" ><input type="checkbox" name="wifi_adapter_' + (lastDetails + 1) + '" id="wifi_adapter_' + (lastDetails + 1) + '" class="assc" ><span class="" > Wifi Adapter</span></div> <div class="accessories" ><input type="checkbox" name="display_connector_' + (lastDetails + 1) + '" id="display_connector_' + (lastDetails + 1) + '" class="assc"><span class="" >Display Connector</span></div>  <div class="accessories" ><input type="checkbox" name="usb_c_type_connector_' + (lastDetails + 1) + '" id="usb_c_type_connector_' + (lastDetails + 1) + '" class="assc" ><span  class="" >USB & C Type Connector</span></div> <div class="accessories" ><input type="checkbox" name="hdmi_cable_' + (lastDetails + 1) + '" id="hdmi_cable_' + (lastDetails + 1) + '" class="assc"  ><span class="" >HDMI Cable</span></div> <div class="accessories" ><input type="checkbox" name="charger_' + (lastDetails + 1) + '" id="charger_' + (lastDetails + 1) + '" class="assc" ><span class="" >Charger</span><input type="text" name="serial_no_' + (lastDetails + 1) + '" id="serial_no_' + (lastDetails + 1) + '" class="form-control serial_no" value="" placeholder="Charger Serial No"> </div> </td><td><input type="text" name="itemQuantity_' + (lastDetails + 1) + '" id="itemQuantity_' + (lastDetails + 1) + '" class="form-control amtChange digits" value=""> <input type="checkbox" style="display: none;" name="apply_taxes_' + (lastDetails + 1) + '" id="apply_taxes_' + (lastDetails + 1) + '" class=" apply_tax-check updateAmt" ><span  style="display: none;" class="apply_tax-check" >Apply taxes</span> </td><td class= "tax-lable"><input type="text" name="itemUnit_' + (lastDetails + 1) + '" id="itemUnit_' + (lastDetails + 1) + '" class="form-control"> <label style="display: none;" class="item_cgst">Cgst</label>   <label style="display: none;" class="item_sgst">Sgst</label> <label style="display: none;" class="item_igst">Igst</label> </td><td class="text-right"><input type="text" name="itemRate_' + (lastDetails + 1) + '" id="itemRate_' + (lastDetails + 1) + '" class="form-control amtChange digits" value=""> <input type="text" name="centralGstPercent_' + (lastDetails + 1) + '" id="centralGstPercent_' + (lastDetails + 1) + '" class="form-control item_cgst amtChange" style="display: none;" value="'+this.model.get('centralGstPercent')+'">  <input type="text" name="stateGstPercent_' + (lastDetails + 1) + '" id="stateGstPercent_' + (lastDetails + 1) + '" class="form-control item_sgst amtChange" style="display: none;" value="'+this.model.get('stateGstPercent')+'"> <input type="text" name="stateGstPercent_' + (lastDetails + 1) + '"" id="interGstPercent_' + (lastDetails + 1) + '" class="form-control item_igst amtChange" style="display: none;" value="'+this.model.get('interGstPercent')+'"> </td><td class="text-right total-td" id="itemtotal_' + (lastDetails + 1) + '"></td><td class="text-right"><button id="itemdel_' + (lastDetails + 1) + '" class="del-row btn-small btn-default"><img class="invoiceDeleteImg" src="images/deleteImg.png"/></button></td></tr>';
       $(".items-holder").append(temprow);
       setTimeout(function () {
         var di = "itemName_" + (lastDetails + 1);
@@ -1084,7 +1084,7 @@ define([
               
               if(res.data.length > 0) {
               $.each(res.data, function (index, value) {
-                dropdownContainer.append('<div id= "sd_'+lastDetails  +'" class="dropdown-item selectProduct" style="background-color: #ffffff;"  data-with_gst=' + value.with_gst + ' data-price=' + value.price + ' data-discount=' + value.discount + ' data-unit=' + value.unit + ' data-gst=' + value.product_id + '>' + value.product_name+'</div>');
+                dropdownContainer.append('<div data-productID="'+value.product_id+'" id= "sd_'+lastDetails  +'" class="dropdown-item selectProduct" style="background-color: #ffffff;"  data-with_gst=' + value.with_gst + '  data-price=' + value.price + ' data-discount=' + value.discount + ' data-unit=' + value.unit + ' data-gst=' + value.product_id + '>' + value.product_name+'</div>');
               });
               dropdownContainer.show();
             }
@@ -1135,6 +1135,7 @@ define([
         $('#itemAmtWithGST_'+lastDetails).prop('checked',false);
       }
       $("#itemUnit_"+lastDetails).val(unit).change();
+
       $('#narr_'+lastDetails).attr({'product_id':productID});
 
       selfobj.setnarration(productID,lastDetails);
