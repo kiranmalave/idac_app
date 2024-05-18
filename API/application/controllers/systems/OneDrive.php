@@ -1,6 +1,5 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-
 class OneDrive extends CI_Controller
 {
 
@@ -24,7 +23,7 @@ class OneDrive extends CI_Controller
 		parent::__construct();
 		$this->load->database();
 		$this->load->model('CommonModel');
-		
+		$this->load->library('MicrosoftGraphAPI');
 	}
 
 	public function onedriveSync(){
@@ -59,5 +58,31 @@ class OneDrive extends CI_Controller
 			$this->response->output($status, 200);
 		}
 	}
+	public function onedriveCallBack(){
+
+		$this->microsoftgraphapi->authenticate();
+	}
+	public function onedriveAccess(){
+		
+	}
+	public function getList(){
+		$this->microsoftgraphapi->getFileList();
+	}
+	public function getFolderByName(){
+		$this->microsoftgraphapi->getFolderIDByName('test');
+	}
+	public function createFolder(){
+		$this->microsoftgraphapi->createFolder('Project_1004');
+	}
+	//create folder in spacific folder.
+	//http://localhost/idac_app/API/createFolder
+	// search folder id by name
+	//http://localhost/idac_app/API/getFolderByName
+	// for get the drive list
+	//http://localhost/idac_app/API/getOneDriveList
+	// for token
+	//http://localhost/idac_app/API/onedriveCallBack?
+	
+	
     
 }

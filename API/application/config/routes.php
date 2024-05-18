@@ -56,6 +56,14 @@ $route['salt'] = 'Login/getsalt';
 $route['logout'] = 'Login/logout';
 $route['forgotPassword'] = 'Login/resetPassword';
 $route['saveOnedriveToken'] = 'systems/OneDrive/onedriveSync';
+$route['onedriveCallBack'] = 'systems/OneDrive/onedriveCallBack';
+$route['onedriveAccess'] = 'systems/OneDrive/onedriveAccess';
+$route['getOneDriveList'] = 'systems/OneDrive/getList';
+$route['getFolderByName'] = 'systems/OneDrive/getFolderByName';
+$route['createFolder'] = 'systems/OneDrive/createFolder';
+
+
+
 
 $route['mSalt'] = 'Login/getsaltMobile';
 $route['mLogin'] = 'Login/verifyUserMobile';

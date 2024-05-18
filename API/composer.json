@@ -1,5 +1,11 @@
 {
     "require": {
-        "mpdf/mpdf":"^7.1"
+        "microsoft/microsoft-graph": "^2.9",
+        "guzzlehttp/guzzle": "^7.8"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }
