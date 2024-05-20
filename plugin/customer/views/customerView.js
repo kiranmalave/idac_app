@@ -13,6 +13,9 @@ define([
   '../../task/views/taskSingleView',
   '../collections/customerCollection',
   '../collections/customerNotesCollection',
+  '../collections/countryCollection',
+  '../collections/stateCollection',
+  '../collections/cityCollection',
   '../models/customerFilterOptionModel',
   '../models/customerSingleModel',
   '../models/customerNoteModel',
@@ -34,7 +37,8 @@ define([
   "../../admin/collections/adminCollection",
   '../../core/views/moduleDefaultSettings',
   'text!../templates/leadModernView.html',
-], function ($, _, Backbone, datepickerBT, moment, Swal, customerSingleView, customerNotesView, mailView, customerActivityView, taskSingleView, customerCollection, customerNotesCollection, customerFilterOptionModel, customerModel, customerNoteModel, appSettings, columnArrangeModalView, configureColumnsView, dynamicFormData, singleMenuModel, slugCollection, emailMasterCollection, timeselectOptions, customerRowTemp, leadGridRow, customerTemp, customerFilterTemp, linkedDropdown, notificationView,escalationView,adminCollection,moduleDefaultSettings,leadModernView) {
+  'text!../templates/customerGridTemp.html',
+], function ($, _, Backbone, datepickerBT, moment, Swal, customerSingleView, customerNotesView, mailView, customerActivityView, taskSingleView, customerCollection, customerNotesCollection, countryCollection, stateCollection, cityCollection, customerFilterOptionModel, customerModel, customerNoteModel, appSettings, columnArrangeModalView, configureColumnsView, dynamicFormData, singleMenuModel, slugCollection, emailMasterCollection, timeselectOptions, customerRowTemp, leadGridRow, customerTemp, customerFilterTemp, linkedDropdown, notificationView,escalationView,adminCollection,moduleDefaultSettings,leadModernView,customerGridTemp) {
   var customerView = Backbone.View.extend({
     plural_label: '',
     module_desc: '',
@@ -42,8 +46,7 @@ define([
     mname: '',
     listDataGrid: [],
     paginginfo: [],
-    totalRec: 0,
-    View: 'traditionalList',
+    View: '',
     module_name: 'customer',
     isdataupdated:false,
     customerModel: customerModel,
@@ -73,17 +76,6 @@ define([
       this.mname = Backbone.history.getFragment();
       permission = ROLE[this.mname];
       this.menuId = permission.menuID;
-      // if(localStorage.getItem('user_setting')){
-      //   this.userSettings = JSON.parse(localStorage.getItem('user_setting'));
-      //   for (const rowKey in selfobj.userSettings) {
-      //     if(rowKey == selfobj.menuId){
-      //       const displayView = selfobj.userSettings[rowKey].displayView;
-      //       this.tableStructure = selfobj.userSettings[rowKey].tableStructure;
-      //     }
-      //   }
-      // }else{
-      //   this.userSettings = {};
-      // }
       this.paginginfo = [],
       this.appSettings = new appSettings();
       this.dynamicFormDatas = new dynamicFormData();
@@ -92,6 +84,8 @@ define([
       this.moduleDefaultSettings = new moduleDefaultSettings();
       searchCustomer = new customerCollection();
       this.collection = new customerCollection();
+      this.stateList = new stateCollection();
+      this.cityList = new cityCollection();
       this.appSettings.getMenuList(this.menuId, function (plural_label, module_desc, form_label, result) {
         selfobj.plural_label = plural_label;
         selfobj.module_desc = module_desc;
@@ -111,7 +105,6 @@ define([
       } else if (this.mname == "customer") {
         filterOption.set({ type: "customer" });
       }
-      // filterOption.set({ company_id: DEFAULTCOMPANY });
       this.categoryList = new slugCollection();
       this.categoryList.fetch({
         headers: {
@@ -122,6 +115,19 @@ define([
         $(".popupLoader").hide();
         $('body').find(".loder").hide();
         selfobj.setStageColor();
+      });
+
+      this.countryList = new countryCollection();
+      this.countryList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: 'post', data: { getAll: 'Y' }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        $('body').find(".loder").hide();
+        selfobj.render();
+        // $(".profile-loader").hide();
       });
 
       selfobj.emailMasterList = new emailMasterCollection();
@@ -250,7 +256,7 @@ define([
       "change .range": "setRange",
       "change #textSearch": "settextSearch",
       "click .multiOptionSel": "multioption",
-      "click .filterSearch": "filteredSearch",
+      "click .filterSearch": "filteredSearches",
       "click #filterOption": "filterRender",
       "click .resetval": "resetSearch",
       "click .loadview": "loadSubView",
@@ -273,23 +279,91 @@ define([
       'mousedown .table-resizable .resize-bar': 'onMouseDown',
       'mousemove .table-resizable th': 'onMouseMove',
       'mouseup .table-resizable th': 'onMouseUp',
-      'dblclick .table-resizable thead': 'resetColumnWidth',
-      "input .countryChange": "getCountry",
-      "click .selectCountry": "setCountry",
-      "input .stateChange": "getState",
-      "click .selectState": "setState",
+      "change .countryChange": "setCountry",
+      "change .selectState": "setState",
       "input .cityChange": "getCity",
       "click .selectCity": "setCity",
       "mouseover .customerRow" :"handleMouseHover",
       "mouseleave .customerRow" :"handleMouseLeave",
       "click .listViewBtn" : "showViewList",
       "click .setViewMode" : "setViewMode",
+      "click .listSortColumns" : "showListSortColumns",
+      "click .memberlistcheck" : "memberListCheck",
+    },
+   
+    memberListCheck: function(e) {
+      // console.log("memberlistcheck...", $(e.currentTarget).prop("checked"));
+      var allChecked = true;
+      $(".memberlistcheck").each(function() {
+        if (!$(this).prop("checked")) {
+          allChecked = false;
+          return false;
+        }
+      });
+      if (allChecked) {
+        $(".checkall").prop("checked", true);
+      } else {
+        $(".checkall").prop("checked", false);
+      }
+    }, 
+
+    setCountry: function (e) {
+      e.stopPropagation();
+      let selfobj = this;
+      var country_id = $(e.currentTarget).val();
+      filterOption.set({ country_id: country_id });
+      if(country_id != "" && country_id != null){
+        this.toClose = false;
+        this.stateList.fetch({
+          headers: {
+            'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          }, error: selfobj.onErrorHandler, type: 'post', data: { getAll: 'Y', country: country_id }
+        }).done(function (res) {
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          $(".popupLoader").hide();
+          selfobj.filterRender(e, true);
+        });
+      }
+    },
+
+    setState: function (e) {
+      e.stopPropagation();
+      let selfobj = this;
+      var state_id = $(e.currentTarget).val();
+      filterOption.set({ state_id: state_id });
+      this.toClose = false;
+      this.cityList.fetch({
+        headers: {
+          'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+        }, error: selfobj.onErrorHandler, type: 'post', data: { getAll: 'Y', state: state_id }
+      }).done(function (res) {
+        if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+        $(".popupLoader").hide();
+        selfobj.filterRender(e, true);
+      });
     },
 
     showViewList: function (e) {
       $(".showListView").toggle();
     },
 
+    showListSortColumns: function (e) {
+      e.preventDefault();
+      var $target = $(e.currentTarget);
+      var $showSortOptions = $target.siblings('.showSortOptions');
+      var $allSortOptions = $('.showSortOptions'); 
+      var $allSortingBtns = $('.sortingBtn');
+      if ($showSortOptions.is(':visible')) {
+        $showSortOptions.hide();
+        $target.closest('.sortingBtn').css("visibility", 'hidden');
+      } else {
+        $allSortOptions.hide();
+        $allSortingBtns.css("visibility", 'hidden');
+        $showSortOptions.show();
+        $target.closest('.sortingBtn').css("visibility", 'visible');
+      }
+    },
+    
     setViewMode: function(e){
       let selfobj = this;
       var View = $(e.currentTarget).val();
@@ -298,31 +372,13 @@ define([
         $(".ws_ColumnConfigure").removeClass("open");
       }
       selfobj.moduleDefaultSettings.setModuleDefaultView(selfobj.menuId,View,selfobj.tableStructure);
-      if (View == "traditionalList") {
-        $("#leadlistview").show();
-        $("#leadgridview").hide();
-        $("#modernlistview").hide();
-        $(".grid_mode").removeAttr("disabled")
-        $(".list_mode").attr('disabled', 'disabled');
-        $(".modernlist_mode").removeAttr("disabled")
-        $("#arrangeColumns").show();
-        $(".showListView").toggle();
-        selfobj.View = "traditionalList";
-        selfobj.resetSearch();
-      }else if(View == 'modernlist'){
-        $("#leadgridview").hide();
-        $("#modernlistview").show();
-        $("#leadlistview").hide();
-        $(".grid_mode").removeAttr("disabled")
-        $(".modernlist_mode").attr('disabled', 'disabled');
-        $(".list_mode").removeAttr("disabled")
-        $("#arrangeColumns").show();
-        $(".showListView").toggle();
-        selfobj.View = "modernlist";
-        selfobj.resetSearch();
-        var numColumns = selfobj.arrangedColumnList ? selfobj.arrangedColumnList.length : 0;
-        var defaultWidth = numColumns <= 5 ? '100%' : (numColumns * 20) + '%';
-        $(".tableModern").css("width", defaultWidth);
+      if(localStorage.getItem('user_setting') && localStorage.getItem('user_setting').length > 15){
+        selfobj.userSettings = JSON.parse(localStorage.getItem('user_setting'));
+      }else{
+        selfobj.userSettings = {};
+      }
+      if(View != "grid"){
+        selfobj.defaultViewSet();
       }else if (View == "grid") {
         $("#leadgridview").show();
         $("#leadlistview").hide();
@@ -334,21 +390,24 @@ define([
         $(".showListView").toggle();
         selfobj.collection.reset();
         selfobj.View = "grid";
-        selfobj.girdLazyLoad(listgridID = "", firstLoad = true);
+        selfobj.gridLazyLoad(listgridID = "", firstLoad = true);
         selfobj.setupDropable();
         selfobj.setupSortable();
-        selfobj.leadCanbanSlider();
+        if(selfobj.mname == 'leads'){
+          selfobj.leadCanbanSlider();
+        }
       }
     },
 
-    filteredSearch:function(e){
+    filteredSearches:function(e){
+      // console.log("filteredSearches");
       var selfobj = this;
       selfobj.filteredSearch = true;
       selfobj.filterSearch();
-
     },
     
     onMouseDown: function (event) {
+      var selfobj = this;
       let index = $(event.target).parent().index();
       this.$handle = this.$el.find('th').eq(index);
       this.pressed = true;
@@ -357,40 +416,65 @@ define([
       this.$table = this.$handle.closest('.table-resizable').addClass('resizing');
     },
 
-    // onMouseMove: function (event) {
-    //   if (this.pressed) {
-    //     this.$handle.width(this.startWidth + (event.pageX - this.startX));
-    //   }
-    // },
-
     onMouseMove: function (event) {
+      var selfobj = this;
       if (this.pressed) {
         let index = this.$handle.index();
         let currentWidth = this.startWidth + (event.pageX - this.startX);
         currentWidth = Math.max(currentWidth, 100);
         this.$handle.width(currentWidth);
+        this.widthChange = currentWidth - this.startWidth;
+        let $currentColumn = this.$el.find('th').eq(index);
+        let fieldLabel = $currentColumn.contents().filter(function() {
+            return this.nodeType === 3;
+        }).text().trim();
+        let fieldLabelLength = fieldLabel.length;
+        let minWidth = fieldLabelLength + 140;
+        // console.log("currentColumn width...",$currentColumn.width());
+        $currentColumn.css('min-width', minWidth + 'px');
+        $currentColumn.css('max-width', '640px');
       }
     },
-    
+  
     onMouseUp: function (event) {
       if (this.pressed) {
         this.$table.removeClass('resizing');
         this.pressed = false;
       }
       var selfobj = this;
-      if (!selfobj.tableStructure) {
-        selfobj.tableStructure = {};
-      }
       let tableName = $(event.currentTarget).closest('table').attr('id');
+   
+      if (tableName) {
+          var $table = $('#' + tableName);
+          var currentTableWidth = $table.width();
+          if(this.widthChange){
+            var newTableWidth = currentTableWidth + (this.widthChange);
+          }else{
+            var newTableWidth = currentTableWidth;
+          }
+          $table.width(newTableWidth);
+      } else {
+          console.log("Table name not found.");
+      }
+     
+      if(newTableWidth < 910){
+        tableName.css('width', '910px');
+      }
+   
       $('#'+tableName + ' thead th').each(function() {
         var datacolumn = $(this).attr('data-column');
-        var styleWidth = $(this).css('width');
+        var styleWidth = this.style.width;
+        var styleMinWidth = this.style.minWidth;
         var width = parseFloat(styleWidth);
+        var minWidth = parseFloat(styleMinWidth);
+        if(width < minWidth){
+          width = minWidth;
+        }else{
+          width = width;
+        }
         let columnObj = {};
-        // if(datacolumn){
-        //   selfobj.tableStructure[datacolumn] = width;
-        // }
         if(datacolumn){
+          columnObj['tableWidth'] = newTableWidth;
           columnObj[datacolumn] = width;
           if (!selfobj.tableStructure[tableName]) {
             selfobj.tableStructure[tableName] = columnObj;
@@ -401,11 +485,6 @@ define([
       });
       
       selfobj.moduleDefaultSettings.setModuleDefaultView(selfobj.menuId, selfobj.View, selfobj.tableStructure);
-    },
-
-    resetColumnWidth: function () {
-      // Reset column sizes on double click
-      this.$el.find('th').css('width', '');
     },
 
     downloadReport: function (e) {
@@ -469,31 +548,43 @@ define([
     // },
 
     sortColumn: function (e) {
+      e.stopPropagation();
       var order = $(e.currentTarget).attr("data-value");
       var selfobj = this;
       var newsetval = [];
-      $("#clist").find(".up").removeClass("active");
-      $("#clist").find(".down").removeClass("active");
-      // var classname = $(e.currentTarget).attr("class").split(" ");
+      if(selfobj.View == 'traditionalList'){
+        $("#clist").find(".listSortColumnUp").removeClass("selected");
+        $("#clist").find(".listSortColumnDown").removeClass("selected");
+        $("#clist").find(".up").removeClass("active");
+        $("#clist").find(".down").removeClass("active");
+      }else{
+        $("#custModernList").find(".listSortColumnUp").removeClass("selected");
+        $("#custModernList").find(".listSortColumnDown").removeClass("selected");
+        $("#custModernList").find(".up").removeClass("active");
+        $("#custModernList").find(".down").removeClass("active");
+      }
       newsetval["order"] = $(e.currentTarget).attr("data-value");
       newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
-      if (order == "" || order == "DESC") {
-        order = "ASC";
-        $(e.currentTarget).find(".down").removeClass("active");
-        $(e.currentTarget).find(".up").addClass("active");
-      } else {
-        order = "DESC";
-        $(e.currentTarget).find(".down").addClass("active");
-        $(e.currentTarget).find(".up").removeClass("active");
+      if (order == "DESC") {
+        $(e.currentTarget).closest('th').find(".clearSorting").removeAttr("disabled")
+        $(e.currentTarget).closest('th').find(".sortarrow.down").addClass("active");
+        $(e.currentTarget).closest('th').find(".listSortColumnDown").addClass("selected");
+        newsetval["order"] = order;
+        newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+      } else if (order == "ASC") {
+        $(e.currentTarget).closest('th').find(".clearSorting").removeAttr("disabled")
+        $(e.currentTarget).closest('th').find(".sortarrow.up").addClass("active");
+        $(e.currentTarget).closest('th').find(".listSortColumnUp").addClass("selected");
+        newsetval["order"] = order;
+        newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
+      } else{
+        $(e.currentTarget).closest(".clearSorting").attr('disabled', 'disabled');
+        newsetval["order"] = 'DESC';
+        newsetval["orderBy"] = 't.created_date';
       }
-      $(e.currentTarget).attr("data-value", order);
-      newsetval["order"] = order;
-      newsetval["orderBy"] = $(e.currentTarget).attr("data-field");
       filterOption.set(newsetval);
       selfobj.filterSearch();
     },
-
-   
 
     mailHide: function (e) {
       $(".customMail").hide();
@@ -524,14 +615,13 @@ define([
       $('.openFull').remove('maxActiveRemove');
     },
 
-    girdLazyLoad: function (listgridID) {
+    gridLazyLoad: function (listgridID) {
       let selfobj = this;
       if (listgridID == "") {
         if(selfobj.isdataupdated || selfobj.listDataGrid.length == 0){
           var isFilter = false;
           if(filterOption.get("stages") != null){
             isFilter = true;
-            console.log("isFilter "+isFilter);
           }
           $.each(this.categoryList.models, function (index, value) {
             $.each(value.attributes.sublist, function (index2, value2) {
@@ -552,7 +642,8 @@ define([
                 $("#leadlistview").hide();
                 $("#modernlistview").hide();
               }else{
-                if(filterOption.get("stages") == value2.category_id){
+                if(filterOption.get("stages") == value2.category_id && filterOption.get("stages") !=0){
+                  
                   selfobj.listDataGrid[value2.category_id] = new customerCollection();
                   selfobj.listDataGrid[value2.category_id].fetch({
                     headers: {
@@ -587,25 +678,33 @@ define([
             $(".profile-loader").hide();
             selfobj.paginginfo = res.paginginfo;
             selfobj.addAllGrid(0);
+            filterOption.set({ stages:null});
           });
           selfobj.isdataupdated = false;
         }
       } else {
         filterOption.set({ stages: listgridID });
-        filterOption.set({ curpage: selfobj.listDataGrid[listgridID].pageinfo.nextpage });
-        if(selfobj.listDataGrid[listgridID].loadstate){
-          selfobj.listDataGrid[listgridID].fetch({
-            headers: {
-              'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-            }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
-          }).done(function (res) {
-            if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-            $(".profile-loader").hide();
-            selfobj.paginginfo = res.paginginfo;
-            selfobj.setGridPagging(selfobj.paginginfo, listgridID);
-          });
-          selfobj.listDataGrid[listgridID].on('add', this.addOne, this);
-          selfobj.listDataGrid[listgridID].on('reset', this.addAll, this);
+        if(selfobj.listDataGrid[listgridID]){
+          filterOption.set({curpage: selfobj.listDataGrid[listgridID].pageinfo.nextpage});
+          if(selfobj.listDataGrid[listgridID].loadstate){
+            selfobj.listDataGrid[listgridID].fetch({
+              headers: {
+                'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+              }, error: selfobj.onErrorHandler, type: 'post', data: filterOption.attributes
+            }).done(function (res) {
+              if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+              $(".profile-loader").hide();
+              selfobj.paginginfo = res.paginginfo;
+              selfobj.setGridPagging(selfobj.paginginfo, listgridID);
+            });
+            const isAddOneAdded = selfobj.listDataGrid[listgridID]._events && selfobj.listDataGrid[listgridID]._events.add && selfobj.listDataGrid[listgridID]._events.add.some(listener => listener.callback === this.addOne);
+            if (isAddOneAdded) {
+              // nothing to do.
+            }else{
+              selfobj.listDataGrid[listgridID].on('add', this.addOne, this);
+              selfobj.listDataGrid[listgridID].on('reset', this.addAll, this);
+            }
+          }
         }
       }
     },
@@ -748,12 +847,12 @@ define([
         title: 'Do you want to delete ?',
         showDenyButton: true,
         showCancelButton: false,
-        confirmButtonText: 'Yes',
-        denyButtonText: `No`,
+        confirmButtonText: 'Make Inactive',
+        denyButtonText: `Permanently Delete`,
       }).then((result) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
-          Swal.fire('Deleted!', '', 'success')
+          Swal.fire('Status changed to Inactive!!', '', 'success')
 
           var selfobj = this;
           var removeIds = [];
@@ -773,13 +872,13 @@ define([
           });
           $(".deleteAll").hide();
           $(".action-icons-div").hide();
-          $(".memberlistcheck").click(function () {
-            if ($(this).is(":checked")) {
-              $(".action-icons-div").show(300);
-            } else {
-              $(".action-icons-div").hide(200);
-            }
-          });
+          // $(".memberlistcheck").click(function () {
+          //   if ($(this).is(":checked")) {
+          //     $(".action-icons-div").show(300);
+          //   } else {
+          //     $(".action-icons-div").hide(200);
+          //   }
+          // });
 
           var idsToRemove = removeIds.toString();
           if (idsToRemove == '') {
@@ -812,18 +911,53 @@ define([
             }
           });
         } else if (result.isDenied) {
+          var selfobj = this;
+          var removeIds = [];
+          var status = $(e.currentTarget).attr("data-action");
+          var action = "changeStatus";
+          if(selfobj.View == 'modernlist'){
+            $('#modernList input:checkbox').each(function () {
+              if ($(this).is(":checked")) {
+                removeIds.push($(this).attr("data-customer_id"));
+              }
+            });
+          }
           $('#customerList input:checkbox').each(function () {
             if ($(this).is(":checked")) {
-              $(this).prop('checked', false);
+              removeIds.push($(this).attr("data-customer_id"));
             }
           });
-          $('#modernList input:checkbox').each(function () {
-            if ($(this).is(":checked")) {
-              $(this).prop('checked', false);
+          var idsToRemove = removeIds.toString();
+          if (idsToRemove == '') {
+            alert("Please select at least one record.");
+            return false;
+          }
+          var action = "changeStatus";
+          $.ajax({
+            url: APIPATH + 'customerMaster/delete',
+            method: 'POST',
+            data: { list: idsToRemove, action: action },
+            datatype: 'JSON',
+            beforeSend: function (request) {
+              request.setRequestHeader("token", $.cookie('_bb_key'));
+              request.setRequestHeader("SadminID", $.cookie('authid'));
+              request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+              request.setRequestHeader("Accept", 'application/json');
+            },
+            success: function (res) {
+              if (res.flag == "F")
+                alert(res.msg);
+
+              if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+              if (res.flag == "S") {
+
+                selfobj.initialize(); 
+
+              }
+              selfobj.isdataupdated = true;
+
             }
           });
-          $(".listCheckbox").find('.checkall').prop('checked', false);
-          $(".deleteAll").hide();
         }
       })
     },
@@ -899,6 +1033,10 @@ define([
       var selfobj = this;
       var show = $(e.currentTarget).attr("data-view");
       $(".loder").show();
+      $('#NoteModal').modal('hide');
+      $('#activityModal').modal('hide');
+      $(".customMail").hide();
+      $(".overlay-main-container").removeClass("open");
       switch (show) {
         case "singleCustomerData": {
           var customer_id = $(e.currentTarget).attr("data-customer_id");
@@ -942,6 +1080,7 @@ define([
           new taskSingleView({ customer_id: customer_id, customerName: cust_name, loadFrom: "customer", searchtask: this, menuName:'task' });
           break;
         }
+        
         case "notificationView": {
           var categoryList = [];
           new notificationView({ menuID: this.menuId, searchreceipt: this, module_name: this.module_name,categoryList:categoryList,filteredData : selfobj.filteredData });
@@ -967,7 +1106,6 @@ define([
       } else if (this.mname == "customer") {
         filterOption.set({ type: "customer" });
       }
-      // filterOption.set({ company_id: DEFAULTCOMPANY });
       $(".multiOptionSel").removeClass("active");
       $(".filterClear").val("");
       $("#textSearch").val("select");
@@ -995,31 +1133,33 @@ define([
     },
 
     addOne: function (objectModel) {
-      var selfobj = this;
-        if (selfobj.View == "traditionalList" || selfobj.mname == 'customer') {
-          this.totalRec = this.collection.length;
-          if (this.totalRec == 0) {
-            $(".noCustAdded").show();
-            $("#leadlistview").hide();
-          } else {
-              $(".noCustAdded").hide();
-              $("#leadlistview").show();
-          }
-        } else if (selfobj.View == "modernlist") {
-          this.totalRec = this.collection.length;
-          if (this.totalRec == 0) {
-            $(".noCustAdded").show();
-            $("#modernlistview").hide();
-          } else {
-              $(".noCustAdded").hide();
-              $("#modernlistview").show();
-          }
+      var selfobj = this; 
+      selfobj.totalRec = selfobj.collection.length;
+
+      // console.log("selfobj.totalRec",selfobj.totalRec);
+
+      if (selfobj.View == "traditionalList") {
+        if (selfobj.totalRec == 0) {
+          $("#leadlistview").hide();
+          $(".noCustAdded").show();
+
         } else {
           $(".noCustAdded").hide();
-          $("#leadlistview").hide();
-          $("#modernlistview").hide();
+          $("#leadlistview").show();
         }
-      
+      } else if (selfobj.View == "modernlist") {
+        if (selfobj.totalRec == 0) {
+          $(".noCustAdded").show();
+          $("#modernlistview").hide();
+        } else {
+          $(".noCustAdded").hide();
+          $("#modernlistview").show();
+        }
+      } else {
+        $(".noCustAdded").hide();
+        $("#leadlistview").hide();
+        $("#modernlistview").hide();
+      }
       selfobj.arrangedColumnList.forEach((column) => {
         if (column.fieldType == 'Datepicker' || column.fieldType == 'Date') {
           if (objectModel.attributes["" + column.column_name] != "0000-00-00" && objectModel.attributes["" + column.column_name] != null) {
@@ -1054,7 +1194,8 @@ define([
           objectModel.attributes["" + column.column_name] = "-";
         }
       });
-      if (selfobj.View == "traditionalList" || selfobj.mname == 'customer') {
+      // alert(selfobj.View);
+      if (selfobj.View == "traditionalList") {
         var template = _.template(customerRowTemp);
         objectModel.set({ "initial": selfobj.getInitials(objectModel.attributes.name) });
         objectModel.set({ "initialBgColor": selfobj.getColorByInitials(objectModel.attributes.initial) });
@@ -1066,25 +1207,45 @@ define([
         objectModel.set({ "initialBgColor": selfobj.getColorByInitials(objectModel.attributes.initial) });
         objectModel.set({ "initialColor": selfobj.getFontColor(objectModel.attributes.initialBgColor) });
         $("#modernList").append(template({ customerDetails: objectModel, arrangedColumnList: this.arrangedColumnList, menuName: this.mname, menuID: this.menuId }));
-       } else {
+       } else if(selfobj.View == "grid" && selfobj.mname == 'leads'){
         var template = _.template(leadGridRow);
+        if (objectModel.attributes.stageID != 0 && objectModel.attributes.stageID != null && objectModel.attributes.stageID != "") {
+          objectModel.set({ "lastActivityTime": selfobj.timeselectOptions.displayRelativeTime(objectModel.attributes.last_activity_date) });
+          objectModel.set({ "initial": selfobj.getInitials(objectModel.attributes.name) });
+          objectModel.set({ "assigneeInitial": selfobj.getInitials(objectModel.attributes.assignee) });
+          objectModel.set({ "initialBgColor": selfobj.getColorByInitials(objectModel.attributes.initial) });
+          objectModel.set({ "initialColor": selfobj.getFontColor(objectModel.attributes.initialBgColor) });
+          $("#" + objectModel.attributes.stageID).append(template({ customerDetails: objectModel, customerLength: this.collection.length }));
+        } else {
+          objectModel.set({ "lastActivityTime": selfobj.timeselectOptions.displayRelativeTime(objectModel.attributes.last_activity_date) });
+          objectModel.set({ "initial": selfobj.getInitials(objectModel.attributes.name) });
+          objectModel.set({ "assigneeInitial": selfobj.getInitials(objectModel.attributes.assignee) });
+          objectModel.set({ "initialBgColor": selfobj.getColorByInitials(objectModel.attributes.initial) });
+          objectModel.set({ "initialColor": selfobj.getFontColor(objectModel.attributes.initialBgColor) });
+          $("#otherStage").append(template({ customerDetails: objectModel, customerLength: this.collection.length }));
+        }
+        selfobj.setupDragable();
+      }else if(selfobj.View == "grid" && selfobj.mname == 'customer'){
+        var template = _.template(customerGridTemp);
         objectModel.set({ "lastActivityTime": selfobj.timeselectOptions.displayRelativeTime(objectModel.attributes.last_activity_date) });
         objectModel.set({ "initial": selfobj.getInitials(objectModel.attributes.name) });
         objectModel.set({ "initialBgColor": selfobj.getColorByInitials(objectModel.attributes.initial) });
         objectModel.set({ "initialColor": selfobj.getFontColor(objectModel.attributes.initialBgColor) });
-        if (objectModel.attributes.stageID != 0 && objectModel.attributes.stageID != null && objectModel.attributes.stageID != "") {
-          $("#" + objectModel.attributes.stageID).append(template({ customerDetails: objectModel, customerLength: this.collection.length }));
-        } else {
-          $("#otherStage").append(template({ customerDetails: objectModel, customerLength: this.collection.length }));
-        }
-        selfobj.setupDragable();
+        let sectionName = $("<div>",{
+          class:"col-md-4 customerGridCard",
+        });
+        sectionName.append(template({ customerDetails: objectModel, customerLength: this.collection.length }));
+        $("#customerGridRow1").append(sectionName);
       }
     },
 
     addAll: function () {
+      let selfobj = this;
       $("#customerList").empty();
+      $('#otherStage').children().not(".totalCount").remove();
       $("#modernList").empty();
-      this.collection.forEach(this.addOne, this);
+      $("#customerGridRow1").empty();
+      selfobj.collection.forEach(selfobj.addOne, selfobj);
     },
 
     addAllGrid: function (col_name) {
@@ -1095,9 +1256,16 @@ define([
       });
     },
     
-    filterRender: function (e) {
+    filterRender: function (e, calledfrom) {
+      
       var selfobj = this;
-      var isexits = checkisoverlay(this.toClose);
+      $('.filterLoader').show();
+      if (calledfrom){
+        var isexits = false;
+      }else{
+        var isexits = checkisoverlay(this.toClose);
+      }
+      
       if (!isexits) {
         var source = customerFilterTemp;
         var template = _.template(source);
@@ -1114,7 +1282,6 @@ define([
             }
           }
         }
-
         selfobj.categories = new slugCollection();
           selfobj.categories.fetch({
             headers: {
@@ -1126,46 +1293,50 @@ define([
           });
 
         extractedFields.forEach(function (column) {
-          if (column.linkedWith != null && column.linkedWith != "" && column.linkedWith != 'undefined' && column.parentCategory != 'undefined' && column.parentCategory != "" && column.parentCategory != null) {
-            selfobj.categoryList = new slugCollection();
-            var matcchedID = [];
-            selfobj.categoryList.fetch({
-              headers: {
-                'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
-              }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y', category_id: column.parentCategory }
-            }).done(function (res) {
-              if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
-              $(".popupLoader").hide();
-              var child = [];
-              if (res.data[0]) {
-                for (var i = 0; i < res.data[0].sublist.length; i++) {
-                  child[0] = res.data[0].sublist[i].category_id;
-                  child[1] = res.data[0].sublist[i].categoryName;
-                  matcchedID.push(child.slice());
-                  // matcchedID.push(res.data[0].sublist[i].categoryName);
-                }
-                column.fieldOptions = matcchedID;
-              }
-            });
-          } else {
+          // if (column.linkedWith != null && column.linkedWith != "" && column.linkedWith != 'undefined' && column.parentCategory != 'undefined' && column.parentCategory != "" && column.parentCategory != null) {
+          //   selfobj.categoryList = new slugCollection();
+          //   var matcchedID = [];
+          //   selfobj.categoryList.fetch({
+          //     headers: {
+          //       'contentType': 'application/x-www-form-urlencoded', 'SadminID': $.cookie('authid'), 'token': $.cookie('_bb_key'), 'Accept': 'application/json'
+          //     }, error: selfobj.onErrorHandler, type: 'post', data: { status: 'active', getAll: 'Y', category_id: column.parentCategory }
+          //   }).done(function (res) {
+          //     if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          //     $(".popupLoader").hide();
+          //     var child = [];
+          //     if (res.data[0]) {
+          //       for (var i = 0; i < res.data[0].sublist.length; i++) {
+          //         child[0] = res.data[0].sublist[i].category_id;
+          //         child[1] = res.data[0].sublist[i].categoryName;
+          //         matcchedID.push(child.slice());
+          //         // matcchedID.push(res.data[0].sublist[i].categoryName);
+          //       }
+          //       column.fieldOptions = matcchedID;
+          //     }
+          //   });
+          // } else {
             column.fieldOptions = column.fieldOptions;
-          }
+          // }
         });
 
         extractedFields.forEach(function (field) {
           selfobj.filteredFields.push(field);
         });
-
         setTimeout(function () {
           var templateData = {
             filteredFields: selfobj.filteredFields || [],
             "categoryList": selfobj.categories.models,
+            "countryList": selfobj.countryList.models,
+            "stateList": selfobj.stateList.models,
+            "cityList":selfobj.cityList.models,
             "menuName": selfobj.mname,
             "adminList": selfobj.adminList.models || [],
+            filterOptions: filterOption.attributes ,
           };
           cont.html(template(templateData));
           $(".ws-select").selectpicker();
           selfobj.setupFilter();
+          $('.filterLoader').hide();
         }, 1000);
 
         cont.attr('id', this.toClose);
@@ -1174,12 +1345,25 @@ define([
           this line use to hide if any other overlay is open first close it.
         */
         $(".overlay-main-container").removeClass("open");
+        $(".ws_filterOptions").children().not(".filterLoader").empty();
         // append filter html here
         $(".ws_filterOptions").append(cont);
         /*  
           INFO
           open filter popup by adding class open here
         */
+          setTimeout(function () {
+            var country_id = filterOption.get("country_id");
+            var state_id = filterOption.get("state_id");
+            if( country_id != 0 && country_id != null && country_id != ""){
+              $('#state_id').removeAttr("disabled");
+              $('.stateChange').find('.btn.dropdown-toggle').removeClass("disabled");
+            }
+            if( state_id != 0 && state_id != null && state_id != ""){
+              $('#city_id').removeAttr("disabled");
+              $('.cityChange').find('.btn.dropdown-toggle').removeClass("disabled");
+            }
+          },2000);
         $(".ws_filterOptions").addClass("open");
         /* 
           INFO
@@ -1189,6 +1373,7 @@ define([
 
       } else {
         // check here we alreay open it or not. if open toggle that popup here
+        $('.filterLoader').hide();
         var isOpen = $(".ws_filterOptions").hasClass("open");
         if (isOpen) {
           $(".ws_filterOptions").removeClass("open");
@@ -1284,7 +1469,6 @@ define([
     },
 
     filterSearch: function (isClose = false, stage) {
-      
       if (isClose && typeof isClose != 'object') {
         $('.' + this.toClose).remove();
         rearrageOverlays();
@@ -1330,10 +1514,9 @@ define([
           appliedFilterCount++;
         }
       }
-      console.log(filterOption.attributes);
       if (this.View == "grid") {
         selfobj.isdataupdated = true;
-        selfobj.girdLazyLoad("");
+        selfobj.gridLazyLoad("");
       }else{
         this.collection.fetch({
           headers: {
@@ -1353,29 +1536,33 @@ define([
             $(".profile-loader-msg").hide();
           }
           
+          selfobj.totalRec = 0;
           selfobj.totalRec = res.paginginfo.totalRecords;
-          console.log("selfobj.View",selfobj.View);
-          if (selfobj.totalRec == 0) {
+          // console.log("selfobj.totalRec",selfobj.totalRec);
+          // console.log("selfobj.filteredSearch",selfobj.filteredSearch);
+
+          if (selfobj.totalRec == 0 && selfobj.filteredSearch == true) {
+            if (selfobj.View == "traditionalList") {
+              $('#leadlistview').show();
+              $('.noDataFound').show();
+            }else if (selfobj.View == "modernlist") {
+              $('#modernlistview').show();
+              $('.noDataFound').show();
+            }
+          } else if (selfobj.totalRec == 0 && selfobj.filteredSearch == false) {
+            $('.noCustAdded').show();
             if (selfobj.View == "traditionalList") {
               $('#leadlistview').hide();
             }else if (selfobj.View == "modernlist") {
               $('#modernlistview').hide();
             }
-            if(selfobj.filteredSearch == true){
-              $('.noDataFound').show();
-            }else{
-              $('.noCustAdded').show();
-            }
-          } else {
+          } else if(selfobj.totalRec > 0){
+            $('.noDataFound').hide();
+            $(".noCustAdded").hide();
             if (selfobj.View == "traditionalList") {
               $('#leadlistview').show();
             }else if (selfobj.View == "modernlist") {
               $('#modernlistview').show();
-            }
-            if(selfobj.filteredSearch == true){
-              $('.noDataFound').hide();
-            }else{
-              $('.noCustAdded').hide();
             }
           }
           selfobj.setValues();
@@ -1714,12 +1901,13 @@ define([
           let fieldID = $(e.currentTarget).attr("data-fieldID");
           let selection = $(e.currentTarget).attr("data-selection");
           let dropdownContainer = $("#field_" + fieldID);
+          let fieldOpt = $(e.currentTarget).attr("data-fieldOpt");
           let selectedIDS = [];
 
           $.ajax({
             url: APIPATH + 'dynamicgetList/',
             method: 'POST',
-            data: { text: name, pluginID: pluginID, wherec: where, fieldID: fieldID },
+            data: { text: name, pluginID: pluginID, wherec: fieldOpt, fieldID: fieldID },
             datatype: 'JSON',
             beforeSend: function (request) {
               $(".textLoader").show();
@@ -2036,16 +2224,16 @@ define([
       });
     },
 
-    setCountry: function (e) {
-      let selfobj = this;
-      var Name = $(e.currentTarget).text();
-      var countryID = $(e.currentTarget).attr('data-countryID');
-      $('.countryChange').val(Name);
-      $("#countryDropdown").hide();
-      let newdetails = [];
-      newdetails["" + 'country_id'] = countryID;
-      filterOption.set(newdetails);
-    },
+    // setCountry: function (e) {
+    //   let selfobj = this;
+    //   var Name = $(e.currentTarget).text();
+    //   var countryID = $(e.currentTarget).attr('data-countryID');
+    //   $('.countryChange').val(Name);
+    //   $("#countryDropdown").hide();
+    //   let newdetails = [];
+    //   newdetails["" + 'country_id'] = countryID;
+    //   filterOption.set(newdetails);
+    // },
 
     getState: function (e) {
       var name = $(e.currentTarget).val();
@@ -2078,16 +2266,16 @@ define([
       });
     },
 
-    setState: function (e) {
-      let selfobj = this;
-      var Name = $(e.currentTarget).text();
-      var stateID = $(e.currentTarget).attr('data-stateID');
-      $('.stateChange').val(Name);
-      $("#stateDropdown").hide();
-      let newdetails = [];
-      newdetails["" + 'state_id'] = stateID;
-      filterOption.set(newdetails);
-    },
+    // setState: function (e) {
+    //   let selfobj = this;
+    //   var Name = $(e.currentTarget).text();
+    //   var stateID = $(e.currentTarget).attr('data-stateID');
+    //   $('.stateChange').val(Name);
+    //   $("#stateDropdown").hide();
+    //   let newdetails = [];
+    //   newdetails["" + 'state_id'] = stateID;
+    //   filterOption.set(newdetails);
+    // },
 
     getCity: function (e) {
       var name = $(e.currentTarget).val();
@@ -2133,24 +2321,21 @@ define([
 
     handleMouseHover: function(event) {
       const customerRow = $(event.currentTarget);
-      const customerId = customerRow.data('customerid');
       const button = customerRow.find(".CustomerHoverButton");
       const checkboxTd = customerRow.find('td.a-center');
       const actionColumn = customerRow.find('td.actionColumn');
-      if ($(event.target).closest(checkboxTd).length === 0 && $(event.target).closest(actionColumn).length === 0 ) {
-          if (button.length > 0) {
-              if (!button.is(":hover")) {
-                const offset = 10;
-                  button.css({
-                      display: "block",
-                      left: event.clientX + "px",
-                      top: (event.clientY + offset) + "px",
-                  });
-              }
-          }
+      if ($(event.target).closest(checkboxTd).length === 0 && $(event.target).closest(actionColumn).length === 0) {
+        if (button.length > 0 && !button.is(":hover")) {
+          const bottomPos = customerRow.offset().top + customerRow.outerHeight();
+          button.css({
+            display: "block",
+            left: event.clientX + "px",
+            top: (bottomPos - 2) + "px",
+          });
+        }
       }
     },
-  
+    
     handleMouseLeave: function(event) {
         const customerRow = $(event.currentTarget);
         const customerId = customerRow.data('customerid');
@@ -2244,6 +2429,313 @@ define([
         };
       }
     },
+
+    defaultViewSet:function(){
+      var selfobj = this;
+      if (selfobj.userSettings && selfobj.userSettings.hasOwnProperty(selfobj.menuId)) {
+          for (const rowKey in selfobj.userSettings) {
+            if(rowKey == selfobj.menuId){
+              const displayView = selfobj.userSettings[rowKey].displayView;
+              const tableStructure = selfobj.userSettings[rowKey].tableStructure;
+              selfobj.tableStructure = tableStructure;
+              if(displayView){
+                if(displayView == 'traditionalList'){
+                  $("#leadlistview").show();
+                  $("#leadgridview").hide();
+                  $("#modernlistview").hide();
+                  $(".grid_mode").removeAttr("disabled")
+                  $(".list_mode").attr('disabled', 'disabled');
+                  $(".modernlist_mode").removeAttr("disabled")
+                  $("#arrangeColumns").show();
+                  $(".showListView").toggle();
+                  selfobj.View = "traditionalList";
+                  selfobj.resetSearch();
+                }else if(displayView == 'modernlist'){
+                  $("#leadlistview").hide();
+                  $("#leadgridview").hide();
+                  $("#modernlistview").show();
+                  $(".grid_mode").removeAttr("disabled")
+                  $(".modernlist_mode").attr('disabled', 'disabled');
+                  $(".list_mode").removeAttr("disabled")
+                  $("#arrangeColumns").show();
+                  $(".showListView").toggle();
+                  selfobj.View = "modernlist";
+                  selfobj.resetSearch();
+                }else{
+                  $("#leadgridview").show();
+                  $("#leadlistview").hide();
+                  $("#modernlistview").hide();
+                  $(".list_mode").removeAttr("disabled")
+                  $(".grid_mode").attr('disabled', 'disabled');
+                  $(".modernlist_mode").removeAttr("disabled")
+                  $(".hide").hide();
+                  $(".showListView").toggle();
+                  selfobj.collection.reset();
+                  selfobj.View = "grid";
+                  selfobj.gridLazyLoad(listgridID = "");
+                  selfobj.setupDropable();
+                  selfobj.setupSortable();
+                  if(selfobj.mname == 'leads'){
+                    selfobj.leadCanbanSlider();
+                  }
+                }
+              }
+              if (tableStructure && tableStructure != {} && Object.entries(tableStructure).length > 0) {
+                let missingColumns = [];
+                let totalWidthReduction = 0;
+                let tableElement;
+                let elseCount = 0;
+                let elseCountCalculated = false; 
+                for (const property in tableStructure) {
+                    if (tableStructure.hasOwnProperty(property)) {
+                      let columns;
+                      if(property == 0){
+                        const entry = tableStructure[property];
+                        if (displayView === 'traditionalList' && entry.hasOwnProperty('clist')) {
+                            columns = entry['clist'];
+                        } else if (displayView === 'modernlist' && entry.hasOwnProperty('custModernList')) {
+                            columns = entry['custModernList'];
+                        }
+                      }else{
+                        if (displayView === 'traditionalList') {
+                          columns = tableStructure['clist'];
+                        } else if (displayView === 'modernlist') {
+                            columns = tableStructure['custModernList'];
+                        }
+                        //  columns = tableStructure[property];
+                      }
+                        if (columns) {
+                          // Flag to track if elseCount has been calculated
+                            for (const columnName in columns) {
+                                if (columns.hasOwnProperty(columnName)) {
+                                    if (columnName !== 'tableWidth' && !selfobj.arrangedColumnList.find(column => column.column_name === columnName)) {
+                                      missingColumns.push({ [columnName]: columns[columnName] });
+                                      totalWidthReduction += columns[columnName];
+                                    }
+                                    if (columnName == 'tableWidth') {
+                                        const tableWidth = columns['tableWidth'];
+                                        // var tableId = '#' + property;
+                                        if(displayView == "traditionalList"){
+                                          var tableId = '#clist';
+                                        }else if(displayView == "modernlist"){
+                                          var tableId = '#custModernList';
+                                        }
+                                        tableElement = document.querySelector(tableId);
+                                        if (tableElement) {
+                                            tableElement.style.width = tableWidth + 'px';
+                                        }
+                                    } else if (!elseCountCalculated) { // Calculate elseCount only once
+                                        selfobj.arrangedColumnList.forEach((column) => {
+                                            if (!columns.hasOwnProperty(column.column_name)) {
+                                                elseCount++;
+                                            }
+                                        });
+                                        elseCountCalculated = true; // Set the flag
+                                    }
+                                }
+                            }
+                            // Adjust column widths
+                              selfobj.arrangedColumnList.forEach((column) => {
+                                if (columns.hasOwnProperty(column.column_name)) {
+                                    let value = columns[column.column_name];
+                                    // console.log("value",value);
+                                    if(value == null || value == "" || value == undefined){
+                                      value = 150;
+                                    }else{
+                                       value = columns[column.column_name];
+                                    }
+                                    // console.log("value1",value);
+                                    const thElement = document.querySelector(`th[data-column="${column.column_name}"]`);
+                                    // console.log("thElement",thElement);
+                                    if (thElement) {
+                                        thElement.style.width = value + 'px';
+                                    }
+                                } else {
+                                    const value = 150;
+                                    const thElement = document.querySelector(`th[data-column="${column.column_name}"]`);
+                                    if (thElement) {
+                                        thElement.style.width = value + 'px';
+                                    }
+                                    else {
+                                        elseCount++; // Increment elseCount here
+                                    }
+                                }
+                            });
+                            // Adjust table width based on elseCount
+                            if (tableElement) {
+                              tableElement.style.width = (parseInt(tableElement.style.width) + (elseCount * 80)) + 'px';
+                            }
+                        }else{
+                          if(displayView != 'grid'){
+                            if(displayView == "traditionalList"){
+                              var tabldeID = 'clist';
+                            }else if(displayView == "modernlist"){
+                              var tabldeID = 'custModernList';
+                            }
+                            var totalWidth = 0;
+                            var minWidth;
+                            var width;
+                            $('#'+tabldeID + ' ' + '.column-title').each(function(index) {
+                              if (index !== $('.column-title').length - 1) {
+                                var fieldLabel = $(this).contents().filter(function() {
+                                  return this.nodeType === 3;
+                                }).text().trim();
+                                
+                                if (fieldLabel !== 'Action') {
+                                  var fieldLabelLength = fieldLabel.length;
+                                  minWidth = fieldLabelLength + 100;
+                                  width = 190 ;
+                                } else {
+                                  minWidth = 122;
+                                  width = 200 ;
+                                }
+                                totalWidth += width;
+                                $(this).css('min-width', minWidth + 'px');
+                                $(this).css('width', width + 'px');
+                                $(this).css('max-width', 640 + 'px');
+                              }
+                            });
+                            const tableId = '#' + tabldeID;
+                            const tableName = document.querySelector(tableId);
+                            if (tableName) {
+                                totalWidth += 60;
+                                tableName.style.width = totalWidth + 'px';
+                            }
+                            if(totalWidth < 910){
+                              if (tableName) {
+                                tableName.style.width = 910 + 'px';
+                              }
+                            }
+                          }
+                        }
+                    }
+                }
+                // if (totalWidthReduction > 0) {
+                  if (tableElement) {
+                      const currentWidth = parseInt(tableElement.style.width || tableElement.clientWidth);
+                      const newWidth = currentWidth - totalWidthReduction;
+                      tableElement.style.width = newWidth + 'px';
+                      if(newWidth < 910){
+                        tableElement.style.width = 910 + 'px';
+                      }
+                  }
+                  $(tableId + ' .column-title').each(function(index) {
+                      var fieldLabel = $(this).contents().filter(function() {
+                        return this.nodeType === 3;
+                      }).text().trim();
+                      
+                      if (fieldLabel == 'Action') {
+                        let minWidth = 122;
+                        let width = 200 ;
+                        $(this).css('min-width', minWidth + 'px');
+                        $(this).css('width', width + 'px');
+                        $(this).css('max-width', 640 + 'px');
+                        if (tableElement) {
+                          const currentWidth = parseInt(tableElement.style.width || tableElement.clientWidth);
+                          const newWidth = currentWidth + width;
+                          tableElement.style.width = newWidth + 'px';
+                          if(newWidth < 910){
+                            tableElement.style.width = 910 + 'px';
+                          }
+                        }
+                      } 
+                  });
+              // }
+              }else{
+                if(displayView != 'grid'){
+                  if(displayView == "traditionalList"){
+                    var tabldeID = 'clist';
+                  }else if(displayView == "modernlist"){
+                    var tabldeID = 'custModernList';
+                  }
+                  // var tabldeID = $('body').find("table").attr("id");
+                  var totalWidth = 0;
+                  var minWidth;
+                  var width;
+                  $('#'+tabldeID + ' ' + '.column-title').each(function(index) {
+                    if (index !== $('.column-title').length - 1) {
+                      var fieldLabel = $(this).contents().filter(function() {
+                        return this.nodeType === 3;
+                      }).text().trim();
+                      
+                      if (fieldLabel !== 'Action') {
+                        var fieldLabelLength = fieldLabel.length;
+                        minWidth = fieldLabelLength + 100;
+                        width = 190 ;
+                      } else {
+                        minWidth = 122;
+                        width = 200 ;
+                      }
+                      totalWidth += width;
+                      $(this).css('min-width', minWidth + 'px');
+                      $(this).css('width', width + 'px');
+                      $(this).css('max-width', 640 + 'px');
+                    }
+                  });
+                  const tableId = '#' + tabldeID;
+                  const tableName = document.querySelector(tableId);
+                  if (tableName) {
+                      totalWidth += 60;
+                      tableName.style.width = totalWidth + 'px';
+                  }
+                  if(totalWidth < 910){
+                    if (tableName) {
+                      tableName.style.width = 910 + 'px';
+                    }
+                  }
+                }
+              }
+            }
+          }
+      } else {
+            $("#leadlistview").show();
+            $("#leadgridview").hide();
+            $("#modernlistview").hide();
+            $(".grid_mode").removeAttr("disabled")
+            $(".list_mode").attr('disabled', 'disabled');
+            $(".modernlist_mode").removeAttr("disabled")
+            $("#arrangeColumns").show();
+            $(".showListView").toggle();
+            selfobj.View = "traditionalList";
+            selfobj.resetSearch();
+            // var tabldeID = $('body').find("table").attr("id");
+            var tabldeID = 'clist';
+            var totalWidth = 0;
+            var minWidth;
+            var width;
+            $('#'+tabldeID + ' ' + '.column-title').each(function(index) {
+              if (index !== $('.column-title').length - 1) {
+                var fieldLabel = $(this).contents().filter(function() {
+                  return this.nodeType === 3;
+                }).text().trim();
+                
+                if (fieldLabel !== 'Action') {
+                  var fieldLabelLength = fieldLabel.length;
+                  minWidth = fieldLabelLength + 100;
+                  width = 190 ;
+                } else {
+                  minWidth = 122;
+                  width = 200 ;
+                }
+                totalWidth += width;
+                $(this).css('min-width', minWidth + 'px');
+                $(this).css('width', width + 'px');
+                $(this).css('max-width', 640 + 'px');
+              }
+            });
+            const tableId = '#' + tabldeID;
+            const tableName = document.querySelector(tableId);
+            if (tableName) {
+                totalWidth += 60;
+                tableName.style.width = totalWidth + 'px';
+            }
+            if(totalWidth < 910){
+              if(tableName){
+                tableName.style.width = 910 + 'px';
+              }
+            }
+      }
+    },
  
     render: function () {
       var selfobj = this;
@@ -2264,12 +2756,9 @@ define([
       });
 
       this.$el.html(template({ totalRec: this.totalRec, menuName: this.mname, closeItem: this.toClose, pluralLable: this.plural_label, "moduleDesc": selfobj.module_desc, "arrangedColumnList": selfobj.arrangedColumnList, categoryList: selfobj.categoryList.models,displayView :selfobj.View }));
-      var numColumns = selfobj.arrangedColumnList ? selfobj.arrangedColumnList.length : 0;
-      var defaultWidth = numColumns <= 5 ? '100%' : (numColumns * 20) + '%';
-      $("#clist").css("width", defaultWidth);
-      $(".tableModern").css("width", defaultWidth);
       $(".app_playground").append(this.$el);
       $(".loder").hide();
+      $(".clearSorting").attr('disabled', 'disabled');
       setToolTip();
 
       $(".listgrid").scroll(function () {
@@ -2281,96 +2770,31 @@ define([
         let rounded = Math.round(remainingScroll);
         if (rounded <= 0) {
           var listgridID = element.attr("id");
-          selfobj.girdLazyLoad(listgridID);
+          selfobj.gridLazyLoad(listgridID);
         }
       });
-      if(localStorage.getItem('user_setting')){
-        this.userSettings = JSON.parse(localStorage.getItem('user_setting'));
-        for (const rowKey in selfobj.userSettings) {
-          if(rowKey == selfobj.menuId){
-            const displayView = selfobj.userSettings[rowKey].displayView;
-            this.tableStructure = selfobj.userSettings[rowKey].tableStructure;
-          }
-        }
+      // console.log("user_setting",localStorage.getItem('user_setting'));
+
+      if(localStorage.getItem('user_setting') && localStorage.getItem('user_setting').length > 15){
+        selfobj.userSettings = JSON.parse(localStorage.getItem('user_setting'));
       }else{
-        this.userSettings = {};
+        selfobj.userSettings = {};
       }
-        setTimeout(function () {
-          if(selfobj.userSettings){
-            for (const rowKey in selfobj.userSettings) {
-              if(rowKey == selfobj.menuId){
-                const displayView = selfobj.userSettings[rowKey].displayView;
-                const tableStructure = selfobj.userSettings[rowKey].tableStructure;
-                if(displayView){
-                  console.log("displayView",displayView);
-                  if(displayView == 'traditionalList' || selfobj.mname == 'customer'){
-                    $("#leadlistview").show();
-                    $("#leadgridview").hide();
-                    $("#modernlistview").hide();
-                    $(".grid_mode").removeAttr("disabled")
-                    $(".list_mode").attr('disabled', 'disabled');
-                    $(".modernlist_mode").removeAttr("disabled")
-                    $("#arrangeColumns").show();
-                    $(".showListView").toggle();
-                    selfobj.View = "traditionalList";
-                    selfobj.resetSearch();
-                  }else if(displayView == 'modernlist'){
-                    $("#leadlistview").hide();
-                    $("#leadgridview").hide();
-                    $("#modernlistview").show();
-                    $(".grid_mode").removeAttr("disabled")
-                    $(".modernlist_mode").attr('disabled', 'disabled');
-                    $(".list_mode").removeAttr("disabled")
-                    $("#arrangeColumns").show();
-                    $(".showListView").toggle();
-                    selfobj.View = "modernlist";
-                    selfobj.resetSearch();
-                  }else{
-                    $("#leadgridview").show();
-                    $("#leadlistview").hide();
-                    $("#modernlistview").hide();
-                    $(".list_mode").removeAttr("disabled")
-                    $(".grid_mode").attr('disabled', 'disabled');
-                    $(".modernlist_mode").removeAttr("disabled")
-                    $(".hide").hide();
-                    $(".showListView").toggle();
-                    selfobj.collection.reset();
-                    selfobj.View = "grid";
-                    selfobj.girdLazyLoad(listgridID = "");
-                    selfobj.setupDropable();
-                    selfobj.setupSortable();
-                    selfobj.leadCanbanSlider();
-                  }
-                }
-                if (tableStructure) {
-                  for (const property in tableStructure) {
-                    if (tableStructure.hasOwnProperty(property)) {
-                      const columns = tableStructure[property];
-                      if (columns) {
-                        for (const columnName in columns) {
-                          if (columns.hasOwnProperty(columnName)) {
-                            selfobj.arrangedColumnList.forEach((column) => {
-                              if (column.column_name === columnName) {
-                                const value = columns[columnName];
-                                const thElement = document.querySelector(`th[data-column="${columnName}"]`);
-                                var table = $(thElement).closest('table').attr('id');
-                                if (thElement) {
-                                  thElement.style.width = value + 'px';
-                                }
-                              }
-                            });
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+      setTimeout(function () {
+        if(selfobj.userSettings && selfobj.userSettings != {} && Object.entries(selfobj.userSettings).length > 0) {
+          selfobj.defaultViewSet();
+        }else{
+          selfobj.moduleDefaultSettings.setModuleDefaultView(selfobj.menuId,"traditionalList",selfobj.tableStructure);
+          if(localStorage.getItem('user_setting') && localStorage.getItem('user_setting').length > 15){
+            selfobj.userSettings = JSON.parse(localStorage.getItem('user_setting'));
+          }else{
+            selfobj.userSettings = {};
           }
-          $(".showListView").hide();
-        }, 300);
-    
+          selfobj.defaultViewSet();
+        }
+        $(".showListView").hide();
+      }, 300);
+
       return this;
     }
   });
