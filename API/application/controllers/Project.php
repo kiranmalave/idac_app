@@ -265,13 +265,17 @@ class Project extends CI_Controller {
 					$whereAttachment = array(
 						"project_id" => $project_id
 					);
-	
 					$projAttachments = $this->CommonModel->getMasterDetails('project_attachment','',$whereAttachment);
+
+					$whereA = array("adminID"=>$this->input->post('SadminID'));
+        			$accessToken = $this->CommonModel->getMasterDetails("admin","one_drive_access_token",$whereA);
+
 					if(!empty($projAttachments)){
 						$attachment = array_column($projAttachments,'attachment_file');
 						$attachmentID = array_column($projAttachments,'attachment_id');
 						$projectDetails[0]->attachment_file = $attachment;
 						$projectDetails[0]->attachment_id = $attachmentID;
+						$projectDetails[0]->accessToken = $accessToken[0]->one_drive_access_token;
 					}
 
 					$status['data'] = $projectDetails;
@@ -393,5 +397,11 @@ class Project extends CI_Controller {
 				$this->response->output($status, 200);
 			}
 		}	
+	}
+
+	public function fileupload(){
+		//echo "herer";
+		//$authUrl = $this->provider->getAuthorizationUrl();
+		var_dump($_GET);
 	}
  }
