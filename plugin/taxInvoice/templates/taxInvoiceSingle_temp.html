@@ -57,7 +57,7 @@
                 <label for="invoiceDate" class="form-label"><% if(menuName=="quotation" ){%>Quotation <%}else if(menuName=="proforma"){ %>Proforma<%}else if(menuName=="invoice"){ %>Invoice<%}else if(menuName=="delivery"){%>Delivery<%}else{%>Receipt<%}%> Date:</label>
                 <input autocomplete="off" type="text" name="invoiceDate" id="invoiceDate" class="form-control" value="<%=model.invoiceDate%>" />
             
-                <label for="valid_until_date" class="form-label">Valid until(upTo 7 days)</label>
+                <label for="valid_until_date" class="form-label">Valid Until (7 days)</label>
                 <input autocomplete="off" type="text" name="valid_until_date" id="valid_until_date" class="form-control" value="<%=model.valid_until_date%>" />
                 
               </div>
