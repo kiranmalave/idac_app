@@ -88,6 +88,7 @@ define([
         "click .loadFile" : "loadFile",
         "click .hideUpload" : "hideUpload",
         "click .deleteAttachment": "deleteAttachment",
+        "click .openOneDrive": "openOneDrive",
       },
       attachEvents: function () {
         // Detach previous event bindings
@@ -111,8 +112,39 @@ define([
         this.$el.on('click', '.hideUpload', this.hideUpload.bind(this));
         this.$el.off('click', '.deleteAttachment', this.deleteAttachment);
         this.$el.on('click', '.deleteAttachment', this.deleteAttachment.bind(this));
+        this.$el.off('click', '.openOneDrive', this.openOneDrive);
+        this.$el.on('click', '.openOneDrive', this.openOneDrive.bind(this));
       },
   
+      openOneDrive: function(e){
+        var accestokenOD = this.model.get("accessToken");
+        var odOptions = {
+          clientId: "ff8c9bad-7a1d-4714-889c-15b4c362d597",
+          action: "query",
+          multiSelect: true,
+          advanced: {
+            redirectUri: 'http://localhost/projects/idac_app/API/projectCallBack',
+          },
+          success: function(files) {
+            // Handle successful selection of files
+            selectedFiles = files; // Store selected files
+            alert('Files selected: ' + files.length);
+          },
+          cancel: function() {  
+              // Handle cancel event
+              alert('OneDrive picker was canceled');
+          },
+          error: function(error) {
+              // Handle error
+              console.error(error);
+              alert('Error occurred: ' + error);
+          },
+          progress: function(percent) { /* progress handler */ },
+         
+        }
+        OneDrive.open(odOptions);
+      },
+
       onErrorHandler: function (collection, response, options) {
         alert("Something was wrong ! Try to refresh the page or contact administer. :(");
         $(".profile-loader").hide();

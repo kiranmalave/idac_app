@@ -111,6 +111,13 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         setPagging(res.paginginfo, res.loadstate, res.msg);
         selfobj.totalRec = res.paginginfo.totalRecords;
+        if(selfobj.totalRec == 0){
+          $(".noRec").show();
+          $("#projectMainContainer").hide();
+        }else{
+          $(".noRec").hide();
+          $("#projectMainContainer").show();
+        }
         $(".profile-loader").hide();
       });
       selfobj.render();
@@ -350,13 +357,6 @@ define([
     },
     addOne: function (objectModel) {
       this.totalRec = this.collection.length;
-      if (this.totalRec == 0) {
-        $(".noCustRec").show();
-        $("#projectMainContainer").hide();
-      }else{
-        $(".noCustRec").hide();
-        $("#projectMainContainer").show();
-      }
       var template = _.template(projectRowTemp);
       $("#projectList").append(template({ projectDetails: objectModel }));
     },
