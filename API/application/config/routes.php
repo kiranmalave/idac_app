@@ -61,6 +61,7 @@ $route['onedriveAccess'] = 'systems/OneDrive/onedriveAccess';
 $route['getOneDriveList'] = 'systems/OneDrive/getList';
 $route['getFolderByName'] = 'systems/OneDrive/getFolderByName';
 $route['createFolder'] = 'systems/OneDrive/createFolder';
+$route['deleteOneDriveFile'] = 'systems/OneDrive/deleteFiles';
 
 
 
