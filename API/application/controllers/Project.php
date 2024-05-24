@@ -26,6 +26,7 @@ class Project extends CI_Controller {
 		$this->load->library("pagination");
 		$this->load->library("response");
 		$this->load->library("ValidateData");
+		$this->load->library("MicrosoftGraphAPI");
 	}
 
 
@@ -178,6 +179,22 @@ class Project extends CI_Controller {
 
 						}else{
 							$projID = $this->db->insert_id();
+							$cName = preg_replace('/[^a-zA-Z0-9 ]/', '_',$projectDetails['project_name']);
+							$cName = str_replace(' ', '_', $cName);
+
+							// If one drive is activated created customer folder on one drive
+							if($this->microsoftgraphapi->isSetup){
+								$customerDetails = $this->CommonModel->getMasterDetails("customer","one_drive_folder",array("customer_id"=>$projectDetails['client_id']));
+								if(isset($customerDetails[0]->one_drive_folder)){
+									$this->microsoftgraphapi->parentDirectoryId = $customerDetails[0]->one_drive_folder;
+									$id = $this->microsoftgraphapi->createFolder($cName."_".$projID);
+									$ProDetailsUp = array();
+									$ProDetailsUp['one_drive_folder'] = $id;
+									$where=array("project_id"=>$projID);
+									$updateID = $this->CommonModel->updateMasterDetails('project',$ProDetailsUp,$where);
+								}
+							}
+
 							$inID = array("docCurrNo"=>($lastProjectDetails[0]->docCurrNo+1));
 							$isupdate = $this->CommonModel->updateMasterDetails("doc_prefix",$inID,array("docTypeID"=>"2"));
 							if(!$isupdate){

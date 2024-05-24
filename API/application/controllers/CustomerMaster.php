@@ -30,6 +30,7 @@ class CustomerMaster extends CI_Controller
 		$this->load->library("ValidateData");
 		$this->load->library("Datatables");
 		$this->load->library("Filters");
+		$this->load->library("MicrosoftGraphAPI");
 		if(!$this->config->item('development'))
 		{
 			$this->load->library("emails");
@@ -339,13 +340,11 @@ class CustomerMaster extends CI_Controller
 			$customerDetails['mailing_address'] = $this->validatedata->validate('mailing_address', 'Mailing Address', false, '', array());
 			$customerDetails['assignee'] = $this->validatedata->validate('assignee', 'Assignee', false, '', array());
 			$customerDetails['assignee'] = $this->validatedata->validate('assignee', 'Assignee', false, '', array());
-			$countryCodeNumber = $this->input->post('countryCodeNumber');
-			$countryarray = explode(" ", $countryCodeNumber);
-			$mobNumberArray = explode(" ", $customerDetails['mobile_no']);
-			$myObj = array_merge($countryarray,$mobNumberArray);
-			$myJSON = json_encode($myObj);
-			$customerDetails['mobile_no'] = $myJSON;
-
+			$countryCodeNumber = $this->validatedata->validate('countryCodeNumber', 'Country Code', false, '', array());
+			if(isset($countryCodeNumber) && !empty($countryCodeNumber)){
+				$countryarray = explode(" ", $countryCodeNumber);
+				$customerDetails['mobile_no'] = $countryCodeNumber.$customerDetails['mobile_no'];
+			}
 			if($customerDetails['type'] =="lead"){
 				$fieldData = $this->datatables->mapDynamicFeilds("leads",$this->input->post());
 				$customerDetails = array_merge($fieldData, $customerDetails);
@@ -384,6 +383,17 @@ class CustomerMaster extends CI_Controller
 					$this->response->output($status, 200);
 				} else {
 					// $notificationlist = $this->CommonModel->getNotificationList('customer','add');
+					$custID = $this->db->insert_id();
+					$cName = preg_replace('/[^a-zA-Z0-9 ]/', '_',$customerDetails['name']);
+    				$cName = str_replace(' ', '_', $cName);
+					// If one drive is activated created customer folder on one drive
+					if($this->microsoftgraphapi->isSetup){
+						$id = $this->microsoftgraphapi->createFolder($cName."_".$custID);
+						$customerDetailsUp = array();
+						$customerDetailsUp['one_drive_folder'] = $id;
+						$where=array("customer_id"=>$custID);
+						$updateID = $this->CommonModel->updateMasterDetails('customer',$customerDetailsUp,$where);
+					}
 					if(isset($notificationlist) && !empty($notificationlist)){
 						foreach ($notificationlist as $key => $value) 
 						{
@@ -399,8 +409,6 @@ class CustomerMaster extends CI_Controller
 							// }
 						}
 					}
-
-					$custID = $this->db->insert_id();
 					$status['lastID'] = $custID;
 					$status['msg'] = $this->systemmsg->getSucessCode(400);
 					$status['statusCode'] = 400;

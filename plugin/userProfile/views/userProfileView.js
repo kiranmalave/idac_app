@@ -295,29 +295,9 @@ define([
       });
     },
 
-    signInToOneDrive: function() {
-      // Register your own application at https://apps.dev.microsoft.com
-      // and set the "clientId" and "redirectUri" variables accordingly.
-      
-      var appInfo = {
-        "clientId": "ab6ef5a7-1db5-4fcc-8aff-3b2da5f9790c",
-        "redirectUri": APPPATH,
-        "scopes": "user.read files.read files.read.all sites.read.all",
-        "authServiceUri": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
-      };
-      console.log(appInfo);
-      this.provideAppInfo(appInfo);
-
-      // use Microsoft Graph v1.0
-      var baseUrl = ""
-      msGraphApiRoot = (baseUrl) ? baseUrl : "https://graph.microsoft.com/v1.0/me";
-      
-      this.challengeForAuth();
-
-      this.saveToCookie( { "apiRoot": msGraphApiRoot, "signedin": true } );
-      return false;
+    signInToOneDrive: function(){
+      $("#.oneDriveSync").submit();
     },
-
     provideAppInfo: function(obj)
     {
       this.storedAppInfo  = obj;
