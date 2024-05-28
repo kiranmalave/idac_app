@@ -292,6 +292,9 @@ class Project extends CI_Controller {
 						$attachmentID = array_column($projAttachments,'attachment_id');
 						$projectDetails[0]->attachment_file = $attachment;
 						$projectDetails[0]->attachment_id = $attachmentID;
+						
+					}
+					if(!empty($accessToken)){
 						$projectDetails[0]->accessToken = $accessToken[0]->one_drive_access_token;
 					}
 

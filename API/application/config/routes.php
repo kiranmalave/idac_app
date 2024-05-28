@@ -235,6 +235,8 @@ $route['project/status'] = 'project/projectchangeStatus';
 $route['projUpload'] = 'project/projUpload';
 $route['projUpload/(:num)'] = 'project/projUpload/$1';
 $route['project/removeAttachment'] = 'project/removeAttachment';
+$route['projectCallBack'] = 'project/fileupload';
+$route['getToken'] = 'systems/OneDrive/token';
 
 
 ######task

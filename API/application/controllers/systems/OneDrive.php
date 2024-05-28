@@ -84,6 +84,9 @@ class OneDrive extends CI_Controller
 	public function deleteFiles(){
 		$this->microsoftgraphapi->deleteFiles('B5C78AF7D85EDA15!1128');
 	}
+	public function token(){
+		$this->microsoftgraphapi->getToken();
+	}
 	//create folder in spacific folder.
 	//http://localhost/idac_app/API/createFolder
 	// search folder id by name

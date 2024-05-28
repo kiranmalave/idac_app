@@ -13784,3 +13784,46 @@ img.alertIcon {
   width: 22px;
   height: 22px;
 }
+
+.file-container {
+  display: flex;
+}
+.file {
+  margin: 10px;
+  text-align: center;
+}
+.thumbnailOd {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.OD-uploadContainer {
+  min-height: 60px;
+  min-width: 100%;
+  display: inline-block;
+}
+
+.OD-uploadContainer label.OD-uploadLabel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed #b0b0b0;
+  background: #f9f9f9;
+  height: 100px;
+  width: 450px;
+}
+
+.OD-uploadContainer label.OD-uploadLabel .OD-uploadLabelImage {
+  margin-top: 0;
+}
+
+.OD-uploadContainer label.OD-uploadLabel .OD-uploadLabelText {
+  color: #b1b0b0;
+}
+
+.OD-uploadContainer .OD-uploadItemsList {
+  min-width: 100%;
+  text-align: left;
+  margin-left: 15px;
+}
