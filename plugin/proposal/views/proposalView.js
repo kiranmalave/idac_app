@@ -23,16 +23,18 @@ define([
   var proposalView = Backbone.View.extend({
     loadFrom: null,
     totalRec:0,
+    accessToken:"",
     initialize: function (options) {
       this.startX = 0;
       this.startWidth = 0;
       this.$handle = null;
       this.$table = null;
       this.pressed = false;
-
       this.loadFrom = options.loadFrom;
       this.customer_ID = options.customerID;
       this.projectID = options.projectID;
+      this.odFolder = options.odfolder;
+      this.accessToken = "";
       $(".profile-loader").show();
       this.toClose = "proposalFilterView";
       filterOption = new proposalFilterOptionModel();
@@ -65,7 +67,7 @@ define([
      
       });
 
-
+     selfobj.getOdToken();
       this.customerID = options.action;
       if(this.customerID != ""){
         filterOption.set({company:this.customerID});
@@ -92,7 +94,9 @@ define([
         $(".popupLoader").hide();
         // selfobj.render();
       });
-
+      setTimeout(function () {
+        selfobj.getFiles();
+      }, 2000);
 
 
       this.collection = new proposalCollection();
@@ -209,6 +213,148 @@ define([
       } else {
         $(".textvalBox").show();
       }
+    },
+
+    getOdToken: function(){
+      let selfobj = this;
+      $.ajax({
+        url: APIPATH + 'getToken',
+        method: 'GET',
+        datatype: 'JSON',
+        beforeSend: function (request) {
+          //$(e.currentTarget).html("<span>Updating..</span>");
+          request.setRequestHeader("token", $.cookie('_bb_key'));
+          request.setRequestHeader("SadminID", $.cookie('authid'));
+          request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+          request.setRequestHeader("Accept", 'application/json');
+        },
+        success: function (res) {
+          if (res.flag == "F")
+            alert(res.msg);
+
+          if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+          if (res.flag == "S") {
+            selfobj.accessToken = res.token;
+          }
+        }
+      });
+    },
+
+    getFiles: async function (){
+      const accessToken = ""+this.accessToken;
+      const folderId = "" + this.odFolder;
+
+      if(folderId != "" || folderId != undefined){
+         
+        try {
+            // Get the list of files in the specified folder
+            const filesUrl = `https://graph.microsoft.com/v1.0/me/drives/D99A97EA28CF1302/items/${folderId}/children`;
+            const filesResponse = await fetch(filesUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+    
+            if (filesResponse.ok) {
+              const filesData = await filesResponse.json();
+              // console.log('Files in folder:', filesData);
+              
+              const fileListElement = document.getElementById('fileList');
+              fileListElement.innerHTML = ''; // Clear previous content
+
+              for (const file of filesData.value) {
+                  // Fetch thumbnail for each file
+                  const thumbnailUrl = `https://graph.microsoft.com/v1.0/me/drives/D99A97EA28CF1302/items/${file.id}/thumbnails`;
+                  const thumbnailResponse = await fetch(thumbnailUrl, {
+                      method: 'GET',
+                      headers: {
+                          'Authorization': `Bearer ${accessToken}`
+                      }
+                  });
+
+                  let thumbnailSrc = '';
+                  if (thumbnailResponse.ok) {
+                      const thumbnailData = await thumbnailResponse.json();
+                      if (thumbnailData.value && thumbnailData.value.length > 0) {
+                          thumbnailSrc = thumbnailData.value[0].medium.url; // Choose an appropriate thumbnail size
+                      }
+                  }
+
+                  // Create HTML for each file with its thumbnail
+                  const fileElement = document.createElement('div');
+                  fileElement.className = 'file';
+
+                  const fileThumbnail = document.createElement('img');
+                  fileThumbnail.className = 'thumbnailOd';
+                  fileThumbnail.src = thumbnailSrc || 'placeholder.png'; // Use a placeholder if no thumbnail
+
+                  const fileName = document.createElement('p');
+                  fileName.textContent = file.name;
+                  const deleteButton = document.createElement('button');
+                  deleteButton.textContent = 'Delete';
+                  deleteButton.onclick = () => this.deleteFile(file.id);
+
+                  fileElement.appendChild(fileThumbnail);
+                  fileElement.appendChild(deleteButton);
+                  fileListElement.appendChild(fileElement);
+              }
+          } else {
+              const errorData = await filesResponse.json();
+              console.error('Error fetching files:', errorData);
+              alert(`Error fetching files: ${errorData.error.message}`);
+          }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
+
+      }
+    },
+
+
+    deleteFile: async function (fileId) {
+      const accessToken =  ""+this.accessToken;
+
+      Swal.fire({
+        title: "Delete Task ",
+        text: "Do you want to delete Attachment ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Delete',
+        animation: "slide-from-top",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          if (fileId) {
+            try {
+                const deleteUrl = `https://graph.microsoft.com/v1.0/me/drives/D99A97EA28CF1302/items/${fileId}`;
+                const deleteResponse = await fetch(deleteUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+  
+                if (deleteResponse.ok) {
+                    alert('File deleted successfully');
+                    // Refresh the file list
+                    this.getFiles();
+                } else {
+                    const errorData = await deleteResponse.json();
+                    console.error('Error deleting file:', errorData);
+                    alert(`Error deleting file: ${errorData.error.message}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+        }else{
+
+        }
+      })
     },
 
     openColumnArrangeModal: function (e) {

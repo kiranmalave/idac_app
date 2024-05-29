@@ -59,8 +59,8 @@ class OneDrive extends CI_Controller
 		}
 	}
 	public function onedriveCallBack(){
-
-		$res = $this->microsoftgraphapi->authenticate();
+		$adminID = $this->input->post('SadminID');
+		$res = $this->microsoftgraphapi->authenticate($adminID);
 		if(!$res){
 			$status['msg'] = $this->systemmsg->getErrorCode(998);
 			$status['statusCode'] = 998;
@@ -85,7 +85,12 @@ class OneDrive extends CI_Controller
 		$this->microsoftgraphapi->deleteFiles('B5C78AF7D85EDA15!1128');
 	}
 	public function token(){
-		$this->microsoftgraphapi->getToken();
+		$res = $this->microsoftgraphapi->getToken();
+		$status['msg'] = $this->systemmsg->getSucessCode(400);
+		$status['statusCode'] = 400;
+		$status['token'] = $res; 
+		$status['flag'] = 'S';
+		$this->response->output($status, 200);
 	}
 	//create folder in spacific folder.
 	//http://localhost/idac_app/API/createFolder

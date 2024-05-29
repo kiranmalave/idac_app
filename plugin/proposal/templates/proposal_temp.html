@@ -2,134 +2,138 @@
     <div class="row clearfix">
         <div class="col-lg-12">
           <div class="card customModule">
-                <div class="noCustRec" <% if(totalRec == 0){%><%}else{%>style="display: none;"<%}%> >
-                  <div class="noCustRecDetails">
-                    <div class="noCustRecPic">
-                      <img src="images/noRecrds.png" alt="">
-                    </div>
-                    <div class="noCustRecText">
-                      <h1>You haven’t added any <span>
-                          Proposal
-                        </span> here</h1>
-                      <p>Click on add button to add the <span>
-                          Proposal
-                        </span></p>
-                      <div class="buttonAdd">
-                        <button type="button" class="btn btn-link waves-effect loadview nav-item addCust" data-view="singleproposalData" data-item="proposalSingleView">
-                          <!-- <span class="material-icons">add</span> -->
-                          Add
-                        </button>
-                      </div>
-                    </div>
+            <div class="noCustRec" <% if(totalRec == 0){%><%}else{%>style="display: none;"<%}%> >
+              <div class="noCustRecDetails">
+                <div class="noCustRecPic">
+                  <img src="images/noRecrds.png" alt="">
+                </div>
+                <div class="noCustRecText">
+                  <h1>You haven’t added any <span>
+                      Proposal
+                    </span> here</h1>
+                  <p>Click on add button to add the <span>
+                      Proposal
+                    </span></p>
+                  <div class="buttonAdd">
+                    <button type="button" class="btn btn-link waves-effect loadview nav-item addCust" data-view="singleproposalData" data-item="proposalSingleView">
+                      <!-- <span class="material-icons">add</span> -->
+                      Add
+                    </button>
                   </div>
                 </div>
-            
-                 <div class="body table" id="proposaList" style="display: none;">
-                    <div class="header moduleSec" style="margin-bottom: 40px !important;">
-                      <h2>Proposals</h2>
-                      <div class="text-right actionBtns" id="arrangeColumns">
-                        <!-- <button type="button" class="btn bg-indigo arrangeColumns" data-action="arrangeColumns">Arrange columns</button> -->
-                        <div class="addColumns">
-                          <button type="button" class="arrangeColumns btn-bgColor columntop" data-action="arrangeColumns" data-toggle="tooltip" data-placement="top" title="Configure Columns">
-                            <span><span class="material-icons">view_column</span><span class="material-icons">expand_more</span></span>
+              </div>
+            </div>
+        
+              <div class="body table" id="proposaList" style="display: none;">
+                <div class="header moduleSec" style="margin-bottom: 40px !important;">
+                  <h2>Proposals</h2>
+                  <div class="text-right actionBtns" id="arrangeColumns">
+                    <!-- <button type="button" class="btn bg-indigo arrangeColumns" data-action="arrangeColumns">Arrange columns</button> -->
+                    <div class="addColumns">
+                      <button type="button" class="arrangeColumns btn-bgColor columntop" data-action="arrangeColumns" data-toggle="tooltip" data-placement="top" title="Configure Columns">
+                        <span><span class="material-icons">view_column</span><span class="material-icons">expand_more</span></span>
+                      </button>
+                      <div class="" id="customColumnConfigure"></div>
+                    </div>
+                    <form id="reports" method="POST" action="#">
+                      <div class="donloadBtn" data-toggle="tooltip"
+                          data-placement="top" title="Download Data">
+                          <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top" title="Download Data">
+                              <span class="material-symbols-outlined">download</span>
                           </button>
-                          <div class="" id="customColumnConfigure"></div>
-                        </div>
-                        <form id="reports" method="POST" action="#">
-                          <div class="donloadBtn" data-toggle="tooltip"
-                              data-placement="top" title="Download Data">
-                              <button type="button" class="dropdown-toggle btn-bgColor" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-toggle="tooltip" data-placement="top" title="Download Data">
-                                  <span class="material-symbols-outlined">download</span>
-                              </button>
-                              <ul class="dropdown-menu">
-                                  <li><a href="javascript:void(0);" class="downloadReport" data-type="pdf">PDF</a></li>
-                                  <li><a href="javascript:void(0);" class="downloadReport" data-type="excel">Excel</a></li>
-                              </ul>
-                          </div>
-                        </form>
+                          <ul class="dropdown-menu">
+                              <li><a href="javascript:void(0);" class="downloadReport" data-type="pdf">PDF</a></li>
+                              <li><a href="javascript:void(0);" class="downloadReport" data-type="excel">Excel</a></li>
+                          </ul>
                       </div>
-                      <% if(loadFrom == "dashboard"){%>
-                      <button type="button" class="ws-btn-default loadview editButton"  data-view="singleproposalData" data-item="proposalSingleView"  data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">add</i></button>
-                    <%}%>
-                    </div>
-                    <div class="actionList">
-                          <span type="button" style="display:none;" class="changeStatus deleteAll" data-action="delete" data-toggle="tooltip" data-placement="top" title="Delete"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Delete" style="background-color: #494b94; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px; color:#fff !important;">delete</i></span>         
-                    </div>
-                    <div class="customTableClass">
-                      <table id="clist" class="table bulk_action tableList table-hover proposalTable table-bordered table-resizable">
-                        <thead id="thead">
-                          <tr class="headings">
-                            <th  style="width:60px;">
-                              <div class="listCheckbox">
-                                  <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
-                                  <label for="cAll">&nbsp;</label>
-                              </div>
-                            </th>
-                            <th class="column-title sortColumns order" data-value="" data-field="proposal_number" style="padding-left: 20px !important;">Proposal Number
-                              <span class="material-symbols-outlined sortarrow up">
-                                north
-                              </span>
-                              <span class="material-symbols-outlined sortarrow down">
-                                south
-                              </span>
-                              <div class="resize-bar"></div>
-                            </th>
-                            <th class="order sortColumns column-title" data-value="" data-field="name" style="padding-left: 20px !important;">Name
-                                <span class="material-symbols-outlined sortarrow up">
-                                  north
-                                </span>
-                                <span class="material-symbols-outlined sortarrow down">
-                                  south
-                                </span>
-                                <div class="resize-bar"></div>
-                            </th>
-                            <th class=" order sortColumns column-title" data-value="" data-field="company_name" style="padding-left: 20px !important;">Client Name
-                                <span class="material-symbols-outlined sortarrow up">
-                                  north
-                                </span>
-                                <span class="material-symbols-outlined sortarrow down">
-                                  south
-                                </span>
-                                <div class="resize-bar"></div>
-                            </th>
-                            <th class="order sortColumns column-title"  data-value="" data-field="project_name" style="padding-left: 20px !important;">Project Name
-                                <span class="material-symbols-outlined sortarrow up">
-                                  north
-                                </span>
-                                <span class="material-symbols-outlined sortarrow down">
-                                  south
-                                </span>
-                                <div class="resize-bar"></div>
-                            </th>
-                            
-                            <th class="column-title" style="padding-left: 20px !important; width: 20%">Action
-                              <div class="resize-bar"></div>
-                            </th>
-                          </tr>
-                        </thead>
-                      <tbody id="proposalList">
-                      </tbody>
-                      </table>
-                    </div>
-                      <div class="profile-loader-msg text-center"></div>
-                      
-                    <div id="loadMember" data-index="1" data-currPage="1"></div>
-                      <!-- paggination -->
-                      <div class="footer row">
-                          <div class="col-sm-5">
-                              <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
-                                  class="page-info"></span>
-                              </div>
+                    </form>
+                  </div>
+                  <% if(loadFrom == "dashboard"){%>
+                  <button type="button" class="ws-btn-default loadview editButton"  data-view="singleproposalData" data-item="proposalSingleView"  data-toggle="tooltip"  data-placement="top" title="Edit"><i class="material-icons">add</i></button>
+                <%}%>
+                </div>
+                <div class="actionList">
+                      <span type="button" style="display:none;" class="changeStatus deleteAll" data-action="delete" data-toggle="tooltip" data-placement="top" title="Delete"><i class="material-icons" data-toggle="tooltip" data-placement="top" title="Delete" style="background-color: #494b94; border-radius: 50%; padding: 2px 5px; margin-bottom: 10px; color:#fff !important;">delete</i></span>         
+                </div>
+                <div class="customTableClass">
+                  <table id="clist" class="table bulk_action tableList table-hover proposalTable table-bordered table-resizable">
+                    <thead id="thead">
+                      <tr class="headings">
+                        <th  style="width:60px;">
+                          <div class="listCheckbox">
+                              <input id="cAll" class="checkall chk-col-amber" data-tocheck="clist" type="checkbox">
+                              <label for="cAll">&nbsp;</label>
                           </div>
-                          <div class="col-sm-7">
-                            <div class="showPageDetails dataTables_paginate paging_simple_numbers">
-                              <ul class="pagination">
-                              </ul>
-                            </div>
+                        </th>
+                        <th class="column-title sortColumns order" data-value="" data-field="proposal_number" style="padding-left: 20px !important;">Proposal Number
+                          <span class="material-symbols-outlined sortarrow up">
+                            north
+                          </span>
+                          <span class="material-symbols-outlined sortarrow down">
+                            south
+                          </span>
+                          <div class="resize-bar"></div>
+                        </th>
+                        <th class="order sortColumns column-title" data-value="" data-field="name" style="padding-left: 20px !important;">Name
+                            <span class="material-symbols-outlined sortarrow up">
+                              north
+                            </span>
+                            <span class="material-symbols-outlined sortarrow down">
+                              south
+                            </span>
+                            <div class="resize-bar"></div>
+                        </th>
+                        <th class=" order sortColumns column-title" data-value="" data-field="company_name" style="padding-left: 20px !important;">Client Name
+                            <span class="material-symbols-outlined sortarrow up">
+                              north
+                            </span>
+                            <span class="material-symbols-outlined sortarrow down">
+                              south
+                            </span>
+                            <div class="resize-bar"></div>
+                        </th>
+                        <th class="order sortColumns column-title"  data-value="" data-field="project_name" style="padding-left: 20px !important;">Project Name
+                            <span class="material-symbols-outlined sortarrow up">
+                              north
+                            </span>
+                            <span class="material-symbols-outlined sortarrow down">
+                              south
+                            </span>
+                            <div class="resize-bar"></div>
+                        </th>
+                        
+                        <th class="column-title" style="padding-left: 20px !important; width: 20%">Action
+                          <div class="resize-bar"></div>
+                        </th>
+                      </tr>
+                    </thead>
+                  <tbody id="proposalList">
+                  </tbody>
+                  </table>
+                </div>
+                  <div class="profile-loader-msg text-center"></div>
+                  
+                <div id="loadMember" data-index="1" data-currPage="1"></div>
+                  <!-- paggination -->
+                  <div class="footer row">
+                      <div class="col-sm-5">
+                          <div class="dataTables_info" id="datatable-checkbox_info" role="status" aria-live="polite"><span
+                              class="page-info"></span>
                           </div>
+                      </div>
+                      <div class="col-sm-7">
+                        <div class="showPageDetails dataTables_paginate paging_simple_numbers">
+                          <ul class="pagination">
+                          </ul>
+                        </div>
                       </div>
                   </div>
-            
+            </div>
+            <div class="row ">
+              <div class="col-md-12"> 
+                  <div id="fileList" class="example file-container"></div>
+              </div>
+          </div>
         </div>
     </div>
   </div>   

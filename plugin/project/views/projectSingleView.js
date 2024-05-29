@@ -30,6 +30,7 @@ define([
         var selfobj = this;
         this.multiselectOptions = new multiselectOptions();
         $(".modelbox").hide();
+        selfobj.getOdToken();
         scanDetails = options.searchproject;
         selfobj.dynamicFieldRenderobj = new dynamicFieldRender({ ViewObj: selfobj, formJson: {} });
         $(".popupLoader").show();
@@ -360,6 +361,31 @@ define([
           messages: messages,
         });
       },
+
+      getOdToken: function(){
+        let selfobj = this;
+        $.ajax({
+          url: APIPATH + 'getToken',
+          method: 'GET',
+          datatype: 'JSON',
+          beforeSend: function (request) {
+            //$(e.currentTarget).html("<span>Updating..</span>");
+            request.setRequestHeader("token", $.cookie('_bb_key'));
+            request.setRequestHeader("SadminID", $.cookie('authid'));
+            request.setRequestHeader("contentType", 'application/x-www-form-urlencoded');
+            request.setRequestHeader("Accept", 'application/json');
+          },
+          success: function (res) {
+            if (res.flag == "F")
+              alert(res.msg);
+  
+            if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
+            if (res.flag == "S") {
+              selfobj.accessToken = res.token;
+            }
+          }
+        });
+      },
       
     uploadLargeFileToOneDrive: async function() {
         let selfobj = this;
@@ -368,7 +394,7 @@ define([
         const folderId =  ""+this.model.get("one_drive_folder");  // spacific folder//'D99A97EA28CF1302!29359';
         let token = this.model.get("accessToken");
         var jsonObject = JSON.parse(token);
-        const accessToken = ""+jsonObject.access_token;
+        const accessToken = ""+this.accessToken;
         
         if (!file) {
             alert('Please select a file to upload.');
@@ -460,9 +486,7 @@ define([
     },
 
     getFiles: async function (){
-      let token = this.model.get("accessToken");
-      var jsonObject = JSON.parse(token);
-      const accessToken = ""+jsonObject.access_token;
+      const accessToken = ""+this.accessToken;
       const folderId = "" + this.model.get("one_drive_folder");
       if(folderId != "" || folderId != undefined){
          
@@ -478,44 +502,69 @@ define([
     
             if (filesResponse.ok) {
               const filesData = await filesResponse.json();
-              // console.log('Files in folder:', filesData);
               
               const fileListElement = document.getElementById('fileList');
               fileListElement.innerHTML = ''; // Clear previous content
 
               for (const file of filesData.value) {
-                  // Fetch thumbnail for each file
-                  const thumbnailUrl = `https://graph.microsoft.com/v1.0/me/drives/D99A97EA28CF1302/items/${file.id}/thumbnails`;
-                  const thumbnailResponse = await fetch(thumbnailUrl, {
-                      method: 'GET',
-                      headers: {
-                          'Authorization': `Bearer ${accessToken}`
-                      }
-                  });
+                // Fetch thumbnail for each file
+                const thumbnailUrl = `https://graph.microsoft.com/v1.0/me/drives/D99A97EA28CF1302/items/${file.id}/thumbnails`;
+                const thumbnailResponse = await fetch(thumbnailUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
 
-                  let thumbnailSrc = '';
-                  if (thumbnailResponse.ok) {
-                      const thumbnailData = await thumbnailResponse.json();
-                      if (thumbnailData.value && thumbnailData.value.length > 0) {
-                          thumbnailSrc = thumbnailData.value[0].medium.url; // Choose an appropriate thumbnail size
-                      }
-                  }
+                let thumbnailSrc = '';
+                if (thumbnailResponse.ok) {
+                    const thumbnailData = await thumbnailResponse.json();
+                    if (thumbnailData.value && thumbnailData.value.length > 0) {
+                        thumbnailSrc = thumbnailData.value[0].medium.url; // Choose an appropriate thumbnail size
+                    }
+                }
 
-                  // Create HTML for each file with its thumbnail
-                  const fileElement = document.createElement('div');
-                  fileElement.className = 'file';
+                // Get the URL for the file to open in a new tab
+                const fileUrl = `https://graph.microsoft.com/v1.0/me/drives/D99A97EA28CF1302/items/${file.id}`;
 
-                  const fileThumbnail = document.createElement('img');
-                  fileThumbnail.className = 'thumbnailOd';
-                  fileThumbnail.src = thumbnailSrc || 'placeholder.png'; // Use a placeholder if no thumbnail
+                // Create HTML for each file with its thumbnail
+                const fileElement = document.createElement('div');
+                fileElement.className = 'file';
 
-                  const fileName = document.createElement('p');
-                  fileName.textContent = file.name;
-                  fileElement.appendChild(fileThumbnail);
-                  // fileElement.appendChild(fileName);
-                  fileListElement.appendChild(fileElement);
-                  console.log(fileListElement);
-              }
+                const fileThumbnail = document.createElement('img');
+                fileThumbnail.className = 'thumbnailOd';
+                fileThumbnail.src = thumbnailSrc || 'placeholder.png'; // Use a placeholder if no thumbnail
+                fileThumbnail.style.cursor = 'pointer'; // Change cursor to pointer to indicate it's clickable
+                fileThumbnail.onclick = async () => {
+                    const fileResponse = await fetch(fileUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`
+                        }
+                    });
+
+                    if (fileResponse.ok) {
+                        const fileData = await fileResponse.json();
+                        const webUrl = fileData.webUrl;
+                        window.open(webUrl, '_blank'); // Open the file in a new tab
+                    } else {
+                        const errorData = await fileResponse.json();
+                        console.error('Error fetching file URL:', errorData);
+                        alert(`Error fetching file URL: ${errorData.error.message}`);
+                    }
+                };
+
+                const fileName = document.createElement('p');
+                fileName.textContent = file.name;
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => this.deleteFile(file.id);
+
+                fileElement.appendChild(fileThumbnail);
+                //fileElement.appendChild(fileName); // Append the file name
+                fileElement.appendChild(deleteButton);
+                fileListElement.appendChild(fileElement);
+            }
           } else {
               const errorData = await filesResponse.json();
               console.error('Error fetching files:', errorData);
@@ -527,6 +576,51 @@ define([
         }
 
       }
+    },
+
+    deleteFile: async function (fileId) {
+      let token = this.model.get("accessToken");
+      var jsonObject = JSON.parse(token);
+      const accessToken = ""+jsonObject.access_token;
+      Swal.fire({
+        title: "Delete Task ",
+        text: "Do you want to delete Attachment ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Delete',
+        animation: "slide-from-top",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          if (fileId) {
+            try {
+                const deleteUrl = `https://graph.microsoft.com/v1.0/me/drives/D99A97EA28CF1302/items/${fileId}`;
+                const deleteResponse = await fetch(deleteUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+  
+                if (deleteResponse.ok) {
+                    alert('File deleted successfully');
+                    // Refresh the file list
+                    this.getFiles();
+                } else {
+                    const errorData = await deleteResponse.json();
+                    console.error('Error deleting file:', errorData);
+                    alert(`Error deleting file: ${errorData.error.message}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+        }else{
+
+        }
+      })
     },
   
   

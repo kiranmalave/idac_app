@@ -76,7 +76,7 @@ class Project extends CI_Controller {
 		}
 
 		if (isset($company) && !empty($company)) {
-			$wherec["client_id like"] = "'" . $company . "%'";
+			$wherec["client_id like"] = "'" . $company . "'";
 		}
 		if(isset($statuscode) && !empty($statuscode)){
 			$statusStr = str_replace(",",'","',$statuscode);
