@@ -19,23 +19,17 @@ class MicrosoftGraphAPI {
     private $provider;
     private $driveID="D99A97EA28CF1302";
     public $parentDirectoryId="D99A97EA28CF1302!29351";
+    public $adminID ;
+
     
     public function __construct() {
         // Load the configuration from a config file or environment variables
-        $this->redirect_uri = 'http://localhost/idac_app/API/onedriveCallBack';
+        $this->redirect_uri = 'http://localhost/projects/idac_app/API/onedriveCallBack';
         $this->CI = &get_instance();
 		$this->CI->load->model('CommonModel');
-
         $this->clientId = '';
         $this->clientSecret = '';
-        
         $this->tenantId = 'common';
-        $where = array("adminID"=>"1");
-        $res = $this->CI->CommonModel->getMasterDetails("admin","one_drive_access_token,is_one_drive_sync",$where);
-        $this->accessTokenDB = $res[0]->one_drive_access_token;
-        if($res[0]->is_one_drive_sync == "y"){
-            $this->isSetup = true;
-        }
         $this->provider = new GenericProvider([
 			'clientId'                => $this->clientId,
 			'clientSecret'            => $this->clientSecret,
@@ -48,7 +42,14 @@ class MicrosoftGraphAPI {
     }
     public function getAccessToken(){
 
+        $where = array("adminID" => '"' .$this->adminID. '"');
+        $res = $this->CI->CommonModel->getMasterDetails("admin","one_drive_access_token,is_one_drive_sync",$where);
+        $this->accessTokenDB = $res[0]->one_drive_access_token;
+        if($res[0]->is_one_drive_sync == "y"){
+            $this->isSetup = true;
+        }
         $tokenArray = json_decode($this->accessTokenDB, true);
+       
         $accessToken = new AccessToken($tokenArray);
         
         // Check if the token has expired
@@ -61,7 +62,7 @@ class MicrosoftGraphAPI {
                 // Save the new token
                 //file_put_contents('token.json', json_encode($newAccessToken->jsonSerialize()));
                 $data = array("one_drive_access_token"=>json_encode($newAccessToken->jsonSerialize()));
-                $where = array("adminID"=>"1");
+                $where = array("adminID"=>"106");
                 $res = $this->CI->CommonModel->updateMasterDetails("admin",$data,$where);
                 $this->accessToken = $newAccessToken->getAccessToken();
                // return $accessToken;
@@ -73,7 +74,7 @@ class MicrosoftGraphAPI {
             $this->accessToken = $accessToken->getToken();
         }
     }
-    public function authenticate() {
+    public function authenticate($adminID) {
         
        if (!isset($_GET['code'])) {
 			// If we don't have an authorization code then get one
@@ -94,7 +95,7 @@ class MicrosoftGraphAPI {
 					'code' => $_GET['code']
 				]);
                 $data = array("one_drive_access_token"=>json_encode($token->jsonSerialize()),"is_one_drive_sync"=>'y');
-                $where = array("adminID"=>"1");
+                $where = array("adminID"=>'"'.$this->adminID.'"');
                 $this->accessToken = $token;
                 $res = $this->CI->CommonModel->updateMasterDetails("admin",$data,$where);
                 if($res){
@@ -117,10 +118,10 @@ class MicrosoftGraphAPI {
             $client = new Client();
             // Make a GET request to the Microsoft Graph API to get the list of files
             //$url = 'https://graph.microsoft.com/v1.0/me/drive/special/test';
-            $url = 'https://graph.microsoft.com/v1.0/me/drive/root/children';
+            //$url = 'https://graph.microsoft.com/v1.0/me/drive/root/children';
             
             //$url = 'https://graph.microsoft.com/v1.0/me/drives';
-            //$url = 'https://graph.microsoft.com/v1.0/drives/b5c78af7d85eda15/items/B5C78AF7D85EDA15!1126/children';
+            $url = 'https://graph.microsoft.com/v1.0/drives/D99A97EA28CF1302/items/D99A97EA28CF1302!29363/children';
             $response = $client->request('GET', $url, [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->accessToken,
@@ -259,6 +260,12 @@ class MicrosoftGraphAPI {
         } catch (Exception $e) {
             $this->erroNotifiyToUser($e);
         }
+    }
+
+    public function getToken(){
+        $this->getAccessToken();
+        return $this->accessToken;
+        
     }
 }
 ?>

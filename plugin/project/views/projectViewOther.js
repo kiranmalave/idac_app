@@ -228,6 +228,7 @@ define([
       e.stopPropagation();
       let selfobj = this;
       let projectID = $(e.currentTarget).attr('data-project_id');
+      let odFolder = $(e.currentTarget).attr('data-odfolder_id');
       var element = document.querySelector(".addFlex");
       element.classList.add("hideFolder");
       $('.projectFooter').hide();
@@ -236,7 +237,7 @@ define([
       element.classList.add("ShowTable");
       var element = document.querySelector(".hideheader");
       element.classList.add("headerHide");
-      new proposalView({ loadFrom: 'dashboard', projectID: projectID, customerID: selfobj.customerID });
+      new proposalView({ loadFrom: 'dashboard', projectID: projectID, odfolder: odFolder , customerID: selfobj.customerID });
     },
 
     backBtn: function () {
