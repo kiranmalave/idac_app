@@ -24,9 +24,9 @@ class MicrosoftGraphAPI {
     
     public function __construct() {
         // Load the configuration from a config file or environment variables
-        $this->redirect_uri = 'http://localhost/projects/idac_app/API/onedriveCallBack';
         $this->CI = &get_instance();
-		$this->CI->load->model('CommonModel');
+        $this->redirect_uri = $this->CI->config->item('base_url').'onedriveCallBack';
+        $this->CI->load->model('CommonModel');
         $this->clientId = '';
         $this->clientSecret = '';
         $this->tenantId = 'common';
@@ -39,17 +39,19 @@ class MicrosoftGraphAPI {
 			'urlResourceOwnerDetails' => '',
 			'scopes'                  => 'openid profile offline_access User.Read Files.ReadWrite.All',
 		]);
+        if(!isset($this->adminID) || empty($this->adminID) && isset($_COOKIE['authid'])){
+            $this->adminID = $_COOKIE['authid'];
+            $where = array("adminID" =>$this->adminID);
+            $res = $this->CI->CommonModel->getMasterDetails("admin","one_drive_access_token,is_one_drive_sync",$where);
+            $this->accessTokenDB = $res[0]->one_drive_access_token;
+            if($res[0]->is_one_drive_sync == "y"){
+                $this->isSetup = true;
+            }
+		}
     }
     public function getAccessToken(){
 
-        $where = array("adminID" => '"' .$this->adminID. '"');
-        $res = $this->CI->CommonModel->getMasterDetails("admin","one_drive_access_token,is_one_drive_sync",$where);
-        $this->accessTokenDB = $res[0]->one_drive_access_token;
-        if($res[0]->is_one_drive_sync == "y"){
-            $this->isSetup = true;
-        }
         $tokenArray = json_decode($this->accessTokenDB, true);
-       
         $accessToken = new AccessToken($tokenArray);
         
         // Check if the token has expired
@@ -62,7 +64,7 @@ class MicrosoftGraphAPI {
                 // Save the new token
                 //file_put_contents('token.json', json_encode($newAccessToken->jsonSerialize()));
                 $data = array("one_drive_access_token"=>json_encode($newAccessToken->jsonSerialize()));
-                $where = array("adminID"=>"106");
+                $where = array("adminID"=>$this->adminID);
                 $res = $this->CI->CommonModel->updateMasterDetails("admin",$data,$where);
                 $this->accessToken = $newAccessToken->getAccessToken();
                // return $accessToken;
@@ -74,7 +76,7 @@ class MicrosoftGraphAPI {
             $this->accessToken = $accessToken->getToken();
         }
     }
-    public function authenticate($adminID) {
+    public function authenticate() {
         
        if (!isset($_GET['code'])) {
 			// If we don't have an authorization code then get one
@@ -95,7 +97,7 @@ class MicrosoftGraphAPI {
 					'code' => $_GET['code']
 				]);
                 $data = array("one_drive_access_token"=>json_encode($token->jsonSerialize()),"is_one_drive_sync"=>'y');
-                $where = array("adminID"=>'"'.$this->adminID.'"');
+                $where = array("adminID"=>$this->adminID);
                 $this->accessToken = $token;
                 $res = $this->CI->CommonModel->updateMasterDetails("admin",$data,$where);
                 if($res){
@@ -108,8 +110,6 @@ class MicrosoftGraphAPI {
 				exit('Failed to get access token: ' . $e->getMessage());
 			}
 		}
-
-       
     }
     public function getFileList(){
         try {
@@ -120,7 +120,7 @@ class MicrosoftGraphAPI {
             //$url = 'https://graph.microsoft.com/v1.0/me/drive/special/test';
             //$url = 'https://graph.microsoft.com/v1.0/me/drive/root/children';
             
-            //$url = 'https://graph.microsoft.com/v1.0/me/drives';
+            //$url = 'https://graph.microsoft.com/v1.0/me//drive/root/children';
             $url = 'https://graph.microsoft.com/v1.0/drives/D99A97EA28CF1302/items/D99A97EA28CF1302!29363/children';
             $response = $client->request('GET', $url, [
                 'headers' => [
@@ -185,8 +185,6 @@ class MicrosoftGraphAPI {
             
             // Define the name and parent directory ID for the new folder
             //$folderName = "Project_1001"; // Replace with the desired folder name
-            $parentDirectoryId = "D99A97EA28CF1302!29351"; // Replace with the ID of the parent directory where you want to create the folder
-            
             // JSON payload for creating the folder
             $payload = [
                 "name" => $folderName,

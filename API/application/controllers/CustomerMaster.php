@@ -425,7 +425,6 @@ class CustomerMaster extends CI_Controller
 					$status['flag'] = 'F';
 					$this->response->output($status, 200);
 				}
-
 				$customerDetails['modified_by'] = $this->input->post('SadminID');
 				$customerDetails['modified_date'] = $updateDate;
 				$iscreated = $this->CommonModel->updateMasterDetails('customer', $customerDetails, $where);
