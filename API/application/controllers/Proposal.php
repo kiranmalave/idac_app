@@ -512,30 +512,31 @@ class Proposal extends CI_Controller {
 				<td style="height:152pt;text-align: center;vertical-align: middle;"><img style="" width="180px" src="'.$logo.'"></td>
 			</tr>
 			<tr><td style="text-align: center;vertical-align: middle;">
-				<h3>Proposal</h3>
+				<h3>PROPOSAL</h3>
 				<h2></h2>
 			</td>
 			</tr>
+			<tr></tr>
 			<tr>
 				<td style="height: 80pt;text-align: center;vertical-align: middle;">
-				<h3>'.$proposalDetails[0]->project_name.'</h3>
+				<h3>'.$proposalDetails[0]->project_name.'</h3></td>
 			</tr>
 			<tr>
 				<td style="text-align: center;vertical-align: middle;">
-				<p>for</p>
+				<p><i>for</i></p></td>
 			</tr>
 			<tr>
 				<td style="height: 80pt;text-align: center;vertical-align: middle;">
-				<h3>'.$proposalDetails[0]->company_name.'</h3>
+				<h3>'.$proposalDetails[0]->company_name.'</h3></td>
 			</tr>
 			<tr>
 				<td style="text-align: center;vertical-align: middle;">
-				<p>by</p>
+				<p><i>by</i></p></td>
 			</tr>
 			<tr>
 				<td style="height: 80pt;text-align: center;vertical-align: middle;">
-				<b>Dr Kiran Bhagate</b> BE, MTech, PhD, MIMechE, CEng(UK)
-				<h3>IDAC India Pvt Ltd</h3>
+				<b>Dr Kiran Bhagate</b> <p>BE, MTech, PhD, MIMechE, CEng(UK)</p>
+				<h3>IDAC India Pvt Ltd</h3></td>
 			</tr>
 
 		</table>');
