@@ -284,7 +284,7 @@ define([
           showDenyButton: true,
           showCancelButton: false,
           confirmButtonText: 'Save as copy ',
-          denyButtonText: `Save in Eixsting`,
+          denyButtonText: `Save in Existing`,
         }).then((result) => {
           if (result.isConfirmed) {
             if ($("#proposalDetails").valid()) {

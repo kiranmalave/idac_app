@@ -2093,7 +2093,9 @@ define([
     },
 
     updateLeadStage: function (leadStageID, customerID) {
+      let selfobj = this;
       if (customerID != "" && leadStageID != "") {
+        selfobj.isdataupdated = true;
         $.ajax({
           url: APIPATH + 'customerMaster/leadUpdate',
           method: 'POST',
@@ -2111,7 +2113,7 @@ define([
 
             if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
             if (res.flag == "S") {
-
+              selfobj.gridLazyLoad(listgridID = "");
             }
           }
         });

@@ -425,6 +425,7 @@ define([
     hideUpload: function (e) {
       $(".upload").hide();
       $('.dotborder').show();
+      $('#attachedDoc').removeClass("attachment-margin-left");
     },
 
     onErrorHandler: function (collection, response, options) {
@@ -525,6 +526,7 @@ define([
     loadMedia: function (e) {
       $('.upload').show();
       $('.dotborder').hide();
+      $('#attachedDoc').addClass("attachment-margin-left");
     },
     
     loadSubView: function (e) {
@@ -1098,6 +1100,9 @@ define([
       this.setOldValues();
       rearrageOverlays(selfobj.form_label, this.toClose);
       this.commentSingleView.render();
+      if(this.taskID == undefined || this.taskID == null || this.taskID == ""){
+        this.loadMedia();
+      }
       this.uploadFileEl = $("#taskUpload").RealTimeUpload({
         text: 'Drag and Drop or Select a File to Upload.',
         maxFiles: 0,

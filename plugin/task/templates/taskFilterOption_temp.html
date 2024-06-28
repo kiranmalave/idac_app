@@ -76,8 +76,7 @@
       </select>
     </div>
     <div class="col-md-6">
-      <select id="customer_id" name="customer_id" class="form-control ws-select show-tick dropval"
-        title="Select Customer" multiple>
+      <select id="customer_id" name="customer_id" class="form-control ws-select show-tick dropval"  data-live-search="true" title="Select Customer" multiple>
         <% _.each(customerList, function(model1) { %>
           <option value="<%=model1.attributes.customer_id%>">
             <%=model1.attributes.name%>
@@ -90,7 +89,7 @@
 
   <div class="row">
     <div class="col-md-6">
-      <select id="created_by" name="created_by" class="form-control ws-select dropval" title="Created By" multiple>
+      <select id="created_by" name="created_by" class="form-control ws-select dropval" title="Created By"  data-live-search="true" multiple>
         <% _.each(adminList, function(model1) { %>
           <option value="<%=model1.attributes.adminID%>">
             <%=model1.attributes.name%>

@@ -64,7 +64,7 @@ define([
       var models = this.historyList.models;
       for (var i = 0; i < models.length; i++) {
         var model = models[i];
-        var timestamp = model.get('timestamp');
+        var timestamp = model.get('created_date');
         selfobj.timeselectOptions.displayRelativeTime(timestamp);
         model.set({ "timeString": selfobj.timeselectOptions.displayRelativeTime(timestamp) });
       }

@@ -13827,3 +13827,14 @@ img.alertIcon {
   text-align: left;
   margin-left: 15px;
 }
+
+.attachment-margin-left {
+  margin-left: 15px;
+}
+
+.activityRight .details{
+  width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
