@@ -34,13 +34,14 @@ define([
     totalRec: 0,
     View:'traditionalList',
     listDataGrid: [],
+    currPage: 0,
     initialize: function (options) {
       this.startX = 0;
       this.startWidth = 0;
       this.$handle = null;
       this.$table = null;
       this.pressed = false;
-
+      this.currPage = 0;
       this.toClose = "taskFilterView";
       var selfobj = this;
       selfobj.arrangedColumnList = [];
@@ -703,6 +704,7 @@ define([
     },
     
     resetSearch: function () {
+      this.currPage = 0;
       filterOption.clear().set(filterOption.defaults);
       let selfobj = this;
       if (this.mname == "task") {
@@ -1120,6 +1122,7 @@ define([
       readyState = true;
       filterOption.set({ curpage: 0 });
       filterOption.set({ menuId:this.menuId});
+      filterOption.set({ curpage: this.currPage });
       var $element = $('#loadMember');
       $(".profile-loader").show();
       $element.attr("data-index", 1);
@@ -1165,6 +1168,7 @@ define([
         if (res.statusCode == 994) { app_router.navigate("logout", { trigger: true }); }
         $(".profile-loader").hide();
         selfobj.totalRec = res.paginginfo.totalRecords;
+        selfobj.currPage = res.paginginfo.curPage;
         if (selfobj.totalRec == 0) {
           $(".noCustRec").show();
           $("#tasklistview").hide();
