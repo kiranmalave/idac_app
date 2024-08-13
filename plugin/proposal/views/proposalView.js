@@ -242,10 +242,9 @@ define([
 
     getFiles: async function (){
       const accessToken = ""+this.accessToken;
-      const folderId = "" + this.odFolder;
+      var folderId = this.odFolder;
 
-      if(folderId != "" || folderId != undefined){
-         
+      if(folderId){
         try {
             // Get the list of files in the specified folder
             const filesUrl = `https://graph.microsoft.com/v1.0/me/drives/D99A97EA28CF1302/items/${folderId}/children`;

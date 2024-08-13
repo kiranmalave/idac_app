@@ -487,8 +487,8 @@ define([
 
     getFiles: async function (){
       const accessToken = ""+this.accessToken;
-      const folderId = "" + this.model.get("one_drive_folder");
-      if(folderId != "" || folderId != undefined){
+      const folderId = this.model.get("one_drive_folder");
+      if(folderId){
          
         try {
             // Get the list of files in the specified folder
